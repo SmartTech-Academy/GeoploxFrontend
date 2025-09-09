@@ -1,0 +1,174 @@
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { useForm } from 'react-hook-form';
+
+import * as z from 'zod/v4';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Eye, EyeOff, Check, X } from 'lucide-react';
+
+import assets from '@/assets';
+import { customResolver } from '@/lib/customZodResolver';
+import { PageMetaTags } from '@/components/page-meta-data';
+
+export const Route = createFileRoute('/_auth/set-password')({
+  component: RouteComponent,
+});
+
+// Password validation schema
+const passwordSchema = z
+  .string()
+  .min(10, 'Minimum 10 characters')
+  .regex(/[a-z]/, 'One lowercase letter')
+  .regex(/[A-Z]/, 'One uppercase letter')
+  .regex(/[0-9]/, 'One number')
+  .regex(/[^a-zA-Z0-9]/, 'One special character')
+  .refine((val) => !/\s/.test(val), 'No space');
+
+const formSchema = z.object({
+  password: passwordSchema,
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+// Custom password requirements component
+const PasswordRequirements = ({ password }: { password: string }) => {
+  const requirements = [
+    { id: 'lowercase', test: /[a-z]/, label: 'One lowercase letter' },
+    { id: 'uppercase', test: /[A-Z]/, label: 'One uppercase letter' },
+    { id: 'special', test: /[^a-zA-Z0-9]/, label: 'One special character' },
+    { id: 'number', test: /[0-9]/, label: 'One number' },
+    { id: 'nospace', test: /^\S*$/, label: 'No space' },
+    { id: 'minlength', test: /.{10,}/, label: 'Minimum 10 character' },
+  ];
+
+  return (
+    <div className="space-y-2">
+      {requirements.map((req) => {
+        const isValid = password ? req.test.test(password) : false;
+        return (
+          <div key={req.id} className="flex items-center gap-2 text-sm">
+            {isValid ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
+            <span className={isValid ? 'text-green-600' : 'text-red-500'}>{req.label}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+function RouteComponent() {
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const form = useForm<FormValues>({
+    resolver: customResolver(formSchema),
+    defaultValues: {
+      password: '',
+    },
+  });
+
+  const onSubmit = async (values: FormValues) => {
+    try {
+      console.log('Password data:', values);
+      // Navigate to next step or dashboard
+      navigate({ to: '/account-ready' });
+    } catch (error) {
+      console.error('Password setup error:', error);
+    }
+  };
+
+  return (
+    <div className="flex h-full w-full bg-white">
+      <PageMetaTags
+        title="Set Your Password"
+        description="Complete your account setup by creating a secure password."
+        keywords="account setup, create password"
+      />
+      <div className="flex h-full min-h-screen w-full flex-col justify-between self-stretch py-10">
+        {/* Header */}
+        <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
+          <img src={assets.logotext} alt="logo" className="h-[46px] w-[126px]" width={126} height={46} />
+
+          <span className="inline-flex gap-1 text-[14px] leading-[21px] text-[#41415A]">
+            Have an Account?{' '}
+            <Link to="/login" className="font-semibold text-[#D4AF36] hover:underline">
+              Sign In{' '}
+            </Link>
+          </span>
+        </div>
+
+        <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
+          <div className="flex w-full flex-col items-center gap-4 self-stretch">
+            <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Create Password</h1>
+            <p className="text-[14px] leading-[20px] text-[#71748C]">Complete your onboarding in 10 minutes.</p>
+          </div>
+
+          <div className="flex w-full flex-col gap-10">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-10">
+                <div className="flex w-full flex-col gap-1.5">
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem className="w-full gap-1.5">
+                        <FormLabel className="leadinng-[17px] text-[14px] font-normal text-[#41415A]">
+                          Create Password
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              type={showPassword ? 'text' : 'password'}
+                              placeholder="••••••••••••"
+                              className="h-10 w-full self-stretch rounded-[8px] border-[#D5D5DD] px-6 pr-12"
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute top-1/2 right-3 -translate-y-1/2 text-[#D4AF36] hover:text-[#B69118]"
+                            >
+                              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
+                          </div>
+                        </FormControl>
+
+                        {/* Custom Password Requirements */}
+                        <div className="w-full">
+                          <PasswordRequirements password={form.getValues().password} />
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="flex flex-col items-start gap-7 self-stretch">
+                  <Button
+                    type="submit"
+                    style={{
+                      background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
+                      boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                    }}
+                    className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                    disabled={!form.formState.isValid}
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center">
+          <p className="text-[14px] leading-[20px] text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
