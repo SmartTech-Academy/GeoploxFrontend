@@ -210,7 +210,7 @@ const PropertiesPage: React.FC = () => {
               variant={filter === 'all' ? 'outline' : 'ghost'}
               size="sm"
               onClick={() => setFilter('all')}
-              className={`h-[36px] min-w-[55px] rounded-full font-semibold ${
+              className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
                 filter === 'all'
                   ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
@@ -222,7 +222,7 @@ const PropertiesPage: React.FC = () => {
               variant={filter === 'active' ? 'outline' : 'ghost'}
               size="sm"
               onClick={() => setFilter('active')}
-              className={`h-[36px] min-w-[55px] rounded-full font-semibold ${
+              className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
                 filter === 'active'
                   ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
@@ -234,7 +234,7 @@ const PropertiesPage: React.FC = () => {
               variant={filter === 'archive' ? 'outline' : 'ghost'}
               size="sm"
               onClick={() => setFilter('archive')}
-              className={`h-[36px] min-w-[55px] rounded-full font-semibold ${
+              className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
                 filter === 'archive'
                   ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
@@ -245,7 +245,7 @@ const PropertiesPage: React.FC = () => {
           </div>
           <Button variant="ghost" size="sm" className="p-2"></Button>
           <Select defaultValue="this_month">
-            <SelectTrigger className="h-10 w-fit rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-transparent text-[#41415A] shadow-none focus:ring-0">
+            <SelectTrigger className="h-8 w-fit rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-transparent text-[#41415A] shadow-none focus:ring-0">
               <div className="flex items-center gap-2">
                 <Filter className="size-4 text-gray-600" />
               </div>

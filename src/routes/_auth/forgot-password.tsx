@@ -25,6 +25,8 @@ function RouteComponent() {
 
   const form = useForm<ForgotPasswordFormValues>({
     resolver: customResolver(forgotPasswordSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
     defaultValues: {
       email: '',
     },

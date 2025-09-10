@@ -137,6 +137,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
   const form = useForm<PropertyFormValues>({
     resolver: customResolver(PropertyFormSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      nearbyAmenities: [], // 👈 prevents undefined
+    },
   });
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -766,15 +771,17 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                         control={form.control}
                         name="nearbyAmenities"
                         render={({ field }) => {
+                          const value = field.value ?? []; // 👈 ensure array
+
                           return (
                             <FormItem key={amenity} className="flex flex-row items-start space-y-0 space-x-3">
                               <FormControl>
                                 <Checkbox
-                                  checked={field.value?.includes(amenity)}
+                                  checked={value.includes(amenity)}
                                   onCheckedChange={(checked) => {
                                     return checked
-                                      ? field.onChange([...field.value, amenity])
-                                      : field.onChange(field.value?.filter((value) => value !== amenity));
+                                      ? field.onChange([...value, amenity])
+                                      : field.onChange(value.filter((v) => v !== amenity));
                                   }}
                                 />
                               </FormControl>

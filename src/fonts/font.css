@@ -48,8 +48,8 @@
   font-display: swap;
 }
 
-/* Apply it globally */
+/* Apply it globally
 body,
 .gill-sans * {
   font-family: 'Gill Sans', sans-serif;
-}
+} */

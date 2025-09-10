@@ -310,7 +310,7 @@ const UsersPage = () => {
                 variant={filter === 'all' ? 'outline' : 'ghost'}
                 size="sm"
                 onClick={() => setFilter('all')}
-                className={`h-[36px] min-w-[55px] rounded-full font-semibold ${
+                className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
                   filter === 'all'
                     ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                     : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
@@ -322,7 +322,7 @@ const UsersPage = () => {
                 variant={filter === 'verified' ? 'outline' : 'ghost'}
                 size="sm"
                 onClick={() => setFilter('verified')}
-                className={`h-[36px] min-w-[80px] rounded-full font-semibold ${
+                className={`h-8 min-w-[80px] rounded-full text-[12px] font-semibold ${
                   filter === 'verified'
                     ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                     : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
@@ -334,7 +334,7 @@ const UsersPage = () => {
                 variant={filter === 'unverified' ? 'outline' : 'ghost'}
                 size="sm"
                 onClick={() => setFilter('unverified')}
-                className={`h-[36px] min-w-[90px] rounded-full font-semibold ${
+                className={`h-8 min-w-[90px] rounded-full text-[12px] font-semibold ${
                   filter === 'unverified'
                     ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                     : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
@@ -346,7 +346,7 @@ const UsersPage = () => {
                 variant={filter === 'blacklisted' ? 'outline' : 'ghost'}
                 size="sm"
                 onClick={() => setFilter('blacklisted')}
-                className={`h-[36px] min-w-[90px] rounded-full font-semibold ${
+                className={`h-8 min-w-[90px] rounded-full text-[12px] font-semibold ${
                   filter === 'blacklisted'
                     ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                     : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
@@ -427,7 +427,7 @@ const UsersPage = () => {
     }
 
     return (
-      <div className="flex h-full flex-1 flex-col rounded-b-[15px] border-[#DDDDDD] lg:rounded-[15px]">
+      <div className="flex h-full flex-1 flex-col rounded-[15px] border border-[#DDDDDD] lg:rounded-[15px]">
         {/* User Header */}
         <div className="relative min-h-[96px] rounded-t-[15px] bg-[#E9DAB9]">
           <div
@@ -469,7 +469,7 @@ const UsersPage = () => {
           </div>
         </div>
 
-        <div className="mt-12 flex w-full flex-col items-start gap-4 border-b border-[#F1F1F4] px-4 pb-4 lg:flex-row lg:items-center lg:justify-between lg:px-0">
+        <div className="mt-12 flex w-full flex-col items-start gap-4 border-b border-[#F1F1F4] px-4 pb-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-4">
             <h2 className="text-[20px] leading-[28px] font-semibold text-[#2E2E3E]">{selectedUser.name}</h2>
 
@@ -516,7 +516,7 @@ const UsersPage = () => {
         </div>
 
         {/* User Details */}
-        <div className="w-full flex-1 overflow-y-auto bg-white p-4 lg:px-0 lg:py-4">
+        <div className="w-full flex-1 overflow-y-auto bg-white p-4 lg:py-4">
           {activeTab === 'profile' ? (
             <div className="flex w-full flex-col gap-4">
               {/* Personal Information */}
@@ -639,7 +639,7 @@ const UsersPage = () => {
                 ))}
               </section>
 
-              <section className="grid w-full grid-cols-1 gap-6 rounded-[8px] lg:grid-cols-2">
+              <section className="grid w-full grid-cols-1 gap-6 rounded-[8px]">
                 <ListingActivities />
                 <ConversionsChart />
               </section>
@@ -650,7 +650,7 @@ const UsersPage = () => {
                     key={index}
                     className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
                   >
-                    <div className="box-border w-full border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
+                    <div className="box-border w-full rounded-t-[10px] border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
                       <h6 className="text-[12px] leading-[14px] tracking-[-0.02em] text-[#7F7F7F] uppercase">
                         {item.title}
                       </h6>

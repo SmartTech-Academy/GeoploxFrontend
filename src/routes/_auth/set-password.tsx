@@ -64,6 +64,8 @@ function RouteComponent() {
 
   const form = useForm<FormValues>({
     resolver: customResolver(formSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
     defaultValues: {
       password: '',
     },

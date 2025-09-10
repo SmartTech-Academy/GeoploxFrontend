@@ -328,7 +328,7 @@ const ManagersPage = () => {
                 variant={filter === 'all' ? 'outline' : 'ghost'}
                 size="sm"
                 onClick={() => setFilter('all')}
-                className={`h-[36px] min-w-[55px] rounded-full font-semibold ${
+                className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
                   filter === 'all'
                     ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                     : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
@@ -340,7 +340,7 @@ const ManagersPage = () => {
                 variant={filter === 'account' ? 'outline' : 'ghost'}
                 size="sm"
                 onClick={() => setFilter('account')}
-                className={`h-[36px] min-w-[80px] rounded-full font-semibold ${
+                className={`h-8 min-w-[80px] rounded-full text-[12px] font-semibold ${
                   filter === 'account'
                     ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                     : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
@@ -352,7 +352,7 @@ const ManagersPage = () => {
                 variant={filter === 'content' ? 'outline' : 'ghost'}
                 size="sm"
                 onClick={() => setFilter('content')}
-                className={`h-[36px] min-w-[90px] rounded-full font-semibold ${
+                className={`h-8 min-w-[90px] rounded-full text-[12px] font-semibold ${
                   filter === 'content'
                     ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                     : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
@@ -368,7 +368,7 @@ const ManagersPage = () => {
                 background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
                 boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
               }}
-              className="h-10 w-fit rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] p-4 text-[12px] leading-[12px] font-normal text-white"
+              className="h-8 w-fit rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] p-4 text-[12px] leading-[12px] font-normal text-white"
             >
               <UserPlus2 className="size-4" />
               Create
@@ -438,7 +438,7 @@ const ManagersPage = () => {
     }
 
     return (
-      <div className="flex h-full flex-1 flex-col rounded-b-[15px] border-[#DDDDDD] lg:rounded-[15px]">
+      <div className="flex h-full flex-1 flex-col rounded-[15px] border border-[#DDDDDD] lg:rounded-[15px]">
         {/* Manager Header */}
         <div className="relative min-h-[96px] rounded-t-[15px] bg-[#E9DAB9]">
           <div className="absolute inset-0 rounded-t-[15px] bg-gradient-to-r from-[#E9DAB9] to-[#F5E6C8]">
@@ -758,12 +758,11 @@ const ManagersPage = () => {
           <ResizablePanel defaultSize={65} minSize={50}>
             <div className="h-[calc(100svh-150px)] w-full overflow-y-auto pl-8">
               <ManagerView />
+              <AssignModal open={openModal} onOpenChange={setOpenModal} />
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
-
-      <AssignModal open={openModal} onOpenChange={setOpenModal} />
     </div>
   );
 };

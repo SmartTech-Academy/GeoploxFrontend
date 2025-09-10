@@ -37,6 +37,8 @@ function RouteComponent() {
 
   const form = useForm<OTPFormValues>({
     resolver: customResolver(otpSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
     defaultValues: {
       otp: '',
     },

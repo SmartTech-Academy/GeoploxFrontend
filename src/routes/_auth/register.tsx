@@ -36,6 +36,8 @@ function RouteComponent() {
 
   const form = useForm<RegisterFormValues>({
     resolver: customResolver(registerSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
     defaultValues: {
       firstName: '',
       lastName: '',

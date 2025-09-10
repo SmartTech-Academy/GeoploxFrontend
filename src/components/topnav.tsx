@@ -31,7 +31,7 @@ const Topnav = () => {
 
   return (
     <nav className="fixed top-0 right-0 left-0 z-20 h-(--landing-header-height) w-full bg-[rgba(255,_255,_255,_0.8)] shadow-[0px_4px_16px_rgba(0,_0,_0,_0.08)] backdrop-blur-sm">
-      <div className="landing-container flex h-(--landing-header-height) w-full items-center justify-between px-4 py-2.5 md:px-0">
+      <div className="landing-container flex h-(--landing-header-height) w-full items-center justify-between py-2.5">
         {/* Logo */}
         <Link to="/">
           <img src={assets.logotext} alt="logo" className="h-8 w-auto md:h-10 md:w-[126px]" width={126} height={40} />

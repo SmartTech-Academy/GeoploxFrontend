@@ -35,7 +35,7 @@ function RouteComponent() {
             </p>
           </div>
 
-          <div className="w-full overflow-hidden rounded-[8px] border border-[#F1F1F4] bg-white p-1.5">
+          <div className="overflow-hidden rounded-[8px] border border-[#F1F1F4] bg-white p-1.5">
             <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto">
               {tabs.map((tab) => (
                 <Button

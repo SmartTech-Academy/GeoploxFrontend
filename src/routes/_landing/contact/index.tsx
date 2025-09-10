@@ -32,6 +32,8 @@ function RouteComponent() {
 
   const form = useForm<ContactFormData>({
     resolver: customResolver(contactSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
     defaultValues: {
       fullName: '',
       email: '',

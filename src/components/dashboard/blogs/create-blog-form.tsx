@@ -70,6 +70,8 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
   const form = useForm<BlogFormValues>({
     resolver: customResolver(BlogFormSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
     defaultValues: {
       seoTitle: [],
       customTags: [],

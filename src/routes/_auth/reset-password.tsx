@@ -47,6 +47,8 @@ function RouteComponent() {
 
   const form = useForm<ResetPasswordFormValues>({
     resolver: customResolver(resetPasswordSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
     defaultValues: {
       password: '',
       confirmPassword: '',
