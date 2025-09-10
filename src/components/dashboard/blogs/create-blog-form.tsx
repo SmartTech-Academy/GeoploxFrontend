@@ -175,7 +175,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem>
-                    <BreadcrumbLink asChild href="/blog">
+                    <BreadcrumbLink asChild>
                       <Link to="/blogs">Blogs</Link>
                     </BreadcrumbLink>
                   </BreadcrumbItem>

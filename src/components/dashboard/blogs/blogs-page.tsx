@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Link } from '@tanstack/react-router';
 import { PageMetaTags } from '@/components/page-meta-data';
+
 const BlogsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 5;

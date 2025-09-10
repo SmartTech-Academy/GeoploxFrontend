@@ -2,9 +2,14 @@ import assets from '@/assets';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useNavigate } from '@tanstack/react-router';
 import { Search, Home } from 'lucide-react';
+import { useState } from 'react';
 
 export function Hero() {
+  const navigate = useNavigate();
+  const [listingType, setListingType] = useState('buy');
+
   return (
     <section className="relative flex min-h-[700px] items-center justify-start">
       {/* Background Image */}
@@ -56,7 +61,7 @@ export function Hero() {
 
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-2">
-                <Select defaultValue="buy">
+                <Select defaultValue={listingType} onValueChange={(value) => setListingType(value)}>
                   <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-white text-[#41415A] focus:ring-0">
                     <div className="flex items-center gap-2">
                       <Home className="size-4 text-[oklch(0.7665_0.1393_91.15)]" />
@@ -79,6 +84,7 @@ export function Hero() {
                   border: '1px solid rgba(30, 30, 30, 0.5)',
                   boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                 }}
+                onClick={() => navigate({ to: `/${listingType}` })}
                 className="flex h-10 items-center justify-center rounded-[40px] p-4 text-[14px] leading-[17px] font-semibold text-white"
               >
                 Find Property

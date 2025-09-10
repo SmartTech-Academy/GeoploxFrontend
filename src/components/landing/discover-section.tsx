@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Heart, BedDouble, ShowerHead, Square, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import assets from '@/assets';
+import { Link } from '@tanstack/react-router';
 
 const propertyData = {
   'Trending Homes': [
@@ -216,7 +217,9 @@ export function DiscoverSection() {
               {/* Property Grid */}
               <div className="grid w-full grid-cols-1 gap-x-5 gap-y-10 self-stretch md:grid-cols-2 lg:grid-cols-3">
                 {propertyData[activeTab as keyof typeof propertyData]?.map((property) => (
-                  <div
+                  <Link
+                    to={`/buy/$id`}
+                    params={{ id: String(property.id) }}
                     key={property.id}
                     className="flex flex-col items-start gap-6 overflow-hidden transition-shadow hover:shadow-lg"
                   >
@@ -271,7 +274,7 @@ export function DiscoverSection() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
 
@@ -368,18 +371,26 @@ export function DiscoverSection() {
             <h3 className="self-stretch text-[54px] leading-[65px] text-black">Stay Informed</h3>
 
             <Button
+              asChild
               variant="ghost"
               className="hidden h-12 rounded-[40px] bg-[#F9F9F9] px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-[#1F2130] lg:inline-flex"
             >
-              View all Articles
-              <ChevronRight className="size-4" />
+              <Link to="/blog">
+                View all Articles
+                <ChevronRight className="size-4" />
+              </Link>
             </Button>
           </div>
 
           <div className="flex w-full flex-col self-stretch border-b border-[#ECECEC] bg-white py-6">
             <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
               {blogs.map((blog, index) => (
-                <div key={index} className="flex grow flex-col items-start gap-[19px]">
+                <Link
+                  to="/blog/$id"
+                  params={{ id: String(index) }}
+                  key={index}
+                  className="flex grow flex-col items-start gap-[19px]"
+                >
                   <img
                     className="h-[229px] w-full rounded-t-[8px]"
                     src={blog.image}
@@ -414,7 +425,7 @@ export function DiscoverSection() {
                       {blog.dateTime}
                     </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

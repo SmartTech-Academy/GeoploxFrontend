@@ -4,8 +4,9 @@ import { Download, MoveUpRight } from 'lucide-react';
 import { PageMetaTags } from '@/components/page-meta-data';
 import ListingActivities from '@/components/charts/ListingActivities';
 import { ConversionsChart } from '@/components/charts/ConversionsChart';
+import { useState } from 'react';
 
-const OVERVIEW = [
+const PROPERTIES_OVERVIEW = [
   {
     title: 'Total Listings',
     value: '145',
@@ -20,6 +21,21 @@ const OVERVIEW = [
   },
 ];
 
+const USERS_OVERVIEW = [
+  {
+    title: 'Total Users',
+    value: '1.2K',
+  },
+  {
+    title: 'Active Users',
+    value: '850',
+  },
+  {
+    title: 'Verified Users',
+    value: '600',
+  },
+];
+
 const TOTALS = [
   { title: 'Total Clicks', value: '2.04K' },
   { title: 'Total Leads', value: '140' },
@@ -28,6 +44,9 @@ const TOTALS = [
 ];
 
 const AdminInsigths = () => {
+  const [metricType, setMetricType] = useState('properties');
+  const overviewData = metricType === 'properties' ? PROPERTIES_OVERVIEW : USERS_OVERVIEW;
+
   return (
     <div className="flex w-full flex-col items-start gap-5 py-8">
       <PageMetaTags
@@ -36,14 +55,14 @@ const AdminInsigths = () => {
         keywords="market insights, real estate trends, property analytics"
       />
       <header className="flex w-full items-center justify-between gap-2 self-stretch">
-        <Select defaultValue="all">
+        <Select defaultValue={metricType} onValueChange={setMetricType}>
           <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-[#F9F9F9] text-[#41415A] focus:ring-0">
             <div className="flex items-center gap-2">
               <SelectValue />
             </div>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Properties</SelectItem>
+            <SelectItem value="properties">All Properties</SelectItem>
             <SelectItem value="users">User Metric</SelectItem>
           </SelectContent>
         </Select>
@@ -58,7 +77,7 @@ const AdminInsigths = () => {
       </header>
 
       <section className="grid grid-cols-1 gap-5 self-stretch lg:grid-cols-3">
-        {OVERVIEW.map((item, index) => (
+        {overviewData.map((item, index) => (
           <div
             key={index}
             className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
@@ -69,7 +88,9 @@ const AdminInsigths = () => {
 
             <div className="flex items-baseline gap-2 px-6 pb-6">
               <p className="text-[48px] leading-[48px] font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
-              <span className="text-[16px] leading-[22px] text-[#1F2130]">Properties</span>
+              <span className="text-[16px] leading-[22px] text-[#1F2130]">
+                {metricType === 'properties' ? 'Properties' : 'Users'}
+              </span>
             </div>
           </div>
         ))}
