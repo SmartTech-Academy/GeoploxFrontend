@@ -25,7 +25,7 @@ export default [
       'build',
       'public/build',
       '.env',
-      //   'src/components/ui/*',
+      'src/components/ui/*',
     ],
   },
   {

@@ -62,7 +62,6 @@ function RouteComponent() {
 
   const handleResendCode = () => {
     // Implement resend OTP logic
-    console.log('Resending OTP to:', phone);
     // You could show a toast notification here
   };
 

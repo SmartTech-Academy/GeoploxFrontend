@@ -1,5 +1,5 @@
 import assets from '@/assets';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { Link } from '@tanstack/react-router';
@@ -40,12 +40,12 @@ const Topnav = () => {
         {/* Desktop Navigation */}
         <ul className="hidden md:flex md:items-center">
           {navigationLinks.map((link, index) => (
-            <>
+            <React.Fragment key={link.to}>
               <li key={link.to} className="isolate flex h-12 w-[80px] items-center justify-center">
                 <NavLink to={link.to} label={link.label} />
               </li>
               {index < navigationLinks.length - 1 && <li key={`divider-${index}`} className="h-3 w-0.5 bg-[#B1B9C7]" />}
-            </>
+            </React.Fragment>
           ))}
         </ul>
 

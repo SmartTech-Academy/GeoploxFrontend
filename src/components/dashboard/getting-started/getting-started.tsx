@@ -250,7 +250,7 @@ const GettingStarted = () => {
   };
 
   const handleFinalSubmit = () => {
-    console.log('Final form data:', form.getValues());
+    // console.log('Final form data:', form.getValues());
     completeOnboarding();
     navigate({ to: '/dashboard' });
     // Handle final submission logic here

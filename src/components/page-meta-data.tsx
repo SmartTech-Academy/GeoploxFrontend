@@ -94,7 +94,7 @@ function generateMetaInfo(options: MetaInfoOptions = {}) {
   };
 
   const generateDynamicKeywords = () => {
-    let keywords = [defaults.baseKeywords];
+    const keywords = [defaults.baseKeywords];
 
     if (options.keywords) {
       keywords.unshift(options.keywords);
