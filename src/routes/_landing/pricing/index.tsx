@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Check } from 'lucide-react';
 import assets from '@/assets';
 import { PageMetaTags } from '@/components/page-meta-data';
+import LoadingFallback from '@/components/loading-fallback';
+import { useGetPlans } from '@/lib/services';
 
 export const Route = createFileRoute('/_landing/pricing/')({
   component: RouteComponent,
@@ -11,11 +13,66 @@ export const Route = createFileRoute('/_landing/pricing/')({
 
 function RouteComponent() {
   const [activeTab, setActiveTab] = useState('Monthly');
+  const { data: plansResponse, isPending: isLoadingPlans } = useGetPlans();
+
+  const plansData = plansResponse?.data.data;
+  const plans = plansData ? [plansData.basic, plansData.premium, plansData.enterprise] : [];
 
   const tabs = [
     { name: 'Monthly', icon: '' },
     { name: 'Annually', icon: '' },
   ];
+
+  // Show loading state
+  if (isLoadingPlans) {
+    return <LoadingFallback />;
+  }
+
+  // Helper function to get button text for each plan
+  const getButtonText = (planName: string) => {
+    if (planName === 'Basic') return 'Free for 14 days';
+    if (planName === 'Premium') return 'Get Premium';
+    return 'Get Enterprise';
+  };
+
+  // Helper function to get card styling
+  const getCardStyle = (isRecommended: boolean) => {
+    if (isRecommended) {
+      return {
+        className:
+          'relative flex grow flex-col justify-between gap-6 rounded-[8px] border-[0.6px] border-[#EFE1B5] bg-[#F8F2DF] px-7 py-8',
+        style: { backdropFilter: 'blur(3px)' },
+      };
+    }
+    return {
+      className: 'flex grow flex-col justify-between gap-6 rounded-[8px] border-[0.6px] border-[#D8D8D8] px-7 py-8',
+      style: { backdropFilter: 'blur(3px)' },
+    };
+  };
+
+  // Helper function to get button styling
+  const getButtonStyle = (planName: string) => {
+    if (planName === 'Premium') {
+      return {
+        style: {
+          background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
+          boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+        },
+        className:
+          'h-10 w-full rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white',
+      };
+    }
+    return {
+      style: {
+        background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
+        boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+      },
+      className: `h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white hover:bg-[#A0750A] ${
+        planName === 'Enterprise' ? 'mt-16' : ''
+      }`,
+    };
+  };
+
   return (
     <div className="min-h-screen w-full bg-white pt-(--landing-header-height)">
       <PageMetaTags
@@ -61,184 +118,51 @@ function RouteComponent() {
           </div>
 
           <div className="grid w-full gap-7 lg:grid-cols-3">
-            {/* Basic Plan */}
-            <div
-              style={{ backdropFilter: 'blur(3px)' }}
-              className="flex grow flex-col justify-between gap-6 rounded-[8px] border-[0.6px] border-[#D8D8D8] px-7 py-8"
-            >
-              <div className="flex flex-col items-start gap-5">
-                <h3 className="text-[20px] leading-[28px] font-semibold text-[#1F2130]">Basic Plan</h3>
+            {plans.map((plan) => {
+              const cardStyle = getCardStyle(plan.is_recommended);
+              const buttonStyle = getButtonStyle(plan.name);
 
-                <span className="text-[32px] leading-[45px] font-semibold text-[#1F2130]">Free</span>
+              return (
+                <div key={plan.id} style={cardStyle.style} className={cardStyle.className}>
+                  {/* Recommended Badge */}
+                  {plan.is_recommended && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 transform">
+                      <div className="rounded-full bg-[#1F2130] px-4 py-1 text-[12px] font-medium text-white">
+                        Recommended
+                      </div>
+                    </div>
+                  )}
 
-                <div className="flex flex-1 flex-col gap-4">
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">Unlimited Property Browsing</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">Limited Listing Details</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">
-                      Limited Owner/Developer Contact Details
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">
-                      Email Notifications for New Listings in Preferred Areas
-                    </span>
-                  </div>
-                </div>
-              </div>
+                  <div className="flex flex-col items-start gap-5">
+                    <h3 className="text-[20px] leading-[28px] font-semibold text-[#1F2130]">{plan.name} Plan</h3>
 
-              <Button
-                style={{
-                  background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
-                }}
-                className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white hover:bg-[#A0750A]"
-              >
-                Free for 14 days
-              </Button>
-            </div>
+                    {plan.name === 'Basic' ? (
+                      <span className="text-[32px] leading-[45px] font-semibold text-[#1F2130]">{plan.price}</span>
+                    ) : (
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-[32px] leading-[45px] font-semibold text-[#1F2130]">
+                          {plan.price.split('/')[0]}
+                        </span>
+                        <span className="text-[16px] leading-[22px] text-[#71748C]">/{plan.price.split('/')[1]}</span>
+                      </div>
+                    )}
 
-            {/* Premium Plan */}
-            <div
-              style={{ backdropFilter: 'blur(3px)' }}
-              className="relative flex grow flex-col justify-between gap-6 rounded-[8px] border-[0.6px] border-[#EFE1B5] bg-[#F8F2DF] px-7 py-8"
-            >
-              {/* Recommended Badge */}
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 transform">
-                <div className="rounded-full bg-[#1F2130] px-4 py-1 text-[12px] font-medium text-white">
-                  Recommended
-                </div>
-              </div>
-              <div className="flex flex-col items-start gap-5">
-                <h3 className="text-[20px] leading-[28px] font-semibold text-[#1F2130]">Premium Plan</h3>
-
-                <div className="flex items-baseline gap-1">
-                  <span className="text-[32px] leading-[45px] font-semibold text-[#1F2130]">₦10,000</span>
-                  <span className="text-[16px] leading-[22px] text-[#71748C]">/Month</span>
-                </div>
-
-                <div className="flex flex-1 flex-col gap-4">
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">Unlimited Property Browsing</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">Full Listing Details</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">
-                      Access to Contact Info of Property Owners/ Developers
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">On-Platform Messaging</span>
+                    <div className="flex flex-1 flex-col gap-4">
+                      {plan.features.map((feature: string) => (
+                        <div key={feature} className="flex items-center gap-4">
+                          <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
+                          <span className="text-[14px] leading-[20px] text-[#71748C]">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">Analytics Dashboard</span>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">
-                      Email Notifications for New Listings in Preferred Areas
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                    <span className="text-[14px] leading-[20px] text-[#71748C]">Priority & Email Support</span>
-                  </div>
+                  <Button style={buttonStyle.style} className={buttonStyle.className}>
+                    {getButtonText(plan.name)}
+                  </Button>
                 </div>
-              </div>
-
-              <Button
-                style={{
-                  background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
-                }}
-                className="h-10 w-full rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
-              >
-                Get Premium
-              </Button>
-            </div>
-
-            {/* Enterprise Plan */}
-            <div
-              style={{ backdropFilter: 'blur(3px)' }}
-              className="flex grow flex-col justify-between gap-6 rounded-[8px] border-[0.6px] border-[#D8D8D8] px-7 py-8"
-            >
-              <div className="flex flex-col items-start gap-5">
-                <h3 className="text-[20px] leading-[28px] font-semibold text-[#1F2130]">Enterprise Plan</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-[32px] leading-[45px] font-semibold text-[#1F2130]">₦20,000</span>
-                  <span className="text-[16px] leading-[22px] text-[#71748C]">/Month</span>
-                </div>
-              </div>
-
-              <div className="flex flex-1 flex-col gap-4">
-                <div className="flex items-center gap-4">
-                  <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                  <span className="text-[14px] leading-[20px] text-[#71748C]">Unlimited property browsing</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                  <span className="text-[14px] leading-[20px] text-[#71748C]">Full listing details</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                  <span className="text-[14px] leading-[20px] text-[#71748C]">
-                    Access to Contact Info of Property Owners/ Developers
-                  </span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                  <span className="text-[14px] leading-[20px] text-[#71748C]">
-                    Downloadable Unwatermarked Property Images
-                  </span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                  <span className="text-[14px] leading-[20px] text-[#71748C]">On-Platform Messaging</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                  <span className="text-[14px] leading-[20px] text-[#71748C]">Analytics Dashboard</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                  <span className="text-[14px] leading-[20px] text-[#71748C]">
-                    Email Notifications for New Listings in Preferred Areas
-                  </span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
-                  <span className="text-[14px] leading-[20px] text-[#71748C]">Priority & Dedicated Support</span>
-                </div>
-              </div>
-
-              <Button
-                style={{
-                  background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
-                }}
-                className="mt-16 h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white hover:bg-[#A0750A]"
-              >
-                Get Enterprise
-              </Button>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -258,7 +182,7 @@ function RouteComponent() {
               <h4 className="text-[44px] leading-[62px] text-[#1F2130]">Ready to Find Real Property?</h4>
 
               <p className="text-[20px] leading-[28px] text-[#41415A]">
-                Start your 7-day free trial and access Nigeria’s most trusted real estate listings — full property
+                Start your 7-day free trial and access Nigeria&apos;s most trusted real estate listings — full property
                 details, high-quality photos, direct contact info, and more
               </p>
             </div>

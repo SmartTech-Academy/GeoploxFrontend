@@ -1,0 +1,9 @@
+# This is the configuration file for Netlify.
+
+[build]
+  publish = "dist" # This should be your build output directory. For Vite, it's 'dist'.
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

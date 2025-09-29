@@ -4,11 +4,14 @@ import * as z from 'zod/v4';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { useVerify } from '@/lib/services';
 
 import assets from '@/assets';
 import { Link } from '@tanstack/react-router';
 import { customResolver } from '@/lib/customZodResolver';
 import { PageMetaTags } from '@/components/page-meta-data';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 // Zod schema for OTP verification
 const otpSchema = z.object({
@@ -19,6 +22,7 @@ type OTPFormValues = z.infer<typeof otpSchema>;
 
 // Search params type
 type VerifyOTPSearch = {
+  email: string;
   phone?: string;
 };
 
@@ -26,6 +30,7 @@ export const Route = createFileRoute('/_auth/verify-otp')({
   component: RouteComponent,
   validateSearch: (search: Record<string, unknown>): VerifyOTPSearch => {
     return {
+      email: search.email as string,
       phone: typeof search.phone === 'string' ? search.phone : undefined,
     };
   },
@@ -33,7 +38,9 @@ export const Route = createFileRoute('/_auth/verify-otp')({
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const { phone } = useSearch({ from: '/_auth/verify-otp' });
+  const { email, phone } = useSearch({ from: '/_auth/verify-otp' });
+  const { mutate, isPending } = useVerify();
+  const [localOTP, setLocalOTP] = useState('');
 
   const form = useForm<OTPFormValues>({
     resolver: customResolver(otpSchema),
@@ -44,25 +51,48 @@ function RouteComponent() {
     },
   });
 
-  const onSubmit = async (values: OTPFormValues) => {
-    try {
-      // Here you would typically make an API call to verify the OTP
-      console.log('OTP verification:', values.otp);
+  const onSubmit = (values: OTPFormValues) => {
+    // Here you would typically make an API call to verify the OTP
+    console.log('OTP verification:', values.otp);
 
-      // On successful verification, navigate to dashboard or next step
-      navigate({ to: '/set-password' });
-    } catch (error) {
-      console.error('OTP verification error:', error);
-      // Handle error appropriately
-      form.setError('otp', {
-        message: 'Invalid verification code. Please try again.',
-      });
-    }
+    const payload = {
+      email_or_username: email,
+      activation_code: values.otp,
+    };
+
+    mutate(payload, {
+      onSuccess: (response) => {
+        toast.success('Account created successfully!');
+        const responseData = response.data?.data;
+        const token = responseData?.access_token;
+        const user = responseData?.user_data;
+        if (token) {
+          localStorage.setItem('token', token);
+        }
+        if (user) {
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+
+        const userEmail = user?.email_address;
+        navigate({
+          to: '/account-ready',
+          search: { email: userEmail || email },
+        });
+      },
+      onError: (error: any) => {
+        const message = error.response?.data?.message || 'Registration failed. Please try again.';
+        toast.error(message);
+        form.setError('otp', {
+          message: 'Invalid verification code. Please try again.',
+        });
+      },
+    });
   };
 
   const handleResendCode = () => {
     // Implement resend OTP logic
     // You could show a toast notification here
+    toast.info('Verification code resent!');
   };
 
   // Format phone number for display (mask most digits)
@@ -113,10 +143,17 @@ function RouteComponent() {
                   render={({ field }) => (
                     <FormItem className="flex w-full flex-col items-center gap-1.5">
                       <FormControl>
-                        <InputOTP maxLength={6} value={field.value} onChange={field.onChange} className="w-full gap-2">
+                        <InputOTP
+                          maxLength={6}
+                          value={field.value}
+                          onChange={(newValue) => {
+                            field.onChange(newValue);
+                            setLocalOTP(newValue);
+                          }}
+                          className="w-full gap-2"
+                        >
                           <InputOTPGroup className="w-full gap-4">
                             <InputOTPSlot index={0} className="size-14 rounded-[8px] text-lg" />
-
                             <InputOTPSlot index={1} className="size-14 rounded-[8px] text-lg" />
                             <InputOTPSlot index={2} className="size-14 rounded-[8px] text-lg" />
                             <InputOTPSlot index={3} className="size-14 rounded-[8px] text-lg" />
@@ -138,9 +175,9 @@ function RouteComponent() {
                     boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                   }}
                   className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
-                  disabled={form.watch('otp').length !== 6}
+                  disabled={localOTP.length !== 6 || isPending}
                 >
-                  Verify
+                  {isPending ? 'Verifying...' : 'Verify'}
                 </Button>
 
                 {/* Resend Code */}

@@ -3,8 +3,8 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Phone } from 'lucide-react';
-import React from 'react';
+import { Phone, Upload } from 'lucide-react';
+import React, { useRef, useState } from 'react';
 
 import { UseFormReturn } from 'react-hook-form';
 
@@ -13,11 +13,70 @@ interface AccountTypeProps {
 }
 
 const PersonalInfo: React.FC<AccountTypeProps> = ({ form }) => {
+  const [picturePreview, setPicturePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64String = e.target?.result as string;
+        setPicturePreview(base64String);
+        form.setValue('profilePicture', base64String); // Store the base64 string
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  //   const handleLogoRemove = () => {
+  //     setBusinessLogo(null);
+  //     setLogoPreview(null);
+  //     form.setValue('businessLogo', null);
+  //     if (fileInputRef.current) {
+  //       fileInputRef.current.value = '';
+  //     }
+  //   };
+
+  const handleLogoClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
         <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Personal Information</h2>
         <p className="text-[14px] leading-[20px] text-[#71748C]">Let us know more about you</p>
+      </div>
+
+      <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
+        <div className="mx-auto flex flex-col gap-6">
+          <div
+            onClick={handleLogoClick}
+            className="relative mx-auto flex size-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
+          >
+            {picturePreview ? (
+              <img src={picturePreview} alt="Profile Preview" className="h-full w-full object-cover" />
+            ) : (
+              <Upload className="size-4 text-[#71748C]" />
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".jpg,.jpeg,.png"
+              onChange={handlePictureUpload}
+              className="sr-only"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <p className="text-[14px] leading-[24px] text-[#1F2130]">Profile Picture</p>
+            <p className="text-[14px] leading-[24px] text-[#71748C]">
+              Upload a profile picture. Only .JPG and .PNG supported.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="flex w-full flex-col gap-5">

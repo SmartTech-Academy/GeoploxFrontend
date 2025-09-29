@@ -3,10 +3,12 @@ import { ChevronRight, HousePlus } from 'lucide-react';
 import { format } from 'date-fns';
 import assets from '@/assets';
 import { Link } from '@tanstack/react-router';
-import { toast } from 'sonner';
-import { useEffect } from 'react';
+
 import { PageMetaTags } from '@/components/page-meta-data';
 import { ActiveListingsChart } from '@/components/charts/ActiveListingsChart';
+import { useGetProfileData } from '@/lib/services/profile';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useMemo } from 'react';
 
 const OVERVIEW = [
   {
@@ -59,16 +61,14 @@ const MESSAGES = [
   },
 ];
 const Dashboard = () => {
-  useEffect(() => {
-    const toastId = toast.success('Your account is under review', {
-      description: "We’re reviewing your information and will notify you once it's approved.",
-      action: {
-        label: 'Dismiss',
-        onClick: () => toast.dismiss(toastId), // dismisses the toast
-      },
-    });
-  }, []);
+  const { data: profileData, isLoading: isProfileLoading } = useGetProfileData();
 
+  const userName = useMemo(() => {
+    if (profileData) {
+      return `${profileData?.firstname || ''} ${profileData?.lastname || ''}`.trim();
+    }
+    return 'User';
+  }, [profileData]);
   return (
     <div className="flex w-full flex-col items-start gap-5 py-8">
       <PageMetaTags
@@ -79,7 +79,10 @@ const Dashboard = () => {
 
       <header className="flex w-full items-center justify-between gap-2 self-stretch">
         <div className="flex flex-col items-baseline gap-2">
-          <h1 className="text-[18px] leading-[18px] font-semibold text-[#1F2130]">Good Afternoon, Rene</h1>
+          <h1 className="flex items-center gap-2 text-[18px] leading-[18px] font-semibold text-[#1F2130]">
+            <span>Good Afternoon,</span>
+            {isProfileLoading ? <Skeleton className="h-5 w-32" /> : <span>{userName}</span>}
+          </h1>
 
           <p className="text-[12px] leading-[17px] tracking-[-0.01em] text-[#71748C]">
             {format(new Date(), 'EEEE, MMMM d')}

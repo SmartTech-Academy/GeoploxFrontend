@@ -33,6 +33,7 @@ import { Route as DashboardSettingsIndexRouteImport } from './routes/_dashboard/
 import { Route as DashboardPropertiesIndexRouteImport } from './routes/_dashboard/properties/index'
 import { Route as DashboardPerformanceIndexRouteImport } from './routes/_dashboard/performance/index'
 import { Route as DashboardPendingApprovalsIndexRouteImport } from './routes/_dashboard/pending-approvals/index'
+import { Route as DashboardNotificationsIndexRouteImport } from './routes/_dashboard/notifications/index'
 import { Route as DashboardMessagesIndexRouteImport } from './routes/_dashboard/messages/index'
 import { Route as DashboardManagersIndexRouteImport } from './routes/_dashboard/managers/index'
 import { Route as DashboardListingIndexRouteImport } from './routes/_dashboard/listing/index'
@@ -170,6 +171,12 @@ const DashboardPendingApprovalsIndexRoute =
     path: '/pending-approvals/',
     getParentRoute: () => DashboardRoute,
   } as any)
+const DashboardNotificationsIndexRoute =
+  DashboardNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 const DashboardMessagesIndexRoute = DashboardMessagesIndexRouteImport.update({
   id: '/messages/',
   path: '/messages/',
@@ -280,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/listing': typeof DashboardListingIndexRoute
   '/managers': typeof DashboardManagersIndexRoute
   '/messages': typeof DashboardMessagesIndexRoute
+  '/notifications': typeof DashboardNotificationsIndexRoute
   '/pending-approvals': typeof DashboardPendingApprovalsIndexRoute
   '/performance': typeof DashboardPerformanceIndexRoute
   '/properties': typeof DashboardPropertiesIndexRoute
@@ -319,6 +327,7 @@ export interface FileRoutesByTo {
   '/listing': typeof DashboardListingIndexRoute
   '/managers': typeof DashboardManagersIndexRoute
   '/messages': typeof DashboardMessagesIndexRoute
+  '/notifications': typeof DashboardNotificationsIndexRoute
   '/pending-approvals': typeof DashboardPendingApprovalsIndexRoute
   '/performance': typeof DashboardPerformanceIndexRoute
   '/properties': typeof DashboardPropertiesIndexRoute
@@ -362,6 +371,7 @@ export interface FileRoutesById {
   '/_dashboard/listing/': typeof DashboardListingIndexRoute
   '/_dashboard/managers/': typeof DashboardManagersIndexRoute
   '/_dashboard/messages/': typeof DashboardMessagesIndexRoute
+  '/_dashboard/notifications/': typeof DashboardNotificationsIndexRoute
   '/_dashboard/pending-approvals/': typeof DashboardPendingApprovalsIndexRoute
   '/_dashboard/performance/': typeof DashboardPerformanceIndexRoute
   '/_dashboard/properties/': typeof DashboardPropertiesIndexRoute
@@ -403,6 +413,7 @@ export interface FileRouteTypes {
     | '/listing'
     | '/managers'
     | '/messages'
+    | '/notifications'
     | '/pending-approvals'
     | '/performance'
     | '/properties'
@@ -442,6 +453,7 @@ export interface FileRouteTypes {
     | '/listing'
     | '/managers'
     | '/messages'
+    | '/notifications'
     | '/pending-approvals'
     | '/performance'
     | '/properties'
@@ -484,6 +496,7 @@ export interface FileRouteTypes {
     | '/_dashboard/listing/'
     | '/_dashboard/managers/'
     | '/_dashboard/messages/'
+    | '/_dashboard/notifications/'
     | '/_dashboard/pending-approvals/'
     | '/_dashboard/performance/'
     | '/_dashboard/properties/'
@@ -674,6 +687,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPendingApprovalsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/notifications/': {
+      id: '/_dashboard/notifications/'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof DashboardNotificationsIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/_dashboard/messages/': {
       id: '/_dashboard/messages/'
       path: '/messages'
@@ -826,6 +846,7 @@ interface DashboardRouteChildren {
   DashboardListingIndexRoute: typeof DashboardListingIndexRoute
   DashboardManagersIndexRoute: typeof DashboardManagersIndexRoute
   DashboardMessagesIndexRoute: typeof DashboardMessagesIndexRoute
+  DashboardNotificationsIndexRoute: typeof DashboardNotificationsIndexRoute
   DashboardPendingApprovalsIndexRoute: typeof DashboardPendingApprovalsIndexRoute
   DashboardPerformanceIndexRoute: typeof DashboardPerformanceIndexRoute
   DashboardPropertiesIndexRoute: typeof DashboardPropertiesIndexRoute
@@ -846,6 +867,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardListingIndexRoute: DashboardListingIndexRoute,
   DashboardManagersIndexRoute: DashboardManagersIndexRoute,
   DashboardMessagesIndexRoute: DashboardMessagesIndexRoute,
+  DashboardNotificationsIndexRoute: DashboardNotificationsIndexRoute,
   DashboardPendingApprovalsIndexRoute: DashboardPendingApprovalsIndexRoute,
   DashboardPerformanceIndexRoute: DashboardPerformanceIndexRoute,
   DashboardPropertiesIndexRoute: DashboardPropertiesIndexRoute,

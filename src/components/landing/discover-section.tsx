@@ -7,122 +7,59 @@ import { Heart, BedDouble, ShowerHead, Square, ChevronRight } from 'lucide-react
 import { cn } from '@/lib/utils';
 import assets from '@/assets';
 import { Link } from '@tanstack/react-router';
+import { useGetHomepageProperties } from '@/lib/services';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const propertyData = {
-  'Trending Homes': [
-    {
-      id: 1,
-      image: assets.trendinghome1,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-    {
-      id: 2,
-      image: assets.trendinghome2,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'For Rent',
-      dotColor: 'bg-[#0CBA65]',
-    },
-    {
-      id: 3,
-      image: assets.trendinghome3,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'Shortlet',
-      dotColor: 'bg-[#1893DD]',
-    },
-    {
-      id: 4,
-      image: assets.trendinghome4,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-    {
-      id: 5,
-      image: assets.trendinghome5,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-    {
-      id: 6,
-      image: assets.trendinghome6,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-  ],
-  'All Homes': [
-    {
-      id: 7,
-      image: assets.trendinghome4,
-      price: '₦750,000,000',
-      location: 'Victoria Island, Lagos',
-      beds: 5,
-      baths: 5,
-      sqft: '4,500 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-  ],
-  Duplexes: [
-    {
-      id: 8,
-      image: assets.trendinghome2,
-      price: '₦400,000,000',
-      location: 'Lekki, Lagos',
-      beds: 4,
-      baths: 3,
-      sqft: '2,800 sq ft',
-      status: 'For Rent',
-      dotColor: 'bg-[#0CBA65]',
-    },
-  ],
-  'Luxury Villas': [
-    {
-      id: 9,
-      image: assets.trendinghome1,
-      price: '₦1,200,000,000',
-      location: 'Banana Island, Lagos',
-      beds: 6,
-      baths: 6,
-      sqft: '6,000 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-  ],
+interface Property {
+  id: string;
+  slug: string;
+  title: string;
+  category: string;
+  price: number;
+  currency: string;
+  bedrooms: number;
+  bathrooms: number;
+  area_sqft: number;
+  cover_image: string;
+  location: {
+    city: string;
+    state: string;
+  };
+}
+
+const formatPrice = (price: number, currency: string) => {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 0,
+  }).format(price);
 };
+
+const getStatusDotColor = (status: string) => {
+  switch (status) {
+    case 'For Sale':
+      return 'bg-[#D20832]';
+    case 'For Rent':
+      return 'bg-[#0CBA65]';
+    case 'Short Let':
+      return 'bg-[#1893DD]';
+    default:
+      return 'bg-gray-400';
+  }
+};
+
+const PropertyCardSkeleton = () => (
+  <div className="flex flex-col items-start gap-6">
+    <Skeleton className="h-[284px] w-full" />
+    <div className="flex flex-col items-start gap-3 self-stretch">
+      <Skeleton className="h-8 w-48" />
+      <div className="flex flex-col items-start gap-[11px] self-stretch">
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-5 w-3/4" />
+      </div>
+    </div>
+  </div>
+);
 
 const nextGen = [assets.direct, assets.deluxe, assets.adozollion, assets.cruxstone, assets.etoniru];
 
@@ -155,13 +92,24 @@ const blogs = [
 
 export function DiscoverSection() {
   const [activeTab, setActiveTab] = useState('Trending Homes');
-
+  const { data: propertyResponse, isPending: isLoadingProperties } = useGetHomepageProperties();
   const tabs = [
     { name: 'Trending Homes', icon: '🔥' },
     { name: 'All Homes', icon: '' },
     { name: 'Duplexes', icon: '' },
     { name: 'Luxury Villas', icon: '' },
   ];
+
+  const propertyData = propertyResponse?.data.data;
+
+  const tabKeyMap: { [key: string]: keyof typeof propertyData } = {
+    'Trending Homes': 'trending_homes',
+    'All Homes': 'all_homes',
+    Duplexes: 'duplexes',
+    'Luxury Villas': 'luxury_villas',
+  };
+
+  const currentProperties = propertyData ? propertyData[tabKeyMap[activeTab]] : [];
 
   return (
     <div className="w-full">
@@ -215,73 +163,87 @@ export function DiscoverSection() {
               </div>
 
               {/* Property Grid */}
-              <div className="grid w-full grid-cols-1 gap-x-5 gap-y-10 self-stretch md:grid-cols-2 lg:grid-cols-3">
-                {propertyData[activeTab as keyof typeof propertyData]?.map((property) => (
-                  <Link
-                    to={`/buy/$id`}
-                    params={{ id: String(property.id) }}
-                    key={property.id}
-                    className="flex flex-col items-start gap-6 overflow-hidden transition-shadow hover:shadow-lg"
-                  >
-                    <div className="relative">
-                      <img
-                        src={property.image || '/placeholder.png'}
-                        alt="Property"
-                        width={397}
-                        height={284}
-                        className="h-[284.42px] w-full object-cover"
-                      />
+              {isLoadingProperties ? (
+                <div className="grid w-full grid-cols-1 gap-x-5 gap-y-10 self-stretch md:grid-cols-2 lg:grid-cols-3">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <PropertyCardSkeleton key={index} />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid w-full grid-cols-1 gap-x-5 gap-y-10 self-stretch md:grid-cols-2 lg:grid-cols-3">
+                  {currentProperties?.map((property: Property) => (
+                    <Link
+                      to={`/buy/$id`}
+                      params={{ id: property.slug }}
+                      key={property.id}
+                      className="flex flex-col items-start gap-6 overflow-hidden transition-shadow hover:shadow-lg"
+                    >
+                      <div className="relative">
+                        <img
+                          src={property.cover_image || '/placeholder.png'}
+                          alt={property.title}
+                          width={397}
+                          height={284}
+                          className="h-[284.42px] w-full object-cover"
+                        />
 
-                      <Badge
-                        className={cn(
-                          'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]'
-                        )}
-                      >
-                        <div className={cn('size-1.5 rounded-full', property.dotColor)} />
+                        <Badge
+                          className={cn(
+                            'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]'
+                          )}
+                        >
+                          <div className={cn('size-1.5 rounded-full', getStatusDotColor(property.category))} />
+                          {property.category}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-4 right-4 bg-transparent hover:bg-transparent"
+                        >
+                          <Heart className="size-6 text-white" />
+                        </Button>
+                      </div>
+                      <div className="flex flex-col items-start gap-3">
+                        <h4 className="font-dm_sans text-[24px] leading-[31px] font-semibold text-white">
+                          {formatPrice(property.price, property.currency)}
+                        </h4>
+                        <div className="flex flex-col items-start gap-[11px] self-stretch">
+                          <p className="text-primary-foreground text-[16px] leading-[18px]">
+                            {property.location.city}, {property.location.state}
+                          </p>
 
-                        {property.status}
-                      </Badge>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-4 right-4 bg-transparent hover:bg-transparent"
-                      >
-                        <Heart className="size-6 text-white" />
-                      </Button>
-                    </div>
-                    <div className="flex flex-col items-start gap-3">
-                      <h4 className="font-dm_sans text-[24px] leading-[31px] font-semibold text-white">
-                        {property.price}
-                      </h4>
-                      <div className="flex flex-col items-start gap-[11px] self-stretch">
-                        <p className="text-primary-foreground text-[16px] leading-[18px]">{property.location}</p>
-
-                        <div className="flex items-end gap-3 self-stretch">
-                          <div className="text-primary-foreground flex items-center gap-5 text-[14px] leading-[16px]">
-                            <div className="flex items-center gap-2">
-                              <BedDouble className="size-[18px] text-white" />
-                              <span>{property.beds} Beds</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <ShowerHead className="size-[18px] text-white" />
-                              <span>{property.baths} Baths</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Square className="size-[18px] text-white" />
-                              <span>{property.sqft}</span>
+                          <div className="flex items-end gap-3 self-stretch">
+                            <div className="text-primary-foreground flex items-center gap-5 text-[14px] leading-[16px]">
+                              <div className="flex items-center gap-2">
+                                <BedDouble className="size-[18px] text-white" />
+                                <span>{property.bedrooms} Beds</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <ShowerHead className="size-[18px] text-white" />
+                                <span>{property.bathrooms} Baths</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Square className="size-[18px] text-white" />
+                                <span>{property.area_sqft.toLocaleString()} sqft</span>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
 
               {/* Explore Listing Button */}
               <div className="flex flex-col items-start gap-2 py-6 text-center">
-                <Button className="min-w-[181px]] bg-secondary-foreground h-12 rounded-[40px] px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800">
-                  Explore Listing <ChevronRight className="size-4 fill-white" />
+                <Button
+                  asChild
+                  className="min-w-[181px]] bg-secondary-foreground h-12 rounded-[40px] px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800"
+                >
+                  <Link to="/buy">
+                    Explore Listing <ChevronRight className="size-4 fill-white" />
+                  </Link>
                 </Button>
               </div>
             </div>

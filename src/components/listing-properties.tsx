@@ -13,6 +13,7 @@ import { Link, useLocation } from '@tanstack/react-router';
 
 const ListingProperties = () => {
   const location = useLocation();
+
   const [priceRange, setPriceRange] = useState([10000000, 99000000]);
   const [landAreaMin, setLandAreaMin] = useState(3000);
   const [landAreaMax, setLandAreaMax] = useState(5000);

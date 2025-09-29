@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
 import { z } from 'zod/v4';
 import { useForm } from 'react-hook-form';
 
@@ -10,12 +9,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CirclePlus, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import assets from '@/assets';
-import { customResolver } from '@/lib/customZodResolver';
+
 import { PageMetaTags } from '@/components/page-meta-data';
+import { useContactUs } from '@/lib/services';
+import { customResolver } from '@/lib/customZodResolver';
+import { toast, Toaster } from 'sonner';
 
 // Zod schema for contact form
 const contactSchema = z.object({
-  fullName: z.string().min(2, 'Full name must be at least 2 characters'),
+  name: z.string().min(2, 'Full name must be at least 2 characters'),
   email: z.email('Please enter a valid email address'),
   phone: z.string().min(10, 'Please enter a valid phone number'),
   message: z.string().min(10, 'Message must be at least 10 characters'),
@@ -28,27 +30,27 @@ export const Route = createFileRoute('/_landing/contact/')({
 });
 
 function RouteComponent() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutate: contactUs, isPending } = useContactUs();
 
   const form = useForm<ContactFormData>({
     resolver: customResolver(contactSchema),
     mode: 'onTouched',
     reValidateMode: 'onChange',
     defaultValues: {
-      fullName: '',
+      name: '',
       email: '',
       phone: '',
       message: '',
     },
   });
 
-  const onSubmit = async (data: ContactFormData) => {
-    setIsSubmitting(true);
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log('Form submitted:', data);
-    form.reset();
-    setIsSubmitting(false);
+  const onSubmit = (data: ContactFormData) => {
+    contactUs(data, {
+      onSuccess: () => {
+        form.reset();
+        toast.success('Message sent successfully! We will get back to you soon.');
+      },
+    });
   };
 
   const faqData = [
@@ -81,6 +83,7 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen w-full bg-white pt-[var(--landing-header-height)]">
+      <Toaster />
       <PageMetaTags
         title="Contact Us"
         description="Get in touch with our team. We're here to help with all your real estate needs across Nigeria."
@@ -122,21 +125,21 @@ function RouteComponent() {
           <div
             style={{
               boxShadow:
-                ' 0px 0px 0px 0.516017px #E4E5E9, 0px 0px 0px 1.03203px rgba(228, 229, 233, 0.6), 0px 0px 0px 3.61212px #F9F9FB, 0px 0px 0px 4.12814px #F3F4F7',
+                '0px 0px 0px 0.516017px #E4E5E9, 0px 0px 0px 1.03203px rgba(228, 229, 233, 0.6), 0px 0px 0px 3.61212px #F9F9FB, 0px 0px 0px 4.12814px #F3F4F7',
             }}
-            className="flex max-w-[513px] flex-col items-center gap-14 rounded-[20px] bg-white px-4 py-8 lg:items-start lg:px-12 lg:py-16"
+            className="flex w-full flex-col items-center gap-14 rounded-[20px] bg-white px-4 py-8 lg:min-w-[513px] lg:items-start lg:px-12 lg:py-16"
           >
             <img src={assets.logotext} className="h-10 w-[126px]" width={126} height={40} alt="logo" />
 
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="flex w-full flex-col items-start gap-11 self-stretch"
+                className="flex w-full shrink-0 flex-col items-start gap-11 self-stretch"
               >
                 <div className="flex w-full flex-col items-start gap-6 self-stretch">
                   <FormField
                     control={form.control}
-                    name="fullName"
+                    name="name"
                     render={({ field }) => (
                       <FormItem className="w-full gap-1.5">
                         <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
@@ -216,14 +219,14 @@ function RouteComponent() {
 
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isPending}
                   style={{
                     background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
                     boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                   }}
                   className="h-12 self-stretch rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] p-4 text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit'}
+                  {isPending ? 'Submitting...' : 'Submit'}
                 </Button>
               </form>
             </Form>

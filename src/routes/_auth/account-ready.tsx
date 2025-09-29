@@ -1,14 +1,22 @@
 import assets from '@/assets';
 import { PageMetaTags } from '@/components/page-meta-data';
 import { Button } from '@/components/ui/button';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
+
+type AccountReadySearch = {
+  email: string;
+};
 
 export const Route = createFileRoute('/_auth/account-ready')({
   component: RouteComponent,
+  validateSearch: (search: Record<string, unknown>): AccountReadySearch => ({
+    email: (search.email as string) || 'your.email@example.com',
+  }),
 });
 
 function RouteComponent() {
   const navigate = useNavigate();
+  const { email } = useSearch({ from: '/_auth/account-ready' });
 
   const handleLoginToDashboard = () => {
     // In a real app, this would navigate to the dashboard
@@ -25,7 +33,6 @@ function RouteComponent() {
       {/* Header */}
       <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
         <img src={assets.logotext} alt="logo" className="h-[46px] w-[126px]" width={126} height={46} />
-        gote
         <span className="inline-flex gap-1 text-[14px] leading-[21px] text-[#41415A]">
           Have an Account?{' '}
           <a href="/login" className="font-semibold text-[#D4AF36] hover:underline">
@@ -45,7 +52,7 @@ function RouteComponent() {
           <p className="text-[14px] leading-[20px] text-[#71748C]">
             You will be able to login with your email address
             <br />
-            <span className="font-medium">(rene_realty@forbes.com)</span>
+            <span className="font-medium">({email || 'your.email@example.com'})</span>
           </p>
         </div>
 

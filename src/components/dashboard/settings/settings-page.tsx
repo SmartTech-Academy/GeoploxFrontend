@@ -9,6 +9,8 @@ import SubscriptionsSection from './SubscriptionsSection';
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { PageMetaTags } from '@/components/page-meta-data';
+import { useGetProfileData } from '@/lib/services/profile';
+import LoadingFallback from '@/components/loading-fallback';
 
 const SettingsPage = () => {
   // Get initial tab from URL or default to personal
@@ -18,6 +20,7 @@ const SettingsPage = () => {
 
   const activeTab = search.tab;
   const navigate = useNavigate();
+  const { data: user, isPending: isProfileLoading } = useGetProfileData();
 
   const handleTabChange = (tab: string) => {
     navigate({
@@ -82,17 +85,21 @@ const SettingsPage = () => {
   );
 
   const renderContent = () => {
+    if (isProfileLoading) {
+      return <LoadingFallback />;
+    }
+
     switch (activeTab || 'personal') {
       case 'personal':
-        return <PersonalInformationSection />;
+        return <PersonalInformationSection user={user} />;
       case 'business':
-        return <BusinessInformationSection />;
+        return <BusinessInformationSection user={user} />;
       case 'security':
         return <SecurityNotificationsSection />;
       case 'subscriptions':
         return <SubscriptionsSection />;
       default:
-        return <PersonalInformationSection />;
+        return <PersonalInformationSection user={user} />;
     }
   };
 
