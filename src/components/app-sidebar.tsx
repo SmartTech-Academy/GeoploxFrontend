@@ -28,7 +28,7 @@ import {
   Users2,
   ChartCandlestick,
 } from 'lucide-react';
-import React from 'react';
+
 import { useGetProfileData } from '@/lib/services/profile';
 import { useQueryClient } from '@tanstack/react-query';
 import { Skeleton } from './ui/skeleton';

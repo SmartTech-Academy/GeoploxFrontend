@@ -17,13 +17,7 @@ export const queryClient = new QueryClient({
         // Retry up to 3 times for other errors
         return failureCount < 3;
       },
-         queryCache: {
-        onError: (error, query) => {
-          // Prevent duplicate toasts if data already exists (stale fetch failing)
-          if (query.state.data !== undefined) return;
-          toast.error(error);
-        },
-      },
+
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
 
       // Refetch behavior
