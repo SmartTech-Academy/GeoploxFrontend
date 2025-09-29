@@ -19,7 +19,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps['theme']}
       className="toaster group"
       position="top-center"
-      duration={Infinity} // 8 seconds timeout
+      duration={8000} // 8 seconds timeout
       closeButton={false} // We'll add our own close button
       toastOptions={{
         classNames: {

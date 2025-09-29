@@ -81,9 +81,10 @@ const step4KYCSchema = z.object({
 });
 
 const step3SubscriptionSchema = z.object({
-  plan: z.enum(['basic', 'premium', 'enterprise'], {
+  plan: z.string({
     error: 'Please select a subscription plan',
   }),
+  duration_months: z.number().min(1),
 });
 
 // Combined schema that merges all step schemas
@@ -95,7 +96,7 @@ const combinedSchema = step1Schema
 
 // Step-specific validation schemas
 const getStepSchema = (step: string) => {
-  // actual steps email_verification, onboarding_account_type , onboarding_personal_information, onboarding_business_information , onboarding_business_information2, onboarding_completion
+  // actual steps  email_verification, onboarding_account_type , onboarding_personal_information, onboarding_business_information , onboarding_business_information2, onboarding_completion
   switch (step) {
     case 'account-type':
       return step1Schema;
@@ -252,7 +253,7 @@ const GettingStarted = () => {
           });
           break;
         case 'subscription':
-          await subscribeToPlanMutate({ plan_id: data.plan });
+          await subscribeToPlanMutate({ plan_id: data.plan, duration_months: data.duration_months });
           toast.success('Subscription plan selected!', {
             action: {
               label: 'Dismiss',

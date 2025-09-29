@@ -10,6 +10,7 @@ import {
   BedDouble,
   ShowerHead,
   Square,
+  Slash,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -21,143 +22,46 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn, formatPrice } from '@/lib/utils';
 import { useState } from 'react';
-import assets from '@/assets';
-import { Link, useLocation } from '@tanstack/react-router';
+import { Link, useLocation, useParams } from '@tanstack/react-router';
 import { PageMetaTags } from './page-meta-data';
+import { useGetPropertyDetails, useGetRelatedProperties } from '@/lib/services';
+import { ListingDetailSkeleton } from './listing-detail-skeleton';
 
-const propertyData = {
-  'Trending Homes': [
-    {
-      id: 1,
-      image: assets.trendinghome1,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-    {
-      id: 2,
-      image: assets.trendinghome2,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'For Rent',
-      dotColor: 'bg-[#0CBA65]',
-    },
-    {
-      id: 3,
-      image: assets.trendinghome3,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'Shortlet',
-      dotColor: 'bg-[#1893DD]',
-    },
-    {
-      id: 4,
-      image: assets.trendinghome4,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-    {
-      id: 5,
-      image: assets.trendinghome5,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-    {
-      id: 6,
-      image: assets.trendinghome6,
-      price: '₦500,000,000',
-      location: 'Ikolabu, GRA Agodi Ibadan Oyo',
-      beds: 4,
-      baths: 4,
-      sqft: '3,000 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-  ],
-  'All Homes': [
-    {
-      id: 7,
-      image: assets.trendinghome4,
-      price: '₦750,000,000',
-      location: 'Victoria Island, Lagos',
-      beds: 5,
-      baths: 5,
-      sqft: '4,500 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-  ],
-  Duplexes: [
-    {
-      id: 8,
-      image: assets.trendinghome2,
-      price: '₦400,000,000',
-      location: 'Lekki, Lagos',
-      beds: 4,
-      baths: 3,
-      sqft: '2,800 sq ft',
-      status: 'For Rent',
-      dotColor: 'bg-[#0CBA65]',
-    },
-  ],
-  'Luxury Villas': [
-    {
-      id: 9,
-      image: assets.trendinghome1,
-      price: '₦1,200,000,000',
-      location: 'Banana Island, Lagos',
-      beds: 6,
-      baths: 6,
-      sqft: '6,000 sq ft',
-      status: 'For Sale',
-      dotColor: 'bg-[#D20832]',
-      statusColor: 'bg-white',
-    },
-  ],
-};
+import { ContactOwnerDialog } from './dialogs/contact-owner-dialog';
+import assets from '@/assets';
+import { PropertyListingCardSkeleton } from './property-listing-card-skeleton';
 
 const ListingDetail = () => {
   const location = useLocation();
+
+  const getRoutePath = () => {
+    if (location.pathname.startsWith('/buy/')) {
+      return '/_landing/buy/$id';
+    }
+    if (location.pathname.startsWith('/rent/')) {
+      return '/_landing/rent/$id';
+    }
+    if (location.pathname.startsWith('/sell/')) {
+      return '/_landing/sell/$id';
+    }
+    // Add other paths like /sell if they exist
+    return '/_landing/buy/$id'; // Fallback
+  };
+
+  const { id: slug } = useParams({ from: getRoutePath() });
   const isDashboard = location.pathname.includes('/listing/');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [isContactDialogOpen, setContactDialogOpen] = useState(false);
 
-  const images = [
-    assets.housebackyardwithgarden,
-    assets.houseinteriorbedroom,
-    assets.houseinteriorbathroom,
-    assets.houseinteriorkitchen,
-    assets.houseinteriorlivingroom,
-    assets.modernhouseexteriorwithgarage,
-    assets.houseinteriordiningroom,
-  ];
+  const { data: propertyDetailsResponse, isLoading: isLoadingDetails } = useGetPropertyDetails(slug);
+  const { data: relatedPropertiesResponse, isLoading: isLoadingRelated } = useGetRelatedProperties(slug);
+
+  const property = propertyDetailsResponse?.data.data;
+  const relatedProperties = relatedPropertiesResponse?.data.data ?? [];
+  const images = property?.images.map((img: { url: string }) => img.url) ?? [];
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -167,24 +71,28 @@ const ListingDetail = () => {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  if (isLoadingDetails) {
+    return <ListingDetailSkeleton />;
+  }
+
+  if (!property) {
+    return <div>Property not found.</div>;
+  }
+
   return (
     <div className={cn('min-h-screen w-full bg-white', isDashboard ? 'py-8' : 'py-(--landing-header-height)')}>
-      {location.pathname.includes('/listing/') ? (
-        <PageMetaTags
-          title="Listing: Waterfront Apartment"
-          description="Manage your waterfront apartment listing - respond to inquiries and update availability."
-          keywords="listing management, property inquiries"
-        />
+      {isDashboard ? (
+        <PageMetaTags title={`Listing: ${property.title}`} description={property.desc} keywords="listing management" />
       ) : (
         <PageMetaTags
-          title="Luxury Villa in Ikoyi"
-          description="5-bedroom luxury villa with pool and garden in prime Ikoyi location"
-          price="₦85,000,000"
-          location="Ikoyi, Lagos"
-          propertyType="Villa"
+          title={property.title}
+          description={property.desc}
+          price={String(property.price)}
+          location={`${property.city}, ${property.state}`}
+          propertyType={property.property_type}
           listingType="buy"
-          image="/properties/villa-ikoyi-001.jpg"
-          keywords="Ikoyi villa, luxury property Lagos, 5 bedroom house"
+          image={property.images.find((img: { is_cover: boolean }) => img.is_cover)?.url}
+          keywords={`${property.property_type} in ${property.city}, ${property.tags.join(', ')}`}
         />
       )}
 
@@ -200,10 +108,12 @@ const ListingDetail = () => {
                         <Link to="/listing">Listing</Link>
                       </BreadcrumbLink>
                     </BreadcrumbItem>
-                    <BreadcrumbSeparator />
+                    <BreadcrumbSeparator>
+                      <Slash />
+                    </BreadcrumbSeparator>
 
                     <BreadcrumbItem>
-                      <BreadcrumbPage>Property in GRA Agodi</BreadcrumbPage>
+                      <BreadcrumbPage>{property.title}</BreadcrumbPage>
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>
@@ -215,7 +125,9 @@ const ListingDetail = () => {
                         <Link to="/">Home</Link>
                       </BreadcrumbLink>
                     </BreadcrumbItem>
-                    <BreadcrumbSeparator />
+                    <BreadcrumbSeparator>
+                      <Slash />
+                    </BreadcrumbSeparator>
 
                     <BreadcrumbItem>
                       <BreadcrumbLink asChild>
@@ -236,16 +148,18 @@ const ListingDetail = () => {
                         </Link>
                       </BreadcrumbLink>
                     </BreadcrumbItem>
-                    <BreadcrumbSeparator />
+                    <BreadcrumbSeparator>
+                      <Slash />
+                    </BreadcrumbSeparator>
                     <BreadcrumbItem>
-                      <BreadcrumbPage>Property in GRA Agodi</BreadcrumbPage>
+                      <BreadcrumbPage>{property.title}</BreadcrumbPage>
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>
               )}
             </div>
 
-            <h1 className="text-[26px] leading-[40px] font-semibold text-[#1A2258]">Ikolaba, GRA Agodi Ibadan Oyo</h1>
+            <h1 className="text-[26px] leading-[40px] font-semibold text-[#1A2258]">{property.title}</h1>
           </div>
 
           <div className="flex items-start justify-end self-stretch">
@@ -312,7 +226,7 @@ const ListingDetail = () => {
 
               {/* Thumbnail Images */}
               <div className="flex gap-4 overflow-x-auto">
-                {images.slice(0, 5).map((image, index) => (
+                {images.slice(0, 5).map((image: any, index: number) => (
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
@@ -337,32 +251,32 @@ const ListingDetail = () => {
               <div className="flex flex-col items-start gap-3 self-stretch border-b border-[#EAEBF0] pb-[21px]">
                 <div className="flex items-center gap-3">
                   <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
-                    <div className="size-1.5 rounded-full bg-[#D20832]" /> For Sale
+                    <div className="size-1.5 rounded-full bg-[#D20832]" /> {property.category}
                   </Badge>
 
                   <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
-                    Duplex
+                    {property.property_type}
                   </Badge>
                 </div>
 
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
                   <h3 className="font-dm_sans border-r border-[#F1F1F4] pr-5 text-[32px] leading-[42px] font-bold text-black">
-                    ₦500,000,000
+                    {formatPrice(property.price, property.currency)}
                   </h3>
 
                   {/* Property Icons */}
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2.5 text-[18px] leading-[21px]">
                       <BedDouble className="text-primary size-6" />
-                      <span className="text-black">4 Beds</span>
+                      <span className="text-black">{property.bedrooms} Beds</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-[18px] leading-[21px]">
                       <ShowerHead className="text-primary size-6" />
-                      <span className="text-black">4 Baths</span>
+                      <span className="text-black">{property.bathrooms} Baths</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-[18px] leading-[21px]">
                       <Square className="text-primary size-6" />
-                      <span className="text-black">3,000 sq ft</span>
+                      <span className="text-black">{property.area_sqft.toLocaleString()} sq ft</span>
                     </div>
                   </div>
                 </div>
@@ -374,37 +288,23 @@ const ListingDetail = () => {
                   Property Details
                 </h2>
 
-                <div className="space-y-4 text-[20px] leading-[28px] text-[#4D5462]">
-                  <p className="">
-                    5 Bedroom fully detached house with 2 maid rooms, an elevator, rooftop terraces (front and back), a
-                    swimming pool, a cinema/movie theater, etc. Land size: 800 square meters.
-                  </p>
+                <div className="space-y-4 text-[16px] leading-[28px] text-[#4D5462]">
+                  <p className="">{property.desc}</p>
 
-                  <p>Price: ₦800 million</p>
-
-                  <p>Located in a beautiful, serene, highly secured estate in the heart of Lekki.</p>
-
+                  <p>Price: {formatPrice(property.price, property.currency)}</p>
                   <div className={cn('flex flex-col gap-2', !showFullDescription && 'bg-white mask-b-from-1')}>
-                    <p>Features include:</p>
-                    <ul className="space-y-1 transition-all duration-300 ease-in-out">
-                      <li>- Smart house.</li>
-                      <li>- 5 Bedrooms (All en-suite).</li>
-                      {showFullDescription && (
-                        <>
-                          <li>- 2 maid rooms/ Boys quarters (BQ)</li>
-                          <li>- Ante room/Foyer with a guest toilet - Dedicated dining space</li>
-                          <li>- Fully fitted kitchen with island and breakfast bar</li>
-                          <li>- Swimming pool with pool house</li>
-                          <li>- Cinema/movie theater room</li>
-                          <li>- Elevator access to all floors</li>
-                          <li>- Rooftop terraces (front and back)</li>
-                          <li>- 24/7 security and power supply</li>
-                          <li>- Ample parking space for multiple vehicles</li>
-                          <li>- Beautiful landscaped gardens</li>
-                          <li>- Modern fixtures and fittings throughout</li>
-                        </>
-                      )}
-                    </ul>
+                    {property.features && property.features.length > 0 && (
+                      <>
+                        <p className="font-semibold">Features include:</p>
+                        <ul className="list-disc space-y-1 pl-5 transition-all duration-300 ease-in-out">
+                          {property.features
+                            .slice(0, showFullDescription ? property.features.length : 2)
+                            .map((feature: string) => (
+                              <li key={feature}>{feature}</li>
+                            ))}
+                        </ul>
+                      </>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-center">
@@ -472,19 +372,28 @@ const ListingDetail = () => {
           <div className="flex flex-col items-end">
             <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
               <div className="flex w-full items-center gap-4 border-b border-[#F1F1F4] pb-5">
-                <img src={assets.landlord} alt="Agent" width={68} height={68} className="size-[68px] rounded-[5px]" />
+                <img
+                  src={property.owner.image_url}
+                  alt="Agent"
+                  width={68}
+                  height={68}
+                  className="size-[68px] rounded-[5px]"
+                />
 
                 <div className="flex flex-col items-start gap-2 self-stretch">
-                  <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">Royal Crest Properties</h4>
+                  <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">{property.owner.name}</h4>
                   <div className="flex items-center gap-2">
-                    <BadgeCheck className="text-primary size-4" />
-                    <span className="text-primary text-[12px] leading-[18px] font-semibold">Verified Agent</span>
+                    {property.is_verified && <BadgeCheck className="text-primary size-4" />}
+                    <span className="text-primary text-[12px] leading-[18px] font-semibold capitalize">
+                      Verified {property.owner.role}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="flex flex-col gap-3 self-stretch">
                 <Button
+                  onClick={() => setContactDialogOpen(true)}
                   style={{
                     background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                     boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
@@ -495,83 +404,109 @@ const ListingDetail = () => {
                 </Button>
 
                 <Button
+                  asChild
                   variant="outline"
                   className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-[16px] font-normal text-[#1F2130]"
                 >
-                  Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
+                  <a href={`mailto:${property.owner.email_address}`}>
+                    Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
+                  </a>
                 </Button>
                 <Button
+                  asChild
                   variant="outline"
                   className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-[16px] font-normal text-[#1F2130]"
                 >
-                  Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
+                  <a href={`https://wa.me/${property.owner.phone_number}`} target="_blank" rel="noopener noreferrer">
+                    Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
+                  </a>
                 </Button>
               </div>
             </div>
           </div>
         </div>
-        {!isDashboard && (
+        {!isDashboard && relatedProperties.length > 0 && (
           <div className="flex flex-col items-start gap-10">
             <h4 className="text-[28px] leading-[34px] font-semibold tracking-[-0.5px] text-[#15181E]">
               Recommended Properties
             </h4>
 
             <div className="grid w-full grid-cols-1 gap-x-5 gap-y-10 self-stretch md:grid-cols-2 lg:grid-cols-3">
-              {propertyData['Trending Homes' as keyof typeof propertyData]?.slice(0, 3).map((property) => (
-                <div key={property.id} className="flex flex-col items-start gap-6 overflow-hidden">
-                  <div className="relative">
-                    <img
-                      src={property.image || '/placeholder.png'}
-                      alt="Property"
-                      width={397}
-                      height={284}
-                      className="h-[284.42px] w-full object-cover"
-                    />
-
-                    <Badge
-                      className={cn(
-                        'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]'
-                      )}
+              {isLoadingRelated
+                ? Array.from({ length: 3 }).map((_, index) => <PropertyListingCardSkeleton key={index} />)
+                : relatedProperties.slice(0, 3).map((property: any) => (
+                    <Link
+                      to={`/buy/$id`}
+                      params={{ id: property.slug }}
+                      key={property.id}
+                      className="flex flex-col items-start gap-6 overflow-hidden"
                     >
-                      <div className={cn('size-1.5 rounded-full', property.dotColor)} />
+                      <div className="relative">
+                        <img
+                          src={property.cover_image || '/placeholder.png'}
+                          alt="Property"
+                          width={397}
+                          height={284}
+                          className="h-[284.42px] w-full object-cover"
+                        />
 
-                      {property.status}
-                    </Badge>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-4 right-4 bg-transparent hover:bg-transparent"
-                    >
-                      <Heart className="size-6 text-white" />
-                    </Button>
-                  </div>
-                  <div className="flex flex-col items-start gap-3">
-                    <h4 className="font-dm_sans text-[24px] leading-[31px] font-semibold text-[#1F2130]">
-                      {property.price}
-                    </h4>
-                    <div className="flex flex-col items-start gap-[11px] self-stretch">
-                      <p className="text-[16px] leading-[18px] text-[#41415A]">{property.location}</p>
+                        {property?.tags?.slice(0, 1)?.map((tag: string) => (
+                          <Badge
+                            key={tag}
+                            className={cn(
+                              'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D] capitalize'
+                            )}
+                          >
+                            {' '}
+                            <div
+                              className={cn(
+                                'size-1.5 rounded-full',
+                                property.category === 'For Sale' && 'bg-[#D20832]',
+                                property.category === 'For Rent' && 'bg-[#0CBA65]',
+                                property.category === 'Short Let' && 'bg-[#1893DD]'
+                              )}
+                            />
+                            {tag}
+                          </Badge>
+                        ))}
 
-                      <div className="flex items-end gap-3 self-stretch">
-                        <div className="flex items-center gap-5 text-[14px] leading-[16px] text-[#41415A]">
-                          <div className="flex items-center gap-2">
-                            <BedDouble className="size-[18px] text-[#1F2130]" />
-                            <span>{property.beds} Beds</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <ShowerHead className="size-[18px] text-[#1F2130]" />
-                            <span>{property.baths} Baths</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Square className="size-[18px] text-[#1F2130]" />
-                            <span>{property.sqft}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-4 right-4 bg-transparent hover:bg-transparent"
+                        >
+                          <Heart className="size-6 text-white" />
+                        </Button>
+                      </div>
+                      <div className="flex flex-col items-start gap-3">
+                        <h4 className="font-dm_sans text-[24px] leading-[31px] font-semibold text-[#1F2130]">
+                          {formatPrice(property.price, property.currency)}
+                        </h4>
+                        <div className="flex flex-col items-start gap-[11px] self-stretch">
+                          <p className="text-[16px] leading-[18px] text-[#41415A]">
+                            {property.location.city}, {property.location.state}
+                          </p>
+
+                          <div className="flex items-end gap-3 self-stretch">
+                            <div className="flex items-center gap-5 text-[14px] leading-[16px] text-[#41415A]">
+                              <div className="flex items-center gap-2">
+                                <BedDouble className="size-[18px] text-[#1F2130]" />
+                                <span>{property.bedrooms} Beds</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <ShowerHead className="size-[18px] text-[#1F2130]" />
+                                <span>{property.bathrooms} Baths</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Square className="size-[18px] text-[#1F2130]" />
+                                <span>{property.area_sqft.toLocaleString()} sqft</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                    </Link>
+                  ))}
             </div>
 
             <div className="flex w-full items-center justify-center">
@@ -586,6 +521,7 @@ const ListingDetail = () => {
           </div>
         )}
       </div>
+      <ContactOwnerDialog propertyId={property.id} open={isContactDialogOpen} onOpenChange={setContactDialogOpen} />
     </div>
   );
 };

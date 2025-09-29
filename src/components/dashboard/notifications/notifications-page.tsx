@@ -92,8 +92,6 @@ export default function NotificationsPage() {
 
   const allNotifications = data?.pages.flatMap((page) => page.data.data) ?? [];
 
-  console.log('data', data);
-
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();

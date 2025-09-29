@@ -4,14 +4,14 @@ import * as z from 'zod/v4';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { useVerify } from '@/lib/services';
+import { useResend, useVerify } from '@/lib/services';
 
 import assets from '@/assets';
 import { Link } from '@tanstack/react-router';
 import { customResolver } from '@/lib/customZodResolver';
 import { PageMetaTags } from '@/components/page-meta-data';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Zod schema for OTP verification
 const otpSchema = z.object({
@@ -39,8 +39,19 @@ export const Route = createFileRoute('/_auth/verify-otp')({
 function RouteComponent() {
   const navigate = useNavigate();
   const { email, phone } = useSearch({ from: '/_auth/verify-otp' });
-  const { mutate, isPending } = useVerify();
+  const { mutate: verifyOtp, isPending: isVerifying } = useVerify();
+  const { mutate: resendCode, isPending: isResending } = useResend();
+  const [countdown, setCountdown] = useState(0);
   const [localOTP, setLocalOTP] = useState('');
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   const form = useForm<OTPFormValues>({
     resolver: customResolver(otpSchema),
@@ -53,14 +64,13 @@ function RouteComponent() {
 
   const onSubmit = (values: OTPFormValues) => {
     // Here you would typically make an API call to verify the OTP
-    console.log('OTP verification:', values.otp);
 
     const payload = {
       email_or_username: email,
       activation_code: values.otp,
     };
 
-    mutate(payload, {
+    verifyOtp(payload, {
       onSuccess: (response) => {
         toast.success('Account created successfully!');
         const responseData = response.data?.data;
@@ -69,10 +79,6 @@ function RouteComponent() {
         if (token) {
           localStorage.setItem('token', token);
         }
-        if (user) {
-          localStorage.setItem('user', JSON.stringify(user));
-        }
-
         const userEmail = user?.email_address;
         navigate({
           to: '/account-ready',
@@ -90,9 +96,17 @@ function RouteComponent() {
   };
 
   const handleResendCode = () => {
-    // Implement resend OTP logic
-    // You could show a toast notification here
-    toast.info('Verification code resent!');
+    if (countdown > 0 || isResending) return;
+
+    resendCode(
+      { email },
+      {
+        onSuccess: () => {
+          toast.info('A new verification code has been sent.');
+          setCountdown(30);
+        },
+      }
+    );
   };
 
   // Format phone number for display (mask most digits)
@@ -144,12 +158,12 @@ function RouteComponent() {
                     <FormItem className="flex w-full flex-col items-center gap-1.5">
                       <FormControl>
                         <InputOTP
-                          maxLength={6}
                           value={field.value}
                           onChange={(newValue) => {
                             field.onChange(newValue);
                             setLocalOTP(newValue);
                           }}
+                          maxLength={6}
                           className="w-full gap-2"
                         >
                           <InputOTPGroup className="w-full gap-4">
@@ -175,9 +189,9 @@ function RouteComponent() {
                     boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                   }}
                   className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
-                  disabled={localOTP.length !== 6 || isPending}
+                  disabled={localOTP.length !== 6 || isVerifying}
                 >
-                  {isPending ? 'Verifying...' : 'Verify'}
+                  {isVerifying ? 'Verifying...' : 'Verify'}
                 </Button>
 
                 {/* Resend Code */}
@@ -187,9 +201,10 @@ function RouteComponent() {
                     <button
                       type="button"
                       onClick={handleResendCode}
-                      className="text-primary font-semibold hover:underline"
+                      className="text-primary font-semibold hover:underline disabled:cursor-not-allowed disabled:text-gray-400 disabled:no-underline"
+                      disabled={countdown > 0 || isResending}
                     >
-                      Resend Code
+                      {isResending ? 'Sending...' : countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code'}
                     </button>
                   </p>
                 </div>
