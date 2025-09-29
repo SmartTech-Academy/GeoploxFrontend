@@ -4,30 +4,36 @@ import { Outlet, useLocation, useNavigate } from '@tanstack/react-router';
 import { AppSidebar } from '../app-sidebar';
 import { TopNav } from '../top-nav';
 import { SidebarInset, SidebarProvider } from '../ui/sidebar';
-
 import { cn } from '@/lib/utils';
 import { Toaster } from '../ui/sonner';
+import { useGetProfileData } from '@/lib/services/profile';
 
 const DashboardLayout = () => {
   const [useMaxWidth, setUseMaxWith] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const { data: user, isLoading, isError } = useGetProfileData();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-    if (!token || !user) {
+    if (!token) {
       navigate({ to: '/login' });
       return;
     }
 
-    const parsedUser = user ? JSON.parse(user) : null;
-    const onboardingStatus = parsedUser?.onboarding_status;
+    if (isError) {
+      // Handle token expiration or other API errors
+      localStorage.removeItem('token');
+      navigate({ to: '/login' });
+      return;
+    }
 
-    if (!onboardingStatus || onboardingStatus !== 'active') {
+    if (user && user.onboarding_status !== 'active' && location.pathname !== '/getting-started') {
       navigate({ to: '/getting-started' });
     }
-  }, [navigate, location.pathname]);
+  }, [navigate, location.pathname, user, isError]);
+
+  if (isLoading) return <LoadingFallback />;
 
   return (
     <Suspense fallback={<LoadingFallback />}>

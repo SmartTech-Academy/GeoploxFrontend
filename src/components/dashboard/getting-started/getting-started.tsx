@@ -31,6 +31,7 @@ import {
 } from '@/lib/services/onboarding';
 import { toast } from 'sonner';
 import { useGetProfileData } from '@/lib/services/profile';
+import { queryClient } from '@/lib/queryClient';
 
 // Account types
 type AccountType = 'developer' | 'agent' | 'client' | 'property-owner';
@@ -94,7 +95,7 @@ const combinedSchema = step1Schema
 
 // Step-specific validation schemas
 const getStepSchema = (step: string) => {
-  // actuall steps email_verification, onboarding_account_type , onboarding_personal_information, onboarding_business_information , onboarding_business_information2, onboarding_completion
+  // actual steps email_verification, onboarding_account_type , onboarding_personal_information, onboarding_business_information , onboarding_business_information2, onboarding_completion
   switch (step) {
     case 'account-type':
       return step1Schema;
@@ -111,11 +112,30 @@ const getStepSchema = (step: string) => {
   }
 };
 
+const getStepIndexFromStatus = (status: string, flow: string[]) => {
+  switch (status) {
+    case 'onboarding_account_type':
+      return flow.indexOf('account-type');
+    case 'onboarding_personal_information':
+      return flow.indexOf('personal-info');
+    case 'onboarding_business_information':
+      return flow.indexOf('business-info');
+    case 'onboarding_kyc_documents':
+    case 'onboarding_kyc_document': // for property-owner
+      return flow.indexOf('kyc-documents');
+    case 'onboarding_subscription_selection':
+      return flow.indexOf('subscription');
+    case 'onboarding_completion':
+      return flow.indexOf('complete');
+    default:
+      return 0; // Default to the first step
+  }
+};
+
 const GettingStarted = () => {
-  //   const { completeOnboarding } = useUserOnboardingStatus();
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(4);
-  const [accountType, setAccountType] = useState<AccountType>('developer');
+  const [currentStep, setCurrentStep] = useState(0);
+  const [accountType, setAccountType] = useState<AccountType | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { mutateAsync: setAccountTypeMutate } = useSetAccountType();
@@ -124,29 +144,14 @@ const GettingStarted = () => {
   const { mutateAsync: uploadKycMutate } = useUploadKycDocuments();
   const { mutateAsync: subscribeToPlanMutate } = useSubscribeToPlan();
   const { mutateAsync: completeOnboardingMutate } = useCompleteOnboarding();
-  const { data: profileData } = useGetProfileData();
-
-  useEffect(() => {
-    if (profileData) {
-      console.log('profile Response:', profileData.data);
-    }
-  }, [profileData]);
-
-  const userResponse = useMemo(() => {
-    const userString = localStorage.getItem('user');
-    if (userString) {
-      const user = JSON.parse(userString);
-      return user;
-    }
-    return null;
-  }, []);
+  const { data: profileData, isPending: isProfileLoading } = useGetProfileData();
 
   const userName = useMemo(() => {
-    if (userResponse) {
-      return `${userResponse?.firstname || ''} ${userResponse?.lastname || ''}`.trim();
+    if (profileData) {
+      return `${profileData?.firstname || ''} ${profileData?.lastname || ''}`.trim();
     }
     return 'User';
-  }, [userResponse]);
+  }, [profileData]);
 
   // Single form instance for all steps
   const form = useForm({
@@ -158,6 +163,20 @@ const GettingStarted = () => {
     mode: 'onTouched',
     reValidateMode: 'onChange',
   });
+
+  useEffect(() => {
+    if (profileData) {
+      const userAccountType = profileData.user_role as AccountType;
+      setAccountType(userAccountType);
+
+      const flow = STEP_FLOWS[userAccountType] || ['account-type'];
+      const stepIndex = getStepIndexFromStatus(profileData.onboarding_status, flow);
+
+      if (stepIndex !== -1) {
+        setCurrentStep(stepIndex);
+      }
+    }
+  }, [profileData]);
 
   // Get current step flow based on account type
   const getStepFlow = () => {
@@ -172,11 +191,10 @@ const GettingStarted = () => {
     let toastId;
     try {
       setIsSubmitting(true);
-      let response;
       const kycFormData = new FormData();
       switch (stepKey) {
         case 'account-type':
-          response = await setAccountTypeMutate({ user_type: data.accountType });
+          await setAccountTypeMutate({ user_type: data.accountType });
           toast.success('Account type saved!', {
             action: {
               label: 'Dismiss',
@@ -185,7 +203,7 @@ const GettingStarted = () => {
           });
           break;
         case 'personal-info':
-          response = await setPersonalInfoMutate({
+          await setPersonalInfoMutate({
             fname: data.firstName,
             lname: data.lastName,
             phone: data.phoneNumber,
@@ -203,7 +221,7 @@ const GettingStarted = () => {
           });
           break;
         case 'business-info':
-          response = await setBusinessInfoMutate({
+          await setBusinessInfoMutate({
             business_name: data.businessName,
             business_email: data.businessEmail,
             business_phone: data.businessPhone,
@@ -225,7 +243,7 @@ const GettingStarted = () => {
         case 'kyc-documents':
           kycFormData.append('cac_doc', data.cacDocument);
           kycFormData.append('gov_id_doc', data.govtIssuedId);
-          response = await uploadKycMutate(kycFormData);
+          await uploadKycMutate(kycFormData);
           toast.success('KYC documents uploaded!', {
             action: {
               label: 'Dismiss',
@@ -234,24 +252,21 @@ const GettingStarted = () => {
           });
           break;
         case 'subscription':
-          response = await subscribeToPlanMutate({ plan_id: data.plan });
+          await subscribeToPlanMutate({ plan_id: data.plan });
           toast.success('Subscription plan selected!', {
             action: {
               label: 'Dismiss',
               onClick: () => toast.dismiss(toastId), // dismisses the toast
             },
           });
+
           break;
 
         default:
           break;
       }
 
-      // Update user data in localStorage after a successful API call
-      const newUserData = response?.data?.data?.user_data;
-      if (newUserData) {
-        localStorage.setItem('user', JSON.stringify(newUserData));
-      }
+      await queryClient.invalidateQueries({ queryKey: ['profile'] });
 
       return true;
     } catch {
@@ -390,12 +405,9 @@ const GettingStarted = () => {
   const handleFinalSubmit = async () => {
     try {
       setIsSubmitting(true);
-      const response = await completeOnboardingMutate();
-      // Update user data in localStorage after a successful API call
-      const newUserData = response?.data?.data;
-      if (newUserData) {
-        localStorage.setItem('user', JSON.stringify(newUserData));
-      }
+      await completeOnboardingMutate();
+      await queryClient.invalidateQueries({ queryKey: ['profile'] });
+
       const toastId = toast.success('Onboarding complete! Welcome to your dashboard.', {
         description: "We’re reviewing your information and will notify you once it's approved.",
         action: {
@@ -427,6 +439,8 @@ const GettingStarted = () => {
     }
     void goToNextStep();
   };
+
+  if (isProfileLoading) return null; // Or a loading spinner
 
   return (
     <div className="min-h-screen w-full bg-white">

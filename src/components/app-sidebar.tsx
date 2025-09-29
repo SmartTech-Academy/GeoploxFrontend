@@ -12,7 +12,7 @@ import {
   SidebarSeparator,
 } from '@/components/ui/sidebar';
 
-import { Link, useLocation, useNavigate } from '@tanstack/react-router';
+import { Link, useLocation } from '@tanstack/react-router';
 import {
   LayoutDashboard,
   Home,
@@ -28,7 +28,10 @@ import {
   Users2,
   ChartCandlestick,
 } from 'lucide-react';
-import React, { useMemo } from 'react';
+import React from 'react';
+import { useGetProfileData } from '@/lib/services/profile';
+import { useQueryClient } from '@tanstack/react-query';
+import { Skeleton } from './ui/skeleton';
 
 const adminNavigation = [
   { name: 'Listing', href: '/listing', icon: Home },
@@ -72,19 +75,17 @@ const bottomNavigation = [
 
 export function AppSidebar() {
   const pathname = useLocation().pathname;
-  const navigate = useNavigate();
+  const { data: user, isLoading } = useGetProfileData();
+  const queryClient = useQueryClient();
 
-  const mainNavigation = useMemo(() => {
-    const user = localStorage.getItem('user');
-    const parsedUser = user ? JSON.parse(user) : null;
-    const userRole = parsedUser?.user_role;
-    const onboardingStatus = parsedUser?.onboarding_status;
-
-    if (onboardingStatus && onboardingStatus !== 'active') {
+  const getNavigation = () => {
+    if (isLoading || !user) {
+      return [];
+    }
+    if (user.onboarding_status !== 'active') {
       return onboardingNavigation;
     }
-
-    switch (userRole) {
+    switch (user.user_role) {
       case 'admin':
         return adminNavigation;
       case 'developer':
@@ -100,12 +101,15 @@ export function AppSidebar() {
       default:
         return [];
     }
-  }, [pathname]);
+  };
+
+  const mainNavigation = getNavigation();
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate({ to: '/login' });
+    // Invalidate all queries to clear cached data
+    queryClient.invalidateQueries();
+    // Redirect to login, which will happen automatically from DashboardLayout's effect
   };
 
   return (
@@ -116,23 +120,29 @@ export function AppSidebar() {
 
       <SidebarContent className="w-full px-[14px]">
         <SidebarMenu className="w-full gap-1">
-          {mainNavigation.map((item) => {
-            const isActive = pathname.includes(item.href);
-            return (
-              <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive}
-                  className="h-10 w-full rounded-[8px] text-[16px] leading-[18px] hover:bg-white hover:text-[#D4AF36] data-[active=true]:bg-white data-[active=true]:font-medium data-[active=true]:text-[#D4AF36]"
-                >
-                  <Link to={item.href}>
-                    <item.icon className={isActive ? 'fill-[#D4AF36] text-[#D4AF36]' : ''} />
-                    <span>{item.name}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
+          {isLoading
+            ? Array.from({ length: 5 }).map((_, i) => (
+                <SidebarMenuItem key={i}>
+                  <Skeleton className="h-10 w-full rounded-[8px]" />
+                </SidebarMenuItem>
+              ))
+            : mainNavigation.map((item) => {
+                const isActive = pathname.includes(item.href);
+                return (
+                  <SidebarMenuItem key={item.name}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      className="h-10 w-full rounded-[8px] text-[16px] leading-[18px] hover:bg-white hover:text-[#D4AF36] data-[active=true]:bg-white data-[active=true]:font-medium data-[active=true]:text-[#D4AF36]"
+                    >
+                      <Link to={item.href}>
+                        <item.icon className={isActive ? 'fill-[#D4AF36] text-[#D4AF36]' : ''} />
+                        <span>{item.name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
         </SidebarMenu>
 
         <div className="w-full">

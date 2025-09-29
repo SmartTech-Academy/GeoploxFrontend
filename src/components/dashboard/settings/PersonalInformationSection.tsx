@@ -10,8 +10,9 @@ import { useForm } from 'react-hook-form';
 import z from 'zod/v4';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSetPersonalInformation } from '@/lib/services/onboarding';
+import { UserProfile } from '@/lib/types';
 import { toast } from 'sonner';
 
 const step2Schema = z.object({
@@ -28,16 +29,30 @@ const step2Schema = z.object({
 
 type PersonalInfoFormValues = z.infer<typeof step2Schema>;
 
-const PersonalInformationSection = () => {
+interface PersonalInformationSectionProps {
+  user: UserProfile | undefined;
+}
+
+const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({ user }) => {
   const { mutateAsync, isPending } = useSetPersonalInformation();
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(user?.display_picture_url || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<PersonalInfoFormValues>({
     resolver: customResolver(step2Schema),
     mode: 'onTouched',
     reValidateMode: 'onChange',
+    defaultValues: {
+      firstName: user?.firstname || '',
+      lastName: user?.lastname || '',
+      phoneNumber: user?.phone_number || '',
+      whatsappNumber: user?.whatsapp_number || '',
+      homeAddress: user?.home_address || '',
+      state: user?.state || undefined,
+      localGovernment: user?.local_gov_area || undefined,
+      bio: user?.bio || '',
+    },
   });
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,26 +73,6 @@ const PersonalInformationSection = () => {
   const handleLogoClick = () => {
     fileInputRef.current?.click();
   };
-
-  useEffect(() => {
-    const userString = localStorage.getItem('user');
-    if (userString) {
-      const user = JSON.parse(userString);
-      form.reset({
-        firstName: user.firstname || '',
-        lastName: user.lastname || '',
-        phoneNumber: user.phone_number || '',
-        whatsappNumber: user.whatsapp_number || '',
-        homeAddress: user.home_address || '',
-        state: user.state || '',
-        localGovernment: user.local_gov_area || '',
-        bio: user.bio || '',
-      });
-      if (user.display_picture_url) {
-        setLogoPreview(user.display_picture_url);
-      }
-    }
-  }, [form]);
 
   const onSubmit = async (values: PersonalInfoFormValues) => {
     const formData = new FormData();

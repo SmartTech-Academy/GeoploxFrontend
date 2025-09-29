@@ -6,6 +6,8 @@ import { Link } from '@tanstack/react-router';
 
 import { PageMetaTags } from '@/components/page-meta-data';
 import { ActiveListingsChart } from '@/components/charts/ActiveListingsChart';
+import { useGetProfileData } from '@/lib/services/profile';
+import { useMemo } from 'react';
 
 const OVERVIEW = [
   {
@@ -58,6 +60,15 @@ const MESSAGES = [
   },
 ];
 const Dashboard = () => {
+  const { data: profileData, isLoading: isProfileLoading } = useGetProfileData();
+
+  const userName = useMemo(() => {
+    console.log('isProfileLoading', isProfileLoading);
+    if (profileData) {
+      return `${profileData?.firstname || ''} ${profileData?.lastname || ''}`.trim();
+    }
+    return 'User';
+  }, [profileData]);
   return (
     <div className="flex w-full flex-col items-start gap-5 py-8">
       <PageMetaTags
@@ -68,7 +79,7 @@ const Dashboard = () => {
 
       <header className="flex w-full items-center justify-between gap-2 self-stretch">
         <div className="flex flex-col items-baseline gap-2">
-          <h1 className="text-[18px] leading-[18px] font-semibold text-[#1F2130]">Good Afternoon, Rene</h1>
+          <h1 className="text-[18px] leading-[18px] font-semibold text-[#1F2130]">Good Afternoon, {userName}</h1>
 
           <p className="text-[12px] leading-[17px] tracking-[-0.01em] text-[#71748C]">
             {format(new Date(), 'EEEE, MMMM d')}

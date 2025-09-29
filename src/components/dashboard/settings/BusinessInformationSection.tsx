@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { customResolver } from '@/lib/customZodResolver';
 import { cn } from '@/lib/utils';
-import { useRouter } from '@tanstack/react-router';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,6 +11,7 @@ import z from 'zod/v4';
 import { Phone, Upload } from 'lucide-react';
 import assets from '@/assets';
 import React, { useRef, useState } from 'react';
+import { UserProfile } from '@/lib/types';
 
 const step3BusinessSchema = z.object({
   businessLogo: z.any().optional(),
@@ -25,39 +25,41 @@ const step3BusinessSchema = z.object({
   businessState: z.string().min(1, 'State is required'),
   businessLocalGovernment: z.string().min(1, 'Local government is required'),
 });
-const BusinessInformationSection = () => {
-  const router = useRouter();
 
-  const [businessLogo, setBusinessLogo] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+interface BusinessInformationSectionProps {
+  user: UserProfile | undefined;
+}
+
+const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({ user }) => {
+  const [logoPreview, setLogoPreview] = useState<string | null>(user?.business?.logo_url || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm({
     resolver: customResolver(step3BusinessSchema),
-    defaultValues: {
-      businessName: 'Rene',
-      businessEmail: 'rene_realty@forbes.com',
-      businessPhone: '0805-555-3323',
-      businessWhatsapp: '0805-555-3323',
-      website: '',
-      instagram: '',
-      businessAddress: '12, Oba Akinjobi Road, Ikeja GRA',
-      businessState: 'lagos',
-      businessLocalGovernment: 'ikeja',
-    },
     mode: 'onTouched',
     reValidateMode: 'onChange',
+    defaultValues: {
+      businessName: user?.business?.name || '',
+      businessEmail: user?.business?.email || '',
+      businessPhone: user?.business?.phone || '',
+      businessWhatsapp: user?.business?.whatsapp || '',
+      website: user?.business?.website || '',
+      instagram: user?.business?.instagram || '',
+      businessAddress: user?.business?.address || '',
+      businessState: user?.business?.state || undefined,
+      businessLocalGovernment: user?.business?.lga || undefined,
+    },
   });
+
   function onSubmit(values: z.infer<typeof step3BusinessSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(businessLogo);
     console.log(values);
   }
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setBusinessLogo(file);
       form.setValue('businessLogo', file);
 
       // Create preview URL
@@ -315,7 +317,6 @@ const BusinessInformationSection = () => {
           <Button
             type="button"
             variant="secondary"
-            onClick={() => router.history.back()}
             className={cn('h-10 flex-1 rounded-full bg-[#F1F1F4] text-[14px] font-semibold text-[#1F2130]')}
           >
             Back
