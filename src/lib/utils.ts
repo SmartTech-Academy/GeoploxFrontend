@@ -4,5 +4,12 @@ import { twMerge } from 'tailwind-merge';
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+export const formatPrice = (price: number, currency: string) => {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 0,
+  }).format(price);
+};
 
 export const NIGERIAN_PHONE_REGEX = /^(070|080|081|090|091)\d{8}$/;

@@ -17,7 +17,7 @@ export const useSetPersonalInformation = () => {
     mutationFn: (data: any) => {
       const headers = data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
       const imageType = data instanceof FormData ? 'binary' : 'none';
-      const url = `/dashboard/onboarding/personal?dimension=300by300&edit_image=resize-only&image_type=${imageType}`;
+      const url = `/dashboard/onboarding/personal?dimension=300by300&edit_image=resize-only&image_type=${imageType}&update=update`;
 
       return api.post(url, data, {
         headers,
@@ -34,7 +34,7 @@ export const useSetBusinessInformation = () => {
     mutationFn: (data: any) => {
       const headers = data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
       const imageType = data instanceof FormData ? 'binary' : 'none';
-      const url = `/dashboard/onboarding/business?dimension=300by300&edit_image=resize-only&image_type=${imageType}`;
+      const url = `/dashboard/onboarding/business?dimension=300by300&edit_image=resize-only&image_type=${imageType}&update=update`;
 
       return api.post(url, data, {
         headers,
@@ -49,7 +49,7 @@ export const useSetBusinessInformation = () => {
 export const useUploadKycDocuments = () => {
   return useMutation({
     mutationFn: (data: any) =>
-      api.post('/dashboard/onboarding/kyc?dimension=300by300&edit_image=resize-only&image_type=binary', data, {
+      api.post('/dashboard/onboarding/kyc?dimension=300by300&edit_image=resize-only&image_type=binary&update=update', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       }),
     onSuccess: () => {

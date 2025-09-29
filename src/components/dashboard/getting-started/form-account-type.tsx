@@ -106,7 +106,7 @@ const FormAccountType: React.FC<AccountTypeProps> = ({ form }) => {
                           htmlFor="client"
                           className="cursor-pointer text-[16px] leading-[19px] font-semibold text-[#41415A]"
                         >
-                          Buyer
+                          Client
                         </label>
                         <p className="text-[12px] leading-[14px] text-[#71748C]">I want to buy or rent properties.</p>
                       </div>

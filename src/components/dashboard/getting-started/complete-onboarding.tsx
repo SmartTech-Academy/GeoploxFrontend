@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { FileText } from 'lucide-react';
 import LoadingFallback from '@/components/loading-fallback';
 import { useGetOnboardingSummary } from '@/lib/services';
 import type React from 'react';
@@ -30,14 +31,16 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = ({ goToPreviousSte
         <p className="text-[14px] leading-[20px] text-[#71748C]">Review your account information before submitting</p>
       </div>
 
-      {summary.business?.logo_url && (
+      {(summary.business?.logo_url || summary.display_picture_url) && (
         <div className="flex items-center justify-center self-stretch border-b border-[#F1F1F4] pb-8">
           <div className="flex size-[64px] items-center justify-center overflow-hidden rounded-full border-2 border-[#D5D5DD]">
-            <img
-              src={summary.business.logo_url || '/placeholder.svg'}
-              alt="Business Logo"
-              className="h-full w-full object-cover"
-            />
+            {(summary.business?.logo_url || summary.display_picture_url) && (
+              <img
+                src={summary.business?.logo_url || summary.display_picture_url}
+                alt="Profile or Business Logo"
+                className="h-full w-full object-cover"
+              />
+            )}
           </div>
         </div>
       )}
@@ -115,7 +118,7 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = ({ goToPreviousSte
         {(summary.user_role === 'agent' || summary.user_role === 'client') && summary.plan && (
           <div className="space-y-4 border-t border-[#F1F1F4] pt-6">
             <div className="space-y-1">
-              <label className="text-[14px] font-medium text-[#41415A]">Selected Plan</label>
+              <label className="text-[14px] font-medium text-[#41415A]">Subscription Plan</label>
               <p className="text-[14px] text-[#1F2130] capitalize">{summary.plan.plan.name}</p>
             </div>
           </div>
@@ -128,13 +131,19 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = ({ goToPreviousSte
             {summary.business?.cac && (
               <div className="space-y-1">
                 <label className="text-[14px] font-medium text-[#41415A]">CAC Document</label>
-                <p className="text-[14px] text-[#1F2130]">{summary.business.cac.split('/').pop()}</p>
+                <div className="flex items-center gap-2">
+                  <FileText className="size-4 text-gray-500" />
+                  <p className="text-[14px] text-[#1F2130]">{summary.business.cac.split('/').pop()}</p>
+                </div>
               </div>
             )}
             {summary.government_id_doc_url && (
               <div className="space-y-1">
                 <label className="text-[14px] font-medium text-[#41415A]">Government Issued ID</label>
-                <p className="text-[14px] text-[#1F2130]">{summary.government_id_doc_url.split('/').pop()}</p>
+                <div className="flex items-center gap-2">
+                  <FileText className="size-4 text-gray-500" />
+                  <p className="text-[14px] text-[#1F2130]">{summary.government_id_doc_url.split('/').pop()}</p>
+                </div>
               </div>
             )}
           </div>

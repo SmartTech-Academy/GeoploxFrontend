@@ -82,7 +82,7 @@ export function AppSidebar() {
     if (isLoading || !user) {
       return [];
     }
-    if (user.onboarding_status !== 'active') {
+    if (user.onboarding_status !== 'active' && user.onboarding_status !== 'newly_registered') {
       return onboardingNavigation;
     }
     switch (user.user_role) {

@@ -28,7 +28,12 @@ const DashboardLayout = () => {
       return;
     }
 
-    if (user && user.onboarding_status !== 'active' && location.pathname !== '/getting-started') {
+    if (
+      user &&
+      user.onboarding_status !== 'active' &&
+      user.onboarding_status !== 'newly_registered' &&
+      location.pathname !== '/getting-started'
+    ) {
       navigate({ to: '/getting-started' });
     }
   }, [navigate, location.pathname, user, isError]);

@@ -11,6 +11,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import assets from '@/assets';
 import { customResolver } from '@/lib/customZodResolver';
 import { PageMetaTags } from '@/components/page-meta-data';
+import { useResetPassword } from '@/lib/services';
 
 // Zod schema for reset password form
 const resetPasswordSchema = z
@@ -44,6 +45,7 @@ function RouteComponent() {
   const { token, email } = useSearch({ from: '/_auth/reset-password' });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { mutate: resetPassword, isPending } = useResetPassword();
 
   const form = useForm<ResetPasswordFormValues>({
     resolver: customResolver(resetPasswordSchema),
@@ -55,17 +57,15 @@ function RouteComponent() {
     },
   });
 
-  const onSubmit = async (values: ResetPasswordFormValues) => {
-    try {
-      // Here you would typically make an API call to reset the password
-      console.log('Password reset data:', { ...values, token, email });
-
-      // Navigate to login page with success message
-      navigate({ to: '/login', search: { resetSuccess: 'true' } });
-    } catch (error) {
-      console.error('Password reset error:', error);
-      // Handle error appropriately
-    }
+  const onSubmit = (values: ResetPasswordFormValues) => {
+    resetPassword(
+      { email, token, password: values.password, password_confirmation: values.confirmPassword },
+      {
+        onSuccess: () => {
+          navigate({ to: '/login', search: { resetSuccess: 'true' } });
+        },
+      }
+    );
   };
 
   return (
@@ -165,14 +165,14 @@ function RouteComponent() {
                 <div className="flex flex-col items-start gap-4 self-stretch">
                   <Button
                     type="submit"
-                    disabled={form.formState.isSubmitting}
+                    disabled={isPending}
                     style={{
                       background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                       boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                     }}
                     className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                   >
-                    {form.formState.isSubmitting ? 'Saving...' : 'Save Password & Login'}
+                    {isPending ? 'Saving...' : 'Save Password & Login'}
                   </Button>
                 </div>
               </form>

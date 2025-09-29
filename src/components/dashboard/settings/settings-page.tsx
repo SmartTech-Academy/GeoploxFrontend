@@ -97,7 +97,7 @@ const SettingsPage = () => {
       case 'security':
         return <SecurityNotificationsSection />;
       case 'subscriptions':
-        return <SubscriptionsSection />;
+        return <SubscriptionsSection user={user} />;
       default:
         return <PersonalInformationSection user={user} />;
     }

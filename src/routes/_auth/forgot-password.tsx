@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import assets from '@/assets';
 import { customResolver } from '@/lib/customZodResolver';
 import { PageMetaTags } from '@/components/page-meta-data';
+import { useForgotPassword } from '@/lib/services';
 
 // Zod schema for forgot password form
 const forgotPasswordSchema = z.object({
@@ -22,6 +23,7 @@ export const Route = createFileRoute('/_auth/forgot-password')({
 
 function RouteComponent() {
   const navigate = useNavigate();
+  const { mutate: forgotPassword, isPending } = useForgotPassword();
 
   const form = useForm<ForgotPasswordFormValues>({
     resolver: customResolver(forgotPasswordSchema),
@@ -32,20 +34,15 @@ function RouteComponent() {
     },
   });
 
-  const onSubmit = async (values: ForgotPasswordFormValues) => {
-    try {
-      // Here you would typically make an API call to send password reset email
-      console.log('Password reset email sent to:', values.email);
-
-      // Navigate to password reset confirmation
-      navigate({
-        to: '/password-reset-sent',
-        search: { email: values.email },
-      });
-    } catch (error) {
-      console.error('Password reset error:', error);
-      // Handle error appropriately
-    }
+  const onSubmit = (values: ForgotPasswordFormValues) => {
+    forgotPassword(values, {
+      onSuccess: () => {
+        navigate({
+          to: '/password-reset-sent',
+          search: { email: values.email },
+        });
+      },
+    });
   };
 
   return (
@@ -119,14 +116,14 @@ function RouteComponent() {
 
                     <Button
                       type="submit"
-                      disabled={form.formState.isSubmitting}
+                      disabled={isPending}
                       style={{
                         background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                         boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                       }}
                       className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                     >
-                      {form.formState.isSubmitting ? 'Sending...' : 'Reset Password'}
+                      {isPending ? 'Sending...' : 'Reset Password'}
                     </Button>
                   </div>
                 </div>

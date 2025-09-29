@@ -1,9 +1,15 @@
-import TrialExpired from '@/components/dialogs/trial-expired';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { UpgradePlanDialog } from '@/components/dialogs/upgrade-plan-dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const SubscriptionsSection = () => {
+const SubscriptionsSection = ({ user }: { user: any }) => {
   const [openModal, setOpenModal] = useState(false);
+
+  const currentPlan = user?.plan?.plan;
+  const subscription = user?.plan;
+
+  // Billing history is still static as there's no API for it yet.
   const billHistory = [
     { date: '12 Mar, 2025', description: 'Premium Plan, Monthly', amount: '₦10,000/Month' },
     { date: '12 Mar, 2025', description: 'Premium Plan, Monthly', amount: '₦10,000/Month' },
@@ -23,32 +29,48 @@ const SubscriptionsSection = () => {
 
       <div className="flex w-full flex-col gap-8">
         {/* Current Plan Section */}
-        <div className="flex flex-col items-start gap-5 self-stretch border-b border-[#F1F1F4] pb-8">
-          <div className="box-border flex items-center justify-between gap-4 self-stretch rounded-[10px] border border-[#E3E3E8] bg-white px-5 py-6">
-            <div className="flex grow flex-col items-start gap-2">
-              <div className="flex items-center gap-3">
-                <h3 className="text-[16px] leading-[16px] tracking-[-0.02em] text-[#282828]">Basic Plan</h3>
+        {!user ? (
+          <Skeleton className="h-24 w-full" />
+        ) : (
+          <div className="flex flex-col items-start gap-5 self-stretch border-b border-[#F1F1F4] pb-8">
+            <div className="box-border flex items-center justify-between gap-4 self-stretch rounded-[10px] border border-[#E3E3E8] bg-white px-5 py-6">
+              {currentPlan ? (
+                <div className="flex grow flex-col items-start gap-2">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-[16px] leading-[16px] font-semibold tracking-[-0.02em] text-[#282828]">
+                      {currentPlan.name} Plan
+                    </h3>
+                    {subscription.active && (
+                      <span className="rounded-[4px] bg-[oklch(0.7665_0.1393_91.15_/_5%)] px-2 py-1 text-[12px] leading-[12px] text-[#D4AF36]">
+                        Active Plan
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[14px] leading-[20px] text-[#71748C]">
+                    {subscription.active
+                      ? `Expires on ${new Date(subscription.expires_at).toLocaleDateString()}`
+                      : 'Plan Inactive'}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-[14px] leading-[20px] text-[#71748C]">You are not subscribed to any plan.</p>
+              )}
 
-                <span className="rounded-[4px] bg-[oklch(0.7665_0.1393_91.15_/_5%)] px-2 py-1 text-[12px] leading-[12px] text-[#D4AF36]">
-                  Active Plan
-                </span>
-              </div>
-              <p className="text-[14px] leading-[20px] text-[#71748C]">Free for 14 Days</p>
+              <Button
+                onClick={() => setOpenModal(true)}
+                style={{
+                  background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
+
+                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                }}
+                className="h-10 rounded-[32px] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                size="sm"
+              >
+                {currentPlan ? 'Upgrade' : 'Subscribe'}
+              </Button>
             </div>
-            <Button
-              onClick={() => setOpenModal(true)}
-              style={{
-                background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-
-                boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
-              }}
-              className="h-10 rounded-[32px] p-4 text-[14px] leading-[17px] font-semibold text-white"
-              size="sm"
-            >
-              Upgrade
-            </Button>
           </div>
-        </div>
+        )}
 
         {/* Bill History Section */}
         <div className="flex flex-col items-start gap-2 self-stretch">
@@ -75,7 +97,7 @@ const SubscriptionsSection = () => {
           </div>
         </div>
       </div>
-      <TrialExpired open={openModal} setOpen={setOpenModal} />
+      <UpgradePlanDialog open={openModal} onOpenChange={setOpenModal} />
     </div>
   );
 };
