@@ -11,8 +11,8 @@ import {
   SidebarMenuButton,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
-// import { useUserOnboardingStatus } from '@/hooks/use-user-onboarding-status';
-import { Link, useLocation } from '@tanstack/react-router';
+
+import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import {
   LayoutDashboard,
   Home,
@@ -28,36 +28,85 @@ import {
   Users2,
   ChartCandlestick,
 } from 'lucide-react';
+import React, { useMemo } from 'react';
 
-const navigation = [
-  { name: 'Get Started', href: '/getting-started', icon: Home },
+const adminNavigation = [
   { name: 'Listing', href: '/listing', icon: Home },
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Blogs', href: '/blogs', icon: Newspaper },
-  { name: 'Insights', href: '/insights', icon: CandlestickChart },
-  { name: 'Admin Insights', href: '/admin-insights', icon: ChartCandlestick },
   { name: 'Pending Approvals', href: '/pending-approvals', icon: CircleCheck },
   { name: 'Users', href: '/users', icon: Users },
   { name: 'Managers', href: '/managers', icon: Users2 },
-  { name: 'Properties', href: '/properties', icon: Home },
+  { name: 'Admin Insights', href: '/admin-insights', icon: ChartCandlestick },
+];
+
+const contentManagerNavigation = [
+  { name: 'Blogs', href: '/blogs', icon: Newspaper },
+  { name: 'Insights', href: '/insights', icon: CandlestickChart },
+];
+
+const accountOfficerNavigation = [
+  { name: 'Listing', href: '/listing', icon: Home },
+  { name: 'Pending Approvals', href: '/pending-approvals', icon: CircleCheck },
   { name: 'Messages', href: '/messages', icon: MessageSquare },
+  { name: 'Users', href: '/users', icon: Users },
+];
+
+const agentClientNavigation = [
+  { name: 'Listing', href: '/listing', icon: Home },
+  { name: 'Messages', href: '/messages', icon: MessageSquare },
+  { name: 'Settings', href: '/settings', icon: Settings },
+];
+const propertyOwnerNavigation = [
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Properties', href: '/properties', icon: Home },
   { name: 'Performance', href: '/performance', icon: BarChart3 },
+  { name: 'Messages', href: '/messages', icon: MessageSquare },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
-// const onboardingNavigation = [{ name: 'Get Started', href: '/getting-started', icon: Home }];
+const onboardingNavigation = [{ name: 'Get Started', href: '/getting-started', icon: Home }];
 
 const bottomNavigation = [
   { name: 'Help', href: '/help', icon: HelpCircle },
-  { name: 'Logout', href: '/login', icon: LogOut },
+  { name: 'Logout', href: '/logout', icon: LogOut },
 ];
 
 export function AppSidebar() {
   const pathname = useLocation().pathname;
-  //   const { isNewUser } = useUserOnboardingStatus();
+  const navigate = useNavigate();
 
-  // Choose navigation based on user status
-  const mainNavigation = navigation;
+  const mainNavigation = useMemo(() => {
+    const user = localStorage.getItem('user');
+    const parsedUser = user ? JSON.parse(user) : null;
+    const userRole = parsedUser?.user_role;
+    const onboardingStatus = parsedUser?.onboarding_status;
+
+    if (onboardingStatus && onboardingStatus !== 'active') {
+      return onboardingNavigation;
+    }
+
+    switch (userRole) {
+      case 'admin':
+        return adminNavigation;
+      case 'developer':
+      case 'owner':
+        return propertyOwnerNavigation;
+      case 'account_officer':
+        return accountOfficerNavigation;
+      case 'content_manager':
+        return contentManagerNavigation;
+      case 'agent':
+      case 'client':
+        return agentClientNavigation;
+      default:
+        return [];
+    }
+  }, [pathname]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate({ to: '/login' });
+  };
 
   return (
     <Sidebar className="border-r-0" style={{ backgroundColor: '#F8F8F8' }}>
@@ -93,6 +142,20 @@ export function AppSidebar() {
         <SidebarMenu className="w-full gap-1">
           {bottomNavigation.map((item) => {
             const isActive = pathname.includes(item.href);
+            if (item.name === 'Logout') {
+              return (
+                <SidebarMenuItem key={item.name}>
+                  <SidebarMenuButton
+                    onClick={handleLogout}
+                    isActive={isActive}
+                    className="group h-10 rounded-[8px] text-[16px] leading-[18px] hover:bg-white hover:text-[#D4AF36] data-[active=true]:bg-white data-[active=true]:font-medium data-[active=true]:text-[#D4AF36]"
+                  >
+                    <item.icon className="" />
+                    <span>{item.name}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            }
             return (
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton

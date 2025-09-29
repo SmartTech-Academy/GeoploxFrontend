@@ -4,6 +4,7 @@ import * as z from 'zod/v4';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
 import assets from '@/assets';
 import { NIGERIAN_PHONE_REGEX } from '@/lib/utils';
@@ -47,27 +48,20 @@ function RouteComponent() {
     },
   });
 
-  const onSubmit = async (values: RegisterFormValues) => {
-    try {
-      // Here you would typically make an API call to register the user
-      console.log('Registration data:', values);
-
-      // Navigate to OTP verification page
-      navigate({ to: '/verify-otp', search: { phone: values.phoneNumber } });
-    } catch (error) {
-      console.error('Registration error:', error);
-      // Handle error appropriately
-    }
+  const onSubmit = (values: RegisterFormValues) => {
+    // Navigate to the next step to set the password, passing user details
+    navigate({
+      to: '/set-password',
+      search: values,
+    });
   };
 
   const handleGoogleSignIn = () => {
-    // Implement Google OAuth flow
-    console.log('Continue with Google');
+    toast('Coming soon');
   };
 
   const handleFacebookSignIn = () => {
-    // Implement Facebook OAuth flow
-    console.log('Continue with Facebook');
+    toast('Coming soon');
   };
 
   return (
@@ -101,7 +95,7 @@ function RouteComponent() {
           <div className="flex w-full flex-col gap-10">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-10">
-                <div className="flex w-full flex-col gap-5">
+                <fieldset disabled={form.formState.isSubmitting} className="flex w-full flex-col gap-5">
                   {/* First Name and Last Name Row */}
                   <div className="grid w-full gap-5 lg:grid-cols-2">
                     <FormField
@@ -209,19 +203,20 @@ function RouteComponent() {
                       </FormItem>
                     )}
                   />
-                </div>
+                </fieldset>
 
                 {/* Submit Button */}
                 <div className="flex flex-col items-start gap-7 self-stretch">
                   <Button
                     type="submit"
+                    disabled={form.formState.isSubmitting}
                     style={{
                       background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                       boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                     }}
                     className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                   >
-                    Get Started
+                    {form.formState.isSubmitting ? 'Loading...' : 'Get Started'}
                   </Button>
 
                   <div className="flex w-full flex-col items-start gap-7">

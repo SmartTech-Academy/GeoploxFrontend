@@ -1,4 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,6 +16,13 @@ export const queryClient = new QueryClient({
         }
         // Retry up to 3 times for other errors
         return failureCount < 3;
+      },
+         queryCache: {
+        onError: (error, query) => {
+          // Prevent duplicate toasts if data already exists (stale fetch failing)
+          if (query.state.data !== undefined) return;
+          toast.error(error);
+        },
       },
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
 
@@ -36,6 +44,7 @@ export const queryClient = new QueryClient({
       // Suspense (if using React Suspense)
       // throwOnError: false, // Set to true if using error boundaries exclusively
     },
+
     mutations: {
       // Retry mutations only once by default
       retry: 1,
@@ -45,42 +54,16 @@ export const queryClient = new QueryClient({
       networkMode: 'online',
 
       // Global mutation error handling
-      //   onError: (error, variables, context) => {
-      //     console.error('Mutation error:', error);
-      //     // You can add global error handling here
-      //     // e.g., show toast notification, log to error service
-      //   },
+      onError: (error: any) => {
+        const errorMessage = error.response?.data?.message || 'An error occurred';
+        const toastId = toast.error('An error occurred', {
+          description: errorMessage,
+          action: {
+            label: 'Dismiss',
+            onClick: () => toast.dismiss(toastId), // dismisses the toast
+          },
+        });
+      },
     },
   },
 });
-
-// // Optional: Add global error handler for uncaught query errors
-// queryClient.setQueryDefaults(['*'], {
-//   queryFn: async ({ queryKey, signal }) => {
-//     // Global query function if needed
-//     throw new Error('Query function must be provided');
-//   },
-// });
-
-// Optional: Set up global mutation defaults for specific patterns
-// queryClient.setMutationDefaults(['auth'], {
-//   mutationFn: async (variables) => {
-//     // Global auth mutation logic if needed
-//     throw new Error('Mutation function must be provided');
-//   },
-//   onError: (error) => {
-//     // Handle auth-specific errors
-//     if (error?.status === 401) {
-//       // Redirect to login or refresh token
-//     }
-//   },
-// });
-
-// // Development-only query debugging
-// if (process.env.NODE_ENV === 'development') {
-//   queryClient.setQueryDefaults(['*'], {
-//     meta: {
-//       errorBoundary: false, // Disable error boundaries in development for easier debugging
-//     },
-//   });
-// }

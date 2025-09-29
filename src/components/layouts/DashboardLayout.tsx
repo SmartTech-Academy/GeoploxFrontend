@@ -1,18 +1,34 @@
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import LoadingFallback from '../loading-fallback';
-import { Outlet } from '@tanstack/react-router';
+import { Outlet, useLocation, useNavigate } from '@tanstack/react-router';
 import { AppSidebar } from '../app-sidebar';
 import { TopNav } from '../top-nav';
 import { SidebarInset, SidebarProvider } from '../ui/sidebar';
-import { useUserOnboardingStatus } from '@/hooks/use-user-onboarding-status';
+
 import { cn } from '@/lib/utils';
 import { Toaster } from '../ui/sonner';
 
 const DashboardLayout = () => {
-  const { isLoading } = useUserOnboardingStatus();
   const [useMaxWidth, setUseMaxWith] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  if (isLoading) return <LoadingFallback />;
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    if (!token || !user) {
+      navigate({ to: '/login' });
+      return;
+    }
+
+    const parsedUser = user ? JSON.parse(user) : null;
+    const onboardingStatus = parsedUser?.onboarding_status;
+
+    if (!onboardingStatus || onboardingStatus !== 'active') {
+      navigate({ to: '/getting-started' });
+    }
+  }, [navigate, location.pathname]);
+
   return (
     <Suspense fallback={<LoadingFallback />}>
       <SidebarProvider>

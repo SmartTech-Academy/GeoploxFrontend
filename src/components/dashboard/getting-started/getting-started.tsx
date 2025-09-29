@@ -1,7 +1,7 @@
 'use client';
 
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import * as z from 'zod/v4';
@@ -17,10 +17,20 @@ import Subscription from './subscription';
 import CompleteOnboarding from './complete-onboarding';
 import { CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useUserOnboardingStatus } from '@/hooks/use-user-onboarding-status';
+// import { useUserOnboardingStatus } from '@/hooks/use-user-onboarding-status';
 import { useNavigate } from '@tanstack/react-router';
 import { customResolver } from '@/lib/customZodResolver';
 import { PageMetaTags } from '@/components/page-meta-data';
+import {
+  useCompleteOnboarding,
+  useSetAccountType,
+  useSetBusinessInformation,
+  useSetPersonalInformation,
+  useSubscribeToPlan,
+  useUploadKycDocuments,
+} from '@/lib/services/onboarding';
+import { toast } from 'sonner';
+import { useGetProfileData } from '@/lib/services/profile';
 
 // Account types
 type AccountType = 'developer' | 'agent' | 'client' | 'property-owner';
@@ -41,6 +51,7 @@ const step1Schema = z.object({
 });
 
 const step2Schema = z.object({
+  profilePicture: z.any().optional(),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   phoneNumber: z.string().min(11, 'Phone number must be 11 digits'),
@@ -83,6 +94,7 @@ const combinedSchema = step1Schema
 
 // Step-specific validation schemas
 const getStepSchema = (step: string) => {
+  // actuall steps email_verification, onboarding_account_type , onboarding_personal_information, onboarding_business_information , onboarding_business_information2, onboarding_completion
   switch (step) {
     case 'account-type':
       return step1Schema;
@@ -100,10 +112,41 @@ const getStepSchema = (step: string) => {
 };
 
 const GettingStarted = () => {
-  const { completeOnboarding } = useUserOnboardingStatus();
+  //   const { completeOnboarding } = useUserOnboardingStatus();
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(4);
   const [accountType, setAccountType] = useState<AccountType>('developer');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { mutateAsync: setAccountTypeMutate } = useSetAccountType();
+  const { mutateAsync: setPersonalInfoMutate } = useSetPersonalInformation();
+  const { mutateAsync: setBusinessInfoMutate } = useSetBusinessInformation();
+  const { mutateAsync: uploadKycMutate } = useUploadKycDocuments();
+  const { mutateAsync: subscribeToPlanMutate } = useSubscribeToPlan();
+  const { mutateAsync: completeOnboardingMutate } = useCompleteOnboarding();
+  const { data: profileData } = useGetProfileData();
+
+  useEffect(() => {
+    if (profileData) {
+      console.log('profile Response:', profileData.data);
+    }
+  }, [profileData]);
+
+  const userResponse = useMemo(() => {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      return user;
+    }
+    return null;
+  }, []);
+
+  const userName = useMemo(() => {
+    if (userResponse) {
+      return `${userResponse?.firstname || ''} ${userResponse?.lastname || ''}`.trim();
+    }
+    return 'User';
+  }, [userResponse]);
 
   // Single form instance for all steps
   const form = useForm({
@@ -125,22 +168,117 @@ const GettingStarted = () => {
   const stepFlow = getStepFlow();
   const currentStepKey = stepFlow[currentStep];
 
+  const handleApiSubmission = async (stepKey: string, data: any) => {
+    let toastId;
+    try {
+      setIsSubmitting(true);
+      let response;
+      const kycFormData = new FormData();
+      switch (stepKey) {
+        case 'account-type':
+          response = await setAccountTypeMutate({ user_type: data.accountType });
+          toast.success('Account type saved!', {
+            action: {
+              label: 'Dismiss',
+              onClick: () => toast.dismiss(toastId), // dismisses the toast
+            },
+          });
+          break;
+        case 'personal-info':
+          response = await setPersonalInfoMutate({
+            fname: data.firstName,
+            lname: data.lastName,
+            phone: data.phoneNumber,
+            whatsapp: data.whatsappNumber,
+            home_address: data.homeAddress,
+            state: data.state,
+            local_gov_area: data.localGovernment,
+            base64_file: data.profilePicture,
+          });
+          toast.success('Personal information saved!', {
+            action: {
+              label: 'Dismiss',
+              onClick: () => toast.dismiss(toastId), // dismisses the toast
+            },
+          });
+          break;
+        case 'business-info':
+          response = await setBusinessInfoMutate({
+            business_name: data.businessName,
+            business_email: data.businessEmail,
+            business_phone: data.businessPhone,
+            business_whatsapp: data.businessWhatsapp,
+            website: data.website,
+            business_ig: data.instagram,
+            business_address: data.businessAddress,
+            state: data.businessState,
+            local_gov_area: data.businessLocalGovernment,
+            base64_file: data.businessLogo,
+          });
+          toast.success('Business information saved!', {
+            action: {
+              label: 'Dismiss',
+              onClick: () => toast.dismiss(toastId), // dismisses the toast
+            },
+          });
+          break;
+        case 'kyc-documents':
+          kycFormData.append('cac_doc', data.cacDocument);
+          kycFormData.append('gov_id_doc', data.govtIssuedId);
+          response = await uploadKycMutate(kycFormData);
+          toast.success('KYC documents uploaded!', {
+            action: {
+              label: 'Dismiss',
+              onClick: () => toast.dismiss(toastId), // dismisses the toast
+            },
+          });
+          break;
+        case 'subscription':
+          response = await subscribeToPlanMutate({ plan_id: data.plan });
+          toast.success('Subscription plan selected!', {
+            action: {
+              label: 'Dismiss',
+              onClick: () => toast.dismiss(toastId), // dismisses the toast
+            },
+          });
+          break;
+
+        default:
+          break;
+      }
+
+      // Update user data in localStorage after a successful API call
+      const newUserData = response?.data?.data?.user_data;
+      if (newUserData) {
+        localStorage.setItem('user', JSON.stringify(newUserData));
+      }
+
+      return true;
+    } catch {
+      //   const message = error.response?.data?.message || 'An error occurred.';
+      //   toast.error(message);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const goToNextStep = async () => {
     const stepSchema = getStepSchema(currentStepKey);
     const stepFields = Object.keys(stepSchema.shape) as (keyof typeof stepSchema.shape)[];
 
-    // Trigger validation for current step fields only
     const isValid = await form.trigger(stepFields);
 
     if (isValid && currentStep < stepFlow.length - 1) {
-      // Update account type if we're on account-type step
-      if (currentStepKey === 'account-type') {
+      const stepData = form.getValues();
+      const apiSuccess = await handleApiSubmission(currentStepKey, stepData);
+
+      if (apiSuccess) {
         const newAccountType = form.getValues('accountType');
-        if (newAccountType && newAccountType !== accountType) {
-          setAccountType(newAccountType);
-        }
+        if (currentStepKey === 'account-type' && newAccountType !== accountType) setAccountType(newAccountType);
+
+        setCurrentStep(currentStep + 1);
       }
-      setCurrentStep(currentStep + 1);
     }
   };
 
@@ -249,11 +387,36 @@ const GettingStarted = () => {
     }
   };
 
-  const handleFinalSubmit = () => {
-    // console.log('Final form data:', form.getValues());
-    completeOnboarding();
-    navigate({ to: '/dashboard' });
-    // Handle final submission logic here
+  const handleFinalSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+      const response = await completeOnboardingMutate();
+      // Update user data in localStorage after a successful API call
+      const newUserData = response?.data?.data;
+      if (newUserData) {
+        localStorage.setItem('user', JSON.stringify(newUserData));
+      }
+      const toastId = toast.success('Onboarding complete! Welcome to your dashboard.', {
+        description: "We’re reviewing your information and will notify you once it's approved.",
+        action: {
+          label: 'Dismiss',
+          onClick: () => toast.dismiss(toastId), // dismisses the toast
+        },
+      });
+
+      navigate({ to: '/dashboard' });
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to complete onboarding.';
+      const toastId = toast.error('Failed to complete onboarding.', {
+        description: message,
+        action: {
+          label: 'Dismiss',
+          onClick: () => toast.dismiss(toastId), // dismisses the toast
+        },
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleContinue = (e: React.FormEvent) => {
@@ -262,7 +425,7 @@ const GettingStarted = () => {
       handleFinalSubmit();
       return;
     }
-    goToNextStep();
+    void goToNextStep();
   };
 
   return (
@@ -277,7 +440,7 @@ const GettingStarted = () => {
           {/* Desktop Sidebar - Hidden on mobile */}
           <div className="hidden w-full shrink-0 flex-col gap-8 border-r border-[#F1F1F4] px-5 py-8 lg:flex lg:w-[447px] lg:px-6">
             <div className="flex flex-col items-start gap-3">
-              <h2 className="text-[24px] leading-[29px] font-semibold text-[#4E4E4E]">Hi, Rene Forbes</h2>
+              <h2 className="text-[24px] leading-[29px] font-semibold text-[#4E4E4E]">Hi, {userName}</h2>
               <p className="text-[14px] leading-[20px] text-[#71748C]">
                 Just a few steps left to finish setting up your account.
               </p>
@@ -296,7 +459,7 @@ const GettingStarted = () => {
             <div className="flex w-full flex-col gap-10">
               <h2 className="text-[24px] font-semibold text-[#4E4E4E]">Get Started</h2>
               <div className="flex w-full flex-col gap-3">
-                <p className="text-[24px] text-[#4E4E4E]">Hi, Rene Forbes</p>
+                <p className="text-[24px] text-[#4E4E4E]">Hi, {userName}</p>
                 <p className="text-[14px] text-[#71748C]">Just a few steps left to finish setting up your account.</p>
               </div>
             </div>
@@ -337,8 +500,9 @@ const GettingStarted = () => {
                       }}
                       type="submit"
                       className="h-12 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] font-semibold text-white"
+                      disabled={isSubmitting}
                     >
-                      Continue
+                      {isSubmitting ? 'Saving...' : 'Continue'}
                     </Button>
                   </div>
                 )}

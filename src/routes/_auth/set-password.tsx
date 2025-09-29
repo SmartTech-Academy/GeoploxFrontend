@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate, useSearch } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 
 import * as z from 'zod/v4';
@@ -8,12 +8,30 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Eye, EyeOff, Check, X } from 'lucide-react';
 
+import { useRegister } from '@/lib/services';
 import assets from '@/assets';
 import { customResolver } from '@/lib/customZodResolver';
 import { PageMetaTags } from '@/components/page-meta-data';
+import { toast } from 'sonner';
+
+type SetPasswordSearch = {
+  firstName: string;
+  lastName: string;
+  username: string;
+  phoneNumber: string;
+  email: string;
+};
 
 export const Route = createFileRoute('/_auth/set-password')({
   component: RouteComponent,
+  validateSearch: (search: Record<string, unknown>): SetPasswordSearch => ({
+    ...search,
+    firstName: search.firstName as string,
+    lastName: search.lastName as string,
+    username: search.username as string,
+    phoneNumber: search.phoneNumber as string,
+    email: search.email as string,
+  }),
 });
 
 // Password validation schema
@@ -61,6 +79,8 @@ const PasswordRequirements = ({ password }: { password: string }) => {
 function RouteComponent() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const searchParams = useSearch({ from: '/_auth/set-password' });
+  const { mutate, isPending } = useRegister();
 
   const form = useForm<FormValues>({
     resolver: customResolver(formSchema),
@@ -71,14 +91,31 @@ function RouteComponent() {
     },
   });
 
-  const onSubmit = async (values: FormValues) => {
-    try {
-      console.log('Password data:', values);
-      // Navigate to next step or dashboard
-      navigate({ to: '/account-ready' });
-    } catch (error) {
-      console.error('Password setup error:', error);
-    }
+  const onSubmit = (values: FormValues) => {
+    const registrationData = {
+      fname: searchParams.firstName,
+      lname: searchParams.lastName,
+      username: searchParams.username,
+      phone: searchParams.phoneNumber,
+      email: searchParams.email,
+      password: values.password,
+    };
+
+    mutate(registrationData, {
+      onSuccess: () => {
+        toast.success('Registration successful! Please check your email for your activation code.');
+        navigate({
+          to: '/verify-otp',
+          search: { email: registrationData.email, phone: registrationData.phone },
+        });
+      },
+      onError: (error: any) => {
+        const message = error.response?.data?.message || 'An error occurred during registration.';
+        toast.error(message);
+        // You could also parse and display field-specific errors here if the API provides them
+        // console.error('Registration error:', error.response?.data);
+      },
+    });
   };
 
   return (
@@ -156,9 +193,9 @@ function RouteComponent() {
                       boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                     }}
                     className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
-                    disabled={!form.formState.isValid}
+                    disabled={!form.formState.isValid || isPending}
                   >
-                    Continue
+                    {isPending ? 'Creating Account...' : 'Continue'}
                   </Button>
                 </div>
               </form>

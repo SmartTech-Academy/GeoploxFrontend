@@ -9,12 +9,14 @@ import { Eye, EyeOff } from 'lucide-react';
 
 import assets from '@/assets';
 import { customResolver } from '@/lib/customZodResolver';
+import { useLogin } from '@/lib/services';
 import { PageMetaTags } from '@/components/page-meta-data';
+import { toast } from 'sonner';
 
 // Zod schema for login form
 const loginSchema = z.object({
-  email: z.email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
+  email_or_username: z.string().min(1, 'Email or Username is required'),
+  password: z.string().min(1, 'Password is required'),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -26,38 +28,41 @@ export const Route = createFileRoute('/_auth/login')({
 function RouteComponent() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const { mutate, isPending } = useLogin();
 
   const form = useForm<LoginFormValues>({
     resolver: customResolver(loginSchema),
     mode: 'onTouched',
     reValidateMode: 'onChange',
     defaultValues: {
-      email: '',
+      email_or_username: '',
       password: '',
     },
   });
 
-  const onSubmit = async (values: LoginFormValues) => {
-    try {
-      // Here you would typically make an API call to authenticate the user
-      console.log('Login data:', values);
-
-      // Navigate to dashboard
-      navigate({ to: '/dashboard' });
-    } catch (error) {
-      console.error('Login error:', error);
-      // Handle error appropriately
-    }
+  const onSubmit = (values: LoginFormValues) => {
+    mutate(values, {
+      onSuccess: () => {
+        toast.success('Login successful!');
+        navigate({ to: '/dashboard' });
+      },
+      onError: (error: any) => {
+        const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
+        toast.error(message);
+        form.setError('password', {
+          type: 'manual',
+          message: 'Invalid credentials. Please try again.',
+        });
+      },
+    });
   };
 
   const handleGoogleSignIn = () => {
-    // Implement Google OAuth flow
-    console.log('Login with Google');
+    toast('Coming soon');
   };
 
   const handleFacebookSignIn = () => {
-    // Implement Facebook OAuth flow
-    console.log('Login with Facebook');
+    toast('Coming soon');
   };
 
   return (
@@ -96,7 +101,7 @@ function RouteComponent() {
                   {/* Email Address */}
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="email_or_username"
                     render={({ field }) => (
                       <FormItem className="w-full gap-1.5">
                         <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
@@ -158,14 +163,14 @@ function RouteComponent() {
                 <div className="flex flex-col items-start gap-7 self-stretch">
                   <Button
                     type="submit"
-                    disabled={form.formState.isSubmitting}
+                    disabled={isPending}
                     style={{
                       background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                       boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                     }}
                     className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                   >
-                    {form.formState.isSubmitting ? 'Signing In...' : 'Login'}
+                    {isPending ? 'Signing In...' : 'Login'}
                   </Button>
 
                   <div className="flex w-full flex-col items-start gap-7">

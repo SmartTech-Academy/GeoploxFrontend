@@ -16,20 +16,18 @@ interface AccountTypeProps {
 }
 
 const BusinessInfo: React.FC<AccountTypeProps> = ({ form }) => {
-  const [, setBusinessLogo] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setBusinessLogo(file);
-      form.setValue('businessLogo', file);
-
       // Create preview URL
       const reader = new FileReader();
       reader.onload = (e) => {
-        setLogoPreview(e.target?.result as string);
+        const base64String = e.target?.result as string;
+        setLogoPreview(base64String);
+        form.setValue('businessLogo', base64String);
       };
       reader.readAsDataURL(file);
     }

@@ -1,0 +1,22 @@
+/* stylelint-disable selector-id-pattern */
+@import 'nprogress/nprogress.css';
+
+#nprogress .bar {
+  /* Use your Tailwind primary color variable */
+  background: var(--primary);
+  height: 3px;
+  z-index: 1031;
+}
+
+#nprogress .peg {
+  box-shadow:
+    0 0 10px var(--primary),
+    0 0 5px var(--primary);
+}
+
+#nprogress .spinner-icon {
+  width: 18px;
+  height: 18px;
+  border-top-color: var(--primary);
+  border-left-color: var(--primary);
+}

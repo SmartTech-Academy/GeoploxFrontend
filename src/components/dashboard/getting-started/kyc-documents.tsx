@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { RotateCcw, Trash } from 'lucide-react';
+import { FileText, RotateCcw, Trash } from 'lucide-react';
 import type React from 'react';
 import { useState, useRef } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
@@ -59,6 +59,23 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form }) => {
     govtIdInputRef.current?.click();
   };
 
+  const renderFilePreview = (file: File) => {
+    if (file.type.startsWith('image/')) {
+      return <img src={URL.createObjectURL(file)} alt={file.name} className="h-full w-full object-contain" />;
+    }
+
+    if (file.type === 'application/pdf') {
+      return (
+        <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-gray-600">
+          <FileText className="size-12 text-red-500" />
+          <span className="max-w-full truncate px-2 text-xs font-medium">{file.name}</span>
+        </div>
+      );
+    }
+
+    return <p className="text-sm text-gray-500">Preview not available</p>;
+  };
+
   return (
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
@@ -91,15 +108,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form }) => {
               onMouseEnter={() => setHoveredDocument('cac')}
               onMouseLeave={() => setHoveredDocument(null)}
             >
-              <div className="h-[112px] w-[250px] bg-transparent">
-                <img
-                  src={URL.createObjectURL(cacDocument)}
-                  alt=""
-                  className="h-full w-full object-contain"
-                  width={250}
-                  height={112}
-                />
-              </div>
+              <div className="h-[112px] w-[250px] bg-transparent">{renderFilePreview(cacDocument)}</div>
 
               <div
                 className={cn(
@@ -167,15 +176,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form }) => {
               onMouseEnter={() => setHoveredDocument('govtId')}
               onMouseLeave={() => setHoveredDocument(null)}
             >
-              <div className="h-[112px] w-[250px] bg-transparent">
-                <img
-                  src={URL.createObjectURL(govtId)}
-                  alt=""
-                  className="h-full w-full object-contain"
-                  width={250}
-                  height={112}
-                />
-              </div>
+              <div className="h-[112px] w-[250px] bg-transparent">{renderFilePreview(govtId)}</div>
 
               <div
                 className={cn(

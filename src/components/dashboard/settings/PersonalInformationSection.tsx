@@ -5,15 +5,17 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Phone } from 'lucide-react';
-
+import { Phone, Upload } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import z from 'zod/v4';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useRouter } from '@tanstack/react-router';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSetPersonalInformation } from '@/lib/services/onboarding';
+import { toast } from 'sonner';
 
 const step2Schema = z.object({
+  profilePicture: z.any().optional(),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   phoneNumber: z.string().min(11, 'Phone number must be 11 digits'),
@@ -21,29 +23,84 @@ const step2Schema = z.object({
   homeAddress: z.string().min(1, 'Home address is required'),
   state: z.string().min(1, 'State is required'),
   localGovernment: z.string().min(1, 'Local government is required'),
+  bio: z.string().optional(),
 });
 
+type PersonalInfoFormValues = z.infer<typeof step2Schema>;
+
 const PersonalInformationSection = () => {
-  const router = useRouter();
-  const form = useForm({
+  const { mutateAsync, isPending } = useSetPersonalInformation();
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const form = useForm<PersonalInfoFormValues>({
     resolver: customResolver(step2Schema),
-    defaultValues: {
-      firstName: 'Rene',
-      lastName: 'Forbes',
-      phoneNumber: '0805-555-3323',
-      whatsappNumber: '0805-555-3323',
-      homeAddress: '12, Oba Akinjobi Road, Ikeja GRA',
-      state: 'lagos',
-      localGovernment: 'ikeja',
-    },
     mode: 'onTouched',
     reValidateMode: 'onChange',
   });
-  function onSubmit(values: z.infer<typeof step2Schema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setProfilePicture(file);
+      form.setValue('profilePicture', file);
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLogoPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLogoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  useEffect(() => {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      form.reset({
+        firstName: user.firstname || '',
+        lastName: user.lastname || '',
+        phoneNumber: user.phone_number || '',
+        whatsappNumber: user.whatsapp_number || '',
+        homeAddress: user.home_address || '',
+        state: user.state || '',
+        localGovernment: user.local_gov_area || '',
+        bio: user.bio || '',
+      });
+      if (user.display_picture_url) {
+        setLogoPreview(user.display_picture_url);
+      }
+    }
+  }, [form]);
+
+  const onSubmit = async (values: PersonalInfoFormValues) => {
+    const formData = new FormData();
+    formData.append('fname', values.firstName);
+    formData.append('lname', values.lastName);
+    formData.append('phone', values.phoneNumber);
+    formData.append('whatsapp', values.whatsappNumber);
+    formData.append('home_address', values.homeAddress);
+    formData.append('state', values.state);
+    formData.append('local_gov_area', values.localGovernment);
+    if (values.bio) formData.append('bio', values.bio);
+    if (profilePicture && values.profilePicture[0]) {
+      formData.append('doc_file', values.profilePicture[0]);
+    }
+
+    try {
+      await mutateAsync(formData);
+      toast.success('Personal information updated successfully!');
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'An error occurred.';
+      toast.error(message);
+    }
+  };
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
@@ -54,6 +111,39 @@ const PersonalInformationSection = () => {
           </div>
 
           <div className="flex w-full flex-col gap-5">
+            <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
+              <div className="mx-auto flex flex-col gap-6">
+                <div
+                  onClick={handleLogoClick}
+                  className="relative mx-auto flex size-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
+                >
+                  {logoPreview ? (
+                    <img
+                      src={logoPreview || '/placeholder.svg'}
+                      alt="Business Logo"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Upload className="size-4 text-[#71748C]" />
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".jpg,.jpeg,.png"
+                    onChange={handleLogoUpload}
+                    className="sr-only"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <p className="text-[14px] leading-[24px] text-[#1F2130]">Business Logo</p>
+                  <p className="text-[14px] leading-[24px] text-[#71748C]">
+                    Upload a profile picture. Only .JPG and .PNG supported.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <FormField
                 control={form.control}
@@ -154,6 +244,25 @@ const PersonalInformationSection = () => {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem className="w-full gap-1.5">
+                  <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Bio</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell us a little about yourself"
+                      className="resize-none rounded-lg border-[#D5D5DD]"
+                      rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
@@ -210,7 +319,6 @@ const PersonalInformationSection = () => {
           <Button
             type="button"
             variant="secondary"
-            onClick={() => router.history.back()}
             className={cn('h-10 flex-1 rounded-full bg-[#F1F1F4] text-[14px] font-semibold text-[#1F2130]')}
           >
             Back
@@ -222,8 +330,9 @@ const PersonalInformationSection = () => {
             }}
             type="submit"
             className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] text-[14px] font-semibold text-white"
+            disabled={isPending}
           >
-            Save Changes
+            {isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </form>

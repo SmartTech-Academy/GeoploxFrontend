@@ -3,8 +3,7 @@ import { ChevronRight, HousePlus } from 'lucide-react';
 import { format } from 'date-fns';
 import assets from '@/assets';
 import { Link } from '@tanstack/react-router';
-import { toast } from 'sonner';
-import { useEffect } from 'react';
+
 import { PageMetaTags } from '@/components/page-meta-data';
 import { ActiveListingsChart } from '@/components/charts/ActiveListingsChart';
 
@@ -59,16 +58,6 @@ const MESSAGES = [
   },
 ];
 const Dashboard = () => {
-  useEffect(() => {
-    const toastId = toast.success('Your account is under review', {
-      description: "We’re reviewing your information and will notify you once it's approved.",
-      action: {
-        label: 'Dismiss',
-        onClick: () => toast.dismiss(toastId), // dismisses the toast
-      },
-    });
-  }, []);
-
   return (
     <div className="flex w-full flex-col items-start gap-5 py-8">
       <PageMetaTags
