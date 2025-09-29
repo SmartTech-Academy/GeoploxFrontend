@@ -74,12 +74,6 @@ export const useCompleteOnboarding = () => {
   });
 };
 
-export const useGetPlans = () => {
-  return useQuery({
-    queryKey: ["plans"],
-    queryFn: () => api.get("/dashboard/plans/sections"),
-  });
-};
 
 export const useSubscribeToPlan = () => {
   return useMutation({

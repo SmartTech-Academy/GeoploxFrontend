@@ -1,4 +1,4 @@
-import { Bell, LogOut, RulerDimensionLine, Settings } from 'lucide-react';
+import { LogOut, RulerDimensionLine, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -15,6 +15,7 @@ import {
 } from './ui/dropdown-menu';
 import { useGetProfileData } from '@/lib/services/profile';
 import { useQueryClient } from '@tanstack/react-query';
+import { NotificationPopover } from '@/components/notification-popover';
 
 // Route title mapping for dashboard pages
 const routeTitleMap: Record<string, string> = {
@@ -32,6 +33,7 @@ const routeTitleMap: Record<string, string> = {
   '/getting-started': 'Getting Started',
   '/blogs': 'Blog Posts',
   '/blogs/create': 'Create Blog Post',
+  '/notifications': 'Notifications',
 };
 
 // Function to get page title based on current route
@@ -88,10 +90,7 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="relative size-8 rounded-full border-[0.5px] border-[#D5D5DD]">
-            <Bell className="size-4" />
-            <span className="absolute top-1 -right-1 h-2 w-2 rounded-full bg-red-500"></span>
-          </Button>
+          <NotificationPopover />
 
           <div className="h-8 w-px bg-[#E2E2E2]" />
 

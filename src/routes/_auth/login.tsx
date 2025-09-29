@@ -46,9 +46,7 @@ function RouteComponent() {
         toast.success('Login successful!');
         navigate({ to: '/dashboard' });
       },
-      onError: (error: any) => {
-        const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
-        toast.error(message);
+      onError: () => {
         form.setError('password', {
           type: 'manual',
           message: 'Invalid credentials. Please try again.',

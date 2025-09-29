@@ -69,7 +69,7 @@ const propertyOwnerNavigation = [
 const onboardingNavigation = [{ name: 'Get Started', href: '/getting-started', icon: Home }];
 
 const bottomNavigation = [
-  { name: 'Help', href: '/help', icon: HelpCircle },
+  { name: 'Help', href: '/contact', icon: HelpCircle },
   { name: 'Logout', href: '/logout', icon: LogOut },
 ];
 
