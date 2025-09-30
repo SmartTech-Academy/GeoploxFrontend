@@ -34,20 +34,19 @@ import { useGetProfileData } from '@/lib/services/profile';
 import { queryClient } from '@/lib/queryClient';
 
 // Account types
-type AccountType = 'developer' | 'agent' | 'client' | 'property-owner' | 'owner';
+type AccountType = 'developer' | 'agent' | 'client' | 'owner';
 
 // Step definitions for each account type
 const STEP_FLOWS = {
   developer: ['account-type', 'personal-info', 'business-info', 'kyc-documents', 'complete'],
   agent: ['account-type', 'personal-info', 'subscription', 'complete'],
   client: ['account-type', 'personal-info', 'subscription', 'complete'],
-  'property-owner': ['account-type', 'personal-info', 'kyc-documents', 'complete'],
   owner: ['account-type', 'personal-info', 'kyc-documents', 'complete'], // Added for 'owner' role
 };
 
 // Step schemas
 const step1Schema = z.object({
-  accountType: z.enum(['developer', 'agent', 'client', 'property-owner'], {
+  accountType: z.enum(['developer', 'agent', 'client', 'owner'], {
     error: 'Please select an account type',
   }),
 });
@@ -138,6 +137,7 @@ const GettingStarted = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [accountType, setAccountType] = useState<AccountType | undefined>();
+  const [minStep, setMinStep] = useState(0); // This will be our "floor"
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { mutateAsync: setAccountTypeMutate } = useSetAccountType();
@@ -175,6 +175,11 @@ const GettingStarted = () => {
       const stepIndex = getStepIndexFromStatus(profileData.onboarding_status, flow);
 
       if (stepIndex !== -1) {
+        // If the user has progressed past the account type selection,
+        // the minimum step they can go back to is the next one (index 1).
+        if (stepIndex > 0) {
+          setMinStep(1);
+        }
         setCurrentStep(stepIndex);
       }
     }
@@ -183,11 +188,7 @@ const GettingStarted = () => {
   // Get current step flow based on account type
   const getStepFlow = () => {
     if (!accountType) return ['account-type'];
-    // Map 'owner' to 'property-owner' if needed, or handle directly
-    const flowKey = accountType === 'owner' ? 'property-owner' : accountType;
-    if (flowKey in STEP_FLOWS) {
-      return STEP_FLOWS[flowKey as keyof typeof STEP_FLOWS];
-    }
+    if (accountType in STEP_FLOWS) return STEP_FLOWS[accountType];
     return ['account-type']; // Fallback for any other roles
   };
 
@@ -305,7 +306,8 @@ const GettingStarted = () => {
   };
 
   const goToPreviousStep = () => {
-    if (currentStep > 0) {
+    if (currentStep > minStep) {
+      // Use minStep to prevent going back to step 0
       setCurrentStep(currentStep - 1);
     }
   };
@@ -506,10 +508,10 @@ const GettingStarted = () => {
                       type="button"
                       variant="outline"
                       onClick={goToPreviousStep}
-                      disabled={currentStep === 0}
+                      disabled={currentStep <= minStep} // Disable if at the minimum allowed step
                       className={cn(
                         'h-12 flex-1 rounded-full border-[#E3E3E8] bg-transparent',
-                        currentStep === 0 && 'hidden'
+                        currentStep <= minStep && 'hidden' // Hide if at the minimum allowed step
                       )}
                     >
                       Back

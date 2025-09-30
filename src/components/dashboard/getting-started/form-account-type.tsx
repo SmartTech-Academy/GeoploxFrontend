@@ -28,7 +28,7 @@ const FormAccountType: React.FC<AccountTypeProps> = ({ form }) => {
                 <div
                   className={cn(
                     'flex items-center justify-between gap-3 self-stretch rounded-[5px] border p-6 transition-colors hover:border-[#D4AF36]',
-                    form.getValues().accountType === 'property-owner'
+                    form.getValues().accountType === 'owner'
                       ? 'border-[#D4AF36] drop-shadow-[0_0_5px_rgba(212,175,54,0.6)]'
                       : 'border-[#F1F1F4]'
                   )}
@@ -41,7 +41,7 @@ const FormAccountType: React.FC<AccountTypeProps> = ({ form }) => {
 
                       <div className="flex flex-col gap-2">
                         <label
-                          htmlFor="property-owner"
+                          htmlFor="owner"
                           className="cursor-pointer text-[16px] leading-[19px] font-semibold text-[#41415A]"
                         >
                           Property Owner
@@ -53,7 +53,7 @@ const FormAccountType: React.FC<AccountTypeProps> = ({ form }) => {
                     </div>
                   </div>
 
-                  <RadioGroupItem value="property-owner" id="property-owner" />
+                  <RadioGroupItem value="owner" id="owner" />
                 </div>
 
                 <div
