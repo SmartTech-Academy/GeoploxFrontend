@@ -14,6 +14,8 @@ export const useGetProfileData = () => {
   return useQuery({
     queryKey: ["profile"],
     queryFn: async (): Promise<UserProfile> => {
+
+
       const response: AxiosResponse<ProfileResponse> = await api.get(
         "/dashboard/profile-datas"
       );

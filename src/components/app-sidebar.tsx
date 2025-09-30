@@ -13,60 +13,11 @@ import {
 } from '@/components/ui/sidebar';
 
 import { Link, useLocation } from '@tanstack/react-router';
-import {
-  LayoutDashboard,
-  Home,
-  BarChart3,
-  MessageSquare,
-  Settings,
-  HelpCircle,
-  LogOut,
-  Newspaper,
-  CandlestickChart,
-  CircleCheck,
-  Users,
-  Users2,
-  ChartCandlestick,
-} from 'lucide-react';
-
+import { HelpCircle, LogOut } from 'lucide-react';
 import { useGetProfileData } from '@/lib/services/profile';
-import { useQueryClient } from '@tanstack/react-query';
 import { Skeleton } from './ui/skeleton';
-
-const adminNavigation = [
-  { name: 'Listing', href: '/listing', icon: Home },
-  { name: 'Pending Approvals', href: '/pending-approvals', icon: CircleCheck },
-  { name: 'Users', href: '/users', icon: Users },
-  { name: 'Managers', href: '/managers', icon: Users2 },
-  { name: 'Admin Insights', href: '/admin-insights', icon: ChartCandlestick },
-];
-
-const contentManagerNavigation = [
-  { name: 'Blogs', href: '/blogs', icon: Newspaper },
-  { name: 'Insights', href: '/insights', icon: CandlestickChart },
-];
-
-const accountOfficerNavigation = [
-  { name: 'Listing', href: '/listing', icon: Home },
-  { name: 'Pending Approvals', href: '/pending-approvals', icon: CircleCheck },
-  { name: 'Messages', href: '/messages', icon: MessageSquare },
-  { name: 'Users', href: '/users', icon: Users },
-];
-
-const agentClientNavigation = [
-  { name: 'Listing', href: '/listing', icon: Home },
-  { name: 'Messages', href: '/messages', icon: MessageSquare },
-  { name: 'Settings', href: '/settings', icon: Settings },
-];
-const propertyOwnerNavigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Properties', href: '/properties', icon: Home },
-  { name: 'Performance', href: '/performance', icon: BarChart3 },
-  { name: 'Messages', href: '/messages', icon: MessageSquare },
-  { name: 'Settings', href: '/settings', icon: Settings },
-];
-
-const onboardingNavigation = [{ name: 'Get Started', href: '/getting-started', icon: Home }];
+import { getPrimaryNavigation } from '@/lib/navigation';
+import { queryClient } from '@/lib/queryClient';
 
 const bottomNavigation = [
   { name: 'Help', href: '/contact', icon: HelpCircle },
@@ -75,35 +26,9 @@ const bottomNavigation = [
 
 export function AppSidebar() {
   const pathname = useLocation().pathname;
-  const { data: user, isLoading } = useGetProfileData();
-  const queryClient = useQueryClient();
+  const { data: user, isPending: isLoading } = useGetProfileData();
 
-  const getNavigation = () => {
-    if (isLoading || !user) {
-      return [];
-    }
-    if (user.onboarding_status !== 'active' && user.onboarding_status !== 'newly_registered') {
-      return onboardingNavigation;
-    }
-    switch (user.user_role) {
-      case 'admin':
-        return adminNavigation;
-      case 'developer':
-      case 'owner':
-        return propertyOwnerNavigation;
-      case 'account_officer':
-        return accountOfficerNavigation;
-      case 'content_manager':
-        return contentManagerNavigation;
-      case 'agent':
-      case 'client':
-        return agentClientNavigation;
-      default:
-        return [];
-    }
-  };
-
-  const mainNavigation = getNavigation();
+  const mainNavigation = getPrimaryNavigation(user);
 
   const handleLogout = () => {
     localStorage.removeItem('token');

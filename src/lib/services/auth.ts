@@ -11,12 +11,11 @@ export const useLogin = () => {
     onSuccess: (data) => {
       const responseData = data.data?.data;
       const token = responseData?.access_token;
-      const user = responseData?.user_data;
+ queryClient.invalidateQueries(); // Invalidate all queries to force a refetch
       if (token) {
         localStorage.setItem('token', token);
       }
-      if (user) localStorage.setItem('user', JSON.stringify(user));
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+
     },
   });
 };

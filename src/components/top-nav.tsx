@@ -14,8 +14,8 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { useGetProfileData } from '@/lib/services/profile';
-import { useQueryClient } from '@tanstack/react-query';
 import { NotificationPopover } from '@/components/notification-popover';
+import { queryClient } from '@/lib/queryClient';
 
 // Route title mapping for dashboard pages
 const routeTitleMap: Record<string, string> = {
@@ -58,7 +58,7 @@ interface TopNavProps {
 export function TopNav({ setUseMaxWith }: TopNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+
   const pageTitle = getPageTitle(location.pathname);
   const { data: user } = useGetProfileData();
 

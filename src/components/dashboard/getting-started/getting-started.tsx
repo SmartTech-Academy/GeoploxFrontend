@@ -34,7 +34,7 @@ import { useGetProfileData } from '@/lib/services/profile';
 import { queryClient } from '@/lib/queryClient';
 
 // Account types
-type AccountType = 'developer' | 'agent' | 'client' | 'property-owner';
+type AccountType = 'developer' | 'agent' | 'client' | 'property-owner' | 'owner';
 
 // Step definitions for each account type
 const STEP_FLOWS = {
@@ -42,6 +42,7 @@ const STEP_FLOWS = {
   agent: ['account-type', 'personal-info', 'subscription', 'complete'],
   client: ['account-type', 'personal-info', 'subscription', 'complete'],
   'property-owner': ['account-type', 'personal-info', 'kyc-documents', 'complete'],
+  owner: ['account-type', 'personal-info', 'kyc-documents', 'complete'], // Added for 'owner' role
 };
 
 // Step schemas
@@ -182,7 +183,12 @@ const GettingStarted = () => {
   // Get current step flow based on account type
   const getStepFlow = () => {
     if (!accountType) return ['account-type'];
-    return STEP_FLOWS[accountType];
+    // Map 'owner' to 'property-owner' if needed, or handle directly
+    const flowKey = accountType === 'owner' ? 'property-owner' : accountType;
+    if (flowKey in STEP_FLOWS) {
+      return STEP_FLOWS[flowKey as keyof typeof STEP_FLOWS];
+    }
+    return ['account-type']; // Fallback for any other roles
   };
 
   const stepFlow = getStepFlow();
