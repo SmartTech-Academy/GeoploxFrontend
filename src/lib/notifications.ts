@@ -21,7 +21,6 @@ export interface Notification {
   sender: NotificationSender | null;
   read_at: string | null;
   created_at: string;
-
 }
 
 export interface NotificationsResponse {

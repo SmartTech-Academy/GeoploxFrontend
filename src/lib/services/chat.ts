@@ -1,7 +1,6 @@
-
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
-import api from "../api";
-import { queryClient } from "../queryClient";
+import api from '../api';
+import { queryClient } from '../queryClient';
 
 export const useGetConversations = (params: { per_page?: number; [key: string]: any }) => {
   return useInfiniteQuery({
@@ -24,9 +23,9 @@ export const useGetConversations = (params: { per_page?: number; [key: string]: 
 
 export const useCreateConversation = () => {
   return useMutation({
-    mutationFn: (data: any) => api.post("/chat/conversations", data),
+    mutationFn: (data: any) => api.post('/chat/conversations', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
 };
@@ -35,7 +34,7 @@ export const useDeleteConversation = () => {
   return useMutation({
     mutationFn: (id: string) => api.delete(`/dashboard/chat/conversations/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
 };
@@ -44,7 +43,7 @@ export const useMarkConversationAsRead = () => {
   return useMutation({
     mutationFn: (id: string) => api.post(`/dashboard/chat/conversations/${id}/read`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
 };
@@ -58,7 +57,7 @@ export const useReportConversation = () => {
 
 export const useSearchConversations = (query: string) => {
   return useQuery({
-    queryKey: ["conversations-search", query],
+    queryKey: ['conversations-search', query],
     queryFn: () => api.get(`/dashboard/chat/conversations/search?q=${query}`),
     enabled: !!query,
   });
@@ -86,10 +85,9 @@ export const useGetMessages = (conversationId: string | number | null, params: {
 
 export const useSendMessage = (conversationId: string) => {
   return useMutation({
-    mutationFn: (data: any) =>
-      api.post(`/dashboard/chat/conversations/${conversationId}/messages`, data),
+    mutationFn: (data: any) => api.post(`/dashboard/chat/conversations/${conversationId}/messages`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
+      queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
     },
   });
 };

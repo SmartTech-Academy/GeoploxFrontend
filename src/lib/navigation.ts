@@ -21,11 +21,13 @@ export interface NavigationItem {
   icon: LucideIcon;
 }
 
-export const adminNavigation: NavigationItem[] = [{ name: 'Listing', href: '/listing', icon: Home },
+export const adminNavigation: NavigationItem[] = [
+  { name: 'Listing', href: '/listing', icon: Home },
   { name: 'Pending Approvals', href: '/pending-approvals', icon: CircleCheck },
   { name: 'Users', href: '/users', icon: Users },
   { name: 'Managers', href: '/managers', icon: Users2 },
-  { name: 'Admin Insights', href: '/admin-insights', icon: ChartCandlestick },];
+  { name: 'Admin Insights', href: '/admin-insights', icon: ChartCandlestick },
+];
 export const contentManagerNavigation: NavigationItem[] = [
   { name: 'Blogs', href: '/blogs', icon: Newspaper },
   { name: 'Insights', href: '/insights', icon: CandlestickChart },
@@ -36,12 +38,12 @@ export const accountOfficerNavigation: NavigationItem[] = [
   { name: 'Messages', href: '/messages', icon: MessageSquare },
   { name: 'Users', href: '/users', icon: Users },
 ];
-export const  agentClientNavigation: NavigationItem[] = [
+export const agentClientNavigation: NavigationItem[] = [
   { name: 'Listing', href: '/listing', icon: Home },
   { name: 'Messages', href: '/messages', icon: MessageSquare },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
-export const  propertyOwnerNavigation: NavigationItem[] = [
+export const propertyOwnerNavigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Properties', href: '/properties', icon: Home },
   { name: 'Performance', href: '/performance', icon: BarChart3 },
