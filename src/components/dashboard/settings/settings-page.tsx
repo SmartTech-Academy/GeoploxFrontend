@@ -62,18 +62,22 @@ const SettingsPage = () => {
           isActive={activeTab === 'personal' || !activeTab}
           onClick={() => handleTabChange('personal')}
         />
-        <SidebarItem
-          id="business"
-          label="Business Information"
-          isActive={activeTab === 'business'}
-          onClick={() => handleTabChange('business')}
-        />
-        <SidebarItem
-          id="subscriptions"
-          label="Subscriptions"
-          isActive={activeTab === 'subscriptions'}
-          onClick={() => handleTabChange('subscriptions')}
-        />
+        {user?.user_role === 'developer' && (
+          <SidebarItem
+            id="business"
+            label="Business Information"
+            isActive={activeTab === 'business'}
+            onClick={() => handleTabChange('business')}
+          />
+        )}
+        {(user?.user_role === 'agent' || user?.user_role === 'client') && (
+          <SidebarItem
+            id="subscriptions"
+            label="Subscriptions"
+            isActive={activeTab === 'subscriptions'}
+            onClick={() => handleTabChange('subscriptions')}
+          />
+        )}
         <SidebarItem
           id="security"
           label="Security & Notifications"

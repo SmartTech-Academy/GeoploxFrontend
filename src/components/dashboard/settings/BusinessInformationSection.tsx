@@ -7,11 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
-import z from 'zod/v4';
-import { Phone, Upload } from 'lucide-react';
+import z from 'zod';
+import { Phone, Upload, XIcon } from 'lucide-react';
 import assets from '@/assets';
 import React, { useRef, useState } from 'react';
 import { UserProfile } from '@/lib/types';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
+import { useSetBusinessInformation } from '@/lib/services/onboarding';
 
 const step3BusinessSchema = z.object({
   businessLogo: z.any().optional(),
@@ -31,7 +34,10 @@ interface BusinessInformationSectionProps {
 }
 
 const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({ user }) => {
+  const { mutateAsync: setBusinessInfoMutate } = useSetBusinessInformation();
   const [logoPreview, setLogoPreview] = useState<string | null>(user?.business?.logo_url || null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isCropDialogOpen, setCropDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm({
@@ -51,29 +57,45 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
     },
   });
 
-  function onSubmit(values: z.infer<typeof step3BusinessSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof step3BusinessSchema>) {
+    await setBusinessInfoMutate({
+      business_name: values.businessName,
+      business_email: values.businessEmail,
+      business_phone: values.businessPhone,
+      business_whatsapp: values.businessWhatsapp,
+      website: values.website,
+      business_ig: values.instagram,
+      business_address: values.businessAddress,
+      state: values.businessState,
+      local_gov_area: values.businessLocalGovernment,
+      base64_file: values.businessLogo,
+    });
   }
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      form.setValue('businessLogo', file);
-
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setLogoPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      setSelectedFile(file);
+      setCropDialogOpen(true);
     }
   };
 
   const handleLogoClick = () => {
     fileInputRef.current?.click();
   };
+
+  const handleCrop = (croppedImage: string) => {
+    setLogoPreview(croppedImage);
+    form.setValue('businessLogo', croppedImage);
+    setCropDialogOpen(false);
+    setSelectedFile(null);
+  };
+
+  const handleDialogClose = () => {
+    setCropDialogOpen(false);
+    setSelectedFile(null);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
@@ -115,6 +137,33 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
               </div>
             </div>
           </div>
+
+          {selectedFile && (
+            <Dialog open={isCropDialogOpen} onOpenChange={handleDialogClose}>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Crop Your Business Logo</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <ImageCrop
+                    aspect={1}
+                    file={selectedFile}
+                    maxImageSize={1024 * 1024} // 1MB
+                    onCrop={handleCrop}
+                  >
+                    <ImageCropContent className="max-w-md" />
+                    <div className="flex items-center justify-center gap-2 pt-4">
+                      <ImageCropApply />
+                      <ImageCropReset />
+                      <Button onClick={handleDialogClose} size="icon" type="button" variant="ghost">
+                        <XIcon className="size-4" />
+                      </Button>
+                    </div>
+                  </ImageCrop>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
 
           <div className="flex w-full flex-col gap-5">
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
