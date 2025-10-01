@@ -1,21 +1,20 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { queryClient } from './queryClient';
 
 const BASE_URL = 'https://geoplox.ribiax.com/api/v1';
- const publicPages = [
-      '/buy',
-      '/rent',
-      '/sell',
-      '/blog',
-      '/pricing',
-      '/login',
-      '/register',
-      '/forgot-password',
-      '/reset-password',
-      '/verify-email',
-      '/about',
-      '/contact-us',
-    ];
+const publicPages = [
+  '/buy',
+  '/rent',
+  '/sell',
+  '/blog',
+  '/pricing',
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+  '/verify-email',
+  '/about',
+  '/contact-us',
+];
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -44,10 +43,8 @@ const onResponseError = (error: AxiosError): Promise<AxiosError | Error> => {
   if (error.response) {
     const { status } = error.response;
 
-
     if (status === 401) {
       localStorage.removeItem('token');
-      queryClient.clear();
       const isPublicPage = publicPages.includes(window.location.pathname);
       const isHomePage = window.location.pathname === '/';
 
