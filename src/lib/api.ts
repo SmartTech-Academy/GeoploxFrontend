@@ -2,6 +2,20 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { queryClient } from './queryClient';
 
 const BASE_URL = 'https://geoplox.ribiax.com/api/v1';
+ const publicPages = [
+      '/buy',
+      '/rent',
+      '/sell',
+      '/blog',
+      '/pricing',
+      '/login',
+      '/register',
+      '/forgot-password',
+      '/reset-password',
+      '/verify-email',
+      '/about',
+      '/contact-us',
+    ];
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -30,14 +44,18 @@ const onResponseError = (error: AxiosError): Promise<AxiosError | Error> => {
   if (error.response) {
     const { status } = error.response;
 
+
     if (status === 401) {
-      // Handle Unauthorized: clear local storage and redirect to login
       localStorage.removeItem('token');
-      queryClient.clear(); // Clear all query cache
-      // Redirect to login page. The check prevents loops if already on the login page.
-      if (window.location.pathname !== '/login') {
+      queryClient.clear();
+      const isPublicPage = publicPages.includes(window.location.pathname);
+      const isHomePage = window.location.pathname === '/';
+
+      // Redirect only if it's NOT a public page AND NOT the home page
+      if (!isPublicPage && !isHomePage) {
         window.location.href = '/login';
       }
+
       return Promise.reject(new Error('Your session has expired. Please log in again.'));
     }
 

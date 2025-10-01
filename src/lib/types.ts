@@ -23,6 +23,19 @@ export interface UserProfile {
   email_verified: boolean;
   email_verification_date: string;
   entity_creation_date: string;
+  plan: {
+    subscription_id: 4;
+    active: true;
+    starts_at: string;
+    expires_at: string;
+    plan: {
+      id: string
+      name: 'Basic';
+      monthly_price: 0;
+      monthly_price_display: string;
+      features: string[];
+    };
+  };
 }
 
 export interface Business {

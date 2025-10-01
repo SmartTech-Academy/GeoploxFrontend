@@ -32,6 +32,7 @@ import {
 import { toast } from 'sonner';
 import { useGetProfileData } from '@/lib/services/profile';
 import { queryClient } from '@/lib/queryClient';
+import { getLoginRedirectPath } from '@/lib/navigation';
 
 // Account types
 type AccountType = 'developer' | 'agent' | 'client' | 'owner';
@@ -425,7 +426,7 @@ const GettingStarted = () => {
         },
       });
 
-      navigate({ to: '/dashboard' });
+      navigate({ to: getLoginRedirectPath(profileData) });
     } catch (error: any) {
       const message = error.response?.data?.message || 'Failed to complete onboarding.';
       const toastId = toast.error('Failed to complete onboarding.', {
