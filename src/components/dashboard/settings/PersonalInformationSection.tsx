@@ -5,15 +5,18 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Phone, Upload } from 'lucide-react';
+import { Phone, Upload, XIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import z from 'zod/v4';
+import z from 'zod';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import React, { useRef, useState } from 'react';
 import { useSetPersonalInformation } from '@/lib/services/onboarding';
 import { UserProfile } from '@/lib/types';
 import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
+import { queryClient } from '@/lib/queryClient';
 
 const step2Schema = z.object({
   profilePicture: z.any().optional(),
@@ -35,8 +38,9 @@ interface PersonalInformationSectionProps {
 
 const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({ user }) => {
   const { mutateAsync, isPending } = useSetPersonalInformation();
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(user?.display_picture_url || null);
+  const [picturePreview, setPicturePreview] = useState<string | null>(user?.display_picture_url || null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isCropDialogOpen, setCropDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<PersonalInfoFormValues>({
@@ -58,15 +62,8 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setProfilePicture(file);
-      form.setValue('profilePicture', file);
-
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setLogoPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      setSelectedFile(file);
+      setCropDialogOpen(true);
     }
   };
 
@@ -74,28 +71,39 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
     fileInputRef.current?.click();
   };
 
-  const onSubmit = async (values: PersonalInfoFormValues) => {
-    const formData = new FormData();
-    formData.append('fname', values.firstName);
-    formData.append('lname', values.lastName);
-    formData.append('phone', values.phoneNumber);
-    formData.append('whatsapp', values.whatsappNumber);
-    formData.append('home_address', values.homeAddress);
-    formData.append('state', values.state);
-    formData.append('local_gov_area', values.localGovernment);
-    if (values.bio) formData.append('bio', values.bio);
-    if (profilePicture && values.profilePicture[0]) {
-      formData.append('doc_file', values.profilePicture[0]);
-    }
+  const handleCrop = (croppedImage: string) => {
+    setPicturePreview(croppedImage);
+    form.setValue('profilePicture', croppedImage);
+    setCropDialogOpen(false);
+    setSelectedFile(null);
+  };
 
+  const handleDialogClose = () => {
+    setCropDialogOpen(false);
+    setSelectedFile(null);
+  };
+
+  const onSubmit = async (values: PersonalInfoFormValues) => {
     try {
-      await mutateAsync(formData);
+      await mutateAsync({
+        fname: values.firstName,
+        lname: values.lastName,
+        phone: values.phoneNumber,
+        whatsapp: values.whatsappNumber,
+        home_address: values.homeAddress,
+        state: values.state,
+        local_gov_area: values.localGovernment,
+        bio: values.bio,
+        base64_file: values.profilePicture,
+      });
       toast.success('Personal information updated successfully!');
+      await queryClient.invalidateQueries({ queryKey: ['profile'] });
     } catch (error: any) {
       const message = error.response?.data?.message || 'An error occurred.';
       toast.error(message);
     }
   };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
@@ -112,9 +120,9 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                   onClick={handleLogoClick}
                   className="relative mx-auto flex size-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
                 >
-                  {logoPreview ? (
+                  {picturePreview ? (
                     <img
-                      src={logoPreview || '/placeholder.svg'}
+                      src={picturePreview || '/placeholder.svg'}
                       alt="Business Logo"
                       className="h-full w-full object-cover"
                     />
@@ -131,13 +139,39 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <p className="text-[14px] leading-[24px] text-[#1F2130]">Business Logo</p>
+                  <p className="text-[14px] leading-[24px] text-[#1F2130]">Profile Picture</p>
                   <p className="text-[14px] leading-[24px] text-[#71748C]">
                     Upload a profile picture. Only .JPG and .PNG supported.
                   </p>
                 </div>
               </div>
             </div>
+            {selectedFile && (
+              <Dialog open={isCropDialogOpen} onOpenChange={handleDialogClose}>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Crop Your Profile Picture</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <ImageCrop
+                      aspect={1}
+                      file={selectedFile}
+                      maxImageSize={1024 * 1024} // 1MB
+                      onCrop={handleCrop}
+                    >
+                      <ImageCropContent className="max-w-md" />
+                      <div className="flex items-center justify-center gap-2 pt-4">
+                        <ImageCropApply />
+                        <ImageCropReset />
+                        <Button onClick={handleDialogClose} size="icon" type="button" variant="ghost">
+                          <XIcon className="size-4" />
+                        </Button>
+                      </div>
+                    </ImageCrop>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <FormField

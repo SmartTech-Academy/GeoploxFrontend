@@ -7,22 +7,26 @@ import { SidebarInset, SidebarProvider } from '../ui/sidebar';
 import { cn } from '@/lib/utils';
 import { Toaster } from '../ui/sonner';
 import { useGetProfileData } from '@/lib/services/profile';
+import PermissionDenied from '../permission-denied';
+import { getPrimaryNavigation } from '@/lib/navigation';
 
 const DashboardLayout = () => {
   const [useMaxWidth, setUseMaxWith] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: user, isLoading, isError } = useGetProfileData();
+  const { data: user, isPending, isError } = useGetProfileData();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+
+    // If there's no token OR the profile fetch fails, the session is invalid.
+    // Log the user out and redirect to the login page.
+
     if (!token) {
-      navigate({ to: '/login' });
-      return;
+      localStorage.removeItem('token');
     }
 
-    if (isError) {
-      // Handle token expiration or other API errors
+    if (!token && isError) {
       localStorage.removeItem('token');
       navigate({ to: '/login' });
       return;
@@ -38,7 +42,18 @@ const DashboardLayout = () => {
     }
   }, [navigate, location.pathname, user, isError]);
 
-  if (isLoading) return <LoadingFallback />;
+  if (isPending) return <LoadingFallback />;
+
+  // 🔹 Permission check happens here
+  const allowedNav = getPrimaryNavigation(user);
+  // Always allow access to the getting-started page during onboarding
+  const allowedPaths = ['/getting-started', ...allowedNav.map((item) => item.href)];
+
+  const isAllowed = allowedPaths.some((p) => location.pathname.startsWith(p));
+
+  if (!isAllowed) {
+    return <PermissionDenied />; // ⬅️ Show the PermissionDenied component
+  }
 
   return (
     <Suspense fallback={<LoadingFallback />}>

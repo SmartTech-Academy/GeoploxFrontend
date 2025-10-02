@@ -1,4 +1,4 @@
-import { LogOut, RulerDimensionLine, Settings } from 'lucide-react';
+import { Home, LogOut, RulerDimensionLine, Settings, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -14,8 +14,8 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { useGetProfileData } from '@/lib/services/profile';
-import { useQueryClient } from '@tanstack/react-query';
 import { NotificationPopover } from '@/components/notification-popover';
+import { queryClient } from '@/lib/queryClient';
 
 // Route title mapping for dashboard pages
 const routeTitleMap: Record<string, string> = {
@@ -58,13 +58,35 @@ interface TopNavProps {
 export function TopNav({ setUseMaxWith }: TopNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+
   const pageTitle = getPageTitle(location.pathname);
   const { data: user } = useGetProfileData();
 
   const getInitials = (firstName?: string, lastName?: string) => {
     if (!firstName || !lastName) return '';
     return `${firstName[0]}${lastName[0]}`.toUpperCase();
+  };
+
+  const getOnboardingStatus = (status: string | undefined) => {
+    if (!status) return null;
+
+    switch (status) {
+      case 'active':
+        return null; // Don't show anything if active
+      case 'newly_registered':
+        return 'Account under review';
+      case 'inactive':
+        return 'Account suspended';
+      case 'onboarding_account_type':
+      case 'onboarding_personal_information':
+      case 'onboarding_business_information':
+      case 'onboarding_kyc_documents':
+      case 'onboarding_subscription_selection':
+      case 'onboarding_completion':
+        return 'Onboarding in progress';
+      default:
+        return 'Pending status';
+    }
   };
 
   const handleLogout = () => {
@@ -111,11 +133,30 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
                   <p className="text-sm leading-none font-medium">
                     {user?.firstname} {user?.lastname}
                   </p>
-                  <p className="text-muted-foreground text-xs leading-none">{user?.email_address}</p>
+                  <p className="text-muted-foreground truncate text-xs leading-none">{user?.email_address}</p>
+                  {getOnboardingStatus(user?.onboarding_status) && (
+                    <p className="text-warning-foreground text-xs leading-none font-semibold">
+                      {getOnboardingStatus(user?.onboarding_status)}
+                    </p>
+                  )}
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <Link to="/">
+                    <Home className="mr-2 h-4 w-4" />
+                    <span>Homepage</span>
+                  </Link>
+                </DropdownMenuItem>
+                {user?.plan && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" search={{ tab: 'subscriptions' }}>
+                      <Star className="mr-2 h-4 w-4" />
+                      <span>{user.plan.plan.name} Plan</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
                   <Link to="/settings">
                     <Settings className="mr-2 h-4 w-4" />

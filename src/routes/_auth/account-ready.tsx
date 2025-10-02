@@ -20,7 +20,7 @@ function RouteComponent() {
 
   const handleLoginToDashboard = () => {
     // In a real app, this would navigate to the dashboard
-    navigate({ to: '/dashboard' });
+    navigate({ to: '/getting-started' });
   };
 
   return (

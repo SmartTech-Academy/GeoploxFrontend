@@ -4,12 +4,15 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
-import { Phone, Upload } from 'lucide-react';
+import { Phone, Upload, XIcon } from 'lucide-react';
 import type React from 'react';
 import { useState, useRef } from 'react';
 
 import type { UseFormReturn } from 'react-hook-form';
 import assets from '@/assets';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
+import { Button } from '@/components/ui/button';
 
 interface AccountTypeProps {
   form: UseFormReturn<any>;
@@ -17,20 +20,23 @@ interface AccountTypeProps {
 
 const BusinessInfo: React.FC<AccountTypeProps> = ({ form }) => {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isCropDialogOpen, setCropDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64String = e.target?.result as string;
-        setLogoPreview(base64String);
-        form.setValue('businessLogo', base64String);
-      };
-      reader.readAsDataURL(file);
+      setSelectedFile(file);
+      setCropDialogOpen(true);
     }
+  };
+
+  const handleCrop = (croppedImage: string) => {
+    setLogoPreview(croppedImage);
+    form.setValue('businessLogo', croppedImage);
+    setCropDialogOpen(false);
+    setSelectedFile(null);
   };
 
   //   const handleLogoRemove = () => {
@@ -41,6 +47,11 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form }) => {
   //       fileInputRef.current.value = '';
   //     }
   //   };
+
+  const handleDialogClose = () => {
+    setCropDialogOpen(false);
+    setSelectedFile(null);
+  };
 
   const handleLogoClick = () => {
     fileInputRef.current?.click();
@@ -81,6 +92,33 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form }) => {
           </div>
         </div>
       </div>
+
+      {selectedFile && (
+        <Dialog open={isCropDialogOpen} onOpenChange={handleDialogClose}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Crop Your Business Logo</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <ImageCrop
+                aspect={1}
+                file={selectedFile}
+                maxImageSize={1024 * 1024} // 1MB
+                onCrop={handleCrop}
+              >
+                <ImageCropContent className="max-w-md" />
+                <div className="flex items-center justify-center gap-2 pt-4">
+                  <ImageCropApply />
+                  <ImageCropReset />
+                  <Button onClick={handleDialogClose} size="icon" type="button" variant="ghost">
+                    <XIcon className="size-4" />
+                  </Button>
+                </div>
+              </ImageCrop>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
       <div className="flex w-full flex-col gap-5">
         <div className="grid grid-cols-2 gap-5">

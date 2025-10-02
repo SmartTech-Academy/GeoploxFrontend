@@ -11,7 +11,9 @@ import assets from '@/assets';
 import { customResolver } from '@/lib/customZodResolver';
 import { useLogin } from '@/lib/services';
 import { PageMetaTags } from '@/components/page-meta-data';
+
 import { toast } from 'sonner';
+import { getLoginRedirectPath } from '@/lib/navigation';
 
 // Zod schema for login form
 const loginSchema = z.object({
@@ -42,9 +44,10 @@ function RouteComponent() {
 
   const onSubmit = (values: LoginFormValues) => {
     mutate(values, {
-      onSuccess: () => {
+      onSuccess: (response) => {
         toast.success('Login successful!');
-        navigate({ to: '/dashboard' });
+        const user = response.data?.data?.user_data;
+        navigate({ to: getLoginRedirectPath(user) });
       },
       onError: () => {
         form.setError('password', {

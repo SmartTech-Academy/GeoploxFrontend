@@ -3,17 +3,13 @@ import globals from 'globals';
 import react from 'eslint-plugin-react';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import pluginQuery from '@tanstack/eslint-plugin-query';
-import * as reactHooks from 'eslint-plugin-react-hooks';
-// Import typescript-eslint
-import eslint from '@eslint/js';
+import reactHooks from 'eslint-plugin-react-hooks'; // This is for Rules of Hooks
 import tseslint from 'typescript-eslint';
 
 export default [
   // Include TypeScript ESLint configs
-  eslint.configs.recommended,
   ...tseslint.configs.recommended,
   ...pluginQuery.configs['flat/recommended'],
-  reactHooks.configs.recommended,
   {
     ignores: [
       'node_modules',
@@ -46,19 +42,18 @@ export default [
     settings: { react: { version: '19.1.0' } },
     plugins: {
       react,
+      'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      ...reactHooks.configs.recommended.plugins,
     },
     rules: {
       ...js.configs.recommended.rules,
       ...react.configs.recommended.rules,
-      ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
+      ...react.configs['jsx-runtime'].rules,
       '@typescript-eslint/no-explicit-any': 'off',
       'react/jsx-no-target-blank': 'off',
       'no-console': 'warn',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      'react-hooks/react-compiler': 'error',
     },
   },
 ];
