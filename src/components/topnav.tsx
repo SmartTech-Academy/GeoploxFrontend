@@ -17,6 +17,7 @@ import {
 } from './ui/dropdown-menu';
 import { queryClient } from '@/lib/queryClient';
 import { NotificationPopover } from './notification-popover';
+import { getLoginRedirectPath } from '@/lib/navigation';
 
 const Topnav = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -124,7 +125,7 @@ const Topnav = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <DropdownMenuItem asChild>
-                    <Link to="/dashboard">
+                    <Link to={getLoginRedirectPath(user)}>
                       <Home className="mr-2 h-4 w-4" />
                       <span>Dashboard</span>
                     </Link>
@@ -221,7 +222,7 @@ const Topnav = () => {
                     </div>
                     <div className="mt-4 flex flex-col gap-2">
                       <Button asChild variant="ghost" className="justify-start">
-                        <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                        <Link to={getLoginRedirectPath(user)} onClick={() => setIsOpen(false)}>
                           <Home className="mr-2 h-4 w-4" />
                           Dashboard
                         </Link>

@@ -84,6 +84,7 @@ export const getPrimaryNavigation = (user: UserProfile | null | undefined) => {
 
 export const getLoginRedirectPath = (user: UserProfile | null | undefined): string => {
   const navigation = getPrimaryNavigation(user);
+
   // Default to '/dashboard' if no specific navigation is found
   return navigation[0]?.href || '/dashboard';
 };
