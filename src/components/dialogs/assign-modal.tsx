@@ -16,6 +16,7 @@ import { ChevronDown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface AssignModalProps {
   onOpenChange: Dispatch<SetStateAction<boolean>>;
@@ -58,7 +59,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange }) => {
   ];
 
   function onSubmit(values: z.infer<typeof assignSchema>) {
-    console.log(values);
+    toast.success(values.assignType);
     onOpenChange(false);
   }
 
@@ -72,7 +73,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange }) => {
   };
 
   const getSelectedRegionsText = () => {
-    const selectedRegions = form.watch('selectedRegions');
+    const selectedRegions = form.getValues('selectedRegions');
     if (selectedRegions.length === 0) return 'Select regions';
     if (selectedRegions.length === 1) {
       const region = regions.find((r) => r.value === selectedRegions[0]);
@@ -187,7 +188,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange }) => {
                         <PopoverContent className="w-96 p-0" align="start">
                           <div className="flex w-full flex-col gap-4 p-4">
                             {regions.map((region) => {
-                              const isChecked = form.watch('selectedRegions').includes(region.value);
+                              const isChecked = form.getValues('selectedRegions').includes(region.value);
                               return (
                                 <div key={region.value} className="flex items-center space-x-3">
                                   <Checkbox

@@ -61,12 +61,13 @@ export const getPrimaryNavigation = (user: UserProfile | null | undefined) => {
   if (!user) {
     return [];
   }
+  if(user.user_role === 'admin'){
+    return adminNavigation
+  }
   if (user.onboarding_status !== 'active' && user.onboarding_status !== 'newly_registered') {
     return onboardingNavigation;
   }
   switch (user.user_role) {
-    case 'admin':
-      return adminNavigation;
     case 'developer':
     case 'owner':
       return propertyOwnerNavigation;

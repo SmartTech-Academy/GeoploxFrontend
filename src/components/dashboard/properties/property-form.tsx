@@ -7,9 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import { Upload, RotateCcw, Trash, X, Slash } from 'lucide-react';
+import { Upload, RotateCcw, Trash, X, Slash, Loader2 } from 'lucide-react';
 import type React from 'react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { z } from 'zod/v4';
 import {
   Breadcrumb,
@@ -23,10 +23,19 @@ import {
 import { useForm } from 'react-hook-form';
 import { customResolver } from '@/lib/customZodResolver';
 import { Link, useRouter } from '@tanstack/react-router';
+import {
+  useCreateProperty,
+  useUpdateProperty,
+  useUploadPropertyImage,
+  useUploadPropertyDocument,
+  useUploadProofOfAddress,
+} from '@/lib/services/properties';
+import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 
 // Zod Schema
 const PropertyFormSchema = z.object({
+  id: z.string().optional(),
   listingTitle: z.string().min(1, 'Listing title is required'),
   listingType: z.enum(['For Sale', 'Rent', 'Short Let'], {
     error: 'Please select a listing type',
@@ -45,9 +54,10 @@ const PropertyFormSchema = z.object({
   totalArea: z.string().min(1, 'Total area is required'),
   propertyPrice: z.string().min(1, 'Property price is required'),
   currency: z.string().min(1, 'Currency is required'),
-  propertyImages: z.array(z.instanceof(File)).min(1, 'At least one property image is required'),
+  propertyImages: z.array(z.string()).min(1, 'At least one property image is required'),
   documentType: z.string().optional(),
-  propertyDocument: z.instanceof(File).optional(),
+  propertyDocument: z.string().optional(),
+  proofOfAddress: z.string().optional(),
   nearbyAmenities: z.array(z.string()).default([]),
 });
 
@@ -56,6 +66,18 @@ export type PropertyFormValues = z.infer<typeof PropertyFormSchema>;
 interface PropertyFormProps {
   isEdit?: boolean;
   initialData?: Partial<PropertyFormValues>;
+}
+
+interface FileState {
+  file: File;
+  preview: string;
+  status: 'idle' | 'uploading' | 'success' | 'error';
+  url?: string;
+  error?: string;
+}
+
+interface DocumentState extends FileState {
+  type?: string;
 }
 
 const propertyTypes = [
@@ -128,18 +150,28 @@ const amenities = [
 
 const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData }) => {
   const router = useRouter();
-  const [propertyImages, setPropertyImages] = useState<File[]>([]);
-  const [propertyDocument, setPropertyDocument] = useState<File | null>(null);
+  const [propertyImages, setPropertyImages] = useState<FileState[]>([]);
+  const [propertyDocument, setPropertyDocument] = useState<DocumentState | null>(null);
+  const [proofOfAddress, setProofOfAddress] = useState<DocumentState | null>(null);
   const [hoveredImage, setHoveredImage] = useState<number | null>(null);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
+  const proofOfAddressInputRef = useRef<HTMLInputElement>(null);
+
+  const { mutateAsync: createProperty, isPending: isCreating } = useCreateProperty();
+  const { mutateAsync: updateProperty, isPending: isUpdating } = useUpdateProperty(initialData?.id || '');
+  const { mutateAsync: uploadImage } = useUploadPropertyImage();
+  const { mutateAsync: uploadPropertyDoc } = useUploadPropertyDocument();
+  const { mutateAsync: uploadDocument } = useUploadProofOfAddress();
+  const isPending = isCreating || isUpdating;
 
   const form = useForm<PropertyFormValues>({
     resolver: customResolver(PropertyFormSchema),
     mode: 'onTouched',
     reValidateMode: 'onChange',
     defaultValues: {
+      ...initialData,
       nearbyAmenities: [], // 👈 prevents undefined
     },
   });
@@ -147,24 +179,112 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (files.length > 0) {
-      const newImages = [...propertyImages, ...files];
-      setPropertyImages(newImages);
-      form.setValue('propertyImages', newImages);
+      const newImageStates: FileState[] = files.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+        status: 'uploading',
+      }));
+
+      const currentImages = [...propertyImages, ...newImageStates];
+      setPropertyImages(currentImages);
+
+      newImageStates.forEach((imageState, index) => {
+        const formData = new FormData();
+        formData.append('property_images_data', imageState.file);
+        formData.append('image_number', String(propertyImages.length + index + 1));
+
+        uploadImage(formData)
+          .then((response) => {
+            setPropertyImages((prev) =>
+              prev.map((img) =>
+                img === imageState ? { ...img, status: 'success', url: response.data.data.image_url } : img
+              )
+            );
+          })
+          .catch(() => {
+            setPropertyImages((prev) =>
+              prev.map((img) => (img === imageState ? { ...img, status: 'error', error: 'Upload failed' } : img))
+            );
+            toast.error(`Failed to upload ${imageState.file.name}`);
+          });
+      });
     }
   };
 
   const handleDocumentUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setPropertyDocument(file);
-      form.setValue('propertyDocument', file);
+      const docState: DocumentState = {
+        file,
+        preview: URL.createObjectURL(file),
+        status: 'uploading',
+      };
+      setPropertyDocument(docState);
+
+      const formData = new FormData();
+      formData.append('property_document', file);
+
+      uploadPropertyDoc(formData)
+        .then((response) => {
+          setPropertyDocument((prev) =>
+            prev ? { ...prev, status: 'success', url: response.data.data.image_url } : null
+          );
+        })
+        .catch(() => {
+          setPropertyDocument((prev) => (prev ? { ...prev, status: 'error', error: 'Upload failed' } : null));
+          toast.error('Failed to upload document.');
+        });
     }
   };
+
+  const handleProofOfAddressUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const docState: DocumentState = {
+        file,
+        preview: URL.createObjectURL(file),
+        status: 'uploading',
+      };
+      setProofOfAddress(docState);
+
+      const formData = new FormData();
+      formData.append('prove_of_address_document', file);
+
+      uploadDocument(formData)
+        .then((response) => {
+          setProofOfAddress((prev) =>
+            prev ? { ...prev, status: 'success', url: response.data.data.image_url } : null
+          );
+        })
+        .catch(() => {
+          setProofOfAddress((prev) => (prev ? { ...prev, status: 'error', error: 'Upload failed' } : null));
+          toast.error('Failed to upload proof of address.');
+        });
+    }
+  };
+
+  useEffect(() => {
+    const uploadedImageUrls = propertyImages
+      .filter((img) => img.status === 'success' && img.url)
+      .map((img) => img.url!);
+    form.setValue('propertyImages', uploadedImageUrls);
+  }, [propertyImages, form]);
+
+  useEffect(() => {
+    if (propertyDocument?.status === 'success' && propertyDocument.url) {
+      form.setValue('propertyDocument', propertyDocument.url);
+    }
+  }, [propertyDocument, form]);
+
+  useEffect(() => {
+    if (proofOfAddress?.status === 'success' && proofOfAddress.url) {
+      form.setValue('proofOfAddress', proofOfAddress.url);
+    }
+  }, [proofOfAddress, form]);
 
   const handleImageRemove = (index: number) => {
     const newImages = propertyImages.filter((_, i) => i !== index);
     setPropertyImages(newImages);
-    form.setValue('propertyImages', newImages);
   };
   const handleImageReplace = (index: number) => {
     handleImageRemove(index);
@@ -173,18 +293,48 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
   const handleDocumentRemove = () => {
     setPropertyDocument(null);
-    form.setValue('propertyDocument', undefined);
     if (documentInputRef.current) {
       documentInputRef.current.value = '';
     }
   };
 
   const handleDocumentReplace = () => {
+    handleDocumentRemove();
     documentInputRef.current?.click();
   };
 
-  const onSubmit = (data: PropertyFormValues) => {
-    console.log(data);
+  const handleProofOfAddressRemove = () => {
+    setProofOfAddress(null);
+    if (proofOfAddressInputRef.current) {
+      proofOfAddressInputRef.current.value = '';
+    }
+  };
+
+  const onSubmit = async (data: PropertyFormValues) => {
+    const payload = {
+      ...data,
+      title: data.listingTitle,
+      category_slug: data.listingType.toLowerCase().replace(' ', '-'),
+      lga_or_city: data.localGovernment,
+      description: data.propertyDescription,
+      area_sqft: data.totalArea,
+      features: data.nearbyAmenities,
+      property_document: data.propertyDocument,
+      address: `${data.houseNumber} ${data.streetName}`,
+    };
+
+    try {
+      if (isEdit) {
+        await updateProperty(payload);
+        toast.success('Property updated successfully!');
+      } else {
+        await createProperty(payload);
+        toast.success('Property created successfully!');
+      }
+      router.navigate({ to: '/properties' });
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'An error occurred.');
+    }
   };
 
   return (
@@ -234,9 +384,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                   }}
                   type="submit"
-                  className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] px-8 py-4 text-[14px] font-semibold text-white sm:w-auto"
+                  className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] px-8 py-4 text-[14px] font-semibold text-white sm:w-auto"
                 >
-                  {isEdit ? 'Update' : 'Submit'}
+                  {isPending ? (isEdit ? 'Updating...' : 'Submitting...') : isEdit ? 'Update' : 'Submit'}
                 </Button>
               </div>
             </div>
@@ -600,19 +750,24 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       onMouseEnter={() => setHoveredImage(index)}
                       onMouseLeave={() => setHoveredImage(null)}
                     >
-                      <div className="h-[120px] w-full bg-transparent sm:h-[108px]">
-                        <img
-                          width={279}
-                          height={108}
-                          src={URL.createObjectURL(image)}
-                          alt={`Property ${index + 1}`}
-                          className="h-full w-full object-cover"
-                        />
+                      <div className="relative h-[120px] w-full bg-transparent sm:h-[108px]">
+                        <img src={image.preview} alt={`Property ${index + 1}`} className="h-full w-full object-cover" />
+                        {image.status === 'uploading' && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                            <Loader2 className="h-6 w-6 animate-spin text-white" />
+                          </div>
+                        )}
+                        {image.status === 'error' && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-500/70 text-white">
+                            <X className="h-6 w-6" />
+                            <span className="text-xs">Failed</span>
+                          </div>
+                        )}
                       </div>
 
                       <div
                         className={cn(
-                          'absolute inset-0 z-10 flex h-full w-full items-center justify-center rounded-[6px] bg-[oklch(0_0_0_/_20%)] backdrop-blur-[2px] transition-all duration-300',
+                          'absolute inset-0 z-10 flex h-full w-full items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
                           hoveredImage === index ? 'opacity-100' : 'pointer-events-none opacity-0'
                         )}
                       >
@@ -706,7 +861,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     Supports JPEG, or PNG files.
                   </label>
 
-                  {!propertyDocument ? (
+                  {propertyDocument?.status === 'uploading' ? (
+                    <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
+                      <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+                    </div>
+                  ) : !propertyDocument ? (
                     <Button
                       type="button"
                       variant="outline"
@@ -717,8 +876,13 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       Choose file
                     </Button>
                   ) : (
-                    <div className="flex items-center gap-3 rounded-lg border border-[#E3E3E8] p-3">
-                      <span className="flex-1 truncate text-sm text-[#1F2130]">{propertyDocument.name}</span>
+                    <div
+                      className={cn(
+                        'flex items-center gap-3 rounded-lg border p-3',
+                        propertyDocument.status === 'error' ? 'border-red-500' : 'border-[#E3E3E8]'
+                      )}
+                    >
+                      <span className="flex-1 truncate text-sm text-[#1F2130]">{propertyDocument.file.name}</span>
                       <div className="flex items-center gap-2">
                         <Button
                           type="button"
@@ -754,6 +918,71 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
             </div>
 
             <Separator className="h-px w-full bg-[#EEEEF1]" />
+
+            {/* Proof of Address */}
+            <div className="flex w-full flex-col gap-3">
+              <h3 className="text-[14px] leading-[17px] font-semibold tracking-[0.01em] text-[#41415A] capitalize">
+                Proof of Address
+              </h3>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  Upload a utility bill or other document as proof of address.
+                </label>
+
+                {proofOfAddress?.status === 'uploading' ? (
+                  <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
+                    <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+                  </div>
+                ) : !proofOfAddress ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-10 w-full px-4 sm:w-fit"
+                    onClick={() => proofOfAddressInputRef.current?.click()}
+                  >
+                    <Upload className="mr-2 size-4" />
+                    Choose file
+                  </Button>
+                ) : (
+                  <div
+                    className={cn(
+                      'flex items-center gap-3 rounded-lg border p-3',
+                      proofOfAddress.status === 'error' ? 'border-red-500' : 'border-[#E3E3E8]'
+                    )}
+                  >
+                    <span className="flex-1 truncate text-sm text-[#1F2130]">{proofOfAddress.file.name}</span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 w-6 p-0"
+                        onClick={() => proofOfAddressInputRef.current?.click()}
+                      >
+                        <RotateCcw className="size-3" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 w-6 p-0 text-red-600"
+                        onClick={handleProofOfAddressRemove}
+                      >
+                        <X className="size-3" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                <input
+                  ref={proofOfAddressInputRef}
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={handleProofOfAddressUpload}
+                  className="hidden"
+                />
+              </div>
+            </div>
 
             {/* Nearby Amenities */}
             <FormField

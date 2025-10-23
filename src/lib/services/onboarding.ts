@@ -28,6 +28,8 @@ export const useSetPersonalInformation = () => {
   });
 };
 
+
+
 export const useSetBusinessInformation = () => {
   return useMutation({
     mutationFn: (data: any) => {

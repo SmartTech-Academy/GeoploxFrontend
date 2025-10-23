@@ -39,9 +39,15 @@ const AuthLayout = () => {
 
   // Handle transition state for smooth animations
   useEffect(() => {
-    setIsTransitioning(true);
-    const timeout = setTimeout(() => setIsTransitioning(false), 100);
-    return () => clearTimeout(timeout);
+    const transitionTimeout = setTimeout(() => {
+      setIsTransitioning(true);
+    }, 0); // Schedule for the next tick
+    const animationTimeout = setTimeout(() => setIsTransitioning(false), 100);
+
+    return () => {
+      clearTimeout(transitionTimeout);
+      clearTimeout(animationTimeout);
+    };
   }, [activeIndex]);
 
   const handleManualSwitch = (index: number) => {

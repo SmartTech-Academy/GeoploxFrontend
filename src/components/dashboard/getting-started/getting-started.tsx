@@ -122,6 +122,8 @@ const getStepIndexFromStatus = (status: string, flow: string[]) => {
       return flow.indexOf('personal-info');
     case 'onboarding_business_information':
       return flow.indexOf('business-info');
+
+    case 'onboarding_business_information2':
     case 'onboarding_kyc_documents':
     case 'onboarding_kyc_document': // for property-owner
       return flow.indexOf('kyc-documents');
@@ -169,6 +171,12 @@ const GettingStarted = () => {
 
   useEffect(() => {
     if (profileData) {
+      if (profileData.onboarding_status === 'newly_registered') {
+        // Redirect immediately for newly registered users
+        navigate({ to: getLoginRedirectPath(profileData) });
+        return; // Exit the useEffect to prevent further processing
+      }
+
       const userAccountType = profileData.user_role as AccountType;
       setAccountType(userAccountType);
 
@@ -184,7 +192,7 @@ const GettingStarted = () => {
         setCurrentStep(stepIndex);
       }
     }
-  }, [profileData]);
+  }, [profileData, navigate]);
 
   // Get current step flow based on account type
   const getStepFlow = () => {
@@ -523,7 +531,7 @@ const GettingStarted = () => {
                         boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                       }}
                       type="submit"
-                      className="h-12 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] font-semibold text-white"
+                      className="h-12 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] font-semibold text-white"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? 'Saving...' : 'Continue'}
