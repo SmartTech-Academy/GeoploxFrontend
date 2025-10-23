@@ -14,7 +14,8 @@ import React, { useRef, useState } from 'react';
 import { UserProfile } from '@/lib/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
-import { useSetBusinessInformation } from '@/lib/services/onboarding';
+import { useUpdateBusinessInformation } from '@/lib/services/profile';
+import { toast } from 'sonner';
 
 const step3BusinessSchema = z.object({
   businessLogo: z.any().optional(),
@@ -34,7 +35,7 @@ interface BusinessInformationSectionProps {
 }
 
 const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({ user }) => {
-  const { mutateAsync: setBusinessInfoMutate } = useSetBusinessInformation();
+  const { mutateAsync: setBusinessInfoMutate, isPending } = useUpdateBusinessInformation();
   const [logoPreview, setLogoPreview] = useState<string | null>(user?.business?.logo_url || null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCropDialogOpen, setCropDialogOpen] = useState(false);
@@ -58,18 +59,23 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
   });
 
   async function onSubmit(values: z.infer<typeof step3BusinessSchema>) {
-    await setBusinessInfoMutate({
-      business_name: values.businessName,
-      business_email: values.businessEmail,
-      business_phone: values.businessPhone,
-      business_whatsapp: values.businessWhatsapp,
-      website: values.website,
-      business_ig: values.instagram,
-      business_address: values.businessAddress,
-      state: values.businessState,
-      local_gov_area: values.businessLocalGovernment,
-      base64_file: values.businessLogo,
-    });
+    try {
+      await setBusinessInfoMutate({
+        business_name: values.businessName,
+        business_email: values.businessEmail,
+        business_phone: values.businessPhone,
+        business_whatsapp: values.businessWhatsapp,
+        website: values.website,
+        business_ig: values.instagram,
+        business_address: values.businessAddress,
+        state: values.businessState,
+        local_gov_area: values.businessLocalGovernment,
+        base64_file: values.businessLogo,
+      });
+      toast.success('Business information updated successfully!');
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'An error occurred while updating business information.');
+    }
   }
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,6 +114,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
           <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
             <div className="mx-auto flex flex-col gap-6">
               <div
+                role="button"
                 onClick={handleLogoClick}
                 className="relative mx-auto flex size-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
               >
@@ -377,8 +384,9 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
             }}
             type="submit"
             className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] text-[14px] font-semibold text-white"
+            disabled={isPending}
           >
-            Save Changes
+            {isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </form>

@@ -1,22 +1,21 @@
-import { Form } from '@/components/ui/form';
-import { customResolver } from '@/lib/customZodResolver';
 import assets from '@/assets';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Phone, Upload, XIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import z from 'zod';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import React, { useRef, useState } from 'react';
-import { useSetPersonalInformation } from '@/lib/services/onboarding';
+import { customResolver } from '@/lib/customZodResolver';
+import { useUpdatePersonalInformation } from '@/lib/services/profile';
 import { UserProfile } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import { Phone, Upload, XIcon } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
-import { queryClient } from '@/lib/queryClient';
+import z from 'zod';
 
 const step2Schema = z.object({
   profilePicture: z.any().optional(),
@@ -37,7 +36,7 @@ interface PersonalInformationSectionProps {
 }
 
 const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({ user }) => {
-  const { mutateAsync, isPending } = useSetPersonalInformation();
+  const { mutateAsync: updatePersonalInfo, isPending } = useUpdatePersonalInformation();
   const [picturePreview, setPicturePreview] = useState<string | null>(user?.display_picture_url || null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCropDialogOpen, setCropDialogOpen] = useState(false);
@@ -59,7 +58,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
     },
   });
 
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
@@ -67,7 +66,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
     }
   };
 
-  const handleLogoClick = () => {
+  const handlePictureClick = () => {
     fileInputRef.current?.click();
   };
 
@@ -85,7 +84,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
 
   const onSubmit = async (values: PersonalInfoFormValues) => {
     try {
-      await mutateAsync({
+      await updatePersonalInfo({
         fname: values.firstName,
         lname: values.lastName,
         phone: values.phoneNumber,
@@ -97,7 +96,6 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
         base64_file: values.profilePicture,
       });
       toast.success('Personal information updated successfully!');
-      await queryClient.invalidateQueries({ queryKey: ['profile'] });
     } catch (error: any) {
       const message = error.response?.data?.message || 'An error occurred.';
       toast.error(message);
@@ -117,13 +115,14 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
             <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
               <div className="mx-auto flex flex-col gap-6">
                 <div
-                  onClick={handleLogoClick}
+                  role="button"
+                  onClick={handlePictureClick}
                   className="relative mx-auto flex size-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
                 >
                   {picturePreview ? (
                     <img
                       src={picturePreview || '/placeholder.svg'}
-                      alt="Business Logo"
+                      alt="Profile Preview"
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -133,7 +132,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                     ref={fileInputRef}
                     type="file"
                     accept=".jpg,.jpeg,.png"
-                    onChange={handleLogoUpload}
+                    onChange={handlePictureUpload}
                     className="sr-only"
                   />
                 </div>
@@ -358,7 +357,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
             type="submit"
-            className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] text-[14px] font-semibold text-white"
+            className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] text-[14px] font-semibold text-white"
             disabled={isPending}
           >
             {isPending ? 'Saving...' : 'Save Changes'}

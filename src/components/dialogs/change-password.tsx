@@ -1,11 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { customResolver } from '@/lib/customZodResolver';
 import z from 'zod/v4';
 import { useForm } from 'react-hook-form';
 import { Input } from '../ui/input';
+import { useChangePassword } from '@/lib/services/profile';
+import { toast } from 'sonner';
 
 interface PropertyProps {
   onOpenChange: Dispatch<SetStateAction<boolean>>;
@@ -13,30 +15,44 @@ interface PropertyProps {
 }
 
 const passwordSchema = z.object({
-  oldPassword: z.string().min(1, 'Old password is required'),
-  newPassword: z.string().min(6, 'New password must be at least 6 characters'),
+  current_password: z.string().min(1, 'Old password is required'),
+  new_password: z.string().min(6, 'New password must be at least 6 characters'),
 });
 
+type PasswordFormValues = z.infer<typeof passwordSchema>;
+
 const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
-  const form = useForm({
+  const { mutateAsync: changePassword, isPending } = useChangePassword();
+  const form = useForm<PasswordFormValues>({
     resolver: customResolver(passwordSchema),
-    defaultValues: {},
+    defaultValues: {
+      current_password: '',
+      new_password: '',
+    },
     mode: 'onTouched',
     reValidateMode: 'onChange',
   });
 
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showOldPassword, setShowOldPassword] = React.useState(false);
+  const [showNewPassword, setShowNewPassword] = React.useState(false);
 
-  function onSubmit(values: z.infer<typeof passwordSchema>) {
-    console.log(values);
+  async function onSubmit(values: PasswordFormValues) {
+    try {
+      await changePassword(values);
+      toast.success('Password changed successfully!');
+      onOpenChange(false);
+      form.reset();
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'An error occurred while changing your password.';
+      toast.error(message);
+    }
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-          <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-5">
             <DialogHeader>
               <DialogTitle>Change Password</DialogTitle>
             </DialogHeader>
@@ -45,7 +61,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
               {/* Old Password */}
               <FormField
                 control={form.control}
-                name="oldPassword"
+                name="current_password"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
@@ -75,7 +91,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
               {/* New Password */}
               <FormField
                 control={form.control}
-                name="newPassword"
+                name="new_password"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
@@ -106,6 +122,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
             <DialogFooter>
               <DialogClose asChild>
                 <Button
+                  type="button"
                   className="h-8 rounded-[32px] bg-[#F1F1F4] px-4 py-[15px] text-[12px] leading-[14px] font-semibold text-[#1F2130]"
                   variant="secondary"
                 >
@@ -119,14 +136,15 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
                   background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
                   boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                 }}
-                className="h-8 rounded-[32px] border border-[oklch(0.235_0_0_/_50%)] p-4 text-[12px] leading-[14px] font-semibold text-white"
+                disabled={isPending}
+                className="h-8 rounded-[32px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-[14px] font-semibold text-white"
               >
-                Save Changes
+                {isPending ? 'Saving...' : 'Save Changes'}
               </Button>
             </DialogFooter>
-          </DialogContent>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </DialogContent>
     </Dialog>
   );
 };

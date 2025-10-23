@@ -41,9 +41,17 @@ const onResponse = (response: any) => {
 
 const onResponseError = (error: AxiosError): Promise<AxiosError | Error> => {
   if (error.response) {
-    const { status } = error.response;
+    const { status, data } = error.response;
+    const errorMessage = (data as { message?: string })?.message;
 
     if (status === 401) {
+      if (
+        errorMessage ===
+        'Unauthorized: You do not have the authorization to perform this action, please wait until admin verifies and approve your account'
+      ) {
+        return Promise.reject(error);
+      }
+
       localStorage.removeItem('token');
       const isPublicPage = publicPages.includes(window.location.pathname);
       const isHomePage = window.location.pathname === '/';

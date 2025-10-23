@@ -1,67 +1,35 @@
 import { Button } from '@/components/ui/button';
 import { ChevronRight, HousePlus } from 'lucide-react';
-import { format } from 'date-fns';
-import assets from '@/assets';
+import { format, formatDistanceToNow, parseISO } from 'date-fns';
+
 import { Link } from '@tanstack/react-router';
 
 import { PageMetaTags } from '@/components/page-meta-data';
 import { ActiveListingsChart } from '@/components/charts/ActiveListingsChart';
 import { useGetProfileData } from '@/lib/services/profile';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useGetDashboardOverview } from '@/lib/services/dashboard';
 
-const OVERVIEW = [
-  {
-    title: 'Total Listings',
-    value: '45',
-  },
-  {
-    title: 'Active Listing',
-    value: '15',
-  },
-  {
-    title: 'Archived Listing',
-    value: '45',
-  },
-];
+interface RecentMessage {
+  conversation_id: number;
+  last_message: {
+    id: number;
+    body: string;
+    sender: {
+      id: number;
+      name: string;
+      avatar: string;
+    };
+    created_at: string;
+  };
+  is_unread: boolean;
+}
 
-const TOTALS = [
-  { title: 'Total Clicks', value: '2.04K' },
-  { title: 'Total Leads', value: '140' },
-  { title: 'Total Views', value: '5.15K' },
-  { title: 'Total Saves & shares', value: '565' },
-];
-
-const MESSAGES = [
-  {
-    image: assets.messaging1,
-    title: 'Daniel Hamilton',
-    message: 'Maybe next week',
-    time: '18:34',
-  },
-  {
-    image: assets.messaging2,
-    title: 'Stephanie Sharkey',
-    message: 'It’s okay. Thanks',
-    time: '18:34',
-    count: '7',
-  },
-  {
-    image: assets.messaging3,
-    title: 'John Dukes',
-    message: 'I’ll be there.',
-    time: '18:34',
-  },
-  {
-    image: assets.messaging4,
-    title: 'Joshua Jones',
-    message: 'Okay thanks for the feedback',
-    time: '18:34',
-    count: '7',
-  },
-];
 const Dashboard = () => {
   const { data: profileData, isLoading: isProfileLoading } = useGetProfileData();
+  const [period, setPeriod] = useState('last_6_months');
+  const { data: dashboardData, isLoading: isDashboardLoading } = useGetDashboardOverview(period);
 
   const userName = useMemo(() => {
     if (profileData) {
@@ -69,6 +37,33 @@ const Dashboard = () => {
     }
     return 'User';
   }, [profileData]);
+
+  const overviewCards = [
+    { title: 'Total Listings', value: dashboardData?.data.cards?.totalListings ?? 0 },
+    { title: 'Active Listing', value: dashboardData?.data.cards?.activeListings ?? 0 },
+    { title: 'Archived Listing', value: dashboardData?.data.cards?.archivedListings ?? 0 },
+  ];
+
+  const totalsCards = [
+    { title: 'Total Clicks', value: dashboardData?.data.cards?.totalClicks ?? 0 },
+    { title: 'Total Leads', value: dashboardData?.data.cards?.totalLeads ?? 0 },
+    { title: 'Total Views', value: dashboardData?.data.cards?.totalViews ?? 0 },
+    { title: 'Total Saves & shares', value: dashboardData?.data.cards?.totalSavesShares ?? 0 },
+  ];
+
+  const recentMessages = dashboardData?.data.recentMessages ?? [];
+  const listingActivities = dashboardData?.data.data.listingActivities ?? [];
+
+  const formatTime = (dateString: string) => {
+    try {
+      return formatDistanceToNow(parseISO(dateString), { addSuffix: true });
+    } catch {
+      return dateString;
+    }
+  };
+
+  const isLoading = isProfileLoading || isDashboardLoading;
+
   return (
     <div className="flex w-full flex-col items-start gap-5 py-8">
       <PageMetaTags
@@ -81,7 +76,7 @@ const Dashboard = () => {
         <div className="flex flex-col items-baseline gap-2">
           <h1 className="flex items-center gap-2 text-[18px] leading-[18px] font-semibold text-[#1F2130]">
             <span>Good Afternoon,</span>
-            {isProfileLoading ? <Skeleton className="h-5 w-32" /> : <span>{userName}</span>}
+            {isLoading ? <Skeleton className="h-5 w-32" /> : <span>{userName}</span>}
           </h1>
 
           <p className="text-[12px] leading-[17px] tracking-[-0.01em] text-[#71748C]">
@@ -95,7 +90,7 @@ const Dashboard = () => {
             background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
             boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
           }}
-          className="h-10 rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] p-4 text-[12px] leading-[12px] font-normal text-white lg:w-fit"
+          className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-[12px] font-normal text-white lg:w-fit"
         >
           <Link to="/properties/create">
             <HousePlus className="size-4" /> New Listing
@@ -104,30 +99,36 @@ const Dashboard = () => {
       </header>
 
       <section className="grid grid-cols-1 gap-5 self-stretch lg:grid-cols-3">
-        {OVERVIEW.map((item, index) => (
-          <div
-            key={index}
-            className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
-          >
-            <div className="box-border w-full rounded-t-[10px] border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-              <h6 className="text-[12px] leading-[14px] tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
-            </div>
+        {isLoading
+          ? Array.from({ length: 3 }).map((_, index) => <Skeleton key={index} className="h-[150px] w-full" />)
+          : overviewCards.map((item, index) => (
+              <div
+                key={index}
+                className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
+              >
+                <div className="box-border w-full rounded-t-[10px] border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
+                  <h6 className="text-[12px] leading-[14px] tracking-[-0.02em] text-[#7F7F7F] uppercase">
+                    {item.title}
+                  </h6>
+                </div>
 
-            <div className="flex items-baseline gap-2 px-6 pb-6">
-              <p className="text-[48px] leading-[48px] font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
-              <span className="text-[16px] leading-[22px] text-[#1F2130]">Properties</span>
-            </div>
-          </div>
-        ))}
+                <div className="flex items-baseline gap-2 px-6 pb-6">
+                  <p className="text-[48px] leading-[48px] font-semibold tracking-[-1px] text-[#1F2130]">
+                    {item.value}
+                  </p>
+                  <span className="text-[16px] leading-[22px] text-[#1F2130]">Properties</span>
+                </div>
+              </div>
+            ))}
       </section>
 
       <section className="grid w-full gap-6 rounded-[8px] lg:grid-cols-2">
-        <ActiveListingsChart />
+        <ActiveListingsChart data={listingActivities} period={period} onPeriodChange={setPeriod} />
 
         <div className="flex w-full items-start gap-12 self-stretch rounded-[8px] border border-[#E3E3E8] bg-white p-6">
           <div className="flex w-full grow flex-col items-start gap-6">
             <header className="flex w-full items-center justify-between gap-6">
-              <h3 className="text-[12px] leading-[14px] tracking-[0.02em] text-[#7F7F7F] uppercase">Active Listings</h3>
+              <h3 className="text-[12px] leading-[14px] tracking-[0.02em] text-[#7F7F7F] uppercase">Recent Messages</h3>
 
               <Button variant="link" className="text-primary text-[12px] leading-[14px] font-semibold">
                 View All
@@ -136,53 +137,69 @@ const Dashboard = () => {
             </header>
 
             <div className="flex w-full flex-col items-start gap-4 self-stretch">
-              {MESSAGES.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex w-full items-center justify-between gap-[14px] self-stretch border-b border-[#E3E3E8] pb-4 last:border-b-0"
-                >
-                  <div className="flex items-center gap-[14px]">
-                    <img src={item.image} alt="" className="size-11" width={44} height={44} />
-                    <div className="flex flex-col items-start justify-center gap-2.5">
-                      <h5 className="text-[14px] leading-[17px] font-semibold text-[#41415A]">{item.title}</h5>
-
-                      <p className="text-[12px] leading-[14px] tracking-[0.01em] text-[#71748C]">{item.message}</p>
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, index) => (
+                  <div key={index} className="flex w-full items-center gap-4">
+                    <Skeleton className="size-11 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
                     </div>
                   </div>
-
-                  <div className="flex flex-col items-start gap-2.5">
-                    <p className="text-right text-[12px] leading-[14px] tracking-[0.01em] text-[#71748C]">
-                      {item.time}
-                    </p>
-
-                    {item.count && (
-                      <div className="flex flex-col items-center rounded-full bg-[#D20832] px-2 py-1 text-[10px] leading-[14px] font-semibold text-white">
-                        <span className="flex items-center justify-center">{item.count}</span>
+                ))
+              ) : recentMessages.length > 0 ? (
+                recentMessages.map((item: RecentMessage) => (
+                  <div
+                    key={item.conversation_id}
+                    className="flex w-full items-center justify-between gap-[14px] self-stretch border-b border-[#E3E3E8] pb-4 last:border-b-0"
+                  >
+                    <div className="flex items-center gap-[14px]">
+                      <img src={item.last_message.sender.avatar} alt="" className="size-11" width={44} height={44} />
+                      <div className="flex flex-col items-start justify-center gap-2.5">
+                        <h5 className="text-[14px] leading-[17px] font-semibold text-[#41415A]">
+                          {item.last_message.sender.name}
+                        </h5>
+                        <p className="truncate text-[12px] leading-[14px] tracking-[0.01em] text-[#71748C]">
+                          {item.last_message.body}
+                        </p>
                       </div>
-                    )}
+                    </div>
+                    <div className="flex flex-col items-end gap-2.5">
+                      <p className="text-right text-[12px] leading-[14px] tracking-[0.01em] whitespace-nowrap text-[#71748C]">
+                        {formatTime(item.last_message.created_at)}
+                      </p>
+                      {item.is_unread && <div className="size-2 rounded-full bg-[#D20832]" />}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="py-10 text-center text-sm text-gray-500">No recent messages.</p>
+              )}
             </div>
           </div>
         </div>
       </section>
 
       <section className="grid w-full grid-cols-1 gap-5 self-stretch lg:grid-cols-4">
-        {TOTALS.map((item, index) => (
-          <div
-            key={index}
-            className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
-          >
-            <div className="box-border w-full rounded-t-[10px] border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-              <h6 className="text-[12px] leading-[14px] tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
-            </div>
-
-            <div className="flex items-baseline gap-2 px-6 pb-6">
-              <p className="text-[48px] leading-[48px] font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
-            </div>
-          </div>
-        ))}
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-[150px] w-full" />)
+          : totalsCards.map((item, index) => (
+              <div
+                key={index}
+                className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
+              >
+                <div className="box-border w-full rounded-t-[10px] border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
+                  <h6 className="text-[12px] leading-[14px] tracking-[-0.02em] text-[#7F7F7F] uppercase">
+                    {item.title}
+                  </h6>
+                </div>
+                <div className="flex items-baseline gap-2 px-6 pb-6">
+                  <p className="text-[48px] leading-[48px] font-semibold tracking-[-1px] text-[#1F2130]">
+                    {item.value}
+                  </p>
+                </div>
+              </div>
+            ))}
       </section>
     </div>
   );
