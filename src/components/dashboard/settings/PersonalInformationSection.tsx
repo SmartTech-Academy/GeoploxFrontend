@@ -12,10 +12,11 @@ import { useUpdatePersonalInformation } from '@/lib/services/profile';
 import { UserProfile } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Phone, Upload, XIcon } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
+import statesAndLgasData from '@/data/statesAndLocalGov.json';
 
 const step2Schema = z.object({
   profilePicture: z.any().optional(),
@@ -40,7 +41,16 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
   const [picturePreview, setPicturePreview] = useState<string | null>(user?.display_picture_url || null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCropDialogOpen, setCropDialogOpen] = useState(false);
+  const [selectedState, setSelectedState] = useState(user?.state || undefined);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const lgas = useMemo(() => {
+    if (!selectedState) {
+      return [];
+    }
+    const stateData = statesAndLgasData.find((s) => s.state === selectedState);
+    return stateData ? stateData.lgas : [];
+  }, [selectedState]);
 
   const form = useForm<PersonalInfoFormValues>({
     resolver: customResolver(step2Schema),
@@ -108,7 +118,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
         <div className="flex w-full flex-col gap-10">
           <div className="flex flex-col items-center gap-3 self-stretch text-center">
             <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Personal Information</h2>
-            <p className="text-[14px] leading-[20px] text-[#71748C]">Update your details</p>
+            <p className="text-[14px] leading-5 text-[#71748C]">Update your details</p>
           </div>
 
           <div className="flex w-full flex-col gap-5">
@@ -117,7 +127,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 <div
                   role="button"
                   onClick={handlePictureClick}
-                  className="relative mx-auto flex size-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
+                  className="relative mx-auto flex size-16 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
                 >
                   {picturePreview ? (
                     <img
@@ -138,8 +148,8 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <p className="text-[14px] leading-[24px] text-[#1F2130]">Profile Picture</p>
-                  <p className="text-[14px] leading-[24px] text-[#71748C]">
+                  <p className="text-[14px] leading-6 text-[#1F2130]">Profile Picture</p>
+                  <p className="text-[14px] leading-6 text-[#71748C]">
                     Upload a profile picture. Only .JPG and .PNG supported.
                   </p>
                 </div>
@@ -151,7 +161,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                   <DialogHeader>
                     <DialogTitle>Crop Your Profile Picture</DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4">
+                  <div className="flex w-full flex-col items-center justify-center space-y-4">
                     <ImageCrop
                       aspect={1}
                       file={selectedFile}
@@ -298,16 +308,25 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">State</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setSelectedState(value);
+                        form.setValue('localGovernment', ''); // Reset LGA on state change
+                      }}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
                           <SelectValue placeholder="Select..." />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="lagos">Lagos</SelectItem>
-                        <SelectItem value="abuja">Abuja</SelectItem>
-                        <SelectItem value="kano">Kano</SelectItem>
+                        {statesAndLgasData.map((state, index) => (
+                          <SelectItem key={`${state.state}${index}`} value={state.state}>
+                            {state.state}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -323,16 +342,22 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                       Local Government
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      disabled={!selectedState || lgas.length === 0}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
                           <SelectValue placeholder="Select..." />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="ikeja">Ikeja</SelectItem>
-                        <SelectItem value="victoria-island">Victoria Island</SelectItem>
-                        <SelectItem value="lekki">Lekki</SelectItem>
+                        {lgas.map((lga, index) => (
+                          <SelectItem key={`${lga}${index}`} value={lga}>
+                            {lga}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

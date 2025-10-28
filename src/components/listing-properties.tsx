@@ -103,7 +103,7 @@ const ListingProperties = () => {
           <div className="flex grow flex-col items-start gap-4 pt-11">
             {/* Header */}
             <div className="flex w-full justify-between gap-6 self-stretch">
-              <h1 className="text-[16px] leading-[24px] text-[#535364]">{totalResults} Results</h1>
+              <h1 className="text-[16px] leading-6 text-[#535364]">{totalResults} Results</h1>
               <div className="flex items-center justify-center gap-6">
                 {sortOptions.map((option) => (
                   <Button
@@ -111,7 +111,7 @@ const ListingProperties = () => {
                     variant="ghost"
                     onClick={() => handleSortChange(option.value)}
                     className={cn(
-                      'h-8 rounded-none border-x-0 border-t-0 border-b-0 py-4 text-[16px] leading-[24px] font-normal text-[#71748C]',
+                      'h-8 rounded-none border-x-0 border-t-0 border-b-0 py-4 text-[16px] leading-6 font-normal text-[#71748C]',
                       sortBy === option.value && 'text-primary border-primary border-b font-semibold'
                     )}
                   >
@@ -238,12 +238,12 @@ const ListingProperties = () => {
 
           {/* Mobile Results Header */}
           <div className="mb-4 px-4">
-            <h1 className="mb-4 text-[16px] leading-[24px] font-medium text-[#535364]">{totalResults} Results</h1>
+            <h1 className="mb-4 text-[16px] leading-6 font-medium text-[#535364]">{totalResults} Results</h1>
           </div>
 
           {/* Mobile Average Price */}
           <div className="mx-4 mb-6">
-            <div className="flex w-full flex-col justify-center gap-3 rounded-[8px] bg-[#F8F8F8] p-4">
+            <div className="flex w-full flex-col justify-center gap-3 rounded-xl bg-[#F8F8F8] p-4">
               <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">Average Price</h3>
               <p className="text-[12px] leading-[17px] text-[#41415A]">
                 The average price of 2 bedroom flats for sale in Lekki, Lagos is ₦160,000,000. The prices vary by
@@ -255,7 +255,7 @@ const ListingProperties = () => {
 
           {/* Mobile Quick Filter */}
           <div className="mx-4 mb-6">
-            <div className="flex w-full flex-col gap-4 rounded-[8px] bg-[#F8F8F8] p-4 text-[#41415A]">
+            <div className="flex w-full flex-col gap-4 rounded-xl bg-[#F8F8F8] p-4 text-[#41415A]">
               <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">Quick Filter</h3>
               <div className="flex flex-wrap items-center gap-1">
                 {propertyTypes.map((type, index) => (

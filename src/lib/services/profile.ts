@@ -27,7 +27,7 @@ export const useUpdatePersonalInformation = () => {
   return useMutation({
     mutationFn: (data: any) => {
       const headers = data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
-      const imageType = data instanceof FormData ? 'binary' : 'none';
+      const imageType = data instanceof FormData ? 'file' : 'binary';
       const url = `/dashboard/profile-settings/update-personal-info?dimension=300by300&edit_image=resize-only&image_type=${imageType}`;
 
 
@@ -54,7 +54,7 @@ export const useUpdateBusinessInformation = () => {
           const headers = data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
       // If base64_file is present, we are sending a binary (base64) image.
       // Otherwise, no image is being updated.
-      const imageType = data.base64_file ? 'binary' : 'none';
+      const imageType = data.base64_file ? 'binary' : 'file';
       const url = `/dashboard/profile-settings/update-business-info?dimension=300by300&edit_image=resize-only&image_type=${imageType}`;
 
       return api.put(url, data, {

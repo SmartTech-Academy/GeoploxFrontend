@@ -1,5 +1,7 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import api from '../api';
+import { queryClient } from '../queryClient';
+import { toast } from 'sonner';
 
 export const useGetProperties = (params?: any) => {
   return useQuery({
@@ -93,6 +95,29 @@ export const useUpdateProperty = (propertyId: string) => {
       });
       formData.append('_method', 'PUT');
       return api.post(`/dashboard/update/property/${propertyId}`, formData);
+    },
+  });
+};
+
+export const useArchiveProperty = () => {
+  return useMutation({
+    mutationFn: ({ propertyId, action }: { propertyId: string; action: 'archive' | 'restore' }) => {
+      const formData = new FormData();
+      formData.append('action', action);
+      return api.post(`/dashboard/property/${propertyId}/archive`, formData);
+    },
+    onSuccess: () => {
+      toast .success('Property status updated!');
+      queryClient.invalidateQueries({ queryKey: ['properties'] });
+    },
+  });
+};
+
+export const useDeleteProperty = () => {
+  return useMutation({
+    mutationFn: (propertyId: string) => api.delete(`/dashboard/property/${propertyId}/delete`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['properties'] });
     },
   });
 };

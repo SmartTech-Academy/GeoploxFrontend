@@ -92,7 +92,7 @@ function RouteComponent() {
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Welcome Back</h1>
-            <p className="text-[14px] leading-[20px] text-[#71748C]">Enter your details below to login</p>
+            <p className="text-[14px] leading-5 text-[#71748C]">Enter your details below to login</p>
           </div>
 
           <div className="flex w-full flex-col gap-10">
@@ -112,7 +112,7 @@ function RouteComponent() {
                           <Input
                             type="email"
                             placeholder="rene_realty@forbes.com"
-                            className="h-10 w-full self-stretch rounded-[8px] border-[#D5D5DD] px-6"
+                            className="h-10 w-full self-stretch rounded-xl border-[#D5D5DD] px-6"
                             {...field}
                           />
                         </FormControl>
@@ -135,7 +135,7 @@ function RouteComponent() {
                             <Input
                               type={showPassword ? 'text' : 'password'}
                               placeholder="G13p@7v#92LmZxQ"
-                              className="h-10 w-full self-stretch rounded-[8px] border-[#D5D5DD] px-6 pr-12"
+                              className="h-10 w-full self-stretch rounded-xl border-[#D5D5DD] px-6 pr-12"
                               {...field}
                             />
                             <button
@@ -154,7 +154,7 @@ function RouteComponent() {
 
                   {/* Forgot Password Link */}
                   <div className="flex justify-end">
-                    <Link to="/forgot-password" className="text-[14px] leading-[20px] text-[#D4AF36] hover:underline">
+                    <Link to="/forgot-password" className="text-[14px] leading-5 text-[#D4AF36] hover:underline">
                       Forgot Password?
                     </Link>
                   </div>
@@ -169,7 +169,7 @@ function RouteComponent() {
                       background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                       boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                     }}
-                    className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                    className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                   >
                     {isPending ? 'Signing In...' : 'Login'}
                   </Button>
@@ -191,7 +191,7 @@ function RouteComponent() {
                         type="button"
                         variant="outline"
                         onClick={handleGoogleSignIn}
-                        className="h-10 rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-[16px] font-normal text-[#1F2130] hover:bg-gray-50"
+                        className="h-10 rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130] hover:bg-gray-50"
                       >
                         <img src={assets.google} alt="" className="size-4" width={16} height={16} />
                         Login with Google
@@ -201,7 +201,7 @@ function RouteComponent() {
                         type="button"
                         variant="outline"
                         onClick={handleFacebookSignIn}
-                        className="h-10 rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-[16px] font-normal text-[#1F2130] hover:bg-gray-50"
+                        className="h-10 rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130] hover:bg-gray-50"
                       >
                         <img src={assets.facebook} alt="" className="size-4" width={16} height={16} />
                         Login with Facebook
@@ -216,7 +216,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-[20px] text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
+          <p className="text-[14px] leading-5 text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
         </div>
       </div>
     </div>

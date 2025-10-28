@@ -15,7 +15,7 @@ export const useSetPersonalInformation = () => {
   return useMutation({
     mutationFn: (data: any) => {
       const headers = data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
-      const imageType = data instanceof FormData ? 'binary' : 'none';
+      const imageType = data instanceof FormData ? 'file' : 'binary';
       const url = `/dashboard/onboarding/personal?dimension=300by300&edit_image=resize-only&image_type=${imageType}&update=update`;
 
       return api.post(url, data, {
@@ -34,7 +34,7 @@ export const useSetBusinessInformation = () => {
   return useMutation({
     mutationFn: (data: any) => {
       const headers = data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
-      const imageType = data instanceof FormData ? 'binary' : 'none';
+      const imageType = data instanceof FormData ? 'file' : 'binary'
       const url = `/dashboard/onboarding/business?dimension=300by300&edit_image=resize-only&image_type=${imageType}&update=update`;
 
       return api.post(url, data, {
@@ -63,10 +63,11 @@ export const useUploadKycDocuments = () => {
   });
 };
 
-export const useGetOnboardingSummary = () => {
+export const useGetOnboardingSummary = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['onboarding-summary'],
     queryFn: () => api.get('/dashboard/onboarding/summary'),
+    ...options,
   });
 };
 

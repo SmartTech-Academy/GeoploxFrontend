@@ -76,7 +76,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
                           {...field}
                         />
                         <span
-                          className="text-primary absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px] leading-[14px] font-semibold hover:underline"
+                          className="text-primary absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px] leading-3.5 font-semibold hover:underline"
                           onClick={() => setShowOldPassword((prev) => !prev)}
                         >
                           {showOldPassword ? 'Hide' : 'Show'}
@@ -106,7 +106,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
                           {...field}
                         />
                         <span
-                          className="text-primary absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px] leading-[14px] font-semibold hover:underline"
+                          className="text-primary absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px] leading-3.5 font-semibold hover:underline"
                           onClick={() => setShowNewPassword((prev) => !prev)}
                         >
                           {showNewPassword ? 'Hide' : 'Show'}
@@ -123,7 +123,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
               <DialogClose asChild>
                 <Button
                   type="button"
-                  className="h-8 rounded-[32px] bg-[#F1F1F4] px-4 py-[15px] text-[12px] leading-[14px] font-semibold text-[#1F2130]"
+                  className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px] leading-3.5 font-semibold text-[#1F2130]"
                   variant="secondary"
                 >
                   Cancel
@@ -137,7 +137,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
                   boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                 }}
                 disabled={isPending}
-                className="h-8 rounded-[32px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-[14px] font-semibold text-white"
+                className="h-8 rounded-4xl border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-3.5 font-semibold text-white"
               >
                 {isPending ? 'Saving...' : 'Save Changes'}
               </Button>

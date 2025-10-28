@@ -7,19 +7,22 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 export default [
+  //   ...tseslint.configs.strictTypeChecked,
+  //   ...tseslint.configs.stylisticTypeChecked, //cant use these two would gave to fix it too many places
   ...tseslint.configs.recommended,
   ...pluginQuery.configs['flat/recommended'],
   {
     ignores: [
-      'node_modules',
-      'dist',
-      '.next',
-      '.env',
-      '.cache',
-      'components/ui',
-      'build',
-      'public/build',
-      'src/components/ui/*',
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.next/**',
+      '**/.cache/**',
+      '**/build/**',
+      '**/public/build/**',
+      'src/components/ui/**',
+      '*.env',
+      'eslint.config.js',
+      'postcss.config.js',
     ],
   },
   {
@@ -27,24 +30,30 @@ export default [
     languageOptions: {
       ecmaVersion: 2020,
       globals: { ...globals.browser, ...globals.node, ...globals.es2025 },
-      parserOptions: { ecmaVersion: 'latest', ecmaFeatures: { jsx: true }, sourceType: 'module' },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+        projectService: true,
+      },
     },
-    settings: { react: { version: '19.2.0' } },
+    settings: { react: { version: 'detect' } },
     plugins: {
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
     },
+    linterOptions: {
+      reportUnusedDisableDirectives: true,
+    },
     rules: {
       ...js.configs.recommended.rules,
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
-      ...reactHooks.configs.recommended.rules, // hooks + compiler (basic)
-      ...reactHooks.configs['recommended-latest'].rules, // hooks + compiler (full)
+      ...reactHooks.configs.recommended.rules,
+      ...reactHooks.configs['recommended-latest'].rules,
 
-      /* -------------------------------------------------
-         React-Compiler opt-in rules (all explicitly on)
-      -------------------------------------------------- */
+      /* React Compiler rules */
       'react-hooks/component-hook-factories': 'warn',
       'react-hooks/config': 'warn',
       'react-hooks/error-boundaries': 'warn',
@@ -61,10 +70,9 @@ export default [
       'react-hooks/unsupported-syntax': 'warn',
       'react-hooks/use-memo': 'warn',
 
-      /* -------------------------------------------------
-         Your existing overrides
-      -------------------------------------------------- */
+      /* Custom overrides */
       '@typescript-eslint/no-explicit-any': 'off',
+      'no-unused-vars': 'off', // Disable base rule
       'react/jsx-no-target-blank': 'off',
       'no-console': 'warn',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],

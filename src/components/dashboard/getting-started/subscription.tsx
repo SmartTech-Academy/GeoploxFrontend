@@ -1,5 +1,3 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -39,10 +37,10 @@ const Subscription: React.FC<SubscriptionProps> = ({ form }) => {
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
         <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Subscription</h2>
-        <p className="text-[14px] leading-[20px] text-[#71748C]">Flexible pricing tailored for you.</p>
+        <p className="text-[14px] leading-5 text-[#71748C]">Flexible pricing tailored for you.</p>
       </div>
 
-      <div className="mx-auto overflow-hidden rounded-[8px] border border-[#F1F1F4] bg-white p-1.5">
+      <div className="mx-auto overflow-hidden rounded-xl border border-[#F1F1F4] bg-white p-1.5">
         <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto">
           {tabs.map((tab) => (
             <Button
@@ -108,10 +106,10 @@ const Subscription: React.FC<SubscriptionProps> = ({ form }) => {
                         <div className="mb-4 flex items-start justify-between">
                           <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-1">
-                              <h3 className="text-[20px] leading-[28px] font-semibold text-[#1F2130]">{plan.name}</h3>
+                              <h3 className="text-[20px] leading-7 font-semibold text-[#1F2130]">{plan.name}</h3>
                             </div>
 
-                            <p className="text-[14px] leading-[20px] text-[#71748C]">
+                            <p className="text-[14px] leading-5 text-[#71748C]">
                               {plan.features[plan.features.length - 1]}
                             </p>
                           </div>

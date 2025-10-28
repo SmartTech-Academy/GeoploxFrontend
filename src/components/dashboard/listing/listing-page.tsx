@@ -163,10 +163,7 @@ const ListingPage = () => {
                 isOpen={isLocationOpen}
                 onToggle={() => setIsLocationOpen(!isLocationOpen)}
               >
-                <Input
-                  placeholder="e.g Lekki, Lagos"
-                  className="h-8 w-full rounded-[8px] border border-[#D5D5DD] px-3"
-                />
+                <Input placeholder="e.g Lekki, Lagos" className="h-8 w-full rounded-xl border border-[#D5D5DD] px-3" />
               </CollapsibleSection>
 
               {/* Category */}
@@ -178,25 +175,25 @@ const ListingPage = () => {
                 <div className="flex w-full flex-col gap-4">
                   <div className="flex items-center gap-3">
                     <Checkbox id="for-rent" />
-                    <label htmlFor="for-rent" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="for-rent" className="text-[14px] leading-4 text-[#41415A]">
                       For Rent
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="for-sale" defaultChecked />
-                    <label htmlFor="for-sale" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="for-sale" className="text-[14px] leading-4 text-[#41415A]">
                       For Sale
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="joint-venture" defaultChecked />
-                    <label htmlFor="joint-venture" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="joint-venture" className="text-[14px] leading-4 text-[#41415A]">
                       Joint Venture
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="short-let" />
-                    <label htmlFor="short-let" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="short-let" className="text-[14px] leading-4 text-[#41415A]">
                       Short Let
                     </label>
                   </div>
@@ -212,31 +209,31 @@ const ListingPage = () => {
                 <div className="flex w-full flex-col gap-4">
                   <div className="flex items-center gap-3">
                     <Checkbox id="flat" />
-                    <label htmlFor="flat" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="flat" className="text-[14px] leading-4 text-[#41415A]">
                       Flat
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="apartment" defaultChecked />
-                    <label htmlFor="apartment" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="apartment" className="text-[14px] leading-4 text-[#41415A]">
                       Apartment
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="house" defaultChecked />
-                    <label htmlFor="house" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="house" className="text-[14px] leading-4 text-[#41415A]">
                       House
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="land" />
-                    <label htmlFor="land" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="land" className="text-[14px] leading-4 text-[#41415A]">
                       Land
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="commercial" defaultChecked />
-                    <label htmlFor="commercial" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="commercial" className="text-[14px] leading-4 text-[#41415A]">
                       Commercial Property
                     </label>
                   </div>
@@ -252,37 +249,37 @@ const ListingPage = () => {
                 <div className="flex w-full flex-col gap-4">
                   <div className="flex items-center gap-3">
                     <Checkbox id="residential" />
-                    <label htmlFor="residential" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="residential" className="text-[14px] leading-4 text-[#41415A]">
                       Residential
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="commercial-land" defaultChecked />
-                    <label htmlFor="commercial-land" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="commercial-land" className="text-[14px] leading-4 text-[#41415A]">
                       Commercial
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="industrial" defaultChecked />
-                    <label htmlFor="industrial" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="industrial" className="text-[14px] leading-4 text-[#41415A]">
                       Industrial
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="mixed-use" />
-                    <label htmlFor="mixed-use" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="mixed-use" className="text-[14px] leading-4 text-[#41415A]">
                       Mixed-use
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="others" defaultChecked />
-                    <label htmlFor="others" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="others" className="text-[14px] leading-4 text-[#41415A]">
                       Others
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="all-lands" defaultChecked />
-                    <label htmlFor="all-lands" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="all-lands" className="text-[14px] leading-4 text-[#41415A]">
                       All Lands
                     </label>
                   </div>
@@ -295,7 +292,7 @@ const ListingPage = () => {
                 isOpen={isKeywordOpen}
                 onToggle={() => setIsKeywordOpen(!isKeywordOpen)}
               >
-                <Input placeholder="Enter keyword" className="h-8 w-full rounded-[8px] border border-[#D5D5DD] px-3" />
+                <Input placeholder="Enter keyword" className="h-8 w-full rounded-xl border border-[#D5D5DD] px-3" />
               </CollapsibleSection>
 
               {/* Price Range */}
@@ -316,7 +313,7 @@ const ListingPage = () => {
                   <div className="flex items-center gap-2">
                     <Input
                       value={`₦${priceRange[0].toLocaleString()}`}
-                      className="border-primary h-8 bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,_175,_54,_0.5)]"
+                      className="border-primary h-8 bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,175,54,0.5)]"
                       readOnly
                     />
 
@@ -341,7 +338,7 @@ const ListingPage = () => {
               >
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-2">
-                    <label className="text-[14px] leading-[16px] text-[#41415A]">Min.</label>
+                    <label className="text-[14px] leading-4 text-[#41415A]">Min.</label>
                     <div className="relative">
                       <Input
                         type="number"
@@ -353,7 +350,7 @@ const ListingPage = () => {
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-[14px] leading-[16px] text-[#41415A]">Max.</label>
+                    <label className="text-[14px] leading-4 text-[#41415A]">Max.</label>
                     <div className="relative">
                       <Input
                         type="number"
@@ -375,14 +372,14 @@ const ListingPage = () => {
               >
                 <div className="flex w-full flex-col gap-4">
                   <div className="flex flex-col gap-2">
-                    <label className="text-[14px] leading-[16px] text-[#41415A]">Bedroom</label>
+                    <label className="text-[14px] leading-4 text-[#41415A]">Bedroom</label>
                     <div className="grid grid-cols-5 gap-2">
                       {[1, 2, 3, 4, '5+'].map((num) => (
                         <Button
                           key={num}
                           variant={'outline'}
                           size="sm"
-                          className={`h-8 rounded-[8px] px-3 text-[14px] leading-[16px] text-[#41415A] ${
+                          className={`h-8 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
                             selectedBedrooms.includes(num) ? 'border-primary hover:border-primary' : 'border-[#D5D5DD]'
                           }`}
                           onClick={() => {
@@ -399,14 +396,14 @@ const ListingPage = () => {
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-[14px] leading-[16px] text-[#41415A]">Bathroom</label>
+                    <label className="text-[14px] leading-4 text-[#41415A]">Bathroom</label>
                     <div className="grid grid-cols-5 gap-2">
                       {[1, 2, 3, 4, '5+'].map((num) => (
                         <Button
                           key={num}
                           variant={'outline'}
                           size="sm"
-                          className={`h-8 rounded-[8px] px-3 text-[14px] leading-[16px] text-[#41415A] ${
+                          className={`h-8 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
                             selectedBathrooms.includes(num) ? 'border-primary hover:border-primary' : 'border-[#D5D5DD]'
                           }`}
                           onClick={() => {
@@ -432,7 +429,7 @@ const ListingPage = () => {
                 onToggle={() => setIsDeveloperOwnerOpen(!isDeveloperOwnerOpen)}
               >
                 <div className="flex w-full flex-col gap-2">
-                  <label className="text-[14px] leading-[16px] text-[#41415A]">Name</label>
+                  <label className="text-[14px] leading-4 text-[#41415A]">Name</label>
                   <Input
                     placeholder="e.g Royalty Properties"
                     className="h-8 w-full border-[#D5D5DD] bg-white px-3 text-sm"
@@ -449,13 +446,13 @@ const ListingPage = () => {
                 <div className="flex w-full flex-col gap-4">
                   <div className="flex items-center gap-3">
                     <Checkbox id="all-listings" />
-                    <label htmlFor="all-listings" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="all-listings" className="text-[14px] leading-4 text-[#41415A]">
                       All Listings
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox id="verified-only" defaultChecked />
-                    <label htmlFor="verified-only" className="text-[14px] leading-[16px] text-[#41415A]">
+                    <label htmlFor="verified-only" className="text-[14px] leading-4 text-[#41415A]">
                       Verified Listings Only
                     </label>
                   </div>
@@ -466,7 +463,7 @@ const ListingPage = () => {
               <div className="flex items-center gap-3 self-stretch">
                 <Button
                   variant="secondary"
-                  className="h-10 grow rounded-[32px] bg-[#F1F1F4] px-4 py-[15px] text-[14px] leading-[17px] text-[#1F2130] hover:bg-gray-50"
+                  className="h-10 grow rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[14px] leading-[17px] text-[#1F2130] hover:bg-gray-50"
                 >
                   Clear
                 </Button>
@@ -476,7 +473,7 @@ const ListingPage = () => {
 
                     boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                   }}
-                  className="h-10 grow rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                  className="h-10 grow rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                 >
                   Apply Filter
                 </Button>
@@ -488,30 +485,30 @@ const ListingPage = () => {
           <div className="flex grow flex-col items-start gap-4 pt-11">
             {/* Header */}
             <div className="flex w-full justify-between gap-6 self-stretch">
-              <h1 className="text-[16px] leading-[24px] text-[#535364]">124 Results</h1>
+              <h1 className="text-[16px] leading-6 text-[#535364]">124 Results</h1>
               <div className="flex items-center justify-center gap-6">
                 <Button
                   variant="ghost"
-                  className="text-primary border-primary h-8 rounded-none border-x-0 border-t-0 border-b py-4 text-[16px] leading-[24px] font-semibold"
+                  className="text-primary border-primary h-8 rounded-none border-x-0 border-t-0 border-b py-4 text-[16px] leading-6 font-semibold"
                 >
                   Newest
                 </Button>
                 <Button
                   variant="ghost"
-                  className="h-8 rounded-none border-x-0 border-t-0 border-b-0 py-4 text-[16px] leading-[24px] font-normal text-[#71748C]"
+                  className="h-8 rounded-none border-x-0 border-t-0 border-b-0 py-4 text-[16px] leading-6 font-normal text-[#71748C]"
                 >
                   Price (Lowest-Highest)
                 </Button>
                 <Button
                   variant="ghost"
-                  className="h-8 rounded-none border-x-0 border-t-0 border-b-0 py-4 text-[16px] leading-[24px] font-normal text-[#71748C]"
+                  className="h-8 rounded-none border-x-0 border-t-0 border-b-0 py-4 text-[16px] leading-6 font-normal text-[#71748C]"
                 >
                   Most viewed
                 </Button>
 
                 <Button
                   variant="ghost"
-                  className="h-8 rounded-none border-x-0 border-t-0 border-b-0 py-4 text-[16px] leading-[24px] font-normal text-[#71748C]"
+                  className="h-8 rounded-none border-x-0 border-t-0 border-b-0 py-4 text-[16px] leading-6 font-normal text-[#71748C]"
                 >
                   Favorites
                 </Button>
@@ -617,9 +614,9 @@ const ListingPage = () => {
                         </div>
 
                         <div className="flex flex-col items-start gap-[11px] self-stretch">
-                          <span className="text-[14px] leading-[16px] text-[#545767]">{property.location}</span>
+                          <span className="text-[14px] leading-4 text-[#545767]">{property.location}</span>
 
-                          <div className="flex w-full items-center gap-5 self-stretch text-[14px] leading-[16px] text-[oklch(0_0_0_/_80%)]">
+                          <div className="flex w-full items-center gap-5 self-stretch text-[14px] leading-4 text-[oklch(0_0_0_/_80%)]">
                             <div className="flex items-center gap-2">
                               <BedDouble className="text-primary size-[18px]" />
                               <span>{property.bedrooms}</span>
@@ -655,7 +652,7 @@ const ListingPage = () => {
                             background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                             boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                           }}
-                          className="h-8 w-1/2 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                          className="h-8 w-1/2 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                         >
                           <Link to="/messages">Contact</Link>
                         </Button>
@@ -675,18 +672,15 @@ const ListingPage = () => {
             {/* Basic Filters Row 1 */}
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] leading-[16px] font-medium text-[#41415A]">Location</label>
-                <Input
-                  placeholder="e.g Lekki, Lagos"
-                  className="h-8 w-full rounded-[8px] border border-[#D5D5DD] px-3"
-                />
+                <label className="text-[14px] leading-4 font-medium text-[#41415A]">Location</label>
+                <Input placeholder="e.g Lekki, Lagos" className="h-8 w-full rounded-xl border border-[#D5D5DD] px-3" />
               </div>
             </div>
 
             {/* Basic Filters Row 2 */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] leading-[16px] font-medium text-[#41415A]">Category</label>
+                <label className="text-[14px] leading-4 font-medium text-[#41415A]">Category</label>
                 <Select defaultValue="For Sale">
                   <SelectTrigger className="h-8 w-full text-sm">
                     <SelectValue />
@@ -700,7 +694,7 @@ const ListingPage = () => {
                 </Select>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] leading-[16px] font-medium text-[#41415A]">Property Type</label>
+                <label className="text-[14px] leading-4 font-medium text-[#41415A]">Property Type</label>
                 <Select defaultValue="House">
                   <SelectTrigger className="h-8 w-full text-sm">
                     <SelectValue />
@@ -719,7 +713,7 @@ const ListingPage = () => {
             {/* Basic Filters Row 3 */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] leading-[16px] font-medium text-[#41415A]">Land Type</label>
+                <label className="text-[14px] leading-4 font-medium text-[#41415A]">Land Type</label>
                 <Select defaultValue="Commercial">
                   <SelectTrigger className="h-8 w-full text-sm">
                     <SelectValue />
@@ -734,10 +728,10 @@ const ListingPage = () => {
                 </Select>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] leading-[16px] font-medium text-[#41415A]">Keyword</label>
+                <label className="text-[14px] leading-4 font-medium text-[#41415A]">Keyword</label>
                 <Input
                   placeholder="Enter keyword"
-                  className="h-10 w-full rounded-[8px] border border-[#D5D5DD] bg-white px-3"
+                  className="h-10 w-full rounded-xl border border-[#D5D5DD] bg-white px-3"
                 />
               </div>
             </div>
@@ -756,7 +750,7 @@ const ListingPage = () => {
               <div className="animate-in slide-in-from-top flex flex-col gap-6 duration-300">
                 {/* Price Range */}
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-[14px] leading-[16px] font-semibold text-[#41415A]">Price Range</h3>
+                  <h3 className="text-[14px] leading-4 font-semibold text-[#41415A]">Price Range</h3>
                   <div className="flex flex-col gap-6 pt-4">
                     <Slider
                       value={priceRange}
@@ -769,7 +763,7 @@ const ListingPage = () => {
                     <div className="flex items-center gap-2">
                       <Input
                         value={`₦${priceRange[0].toLocaleString()}`}
-                        className="border-primary h-10 bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,_175,_54,_0.5)]"
+                        className="border-primary h-10 bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,175,54,0.5)]"
                         readOnly
                       />
                       <svg width="20" height="2" viewBox="0 0 20 2" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -786,10 +780,10 @@ const ListingPage = () => {
 
                 {/* Land Area */}
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-[14px] leading-[16px] font-semibold text-[#41415A]">Land Area</h3>
+                  <h3 className="text-[14px] leading-4 font-semibold text-[#41415A]">Land Area</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col gap-2">
-                      <label className="text-[12px] leading-[14px] text-[#41415A]">Min.</label>
+                      <label className="text-[12px] leading-3.5 text-[#41415A]">Min.</label>
                       <div className="relative">
                         <Input
                           type="number"
@@ -801,7 +795,7 @@ const ListingPage = () => {
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label className="text-[12px] leading-[14px] text-[#41415A]">Max.</label>
+                      <label className="text-[12px] leading-3.5 text-[#41415A]">Max.</label>
                       <div className="relative">
                         <Input
                           type="number"
@@ -817,17 +811,17 @@ const ListingPage = () => {
 
                 {/* Bedroom/Bathroom */}
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-[14px] leading-[16px] font-semibold text-[#41415A]">Bedroom/Bathroom</h3>
+                  <h3 className="text-[14px] leading-4 font-semibold text-[#41415A]">Bedroom/Bathroom</h3>
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-2">
-                      <label className="text-[12px] leading-[14px] text-[#41415A]">Bedroom</label>
+                      <label className="text-[12px] leading-3.5 text-[#41415A]">Bedroom</label>
                       <div className="grid grid-cols-5 gap-2">
                         {[1, 2, 3, 4, '5+'].map((num) => (
                           <Button
                             key={num}
                             variant={'outline'}
                             size="sm"
-                            className={`h-10 rounded-[8px] px-3 text-[14px] leading-[16px] text-[#41415A] ${
+                            className={`h-10 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
                               selectedBedrooms.includes(num)
                                 ? 'border-[#D4AF36] bg-[#D4AF36] text-white'
                                 : 'border-[#D5D5DD]'
@@ -846,14 +840,14 @@ const ListingPage = () => {
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label className="text-[12px] leading-[14px] text-[#41415A]">Bathroom</label>
+                      <label className="text-[12px] leading-3.5 text-[#41415A]">Bathroom</label>
                       <div className="grid grid-cols-5 gap-2">
                         {[1, 2, 3, 4, '5+'].map((num) => (
                           <Button
                             key={num}
                             variant={'outline'}
                             size="sm"
-                            className={`h-10 rounded-[8px] px-3 text-[14px] leading-[16px] text-[#41415A] ${
+                            className={`h-10 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
                               selectedBathrooms.includes(num)
                                 ? 'border-[#D4AF36] bg-[#D4AF36] text-white'
                                 : 'border-[#D5D5DD]'
@@ -876,9 +870,9 @@ const ListingPage = () => {
 
                 {/* Developer/Owner */}
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-[14px] leading-[16px] font-semibold text-[#41415A]">Developer / Owner</h3>
+                  <h3 className="text-[14px] leading-4 font-semibold text-[#41415A]">Developer / Owner</h3>
                   <div className="flex flex-col gap-2">
-                    <label className="text-[12px] leading-[14px] text-[#41415A]">Name</label>
+                    <label className="text-[12px] leading-3.5 text-[#41415A]">Name</label>
                     <Input
                       placeholder="e.g Royalty Properties"
                       className="h-10 w-full border-[#D5D5DD] bg-white px-3 text-sm"
@@ -888,17 +882,17 @@ const ListingPage = () => {
 
                 {/* Verified Listing */}
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-[14px] leading-[16px] font-semibold text-[#41415A]">Verified Listing</h3>
+                  <h3 className="text-[14px] leading-4 font-semibold text-[#41415A]">Verified Listing</h3>
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3">
                       <Checkbox id="all-listings-mobile" />
-                      <label htmlFor="all-listings-mobile" className="text-[14px] leading-[16px] text-[#41415A]">
+                      <label htmlFor="all-listings-mobile" className="text-[14px] leading-4 text-[#41415A]">
                         All Listings
                       </label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox id="verified-only-mobile" defaultChecked />
-                      <label htmlFor="verified-only-mobile" className="text-[14px] leading-[16px] text-[#41415A]">
+                      <label htmlFor="verified-only-mobile" className="text-[14px] leading-4 text-[#41415A]">
                         Verified Listings Only
                       </label>
                     </div>
@@ -911,7 +905,7 @@ const ListingPage = () => {
             <div className="mt-4 flex items-center gap-3">
               <Button
                 variant="secondary"
-                className="h-12 flex-1 rounded-[32px] bg-[#F1F1F4] px-4 text-[14px] leading-[17px] text-[#1F2130] hover:bg-gray-200"
+                className="h-12 flex-1 rounded-4xl bg-[#F1F1F4] px-4 text-[14px] leading-[17px] text-[#1F2130] hover:bg-gray-200"
               >
                 Clear
               </Button>
@@ -920,7 +914,7 @@ const ListingPage = () => {
                   background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
                   boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                 }}
-                className="h-12 flex-1 rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] text-[14px] leading-[17px] font-semibold text-white"
+                className="h-12 flex-1 rounded-[40px] border border-[oklch(0.235_0_0/50%)] text-[14px] leading-[17px] font-semibold text-white"
               >
                 Apply Filter
               </Button>
@@ -929,12 +923,12 @@ const ListingPage = () => {
 
           {/* Mobile Results Header */}
           <div className="mb-4 px-4">
-            <h1 className="mb-4 text-[16px] leading-[24px] font-medium text-[#535364]">124 Results</h1>
+            <h1 className="mb-4 text-[16px] leading-6 font-medium text-[#535364]">124 Results</h1>
           </div>
 
           {/* Mobile Average Price */}
           <div className="mx-4 mb-6">
-            <div className="flex w-full flex-col justify-center gap-3 rounded-[8px] bg-[#F8F8F8] p-4">
+            <div className="flex w-full flex-col justify-center gap-3 rounded-xl bg-[#F8F8F8] p-4">
               <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">Average Price</h3>
               <p className="text-[12px] leading-[17px] text-[#41415A]">
                 The average price of 2 bedroom flats for sale in Lekki, Lagos is ₦160,000,000. The prices vary by
@@ -946,7 +940,7 @@ const ListingPage = () => {
 
           {/* Mobile Quick Filter */}
           <div className="mx-4 mb-6">
-            <div className="flex w-full flex-col gap-4 rounded-[8px] bg-[#F8F8F8] p-4 text-[#41415A]">
+            <div className="flex w-full flex-col gap-4 rounded-xl bg-[#F8F8F8] p-4 text-[#41415A]">
               <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">Quick Filter</h3>
               <div className="flex flex-wrap items-center gap-1">
                 {propertyTypes.map((type, index) => (
@@ -990,21 +984,21 @@ const ListingPage = () => {
           <div className="flex flex-col gap-6 px-4">
             {properties.map((property) => (
               <div key={property.id} className="flex flex-col gap-4 border-b border-[#F1F1F4] pb-6">
-                <img src={property.images} alt="property" className="h-[200px] w-full rounded-[8px] object-cover" />
+                <img src={property.images} alt="property" className="h-[200px] w-full rounded-xl object-cover" />
 
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-col gap-2">
                     <Badge className="h-[25px] w-fit rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[12px] leading-[18px] font-normal text-[#0B0B0D]">
                       For Sale
                     </Badge>
-                    <p className="line-clamp-2 text-[14px] leading-[16px] text-[#7F7F7F]">{property.title}</p>
-                    <p className="text-[18px] leading-[24px] font-bold text-[#1F2130]">{property.price}</p>
+                    <p className="line-clamp-2 text-[14px] leading-4 text-[#7F7F7F]">{property.title}</p>
+                    <p className="text-[18px] leading-6 font-bold text-[#1F2130]">{property.price}</p>
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <span className="text-[12px] leading-[14px] text-[#545767]">{property.location}</span>
+                    <span className="text-[12px] leading-3.5 text-[#545767]">{property.location}</span>
 
-                    <div className="flex items-center gap-4 text-[12px] leading-[14px] text-[oklch(0_0_0_/_80%)]">
+                    <div className="flex items-center gap-4 text-[12px] leading-3.5 text-[oklch(0_0_0_/_80%)]">
                       <div className="flex items-center gap-1">
                         <BedDouble className="size-4 text-[#D4AF36]" />
                         <span>{property.bedrooms}</span>
@@ -1019,14 +1013,14 @@ const ListingPage = () => {
                       </div>
                     </div>
 
-                    <p className="line-clamp-2 text-[12px] leading-[16px] text-gray-600">{property.area}</p>
+                    <p className="line-clamp-2 text-[12px] leading-4 text-gray-600">{property.area}</p>
                   </div>
 
                   <div className="mt-2 flex items-center gap-3">
                     <Button
                       asChild
                       variant={'secondary'}
-                      className="h-10 flex-1 rounded-[40px] bg-[#F1F1F4] text-[12px] leading-[14px] font-semibold text-[#41415A] hover:bg-gray-200"
+                      className="h-10 flex-1 rounded-[40px] bg-[#F1F1F4] text-[12px] leading-3.5 font-semibold text-[#41415A] hover:bg-gray-200"
                     >
                       <Link params={{ id: String(property.id) }} to="/listing/$id">
                         View Details
@@ -1037,7 +1031,7 @@ const ListingPage = () => {
                         background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                         boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                       }}
-                      className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] text-[12px] leading-[14px] font-semibold text-white"
+                      className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] text-[12px] leading-3.5 font-semibold text-white"
                     >
                       Contact
                     </Button>

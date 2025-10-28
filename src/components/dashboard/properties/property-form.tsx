@@ -1,5 +1,3 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -9,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { Upload, RotateCcw, Trash, X, Slash, Loader2 } from 'lucide-react';
 import type React from 'react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { z } from 'zod/v4';
 import {
   Breadcrumb,
@@ -32,6 +30,7 @@ import {
 } from '@/lib/services/properties';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
+import statesAndLgasData from '@/data/statesAndLocalGov.json';
 
 // Zod Schema
 const PropertyFormSchema = z.object({
@@ -49,10 +48,10 @@ const PropertyFormSchema = z.object({
   state: z.string().min(1, 'State is required'),
   localGovernment: z.string().min(1, 'Local government is required'),
   propertyDescription: z.string().min(10, 'Property description must be at least 10 characters'),
-  bedrooms: z.string().min(1, 'Number of bedrooms is required'),
-  bathrooms: z.string().min(1, 'Number of bathrooms is required'),
-  totalArea: z.string().min(1, 'Total area is required'),
-  propertyPrice: z.string().min(1, 'Property price is required'),
+  bedrooms: z.coerce.number().int().min(1, 'Number of bedrooms is required'),
+  bathrooms: z.coerce.number().int().min(1, 'Number of bathrooms is required'),
+  totalArea: z.coerce.number().int().min(1, 'Total area is required'),
+  propertyPrice: z.coerce.number().min(1, 'Property price is required'),
   currency: z.string().min(1, 'Currency is required'),
   propertyImages: z.array(z.string()).min(1, 'At least one property image is required'),
   documentType: z.string().optional(),
@@ -93,21 +92,6 @@ const propertyTypes = [
 ];
 
 const landTypes = ['Residential', 'Commercial', 'Industrial', 'Agricultural', 'Mixed Use'];
-
-const states = ['Lagos', 'Abuja', 'Kano', 'Rivers', 'Ogun', 'Kaduna', 'Oyo', 'Delta', 'Edo', 'Anambra'];
-
-const localGovernments = [
-  'Ikeja',
-  'Victoria Island',
-  'Lekki',
-  'Surulere',
-  'Ikoyi',
-  'Yaba',
-  'Gbagada',
-  'Mushin',
-  'Alimosho',
-  'Kosofe',
-];
 
 const currencies = [
   { value: 'NGN', label: '₦ Nigerian Naira' },
@@ -158,14 +142,22 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const imageInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
   const proofOfAddressInputRef = useRef<HTMLInputElement>(null);
-
+  const [selectedState, setSelectedState] = useState('');
   const { mutateAsync: createProperty, isPending: isCreating } = useCreateProperty();
   const { mutateAsync: updateProperty, isPending: isUpdating } = useUpdateProperty(initialData?.id || '');
   const { mutateAsync: uploadImage } = useUploadPropertyImage();
   const { mutateAsync: uploadPropertyDoc } = useUploadPropertyDocument();
   const { mutateAsync: uploadDocument } = useUploadProofOfAddress();
+
   const isPending = isCreating || isUpdating;
 
+  const lgas = useMemo(() => {
+    if (!selectedState) {
+      return [];
+    }
+    const stateData = statesAndLgasData.find((s) => s.state === selectedState);
+    return stateData ? stateData.lgas : [];
+  }, [selectedState]);
   const form = useForm<PropertyFormValues>({
     resolver: customResolver(PropertyFormSchema),
     mode: 'onTouched',
@@ -311,16 +303,39 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   };
 
   const onSubmit = async (data: PropertyFormValues) => {
+    const categorySlugMap: Record<PropertyFormValues['listingType'], string> = {
+      'For Sale': 'for-sale',
+      Rent: 'for-rent',
+      'Short Let': 'short-let',
+    };
+
+    const propertyTypeMap: Record<string, string> = {
+      duplex: 'duplex',
+      bungalow: 'house',
+      apartment: 'apartment',
+      flat: 'apartment',
+      mansion: 'house',
+      townhouse: 'house',
+      villa: 'villa',
+      studio: 'apartment',
+      penthouse: 'apartment',
+    };
+
     const payload = {
-      ...data,
       title: data.listingTitle,
-      category_slug: data.listingType.toLowerCase().replace(' ', '-'),
-      lga_or_city: data.localGovernment,
+      category_slug: categorySlugMap[data.listingType],
       description: data.propertyDescription,
+      price: Number(data.propertyPrice),
+      currency: data.currency,
+      property_type: propertyTypeMap[data.propertyType.toLowerCase()] || 'other',
+      address: `${data.houseNumber} ${data.streetName}`,
+      lga_or_city: data.localGovernment,
+      state: data.state,
+      country: 'Nigeria', // Assuming this is constant for now
+      bedrooms: data.bedrooms,
+      bathrooms: data.bathrooms,
       area_sqft: data.totalArea,
       features: data.nearbyAmenities,
-      property_document: data.propertyDocument,
-      address: `${data.houseNumber} ${data.streetName}`,
     };
 
     try {
@@ -373,7 +388,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                   type="button"
                   variant="secondary"
                   onClick={() => router.history.back()}
-                  className="h-10 w-full rounded-[32px] bg-[#F1F1F4] px-8 py-[15px] text-[14px] font-semibold text-[#1F2130] sm:w-auto"
+                  className="h-10 w-full rounded-4xl bg-[#F1F1F4] px-8 py-[15px] text-[14px] font-semibold text-[#1F2130] sm:w-auto"
                 >
                   Cancel
                 </Button>
@@ -558,16 +573,23 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">State</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setSelectedState(value);
+                        form.setValue('localGovernment', ''); // Reset LGA on state change
+                      }}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
                           <SelectValue placeholder="Lagos" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {states.map((state) => (
-                          <SelectItem key={state} value={state}>
-                            {state}
+                        {statesAndLgasData.map((state, index) => (
+                          <SelectItem key={`${state.state}${index}`} value={state.state}>
+                            {state.state}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -585,16 +607,20 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                       Local Government
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      disabled={!selectedState || lgas.length === 0}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
                           <SelectValue placeholder="Ikeja" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {localGovernments.map((lg) => (
-                          <SelectItem key={lg} value={lg}>
-                            {lg}
+                        {lgas.map((lga, index) => (
+                          <SelectItem key={`${lga}${index}`} value={lga}>
+                            {lga}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -618,7 +644,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     <FormControl>
                       <Textarea
                         placeholder="5  Bedroom fully detached house with 2 maid rooms, an elevator, rooftop terraces (front and back), a swimming pool, a cinema/movie theater, etc."
-                        className="min-h-[80px] resize-none rounded-lg border-[#D5D5DD] sm:min-h-[64px]"
+                        className="min-h-20 resize-none rounded-lg border-[#D5D5DD] sm:min-h-16"
                         {...field}
                       />
                     </FormControl>
@@ -737,7 +763,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       <p className="text-[14px] leading-[17px] text-[#71748C]">
                         <span className="cursor-pointer font-semibold text-[#B69118]">Click </span> to upload
                       </p>
-                      <p className="text-[10px] leading-[12px] text-[#71748C]">Supports JPEG, or PNG files.</p>
+                      <p className="text-[10px] leading-3 text-[#71748C]">Supports JPEG, or PNG files.</p>
                     </div>
                   </div>
                 </div>
@@ -776,20 +802,20 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px] leading-[14px] font-normal text-black sm:px-6"
+                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px] leading-3.5 font-normal text-black sm:px-6"
                             onClick={() => handleImageRemove(index)}
                           >
-                            <Trash className="size-[14px] text-[#D20832]" />
+                            <Trash className="size-3.5 text-[#D20832]" />
                           </Button>
 
                           <Button
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px] leading-[14px] font-normal text-black sm:px-6"
+                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px] leading-3.5 font-normal text-black sm:px-6"
                             onClick={() => handleImageReplace(index)}
                           >
-                            <RotateCcw className="size-[14px]" />
+                            <RotateCcw className="size-3.5" />
                           </Button>
                         </div>
                       </div>
@@ -804,7 +830,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       <p className="text-[14px] leading-[17px] text-[#71748C]">
                         <span className="cursor-pointer font-semibold text-[#B69118]">Click </span> to upload
                       </p>
-                      <p className="text-[10px] leading-[12px] text-[#71748C]">Supports JPEG, or PNG files.</p>
+                      <p className="text-[10px] leading-3 text-[#71748C]">Supports JPEG, or PNG files.</p>
                     </div>
                   </div>
                 </div>

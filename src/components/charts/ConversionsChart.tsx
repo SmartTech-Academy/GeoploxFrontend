@@ -1,5 +1,3 @@
-'use client';
-
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
@@ -7,16 +5,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 interface ConversionsChartProps {
   data: any[];
   period: string;
-  // eslint-disable-next-line no-unused-vars
+
   onPeriodChange: (period: string) => void;
 }
 
 export function ConversionsChart({ data, period, onPeriodChange }: ConversionsChartProps) {
   return (
-    <div className="flex items-start gap-12 self-stretch rounded-[8px] border border-[#E3E3E8] bg-white p-6">
+    <div className="flex items-start gap-12 self-stretch rounded-xl border border-[#E3E3E8] bg-white p-6">
       <div className="flex w-full grow flex-col items-start gap-6">
         <header className="flex w-full items-center justify-between gap-6">
-          <h3 className="text-[12px] leading-[14px] tracking-[0.02em] text-[#7F7F7F] uppercase">Conversions</h3>
+          <h3 className="text-[12px] leading-3.5 tracking-[0.02em] text-[#7F7F7F] uppercase">Conversions</h3>
           <Select value={period} onValueChange={onPeriodChange}>
             <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-[#F9F9F9] text-[#41415A] focus:ring-0">
               <div className="flex items-center gap-2">

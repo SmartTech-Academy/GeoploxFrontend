@@ -90,7 +90,7 @@ const Dashboard = () => {
             background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
             boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
           }}
-          className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-[12px] font-normal text-white lg:w-fit"
+          className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-3 font-normal text-white lg:w-fit"
         >
           <Link to="/properties/create">
             <HousePlus className="size-4" /> New Listing
@@ -107,30 +107,26 @@ const Dashboard = () => {
                 className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
               >
                 <div className="box-border w-full rounded-t-[10px] border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-                  <h6 className="text-[12px] leading-[14px] tracking-[-0.02em] text-[#7F7F7F] uppercase">
-                    {item.title}
-                  </h6>
+                  <h6 className="text-[12px] leading-3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
                 </div>
 
                 <div className="flex items-baseline gap-2 px-6 pb-6">
-                  <p className="text-[48px] leading-[48px] font-semibold tracking-[-1px] text-[#1F2130]">
-                    {item.value}
-                  </p>
+                  <p className="text-[48px] leading-12 font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
                   <span className="text-[16px] leading-[22px] text-[#1F2130]">Properties</span>
                 </div>
               </div>
             ))}
       </section>
 
-      <section className="grid w-full gap-6 rounded-[8px] lg:grid-cols-2">
+      <section className="grid w-full gap-6 rounded-xl lg:grid-cols-2">
         <ActiveListingsChart data={listingActivities} period={period} onPeriodChange={setPeriod} />
 
-        <div className="flex w-full items-start gap-12 self-stretch rounded-[8px] border border-[#E3E3E8] bg-white p-6">
+        <div className="flex w-full items-start gap-12 self-stretch rounded-xl border border-[#E3E3E8] bg-white p-6">
           <div className="flex w-full grow flex-col items-start gap-6">
             <header className="flex w-full items-center justify-between gap-6">
-              <h3 className="text-[12px] leading-[14px] tracking-[0.02em] text-[#7F7F7F] uppercase">Recent Messages</h3>
+              <h3 className="text-[12px] leading-3.5 tracking-[0.02em] text-[#7F7F7F] uppercase">Recent Messages</h3>
 
-              <Button variant="link" className="text-primary text-[12px] leading-[14px] font-semibold">
+              <Button variant="link" className="text-primary text-[12px] leading-3.5 font-semibold">
                 View All
                 <ChevronRight className="size-4 fill-[#D4AF36]" />
               </Button>
@@ -151,21 +147,21 @@ const Dashboard = () => {
                 recentMessages.map((item: RecentMessage) => (
                   <div
                     key={item.conversation_id}
-                    className="flex w-full items-center justify-between gap-[14px] self-stretch border-b border-[#E3E3E8] pb-4 last:border-b-0"
+                    className="flex w-full items-center justify-between gap-3.5 self-stretch border-b border-[#E3E3E8] pb-4 last:border-b-0"
                   >
-                    <div className="flex items-center gap-[14px]">
+                    <div className="flex items-center gap-3.5">
                       <img src={item.last_message.sender.avatar} alt="" className="size-11" width={44} height={44} />
                       <div className="flex flex-col items-start justify-center gap-2.5">
                         <h5 className="text-[14px] leading-[17px] font-semibold text-[#41415A]">
                           {item.last_message.sender.name}
                         </h5>
-                        <p className="truncate text-[12px] leading-[14px] tracking-[0.01em] text-[#71748C]">
+                        <p className="truncate text-[12px] leading-3.5 tracking-[0.01em] text-[#71748C]">
                           {item.last_message.body}
                         </p>
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-2.5">
-                      <p className="text-right text-[12px] leading-[14px] tracking-[0.01em] whitespace-nowrap text-[#71748C]">
+                      <p className="text-right text-[12px] leading-3.5 tracking-[0.01em] whitespace-nowrap text-[#71748C]">
                         {formatTime(item.last_message.created_at)}
                       </p>
                       {item.is_unread && <div className="size-2 rounded-full bg-[#D20832]" />}
@@ -189,14 +185,10 @@ const Dashboard = () => {
                 className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
               >
                 <div className="box-border w-full rounded-t-[10px] border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-                  <h6 className="text-[12px] leading-[14px] tracking-[-0.02em] text-[#7F7F7F] uppercase">
-                    {item.title}
-                  </h6>
+                  <h6 className="text-[12px] leading-3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
                 </div>
                 <div className="flex items-baseline gap-2 px-6 pb-6">
-                  <p className="text-[48px] leading-[48px] font-semibold tracking-[-1px] text-[#1F2130]">
-                    {item.value}
-                  </p>
+                  <p className="text-[48px] leading-12 font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
                 </div>
               </div>
             ))}

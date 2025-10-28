@@ -288,7 +288,7 @@ const ListingDetail = () => {
                   Property Details
                 </h2>
 
-                <div className="space-y-4 text-[16px] leading-[28px] text-[#4D5462]">
+                <div className="space-y-4 text-[16px] leading-7 text-[#4D5462]">
                   <p className="">{property.desc}</p>
 
                   <p>Price: {formatPrice(property.price, property.currency)}</p>
@@ -326,7 +326,7 @@ const ListingDetail = () => {
                   <h2 className="text-[28px] leading-[34px] font-semibold tracking-[-0.5px] text-[#15181E]">
                     Neighborhood
                   </h2>
-                  <p className="text-[20px] leading-[28px] tracking-[-0.5px] text-[#4D5462]">
+                  <p className="text-[20px] leading-7 tracking-[-0.5px] text-[#4D5462]">
                     Use interactive map to explore the neighborhood and see how it matches your interests.
                   </p>
                 </div>
@@ -398,7 +398,7 @@ const ListingDetail = () => {
                     background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                     boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                   }}
-                  className="h-8 self-stretch rounded-[40px] border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                  className="h-8 self-stretch rounded-[40px] border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                 >
                   Contact <Lock className="size-3" />
                 </Button>
@@ -406,7 +406,7 @@ const ListingDetail = () => {
                 <Button
                   asChild
                   variant="outline"
-                  className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-[16px] font-normal text-[#1F2130]"
+                  className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
                 >
                   <a href={`mailto:${property.owner.email_address}`}>
                     Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
@@ -415,7 +415,7 @@ const ListingDetail = () => {
                 <Button
                   asChild
                   variant="outline"
-                  className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-[16px] font-normal text-[#1F2130]"
+                  className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
                 >
                   <a href={`https://wa.me/${property.owner.phone_number}`} target="_blank" rel="noopener noreferrer">
                     Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
@@ -488,7 +488,7 @@ const ListingDetail = () => {
                           </p>
 
                           <div className="flex items-end gap-3 self-stretch">
-                            <div className="flex items-center gap-5 text-[14px] leading-[16px] text-[#41415A]">
+                            <div className="flex items-center gap-5 text-[14px] leading-4 text-[#41415A]">
                               <div className="flex items-center gap-2">
                                 <BedDouble className="size-[18px] text-[#1F2130]" />
                                 <span>{property.bedrooms} Beds</span>

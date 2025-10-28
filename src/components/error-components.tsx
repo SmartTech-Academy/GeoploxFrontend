@@ -158,14 +158,14 @@ const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ error, re
         <div className="mt-8 flex justify-center gap-4">
           <Button
             onClick={resetErrorBoundary}
-            className="border-primary h-11 gap-11 rounded-full border px-5 py-2.5 text-[16px] leading-[16px] font-medium tracking-[-0.02em] text-white"
+            className="border-primary h-11 gap-11 rounded-full border px-5 py-2.5 text-[16px] leading-4 font-medium tracking-[-0.02em] text-white"
           >
             Try Again
           </Button>
           <Button
             onClick={() => (window.location.href = '/dashboard')}
             variant="outline"
-            className="border-primary h-11 gap-11 rounded-full border px-5 py-2.5 text-[16px] leading-[16px] font-medium tracking-[-0.02em]"
+            className="border-primary h-11 gap-11 rounded-full border px-5 py-2.5 text-[16px] leading-4 font-medium tracking-[-0.02em]"
           >
             Go to Dashboard
           </Button>

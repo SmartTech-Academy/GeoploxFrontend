@@ -41,10 +41,10 @@ const PropertiesDetails = () => {
         state: property.state,
         localGovernment: property.city, // Assuming city is the local government
         propertyDescription: property.desc,
-        bedrooms: String(property.bedrooms),
-        bathrooms: String(property.bathrooms),
-        totalArea: String(property.area_sqft),
-        propertyPrice: String(property.price),
+        bedrooms: property.bedrooms,
+        bathrooms: property.bathrooms,
+        totalArea: property.area_sqft,
+        propertyPrice: property.price,
         currency: property.currency,
         nearbyAmenities: property.features || [],
       }

@@ -19,7 +19,7 @@ type SubscriptionFormData = z.infer<typeof subscriptionSchema>;
 
 interface UpgradePlanDialogProps {
   open: boolean;
-  // eslint-disable-next-line no-unused-vars
+
   onOpenChange: (open: boolean) => void;
 }
 
@@ -80,7 +80,7 @@ export const UpgradePlanDialog: React.FC<UpgradePlanDialogProps> = ({ open, onOp
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="mx-auto w-fit overflow-hidden rounded-[8px] border border-[#F1F1F4] bg-white p-1.5">
+              <div className="mx-auto w-fit overflow-hidden rounded-xl border border-[#F1F1F4] bg-white p-1.5">
                 <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto">
                   {['Monthly', 'Annually'].map((tab) => (
                     <Button

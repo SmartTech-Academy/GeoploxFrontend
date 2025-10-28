@@ -73,12 +73,12 @@ const BlogsPage = () => {
                   <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                   <Input
                     placeholder="Search blog"
-                    className="h-10 w-full rounded-[8px] border border-[#D5D5DD] pr-4 pl-10 md:w-[339px]"
+                    className="h-10 w-full rounded-xl border border-[#D5D5DD] pr-4 pl-10 md:w-[339px]"
                   />
                 </div>
 
                 <Select defaultValue="all" name="blog-category-select">
-                  <SelectTrigger className="h-10 min-w-[198px] rounded-[8px] border-[#D5D5DD] bg-white text-[#41415A] focus:ring-0">
+                  <SelectTrigger className="h-10 min-w-[198px] rounded-xl border-[#D5D5DD] bg-white text-[#41415A] focus:ring-0">
                     <div className="flex items-center gap-2">
                       <SelectValue />
                     </div>
@@ -99,7 +99,7 @@ const BlogsPage = () => {
                   background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
                   boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                 }}
-                className="h-10 rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] px-6 text-[14px] leading-[17px] font-semibold text-white"
+                className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] px-6 text-[14px] leading-[17px] font-semibold text-white"
               >
                 <Link to="/blogs/create">New Post</Link>
               </Button>
@@ -120,13 +120,9 @@ const BlogsPage = () => {
                   />
                   <div className="flex flex-col p-4 pr-3 md:p-0">
                     <div className="flex items-center gap-3">
-                      <p className="text-[15px] leading-[20px] tracking-[-0.12px] text-[#060809]">
-                        {blogPosts[0].category}
-                      </p>
+                      <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">{blogPosts[0].category}</p>
 
-                      <p className="text-[15px] leading-[20px] tracking-[-0.12px] text-[#7B828E]">
-                        {blogPosts[0].date}
-                      </p>
+                      <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#7B828E]">{blogPosts[0].date}</p>
                     </div>
 
                     <div className="flex flex-col gap-4 self-stretch">
@@ -144,7 +140,7 @@ const BlogsPage = () => {
                 {/* Grid Posts */}
                 <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
                   {blogPosts.slice(1).map((post) => (
-                    <div key={post.id} className="flex w-full flex-col gap-4 rounded-[8px] border border-[#E9EBEC]">
+                    <div key={post.id} className="flex w-full flex-col gap-4 rounded-xl border border-[#E9EBEC]">
                       <img
                         width={362}
                         height={240}
@@ -155,11 +151,9 @@ const BlogsPage = () => {
                       <div className="flex flex-col gap-3 px-4 py-6">
                         <div className="flex items-center gap-3">
                           <div className="flex items-center gap-3">
-                            <p className="text-[15px] leading-[20px] tracking-[-0.12px] text-[#060809]">
-                              {post.category}
-                            </p>
+                            <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">{post.category}</p>
 
-                            <p className="text-[15px] leading-[20px] tracking-[-0.12px] text-[#7B828E]">{post.date}</p>
+                            <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#7B828E]">{post.date}</p>
                           </div>
                         </div>
                         <h3 className="text-[18px] leading-[26px] font-semibold tracking-[-0.2px] text-[#060809]">

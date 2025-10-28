@@ -24,7 +24,7 @@ const SubscriptionsSection = ({ user }: { user: any }) => {
     <div className="flex w-full flex-col gap-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
         <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Subscription</h2>
-        <p className="text-[14px] leading-[20px] text-[#71748C]">Manage your subscription and billing</p>
+        <p className="text-[14px] leading-5 text-[#71748C]">Manage your subscription and billing</p>
       </div>
 
       <div className="flex w-full flex-col gap-8">
@@ -37,23 +37,23 @@ const SubscriptionsSection = ({ user }: { user: any }) => {
               {currentPlan ? (
                 <div className="flex grow flex-col items-start gap-2">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-[16px] leading-[16px] font-semibold tracking-[-0.02em] text-[#282828]">
+                    <h3 className="text-[16px] leading-4 font-semibold tracking-[-0.02em] text-[#282828]">
                       {currentPlan.name} Plan
                     </h3>
                     {subscription.active && (
-                      <span className="rounded-[4px] bg-[oklch(0.7665_0.1393_91.15_/_5%)] px-2 py-1 text-[12px] leading-[12px] text-[#D4AF36]">
+                      <span className="rounded-[4px] bg-[oklch(0.7665_0.1393_91.15_/_5%)] px-2 py-1 text-[12px] leading-3 text-[#D4AF36]">
                         Active Plan
                       </span>
                     )}
                   </div>
-                  <p className="text-[14px] leading-[20px] text-[#71748C]">
+                  <p className="text-[14px] leading-5 text-[#71748C]">
                     {subscription.active
                       ? `Expires on ${new Date(subscription.expires_at).toLocaleDateString()}`
                       : 'Plan Inactive'}
                   </p>
                 </div>
               ) : (
-                <p className="text-[14px] leading-[20px] text-[#71748C]">You are not subscribed to any plan.</p>
+                <p className="text-[14px] leading-5 text-[#71748C]">You are not subscribed to any plan.</p>
               )}
 
               <Button
@@ -63,7 +63,7 @@ const SubscriptionsSection = ({ user }: { user: any }) => {
 
                   boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                 }}
-                className="h-10 rounded-[32px] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                className="h-10 rounded-4xl p-4 text-[14px] leading-[17px] font-semibold text-white"
                 size="sm"
               >
                 {currentPlan ? 'Upgrade' : 'Subscribe'}
@@ -74,7 +74,7 @@ const SubscriptionsSection = ({ user }: { user: any }) => {
 
         {/* Bill History Section */}
         <div className="flex flex-col items-start gap-2 self-stretch">
-          <h3 className="text-[16px] leading-[20px] font-semibold text-[#1F2130]">Bill History</h3>
+          <h3 className="text-[16px] leading-5 font-semibold text-[#1F2130]">Bill History</h3>
 
           <div className="flex w-full flex-col bg-white">
             {/* Table Header */}
@@ -87,11 +87,9 @@ const SubscriptionsSection = ({ user }: { user: any }) => {
             {/* Table Rows */}
             {billHistory.map((item, index) => (
               <div key={index} className={`grid w-full grid-cols-3 ${index % 2 === 0 ? 'bg-[#F8F8F8]' : ''}`}>
-                <span className="px-4 py-[18px] text-[14px] leading-[16px] text-[#41415A]">{item.date}</span>
-                <span className="px-4 py-[18px] text-[14px] leading-[16px] text-[#41415A]">{item.description}</span>
-                <span className="px-4 py-[18px] text-right text-[14px] leading-[16px] text-[#41415A]">
-                  {item.amount}
-                </span>
+                <span className="px-4 py-[18px] text-[14px] leading-4 text-[#41415A]">{item.date}</span>
+                <span className="px-4 py-[18px] text-[14px] leading-4 text-[#41415A]">{item.description}</span>
+                <span className="px-4 py-[18px] text-right text-[14px] leading-4 text-[#41415A]">{item.amount}</span>
               </div>
             ))}
           </div>

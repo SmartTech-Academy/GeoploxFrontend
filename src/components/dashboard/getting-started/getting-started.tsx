@@ -1,5 +1,3 @@
-'use client';
-
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -401,10 +399,10 @@ const GettingStarted = () => {
         return <FormAccountType form={form} />;
 
       case 'personal-info':
-        return <PersonalInfo form={form} />;
+        return <PersonalInfo form={form} profileData={profileData} />;
 
       case 'business-info':
-        return <BusinessInfo form={form} />;
+        return <BusinessInfo form={form} profileData={profileData} />;
 
       case 'kyc-documents':
         return <KYCDocuments form={form} />;
@@ -424,7 +422,6 @@ const GettingStarted = () => {
     try {
       setIsSubmitting(true);
       await completeOnboardingMutate();
-      await queryClient.invalidateQueries({ queryKey: ['profile'] });
 
       const toastId = toast.success('Onboarding complete! Welcome to your dashboard.', {
         description: "We’re reviewing your information and will notify you once it's approved.",
@@ -434,7 +431,10 @@ const GettingStarted = () => {
         },
       });
 
+      // Navigate immediately after success
       navigate({ to: getLoginRedirectPath(profileData) });
+      // Invalidate profile data after navigation to refresh it in the background for the dashboard
+      await queryClient.invalidateQueries({ queryKey: ['profile'] });
     } catch (error: any) {
       const message = error.response?.data?.message || 'Failed to complete onboarding.';
       const toastId = toast.error('Failed to complete onboarding.', {
@@ -473,7 +473,7 @@ const GettingStarted = () => {
           <div className="hidden w-full shrink-0 flex-col gap-8 border-r border-[#F1F1F4] px-5 py-8 lg:flex lg:w-[447px] lg:px-6">
             <div className="flex flex-col items-start gap-3">
               <h2 className="text-[24px] leading-[29px] font-semibold text-[#4E4E4E]">Hi, {userName}</h2>
-              <p className="text-[14px] leading-[20px] text-[#71748C]">
+              <p className="text-[14px] leading-5 text-[#71748C]">
                 Just a few steps left to finish setting up your account.
               </p>
             </div>

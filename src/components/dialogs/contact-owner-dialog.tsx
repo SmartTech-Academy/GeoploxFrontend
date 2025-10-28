@@ -22,7 +22,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 interface ContactOwnerDialogProps {
   propertyId: string;
   open: boolean;
-  // eslint-disable-next-line no-unused-vars
+
   onOpenChange: (open: boolean) => void;
 }
 

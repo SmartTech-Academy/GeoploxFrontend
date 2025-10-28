@@ -46,7 +46,7 @@ function RouteComponent() {
 
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Password Recovery link sent</h1>
-            <p className="max-w-[400px] text-center text-[14px] leading-[20px] text-[#71748C]">
+            <p className="max-w-[400px] text-center text-[14px] leading-5 text-[#71748C]">
               If your email address provided is associated with an account, you should receive a link to create a new
               password
             </p>
@@ -67,7 +67,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-[20px] text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
+          <p className="text-[14px] leading-5 text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
         </div>
       </div>
     </div>

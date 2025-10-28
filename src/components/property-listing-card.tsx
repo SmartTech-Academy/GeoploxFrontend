@@ -73,11 +73,11 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
           </div>
 
           <div className="flex flex-col items-start gap-[11px] self-stretch">
-            <span className="text-[14px] leading-[16px] text-[#545767]">
+            <span className="text-[14px] leading-4 text-[#545767]">
               {property.location.city}, {property.location.state}
             </span>
 
-            <div className="flex w-full items-center gap-5 self-stretch text-[14px] leading-[16px] text-[oklch(0_0_0_/_80%)]">
+            <div className="flex w-full items-center gap-5 self-stretch text-[14px] leading-4 text-[oklch(0_0_0_/_80%)]">
               <div className="flex items-center gap-2">
                 <BedDouble className="text-primary size-[18px]" />
                 <span>{property.bedrooms} Beds</span>
@@ -121,7 +121,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
               background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
-            className="h-8 w-1/2 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+            className="h-8 w-1/2 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
           >
             Contact
           </Button>
