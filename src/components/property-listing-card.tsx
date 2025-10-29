@@ -26,11 +26,22 @@ export interface Property {
 
 interface PropertyListingCardProps {
   property: Property;
+  isDashboard?: boolean;
+  identifier?: string;
 }
 
-export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ property }) => {
+export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ property, isDashboard, identifier }) => {
   const location = useLocation();
-
+  const isAdminListing = location.pathname.includes('/admin-listing');
+  const detailPath = isDashboard
+    ? isAdminListing
+      ? `/admin-listing/${identifier}`
+      : `/listing/${identifier}`
+    : location.pathname.includes('/buy')
+      ? `/buy/${identifier}`
+      : location.pathname.includes('/rent')
+        ? `/rent/${identifier}`
+        : `/sell/${identifier}`;
   return (
     <div className="flex w-full items-center justify-between gap-[89px] self-stretch border-b border-[#F1F1F4] pb-10">
       <div className="grid h-[266px] w-[463px] grid-cols-2 gap-2">
@@ -61,7 +72,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
       <div className="flex flex-col items-start gap-9">
         <div className="flex flex-col gap-4 self-stretch">
           <div className="flex flex-col items-start gap-2.5">
-            <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
+            <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
               {property.category}
             </Badge>
 
@@ -73,11 +84,11 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
           </div>
 
           <div className="flex flex-col items-start gap-[11px] self-stretch">
-            <span className="text-[14px] leading-[16px] text-[#545767]">
+            <span className="text-[14px] leading-4 text-[#545767]">
               {property.location.city}, {property.location.state}
             </span>
 
-            <div className="flex w-full items-center gap-5 self-stretch text-[14px] leading-[16px] text-[oklch(0_0_0_/_80%)]">
+            <div className="flex w-full items-center gap-5 self-stretch text-[14px] leading-4 text-[oklch(0_0_0/80%)]">
               <div className="flex items-center gap-2">
                 <BedDouble className="text-primary size-[18px]" />
                 <span>{property.bedrooms} Beds</span>
@@ -102,18 +113,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
             variant={'secondary'}
             className="h-8 w-1/2 rounded-[40px] bg-[#F1F1F4] p-4 text-[14px] leading-[17px] font-semibold text-[#41415A]"
           >
-            <Link
-              params={{ id: property.slug }}
-              to={
-                location.pathname.includes('/buy')
-                  ? '/buy/$id'
-                  : location.pathname.includes('/rent')
-                    ? '/rent/$id'
-                    : '/sell/$id'
-              }
-            >
-              View Details
-            </Link>
+            <Link to={detailPath}>View Details</Link>
           </Button>
 
           <Button
@@ -121,7 +121,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
               background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
-            className="h-8 w-1/2 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+            className="h-8 w-1/2 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
           >
             Contact
           </Button>

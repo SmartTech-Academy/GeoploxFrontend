@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { Filter, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -203,8 +201,8 @@ const PendingApprovalPage = () => {
               height={84}
             />
             <div className="flex flex-col items-center justify-center gap-3">
-              <h5 className="text-[20px] leading-[28px] font-normal text-[#1F2130]">No request selected</h5>
-              <p className="text-center text-[14px] leading-[20px] tracking-[-0.02em] text-[#71748C]">
+              <h5 className="text-[20px] leading-7 font-normal text-[#1F2130]">No request selected</h5>
+              <p className="text-center text-[14px] leading-5 tracking-[-0.02em] text-[#71748C]">
                 Select a request from the list
                 <br /> to view details and take action.
               </p>
@@ -226,7 +224,7 @@ const PendingApprovalPage = () => {
             height={84}
           />
           <div className="flex flex-col items-center justify-center gap-3">
-            <h5 className="text-[20px] leading-[28px] font-semibold text-[#1F2130]">No requests found</h5>
+            <h5 className="text-[20px] leading-7 font-semibold text-[#1F2130]">No requests found</h5>
             <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
               No pending requests match your current filter.
             </p>
@@ -269,7 +267,7 @@ const PendingApprovalPage = () => {
       </div>
 
       {/* Table Header */}
-      <div className="grid grid-cols-4 gap-4 border-b border-[#E8E8E8] px-4 py-3 text-[12px] leading-[12px] font-normal text-[#71748C]">
+      <div className="grid grid-cols-4 gap-4 border-b border-[#E8E8E8] px-4 py-3 text-[12px] leading-3 font-normal text-[#71748C]">
         <div>Date</div>
         <div>Type</div>
         <div>Name / Property ID</div>
@@ -286,7 +284,7 @@ const PendingApprovalPage = () => {
               key={request.id}
               onClick={() => onSelectRequest(request)}
               className={cn(
-                `relative grid cursor-pointer grid-cols-4 items-center gap-4 px-4 py-[18px] text-[14px] leading-[16px] text-[#41415A] transition-colors hover:bg-gray-50`,
+                `relative grid cursor-pointer grid-cols-4 items-center gap-4 px-4 py-[18px] text-[14px] leading-4 text-[#41415A] transition-colors hover:bg-gray-50`,
                 index % 2 === 0 ? 'bg-[#F8F8F8]' : 'bg-white',
                 selectedRequest?.id === request.id && 'bg-[#FDFBF5]'
               )}
@@ -339,9 +337,9 @@ const PendingApprovalPage = () => {
           </div>
 
           {/* Request Details */}
-          <div className="flex flex-1 flex-col items-center gap-4 self-stretch overflow-y-auto rounded-[8px] border border-dashed border-[#D5D5DD] bg-white px-4 py-8">
+          <div className="flex flex-1 flex-col items-center gap-4 self-stretch overflow-y-auto rounded-xl border border-dashed border-[#D5D5DD] bg-white px-4 py-8">
             {isKYC ? (
-              <img src={assets.landlord} className="size-[64px] rounded-full" width={64} height={64} />
+              <img src={assets.landlord} className="size-16 rounded-full" width={64} height={64} />
             ) : (
               <img
                 src={assets.housebackyardwithgarden}
@@ -356,27 +354,27 @@ const PendingApprovalPage = () => {
                 {/* Personal Information */}
                 <div className="w-full">
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Account Type</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Account Type</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as KYCDetails).accountType}
                     </p>
                   </div>
 
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Personal Phone Number</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Personal Phone Number</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as KYCDetails).personalPhone}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Personal Whatsapp Number</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Personal Whatsapp Number</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as KYCDetails).personalWhatsapp}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Home Address</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Home Address</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as KYCDetails).homeAddress}
                     </p>
                   </div>
@@ -385,32 +383,32 @@ const PendingApprovalPage = () => {
                 {/* Business Information */}
                 <div className="w-full border-t border-[#F1F1F4] pt-4">
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Business Name</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Business Name</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as KYCDetails).businessName}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Business Email Address</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Business Email Address</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as KYCDetails).businessEmail}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Business Phone Number</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Business Phone Number</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as KYCDetails).businessPhone}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Business Whatsapp Number</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Business Whatsapp Number</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as KYCDetails).businessWhatsapp}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Business Address</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Business Address</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as KYCDetails).businessAddress}
                     </p>
                   </div>
@@ -445,27 +443,27 @@ const PendingApprovalPage = () => {
                 {/* Personal Information */}
                 <div className="w-full">
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Listing Title</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Listing Title</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as ListingDetails).listingTitle}
                     </p>
                   </div>
 
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Listing Type</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Listing Type</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as ListingDetails).listingType}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Property ID</label>
-                    <p className="text-[14px] leading-[14px] text-[#065BCD] underline">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Property ID</label>
+                    <p className="text-[14px] leading-3.5 text-[#065BCD] underline">
                       {(selectedRequest.details as ListingDetails).propertyID}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Submitted By</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Submitted By</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as ListingDetails).submitedBy}
                     </p>
                   </div>
@@ -474,26 +472,26 @@ const PendingApprovalPage = () => {
                 {/* Business Information */}
                 <div className="w-full border-t border-[#F1F1F4] pt-4">
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Business Name</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Business Name</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as ListingDetails).businessName}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Property Type</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Property Type</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as ListingDetails).propertyType}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Property Price</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Property Price</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as ListingDetails).propertyPrice}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-10 self-stretch py-2">
-                    <label className="text-[14px] leading-[14px] text-[#71748C]">Location</label>
-                    <p className="text-[14px] leading-[14px] text-[#1F2130]">
+                    <label className="text-[14px] leading-3.5 text-[#71748C]">Location</label>
+                    <p className="text-[14px] leading-3.5 text-[#1F2130]">
                       {(selectedRequest.details as ListingDetails).location}
                     </p>
                   </div>

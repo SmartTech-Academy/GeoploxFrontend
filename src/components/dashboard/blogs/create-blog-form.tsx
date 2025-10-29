@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -117,7 +115,6 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
   };
 
   const removeSeoTag = (index: number) => {
-    console.log(index);
     const currentTags = form.getValues('seoTitle');
     form.setValue(
       'seoTitle',
@@ -134,7 +131,6 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
   };
 
   const removeCustomTag = (index: number) => {
-    console.log(index);
     const currentTags = form.getValues('customTags');
     form.setValue(
       'customTags',
@@ -191,15 +187,13 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
               </Breadcrumb>
 
               <div className="flex w-full items-center justify-between gap-10 self-stretch">
-                <h1 className="text-[20px] leading-[24px] font-semibold text-black">
-                  {isEdit ? 'Edit Post' : 'New Post'}
-                </h1>
+                <h1 className="text-[20px] leading-6 font-semibold text-black">{isEdit ? 'Edit Post' : 'New Post'}</h1>
 
                 <div className="flex items-center gap-3">
                   <Button
                     type="button"
                     variant="secondary"
-                    className="h-8 self-stretch rounded-[32px] bg-[#F1F1F4] px-8 py-[15px] text-[14px] leading-[17px] font-semibold text-[#1F2130]"
+                    className="h-8 self-stretch rounded-4xl bg-[#F1F1F4] px-8 py-[15px] text-[14px] leading-[17px] font-semibold text-[#1F2130]"
                   >
                     Save Draft
                   </Button>
@@ -208,7 +202,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                     type="button"
                     variant="secondary"
                     onClick={handlePreview}
-                    className="h-8 self-stretch rounded-[32px] bg-[#F1F1F4] px-8 py-[15px] text-[14px] leading-[17px] font-semibold text-[#1F2130]"
+                    className="h-8 self-stretch rounded-4xl bg-[#F1F1F4] px-8 py-[15px] text-[14px] leading-[17px] font-semibold text-[#1F2130]"
                   >
                     Preview
                   </Button>
@@ -218,7 +212,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                       background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
                       boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                     }}
-                    className="h-8 rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] px-6 text-[14px] leading-[17px] font-semibold text-white"
+                    className="h-8 rounded-[40px] border border-[oklch(0.235_0_0/50%)] px-6 text-[14px] leading-[17px] font-semibold text-white"
                   >
                     Publish
                   </Button>
@@ -264,7 +258,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                           Drag and drop here or{' '}
                           <span className="cursor-pointer font-semibold text-[#B69118]">click to upload</span>
                         </p>
-                        <p className="text-[10px] leading-[12px] text-[#71748C]">
+                        <p className="text-[10px] leading-3 text-[#71748C]">
                           Supports PDF, JPEG, or PNG files. Smaller than 1 MB
                         </p>
                       </div>
@@ -287,7 +281,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
                       <div
                         className={cn(
-                          'absolute inset-0 z-10 flex h-full w-full items-center justify-center rounded-[6px] bg-[oklch(0_0_0_/_20%)] backdrop-blur-[2px] transition-all duration-300',
+                          'absolute inset-0 z-10 flex h-full w-full items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
                           hoveredDocument === 'headerImage' ? 'opacity-100' : 'pointer-events-none opacity-0'
                         )}
                       >
@@ -296,10 +290,10 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px] leading-[14px] font-normal text-black"
+                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px] leading-3.5 font-normal text-black"
                             onClick={handleImageRemove}
                           >
-                            <Trash className="size-[14px] text-[#D20832]" />
+                            <Trash className="size-3.5 text-[#D20832]" />
                             Remove
                           </Button>
 
@@ -307,10 +301,10 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px] leading-[14px] font-normal text-black"
+                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px] leading-3.5 font-normal text-black"
                             onClick={handleImageReplace}
                           >
-                            <RotateCcw className="size-[14px]" />
+                            <RotateCcw className="size-3.5" />
                             Replace
                           </Button>
                         </div>
@@ -446,7 +440,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                   <div className="flex w-full flex-col gap-1.5">
                     <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">Custom Tags</label>
                     <div className="relative">
-                      <div className="flex min-h-[40px] w-full flex-wrap items-center gap-1 rounded-lg border border-[#D5D5DD] bg-white px-3">
+                      <div className="flex min-h-10 w-full flex-wrap items-center gap-1 rounded-lg border border-[#D5D5DD] bg-white px-3">
                         {form.watch('customTags').map((tag, index) => (
                           <Badge
                             key={index}
@@ -485,7 +479,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                 <div className="flex w-full flex-col gap-1.5">
                   <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">SEO Title</label>
                   <div className="relative">
-                    <div className="flex min-h-[40px] w-full flex-wrap items-center gap-1 rounded-lg border border-[#D5D5DD] bg-white px-3">
+                    <div className="flex min-h-10 w-full flex-wrap items-center gap-1 rounded-lg border border-[#D5D5DD] bg-white px-3">
                       {form.watch('seoTitle').map((tag, index) => (
                         <Badge
                           key={index}
@@ -566,7 +560,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                       <FormControl>
                         <Textarea
                           placeholder="Explore spacious 3-bedroom apartments in Lekki with modern amenities. Contact now for a viewing."
-                          className="min-h-[80px] resize-none rounded-lg border-[#D5D5DD]"
+                          className="min-h-20 resize-none rounded-lg border-[#D5D5DD]"
                           {...field}
                         />
                       </FormControl>
@@ -582,7 +576,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
       {/* Preview Modal */}
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[1024px]">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-5xl">
           <DialogHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm text-gray-600">

@@ -40,9 +40,9 @@ const MessagingPage = () => {
               height={84}
             />
             <div className="flex flex-col items-center justify-center gap-3">
-              <h5 className="text-[20px] leading-[28px] font-normal text-[#1F2130]">No message yet</h5>
+              <h5 className="text-[20px] leading-7 font-normal text-[#1F2130]">No message yet</h5>
 
-              <p className="text-center text-[14px] leading-[20px] tracking-[-0.02em] text-[#71748C]">
+              <p className="text-center text-[14px] leading-5 tracking-[-0.02em] text-[#71748C]">
                 Once you start a new conversation,
                 <br /> you’ll see it here.
               </p>
@@ -55,7 +55,7 @@ const MessagingPage = () => {
       <div className="flex w-full flex-col items-center justify-center gap-8 self-stretch py-14">
         <img src={assets.chatloading} className="h-[112px] w-[211px] animate-pulse" width={211} height={112} />
         <div className="flex flex-col items-center justify-center gap-3">
-          <h5 className="text-[20px] leading-[28px] font-semibold text-[#1F2130]">Your chat is empty</h5>
+          <h5 className="text-[20px] leading-7 font-semibold text-[#1F2130]">Your chat is empty</h5>
           <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
             It looks like you haven’t had a chat yet.
           </p>

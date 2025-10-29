@@ -1,11 +1,10 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
 import LoadingFallback from '@/components/loading-fallback';
 import { useGetOnboardingSummary } from '@/lib/services';
-import type React from 'react';
+import React, { useMemo } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
+import { useGetProfileData } from '@/lib/services/profile';
 
 interface CompleteOnboardingProps {
   form: UseFormReturn<any>;
@@ -13,7 +12,10 @@ interface CompleteOnboardingProps {
 }
 
 const CompleteOnboarding: React.FC<CompleteOnboardingProps> = ({ goToPreviousStep }) => {
-  const { data: summaryData, isPending } = useGetOnboardingSummary();
+  const { data: profileData } = useGetProfileData();
+  const isCompleted = useMemo(() => profileData?.onboarding_status === 'completed', [profileData]);
+
+  const { data: summaryData, isPending } = useGetOnboardingSummary({ enabled: !isCompleted });
   const summary = summaryData?.data?.data;
 
   if (isPending) {
@@ -28,12 +30,12 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = ({ goToPreviousSte
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
         <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Complete Onboarding</h2>
-        <p className="text-[14px] leading-[20px] text-[#71748C]">Review your account information before submitting</p>
+        <p className="text-[14px] leading-5 text-[#71748C]">Review your account information before submitting</p>
       </div>
 
       {(summary.business?.logo_url || summary.display_picture_url) && (
         <div className="flex items-center justify-center self-stretch border-b border-[#F1F1F4] pb-8">
-          <div className="flex size-[64px] items-center justify-center overflow-hidden rounded-full border-2 border-[#D5D5DD]">
+          <div className="flex size-16 items-center justify-center overflow-hidden rounded-full border-2 border-[#D5D5DD]">
             {(summary.business?.logo_url || summary.display_picture_url) && (
               <img
                 src={summary.business?.logo_url || summary.display_picture_url}
@@ -166,7 +168,7 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = ({ goToPreviousSte
             boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
           }}
           type="submit"
-          className="h-12 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] font-semibold text-white"
+          className="h-12 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] font-semibold text-white"
         >
           Submit
         </Button>

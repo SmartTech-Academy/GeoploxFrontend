@@ -44,7 +44,6 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, isOpen, 
 };
 
 interface PropertyFilterSidebarProps {
-  // eslint-disable-next-line no-unused-vars
   onFiltersChange: (newFilters: Record<string, any>) => void;
   onClear: () => void;
 }
@@ -183,7 +182,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
         >
           <Input
             placeholder="e.g Lekki, Lagos"
-            className="h-8 w-full rounded-[8px] border border-[#D5D5DD] px-3"
+            className="h-8 w-full rounded-xl border border-[#D5D5DD] px-3"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
@@ -207,7 +206,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                     );
                   }}
                 />
-                <label htmlFor={`cat-${category.id}`} className="text-[14px] leading-[16px] text-[#41415A]">
+                <label htmlFor={`cat-${category.id}`} className="text-[14px] leading-4 text-[#41415A]">
                   {category.title}
                 </label>
               </div>
@@ -228,7 +227,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={propertyType.flat}
                 onCheckedChange={(checked) => setPropertyType((prev) => ({ ...prev, flat: !!checked }))}
               />
-              <label htmlFor="flat" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="flat" className="text-[14px] leading-4 text-[#41415A]">
                 Flat
               </label>
             </div>
@@ -238,7 +237,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={propertyType.apartment}
                 onCheckedChange={(checked) => setPropertyType((prev) => ({ ...prev, apartment: !!checked }))}
               />
-              <label htmlFor="apartment" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="apartment" className="text-[14px] leading-4 text-[#41415A]">
                 Apartment
               </label>
             </div>
@@ -248,7 +247,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={propertyType.house}
                 onCheckedChange={(checked) => setPropertyType((prev) => ({ ...prev, house: !!checked }))}
               />
-              <label htmlFor="house" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="house" className="text-[14px] leading-4 text-[#41415A]">
                 House
               </label>
             </div>
@@ -258,7 +257,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={propertyType.land}
                 onCheckedChange={(checked) => setPropertyType((prev) => ({ ...prev, land: !!checked }))}
               />
-              <label htmlFor="land" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="land" className="text-[14px] leading-4 text-[#41415A]">
                 Land
               </label>
             </div>
@@ -268,7 +267,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={propertyType.commercial}
                 onCheckedChange={(checked) => setPropertyType((prev) => ({ ...prev, commercial: !!checked }))}
               />
-              <label htmlFor="commercial" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="commercial" className="text-[14px] leading-4 text-[#41415A]">
                 Commercial Property
               </label>
             </div>
@@ -288,7 +287,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={landType.residential}
                 onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, residential: !!checked }))}
               />
-              <label htmlFor="residential" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="residential" className="text-[14px] leading-4 text-[#41415A]">
                 Residential
               </label>
             </div>
@@ -298,7 +297,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={landType.commercialLand}
                 onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, commercialLand: !!checked }))}
               />
-              <label htmlFor="commercial-land" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="commercial-land" className="text-[14px] leading-4 text-[#41415A]">
                 Commercial
               </label>
             </div>
@@ -308,7 +307,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={landType.industrial}
                 onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, industrial: !!checked }))}
               />
-              <label htmlFor="industrial" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="industrial" className="text-[14px] leading-4 text-[#41415A]">
                 Industrial
               </label>
             </div>
@@ -318,7 +317,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={landType.mixedUse}
                 onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, mixedUse: !!checked }))}
               />
-              <label htmlFor="mixed-use" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="mixed-use" className="text-[14px] leading-4 text-[#41415A]">
                 Mixed-use
               </label>
             </div>
@@ -328,7 +327,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={landType.others}
                 onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, others: !!checked }))}
               />
-              <label htmlFor="others" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="others" className="text-[14px] leading-4 text-[#41415A]">
                 Others
               </label>
             </div>
@@ -338,7 +337,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 checked={landType.allLands}
                 onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, allLands: !!checked }))}
               />
-              <label htmlFor="all-lands" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="all-lands" className="text-[14px] leading-4 text-[#41415A]">
                 All Lands
               </label>
             </div>
@@ -349,7 +348,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
         <CollapsibleSection title="Keyword" isOpen={isKeywordOpen} onToggle={() => setIsKeywordOpen(!isKeywordOpen)}>
           <Input
             placeholder="Enter keyword"
-            className="h-8 w-full rounded-[8px] border border-[#D5D5DD] px-3"
+            className="h-8 w-full rounded-xl border border-[#D5D5DD] px-3"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />
@@ -373,7 +372,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
             <div className="flex items-center gap-2">
               <Input
                 value={`₦${priceRange[0].toLocaleString()}`}
-                className="border-primary h-8 bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,_175,_54,_0.5)]"
+                className="border-primary h-8 bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,175,54,0.5)]"
                 readOnly
               />
               <svg width="20" height="2" viewBox="0 0 20 2" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -396,7 +395,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
         >
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-[16px] text-[#41415A]">Min.</label>
+              <label className="text-[14px] leading-4 text-[#41415A]">Min.</label>
               <div className="relative">
                 <Input
                   type="number"
@@ -408,7 +407,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-[16px] text-[#41415A]">Max.</label>
+              <label className="text-[14px] leading-4 text-[#41415A]">Max.</label>
               <div className="relative">
                 <Input
                   type="number"
@@ -430,14 +429,14 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
         >
           <div className="flex w-full flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-[16px] text-[#41415A]">Bedroom</label>
+              <label className="text-[14px] leading-4 text-[#41415A]">Bedroom</label>
               <div className="grid grid-cols-5 gap-2">
                 {[1, 2, 3, 4, '5+'].map((num) => (
                   <Button
                     key={num}
                     variant={'outline'}
                     size="sm"
-                    className={`h-8 rounded-[8px] px-3 text-[14px] leading-[16px] text-[#41415A] ${
+                    className={`h-8 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
                       selectedBedrooms.includes(num) ? 'border-primary hover:border-primary' : 'border-[#D5D5DD]'
                     }`}
                     onClick={() => {
@@ -454,14 +453,14 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-[16px] text-[#41415A]">Bathroom</label>
+              <label className="text-[14px] leading-4 text-[#41415A]">Bathroom</label>
               <div className="grid grid-cols-5 gap-2">
                 {[1, 2, 3, 4, '5+'].map((num) => (
                   <Button
                     key={num}
                     variant={'outline'}
                     size="sm"
-                    className={`h-8 rounded-[8px] px-3 text-[14px] leading-[16px] text-[#41415A] ${
+                    className={`h-8 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
                       selectedBathrooms.includes(num) ? 'border-primary hover:border-primary' : 'border-[#D5D5DD]'
                     }`}
                     onClick={() => {
@@ -487,7 +486,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
           onToggle={() => setIsDeveloperOwnerOpen(!isDeveloperOwnerOpen)}
         >
           <div className="flex w-full flex-col gap-2">
-            <label className="text-[14px] leading-[16px] text-[#41415A]">Name</label>
+            <label className="text-[14px] leading-4 text-[#41415A]">Name</label>
             <Input
               placeholder="e.g Royalty Properties"
               className="h-8 w-full border-[#D5D5DD] bg-white px-3 text-sm"
@@ -509,7 +508,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                     setSelectedTags((prev) => (checked ? [...prev, tag.id] : prev.filter((id) => id !== tag.id)));
                   }}
                 />
-                <label htmlFor={`tag-${tag.id}`} className="text-[14px] leading-[16px] text-[#41415A] capitalize">
+                <label htmlFor={`tag-${tag.id}`} className="text-[14px] leading-4 text-[#41415A] capitalize">
                   {tag.name}
                 </label>
               </div>
@@ -532,7 +531,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                   setVerifiedListing((prev) => ({ ...prev, allListings: !!checked, verifiedOnly: !checked }))
                 }
               />
-              <label htmlFor="all-listings" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="all-listings" className="text-[14px] leading-4 text-[#41415A]">
                 All Listings
               </label>
             </div>
@@ -544,7 +543,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                   setVerifiedListing((prev) => ({ ...prev, verifiedOnly: !!checked, allListings: !checked }))
                 }
               />
-              <label htmlFor="verified-only" className="text-[14px] leading-[16px] text-[#41415A]">
+              <label htmlFor="verified-only" className="text-[14px] leading-4 text-[#41415A]">
                 Verified Listings Only
               </label>
             </div>
@@ -555,7 +554,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
         <div className="flex items-center gap-3 self-stretch">
           <Button
             variant="secondary"
-            className="h-10 grow rounded-[32px] bg-[#F1F1F4] px-4 py-[15px] text-[14px] leading-[17px] text-[#1F2130] hover:bg-gray-50"
+            className="h-10 grow rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[14px] leading-[17px] text-[#1F2130] hover:bg-gray-50"
             onClick={handleClearFilters}
           >
             Clear
@@ -565,7 +564,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
               background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
-            className="h-10 grow rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+            className="h-10 grow rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
             onClick={handleApplyFilters}
           >
             Apply Filter

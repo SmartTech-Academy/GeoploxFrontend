@@ -24,7 +24,12 @@ const PropertiesDetails = () => {
     return <div className="p-8 text-red-500">Error loading property details.</div>;
   }
 
-  const property = propertyData?.data?.data;
+  const property = propertyData?.data?.data?.data;
+
+  const toTitleCase = (str: string) => {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
 
   // Transform API data to form values
   const initialData: Partial<PropertyFormValues> = property
@@ -32,20 +37,22 @@ const PropertiesDetails = () => {
         id: property.id,
         listingTitle: property.title,
         listingType: property.category, // 'For Sale', 'Rent', 'Short Let'
-        propertyType: property.property_type,
-        landType: property.land_type, // Assuming this comes from API
-        houseNumber: property.address, // API provides full address, splitting might be needed
-        streetName: '', // API provides full address
-        city: property.city,
-        postalCode: '', // Not in API response
+        propertyType: toTitleCase(property.property_type),
+        // landType: property.land_type, // Not in API response
+        // Splitting address into houseNumber and streetName
+        houseNumber: property.address?.split(' ')[0] || '',
+        streetName: property.address?.split(' ').slice(1).join(' ') || '',
+        city: property.city, // API provides LGA as city
+        // postalCode: '', // Not in API response
         state: property.state,
-        localGovernment: property.city, // Assuming city is the local government
+        localGovernment: property.city, // API provides LGA in the 'city' field
         propertyDescription: property.desc,
-        bedrooms: String(property.bedrooms),
-        bathrooms: String(property.bathrooms),
-        totalArea: String(property.area_sqft),
-        propertyPrice: String(property.price),
+        bedrooms: property.bedrooms,
+        bathrooms: property.bathrooms,
+        totalArea: property.area_sqft,
+        propertyPrice: property.price,
         currency: property.currency,
+        propertyImages: property.images?.map((img: { url: string }) => img.url) || [],
         nearbyAmenities: property.features || [],
       }
     : {};

@@ -26,7 +26,7 @@ import { Conversation } from './chat';
 
 interface ChatViewProps {
   selectedChat: Conversation;
-  // eslint-disable-next-line no-unused-vars
+
   setSelectedChat: (chat: Conversation | null) => void;
   profileData: UserProfile | undefined;
 }
@@ -90,7 +90,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <Avatar className="size-[64px] rounded-[6px]">
+              <Avatar className="size-16 rounded-[6px]">
                 <AvatarImage src={otherParticipant?.display_picture_url} />
                 <AvatarFallback className="bg-gray-200">
                   {`${otherParticipant?.firstname[0] ?? ''}${otherParticipant?.lastname[0] ?? ''}`}
@@ -227,7 +227,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
                 background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
                 boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
               }}
-              className="h-8 rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] bg-gray-800 p-3 text-white hover:bg-gray-700"
+              className="h-8 rounded-[40px] border border-[oklch(0.235_0_0/50%)] bg-gray-800 p-3 text-white hover:bg-gray-700"
             >
               Send
               <SendHorizonal className="h-4 w-4" />

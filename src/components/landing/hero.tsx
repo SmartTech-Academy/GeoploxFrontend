@@ -39,16 +39,16 @@ export function Hero() {
             </div>
 
             {/* Subheading */}
-            <p className="text-primary-foreground text-[20px] leading-[28px]">
+            <p className="text-primary-foreground text-[20px] leading-7">
               Get direct access to listings from real owners and developers — where trust meets transparency.
             </p>
 
             {/* Additional tagline */}
-            <p className="text-primary-foreground text-[14px] leading-[20px]">No fake agents, no hidden fees.</p>
+            <p className="text-primary-foreground text-[14px] leading-5">No fake agents, no hidden fees.</p>
           </div>
 
           {/* Search Interface */}
-          <div className="flex w-full flex-col items-center gap-3 rounded-[32px] bg-[oklch(1_0_0_/_50%)] p-4 backdrop-blur-[12px] lg:max-w-[817px] lg:flex-row">
+          <div className="flex w-full flex-col items-center gap-3 rounded-4xl bg-[oklch(1_0_0_/_50%)] p-4 backdrop-blur-[12px] lg:max-w-[817px] lg:flex-row">
             <div className="relative flex w-full flex-1 items-center gap-2">
               <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-[#D4AF36]" />
               <Input

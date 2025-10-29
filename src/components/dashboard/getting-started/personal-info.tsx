@@ -3,23 +3,47 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Phone, Upload, XIcon } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { UseFormReturn } from 'react-hook-form';
 import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import assets from '@/assets';
+import { UserProfile } from '@/lib/types';
+import statesAndLgasData from '@/data/statesAndLocalGov.json';
 
 interface AccountTypeProps {
   form: UseFormReturn<any>;
+  profileData: UserProfile | undefined;
 }
 
-const PersonalInfo: React.FC<AccountTypeProps> = ({ form }) => {
-  const [picturePreview, setPicturePreview] = useState<string | null>(null);
+const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
+  const [picturePreview, setPicturePreview] = useState<string | null>(() => profileData?.display_picture_url || null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCropDialogOpen, setCropDialogOpen] = useState(false);
+  const [selectedState, setSelectedState] = useState(form.getValues().state);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const lgas = useMemo(() => {
+    if (!selectedState) {
+      return [];
+    }
+    const stateData = statesAndLgasData.find((s) => s.state === selectedState);
+    return stateData ? stateData.lgas : [];
+  }, [selectedState]);
+
+  useEffect(() => {
+    if (profileData) {
+      form.setValue('firstName', profileData.firstname || '');
+      form.setValue('lastName', profileData.lastname || '');
+      form.setValue('phoneNumber', profileData.phone_number || '');
+      form.setValue('whatsappNumber', profileData.whatsapp_number || '');
+      form.setValue('homeAddress', profileData.home_address || '');
+      form.setValue('state', profileData.state || '');
+      form.setValue('localGovernment', profileData.local_gov_area || '');
+    }
+  }, [profileData, form]);
 
   const handlePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -49,14 +73,14 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form }) => {
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
         <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Personal Information</h2>
-        <p className="text-[14px] leading-[20px] text-[#71748C]">Let us know more about you</p>
+        <p className="text-[14px] leading-5 text-[#71748C]">Let us know more about you</p>
       </div>
 
       <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
         <div className="mx-auto flex flex-col gap-6">
           <div
             onClick={handleLogoClick}
-            className="relative mx-auto flex size-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
+            className="relative mx-auto flex size-16 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
           >
             {picturePreview ? (
               <img src={picturePreview} alt="Profile Preview" className="h-full w-full object-cover" />
@@ -73,8 +97,8 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form }) => {
           </div>
 
           <div className="flex flex-col gap-1">
-            <p className="text-[14px] leading-[24px] text-[#1F2130]">Profile Picture</p>
-            <p className="text-[14px] leading-[24px] text-[#71748C]">
+            <p className="text-[14px] leading-6 text-[#1F2130]">Profile Picture</p>
+            <p className="text-[14px] leading-6 text-[#71748C]">
               Upload a profile picture. Only .JPG and .PNG supported.
             </p>
           </div>
@@ -87,7 +111,7 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form }) => {
             <DialogHeader>
               <DialogTitle>Crop Your Profile Picture</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="flex w-full flex-col items-center justify-center space-y-4">
               <ImageCrop
                 aspect={1}
                 file={selectedFile}
@@ -201,16 +225,25 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form }) => {
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
                 <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">State</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    setSelectedState(value);
+                    form.setValue('localGovernment', ''); // Reset LGA on state change
+                  }}
+                  value={field.value}
+                >
                   <FormControl>
                     <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
                       <SelectValue placeholder="Select..." />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="lagos">Lagos</SelectItem>
-                    <SelectItem value="abuja">Abuja</SelectItem>
-                    <SelectItem value="kano">Kano</SelectItem>
+                    {statesAndLgasData.map((state, index) => (
+                      <SelectItem key={`${state.state}${index}`} value={state.state}>
+                        {state.state}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -226,16 +259,22 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form }) => {
                 <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                   Local Government
                 </FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={!selectedState || lgas.length === 0}
+                >
                   <FormControl>
                     <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
                       <SelectValue placeholder="Select..." />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="ikeja">Ikeja</SelectItem>
-                    <SelectItem value="victoria-island">Victoria Island</SelectItem>
-                    <SelectItem value="lekki">Lekki</SelectItem>
+                    {lgas.map((lga, index) => (
+                      <SelectItem key={`${lga}${index}`} value={lga}>
+                        {lga}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />

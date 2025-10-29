@@ -141,7 +141,7 @@ function RouteComponent() {
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
           <div className="flex w-full flex-col items-center gap-4 self-stretch px-4">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Verify your Account</h1>
-            <p className="text-center text-[14px] leading-[20px] text-[#71748C]">
+            <p className="text-center text-[14px] leading-5 text-[#71748C]">
               Enter the 6-digit code sent to your phone number ending with{' '}
               <span className="font-medium">{formatPhoneForDisplay(phone)}</span>
             </p>
@@ -167,12 +167,12 @@ function RouteComponent() {
                           className="w-full gap-2"
                         >
                           <InputOTPGroup className="w-full gap-4">
-                            <InputOTPSlot index={0} className="size-14 rounded-[8px] text-lg" />
-                            <InputOTPSlot index={1} className="size-14 rounded-[8px] text-lg" />
-                            <InputOTPSlot index={2} className="size-14 rounded-[8px] text-lg" />
-                            <InputOTPSlot index={3} className="size-14 rounded-[8px] text-lg" />
-                            <InputOTPSlot index={4} className="size-14 rounded-[8px] text-lg" />
-                            <InputOTPSlot index={5} className="size-14 rounded-[8px] text-lg" />
+                            <InputOTPSlot index={0} className="size-14 rounded-xl text-lg" />
+                            <InputOTPSlot index={1} className="size-14 rounded-xl text-lg" />
+                            <InputOTPSlot index={2} className="size-14 rounded-xl text-lg" />
+                            <InputOTPSlot index={3} className="size-14 rounded-xl text-lg" />
+                            <InputOTPSlot index={4} className="size-14 rounded-xl text-lg" />
+                            <InputOTPSlot index={5} className="size-14 rounded-xl text-lg" />
                           </InputOTPGroup>
                         </InputOTP>
                       </FormControl>
@@ -188,7 +188,7 @@ function RouteComponent() {
                     background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                     boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                   }}
-                  className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                  className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                   disabled={localOTP.length !== 6 || isVerifying}
                 >
                   {isVerifying ? 'Verifying...' : 'Verify'}
@@ -196,7 +196,7 @@ function RouteComponent() {
 
                 {/* Resend Code */}
                 <div className="text-center">
-                  <p className="text-[14px] leading-[20px] text-[#41415A]">
+                  <p className="text-[14px] leading-5 text-[#41415A]">
                     Didn&apos;t receive?{' '}
                     <button
                       type="button"
@@ -215,7 +215,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-[20px] text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
+          <p className="text-[14px] leading-5 text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
         </div>
       </div>
     </div>

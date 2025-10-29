@@ -26,7 +26,7 @@ const NotificationItem = ({
 }: {
   notification: Notification;
   isSelected: boolean;
-  // eslint-disable-next-line no-unused-vars
+
   onSelect: (id: string, checked: boolean) => void;
 }) => {
   const navigate = useNavigate();

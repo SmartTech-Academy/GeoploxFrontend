@@ -1,25 +1,21 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Loader2 } from 'lucide-react';
 import React, { Dispatch, SetStateAction } from 'react';
-
-import { toast } from 'sonner';
 
 interface DeletePropertyProps {
   setOpenDeleteModal: Dispatch<SetStateAction<boolean>>;
   openDeleteModal: boolean;
+  onConfirm: () => void;
+  isDeleting: boolean;
 }
 
-const DeleteProperty: React.FC<DeletePropertyProps> = ({ setOpenDeleteModal, openDeleteModal }) => {
-  const handleDelete = () => {
-    // Show success toast
-    const toastId = toast.success('Property Deleted Successfully', {
-      description: 'Property "456 Market Avenue" has been successfully deleted.',
-      action: {
-        label: 'Dismiss',
-        onClick: () => toast.dismiss(toastId),
-      },
-    });
-  };
+const DeleteProperty: React.FC<DeletePropertyProps> = ({
+  setOpenDeleteModal,
+  openDeleteModal,
+  onConfirm,
+  isDeleting,
+}) => {
   return (
     <Dialog open={openDeleteModal} onOpenChange={setOpenDeleteModal}>
       <DialogContent className="sm:max-w-[425px]">
@@ -36,14 +32,15 @@ const DeleteProperty: React.FC<DeletePropertyProps> = ({ setOpenDeleteModal, ope
         <DialogFooter>
           <DialogClose asChild>
             <Button
-              className="h-8 rounded-[32px] bg-[#F1F1F4] px-4 py-[15px] text-[12px] leading-[14px] font-semibold text-[#1F2130]"
+              className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px] leading-3.5 font-semibold text-[#1F2130]"
               variant="secondary"
             >
               Cancel
             </Button>
           </DialogClose>
           <Button
-            onClick={handleDelete}
+            onClick={onConfirm}
+            disabled={isDeleting}
             type="submit"
             variant="destructive"
             style={{
@@ -51,9 +48,9 @@ const DeleteProperty: React.FC<DeletePropertyProps> = ({ setOpenDeleteModal, ope
 
               boxShadow: ' 0px 2px 4px rgba(0, 0, 0, 0.2), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
-            className="h-8 rounded-[32px] border border-[oklch(0.5477_0.2177_21.48_/_50%)] p-4 text-[12px] leading-[14px] font-semibold text-white"
+            className="h-8 rounded-4xl border border-[oklch(0.5477_0.2177_21.48/50%)] p-4 text-[12px] leading-3.5 font-semibold text-white"
           >
-            Yes, Delete
+            {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Yes, Delete'}
           </Button>
         </DialogFooter>
       </DialogContent>

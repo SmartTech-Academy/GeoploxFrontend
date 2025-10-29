@@ -10,12 +10,13 @@ import { useForm } from 'react-hook-form';
 import z from 'zod';
 import { Phone, Upload, XIcon } from 'lucide-react';
 import assets from '@/assets';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { UserProfile } from '@/lib/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
 import { useUpdateBusinessInformation } from '@/lib/services/profile';
 import { toast } from 'sonner';
+import statesAndLgasData from '@/data/statesAndLocalGov.json';
 
 const step3BusinessSchema = z.object({
   businessLogo: z.any().optional(),
@@ -38,8 +39,17 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
   const { mutateAsync: setBusinessInfoMutate, isPending } = useUpdateBusinessInformation();
   const [logoPreview, setLogoPreview] = useState<string | null>(user?.business?.logo_url || null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedState, setSelectedState] = useState(user?.business?.state || undefined);
   const [isCropDialogOpen, setCropDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const lgas = useMemo(() => {
+    if (!selectedState) {
+      return [];
+    }
+    const stateData = statesAndLgasData.find((s) => s.state === selectedState);
+    return stateData ? stateData.lgas : [];
+  }, [selectedState]);
 
   const form = useForm({
     resolver: customResolver(step3BusinessSchema),
@@ -108,7 +118,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
         <div className="flex w-full flex-col gap-10 bg-white">
           <div className="flex flex-col items-center gap-3 self-stretch text-center">
             <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Business Information</h2>
-            <p className="text-[14px] leading-[20px] text-[#71748C]">Update your business details</p>
+            <p className="text-[14px] leading-5 text-[#71748C]">Update your business details</p>
           </div>
 
           <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
@@ -116,7 +126,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
               <div
                 role="button"
                 onClick={handleLogoClick}
-                className="relative mx-auto flex size-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
+                className="relative mx-auto flex size-16 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
               >
                 {logoPreview ? (
                   <img
@@ -137,8 +147,8 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
               </div>
 
               <div className="flex flex-col gap-1">
-                <p className="text-[14px] leading-[24px] text-[#1F2130]">Business Logo</p>
-                <p className="text-[14px] leading-[24px] text-[#71748C]">
+                <p className="text-[14px] leading-6 text-[#1F2130]">Business Logo</p>
+                <p className="text-[14px] leading-6 text-[#71748C]">
                   Upload a profile picture. Only .JPG and .PNG supported.
                 </p>
               </div>
@@ -151,7 +161,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                 <DialogHeader>
                   <DialogTitle>Crop Your Business Logo</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
+                <div className="flex w-full flex-col items-center justify-center space-y-4">
                   <ImageCrop
                     aspect={1}
                     file={selectedFile}
@@ -325,16 +335,25 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">State</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setSelectedState(value);
+                        form.setValue('businessLocalGovernment', ''); // Reset LGA on state change
+                      }}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
                           <SelectValue placeholder="Select..." />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="lagos">Lagos</SelectItem>
-                        <SelectItem value="abuja">Abuja</SelectItem>
-                        <SelectItem value="kano">Kano</SelectItem>
+                        {statesAndLgasData.map((state, index) => (
+                          <SelectItem key={`${state.state}${index}`} value={state.state}>
+                            {state.state}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -350,16 +369,22 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                       Local Government
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      disabled={!selectedState || lgas.length === 0}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
                           <SelectValue placeholder="Select..." />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="ikeja">Ikeja</SelectItem>
-                        <SelectItem value="victoria-island">Victoria Island</SelectItem>
-                        <SelectItem value="lekki">Lekki</SelectItem>
+                        {lgas.map((lga, index) => (
+                          <SelectItem key={`${lga}${index}`} value={lga}>
+                            {lga}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -383,7 +408,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
             type="submit"
-            className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] text-[14px] font-semibold text-white"
+            className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] text-[14px] font-semibold text-white"
             disabled={isPending}
           >
             {isPending ? 'Saving...' : 'Save Changes'}

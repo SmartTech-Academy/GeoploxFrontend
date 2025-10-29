@@ -23,6 +23,7 @@ export interface UserProfile {
   email_verified: boolean;
   email_verification_date: string;
   entity_creation_date: string;
+
   plan: {
     subscription_id: 4;
     active: true;
@@ -36,6 +37,9 @@ export interface UserProfile {
       features: string[];
     };
   };
+
+
+
 }
 
 export interface Business {

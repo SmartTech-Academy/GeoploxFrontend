@@ -15,7 +15,7 @@ import assets from '@/assets';
 interface ChatListProps {
   conversations: Conversation[];
   selectedChat: Conversation | null;
-  // eslint-disable-next-line no-unused-vars
+
   onSelectChat: (chat: Conversation) => void;
   isLoading: boolean;
   hasNextPage: boolean | undefined;
@@ -23,10 +23,10 @@ interface ChatListProps {
   fetchNextPage: () => void;
   profileData: UserProfile | undefined;
   searchQuery: string;
-  // eslint-disable-next-line no-unused-vars
+
   setSearchQuery: (query: string) => void;
   filter: 'all' | 'unread';
-  // eslint-disable-next-line no-unused-vars
+
   setFilter: (filter: 'all' | 'unread') => void;
 }
 
@@ -34,7 +34,7 @@ const EmptyState = () => (
   <div className="flex w-full flex-col items-center justify-center gap-8 self-stretch py-14">
     <img src={assets.chatloading} className="h-[112px] w-[211px] animate-pulse" width={211} height={112} />
     <div className="flex flex-col items-center justify-center gap-3">
-      <h5 className="text-[20px] leading-[28px] font-semibold text-[#1F2130]">Your chat is empty</h5>
+      <h5 className="text-[20px] leading-7 font-semibold text-[#1F2130]">Your chat is empty</h5>
       <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
         It looks like you haven’t had a chat yet.
       </p>
@@ -80,7 +80,7 @@ export const ChatList: React.FC<ChatListProps> = ({
           <Input
             type="text"
             placeholder="Search messages"
-            className="h-10 self-stretch rounded-[8px] border border-[#D5D5DD] px-3 pl-10"
+            className="h-10 self-stretch rounded-xl border border-[#D5D5DD] px-3 pl-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -131,9 +131,9 @@ export const ChatList: React.FC<ChatListProps> = ({
                   selectedChat?.id === chat.id ? 'bg-[#FDF9ED]' : ''
                 }`}
               >
-                <div className="flex w-full items-center gap-[14px]">
+                <div className="flex w-full items-center gap-3.5">
                   <div className="relative">
-                    <Avatar className="size-[64px] rounded-[6px]">
+                    <Avatar className="size-16 rounded-[6px]">
                       <AvatarImage src={otherParticipant.display_picture_url} />
                       <AvatarFallback className="bg-gray-200">
                         {`${otherParticipant.firstname[0]}${otherParticipant.lastname[0]}`}
@@ -146,7 +146,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                         {`${otherParticipant.firstname} ${otherParticipant.lastname}`}
                       </h3>
                       <div className="flex items-center space-x-2">
-                        <span className="text-[12px] leading-[14px] text-[#71748C]">
+                        <span className="text-[12px] leading-3.5 text-[#71748C]">
                           {chat.last_message ? formatTime(chat.last_message.created_at) : ''}
                         </span>
                         {chat.unread_count > 0 && (
@@ -156,7 +156,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                         )}
                       </div>
                     </div>
-                    <p className="mt-1 truncate text-[12px] leading-[14px] tracking-[0.01em] text-[#71748C]">
+                    <p className="mt-1 truncate text-[12px] leading-3.5 tracking-[0.01em] text-[#71748C]">
                       {chat.last_message?.body ?? 'No messages yet'}
                     </p>
                   </div>

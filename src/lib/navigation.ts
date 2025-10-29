@@ -22,7 +22,7 @@ export interface NavigationItem {
 }
 
 export const adminNavigation: NavigationItem[] = [
-  { name: 'Listing', href: '/listing', icon: Home },
+  { name: 'Listing', href: '/admin-listing', icon: Home },
   { name: 'Pending Approvals', href: '/pending-approvals', icon: CircleCheck },
   { name: 'Users', href: '/users', icon: Users },
   { name: 'Managers', href: '/managers', icon: Users2 },

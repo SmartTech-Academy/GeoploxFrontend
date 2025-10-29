@@ -49,7 +49,7 @@ function RouteComponent() {
         {/* Success Message */}
         <div className="flex w-full flex-col items-center gap-4 self-stretch text-center">
           <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Your account is ready</h1>
-          <p className="text-[14px] leading-[20px] text-[#71748C]">
+          <p className="text-[14px] leading-5 text-[#71748C]">
             You will be able to login with your email address
             <br />
             <span className="font-medium">({email || 'your.email@example.com'})</span>
@@ -64,7 +64,7 @@ function RouteComponent() {
               background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
-            className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15_/_50%)] p-4 text-[14px] leading-[17px] font-semibold text-white transition-opacity hover:opacity-90"
+            className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white transition-opacity hover:opacity-90"
           >
             Login to Dashboard
           </Button>
@@ -73,7 +73,7 @@ function RouteComponent() {
 
       {/* Footer */}
       <div className="text-center">
-        <p className="text-[14px] leading-[20px] text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
+        <p className="text-[14px] leading-5 text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
       </div>
     </div>
   );

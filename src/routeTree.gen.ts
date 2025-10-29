@@ -41,6 +41,7 @@ import { Route as DashboardInsightsIndexRouteImport } from './routes/_dashboard/
 import { Route as DashboardGettingStartedIndexRouteImport } from './routes/_dashboard/getting-started/index'
 import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard/dashboard/index'
 import { Route as DashboardBlogsIndexRouteImport } from './routes/_dashboard/blogs/index'
+import { Route as DashboardAdminListingIndexRouteImport } from './routes/_dashboard/admin-listing/index'
 import { Route as DashboardAdminInsightsIndexRouteImport } from './routes/_dashboard/admin-insights/index'
 import { Route as LandingSellIdRouteImport } from './routes/_landing/sell/$id'
 import { Route as LandingRentIdRouteImport } from './routes/_landing/rent/$id'
@@ -50,6 +51,7 @@ import { Route as DashboardPropertiesCreateRouteImport } from './routes/_dashboa
 import { Route as DashboardPropertiesIdRouteImport } from './routes/_dashboard/properties/$id'
 import { Route as DashboardListingIdRouteImport } from './routes/_dashboard/listing/$id'
 import { Route as DashboardBlogsCreateRouteImport } from './routes/_dashboard/blogs/create'
+import { Route as DashboardAdminListingIdRouteImport } from './routes/_dashboard/admin-listing/$id'
 
 const LandingRoute = LandingRouteImport.update({
   id: '/_landing',
@@ -213,6 +215,12 @@ const DashboardBlogsIndexRoute = DashboardBlogsIndexRouteImport.update({
   path: '/blogs/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardAdminListingIndexRoute =
+  DashboardAdminListingIndexRouteImport.update({
+    id: '/admin-listing/',
+    path: '/admin-listing/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 const DashboardAdminInsightsIndexRoute =
   DashboardAdminInsightsIndexRouteImport.update({
     id: '/admin-insights/',
@@ -260,6 +268,11 @@ const DashboardBlogsCreateRoute = DashboardBlogsCreateRouteImport.update({
   path: '/blogs/create',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardAdminListingIdRoute = DashboardAdminListingIdRouteImport.update({
+  id: '/admin-listing/$id',
+  path: '/admin-listing/$id',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/account-ready': typeof AuthAccountReadyRoute
@@ -271,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/set-password': typeof AuthSetPasswordRoute
   '/verify-otp': typeof AuthVerifyOtpRoute
   '/': typeof LandingIndexRoute
+  '/admin-listing/$id': typeof DashboardAdminListingIdRoute
   '/blogs/create': typeof DashboardBlogsCreateRoute
   '/listing/$id': typeof DashboardListingIdRoute
   '/properties/$id': typeof DashboardPropertiesIdRoute
@@ -280,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/rent/$id': typeof LandingRentIdRoute
   '/sell/$id': typeof LandingSellIdRoute
   '/admin-insights': typeof DashboardAdminInsightsIndexRoute
+  '/admin-listing': typeof DashboardAdminListingIndexRoute
   '/blogs': typeof DashboardBlogsIndexRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
   '/getting-started': typeof DashboardGettingStartedIndexRoute
@@ -311,6 +326,7 @@ export interface FileRoutesByTo {
   '/set-password': typeof AuthSetPasswordRoute
   '/verify-otp': typeof AuthVerifyOtpRoute
   '/': typeof LandingIndexRoute
+  '/admin-listing/$id': typeof DashboardAdminListingIdRoute
   '/blogs/create': typeof DashboardBlogsCreateRoute
   '/listing/$id': typeof DashboardListingIdRoute
   '/properties/$id': typeof DashboardPropertiesIdRoute
@@ -320,6 +336,7 @@ export interface FileRoutesByTo {
   '/rent/$id': typeof LandingRentIdRoute
   '/sell/$id': typeof LandingSellIdRoute
   '/admin-insights': typeof DashboardAdminInsightsIndexRoute
+  '/admin-listing': typeof DashboardAdminListingIndexRoute
   '/blogs': typeof DashboardBlogsIndexRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
   '/getting-started': typeof DashboardGettingStartedIndexRoute
@@ -355,6 +372,7 @@ export interface FileRoutesById {
   '/_auth/set-password': typeof AuthSetPasswordRoute
   '/_auth/verify-otp': typeof AuthVerifyOtpRoute
   '/_landing/': typeof LandingIndexRoute
+  '/_dashboard/admin-listing/$id': typeof DashboardAdminListingIdRoute
   '/_dashboard/blogs/create': typeof DashboardBlogsCreateRoute
   '/_dashboard/listing/$id': typeof DashboardListingIdRoute
   '/_dashboard/properties/$id': typeof DashboardPropertiesIdRoute
@@ -364,6 +382,7 @@ export interface FileRoutesById {
   '/_landing/rent/$id': typeof LandingRentIdRoute
   '/_landing/sell/$id': typeof LandingSellIdRoute
   '/_dashboard/admin-insights/': typeof DashboardAdminInsightsIndexRoute
+  '/_dashboard/admin-listing/': typeof DashboardAdminListingIndexRoute
   '/_dashboard/blogs/': typeof DashboardBlogsIndexRoute
   '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
   '/_dashboard/getting-started/': typeof DashboardGettingStartedIndexRoute
@@ -397,6 +416,7 @@ export interface FileRouteTypes {
     | '/set-password'
     | '/verify-otp'
     | '/'
+    | '/admin-listing/$id'
     | '/blogs/create'
     | '/listing/$id'
     | '/properties/$id'
@@ -406,6 +426,7 @@ export interface FileRouteTypes {
     | '/rent/$id'
     | '/sell/$id'
     | '/admin-insights'
+    | '/admin-listing'
     | '/blogs'
     | '/dashboard'
     | '/getting-started'
@@ -437,6 +458,7 @@ export interface FileRouteTypes {
     | '/set-password'
     | '/verify-otp'
     | '/'
+    | '/admin-listing/$id'
     | '/blogs/create'
     | '/listing/$id'
     | '/properties/$id'
@@ -446,6 +468,7 @@ export interface FileRouteTypes {
     | '/rent/$id'
     | '/sell/$id'
     | '/admin-insights'
+    | '/admin-listing'
     | '/blogs'
     | '/dashboard'
     | '/getting-started'
@@ -480,6 +503,7 @@ export interface FileRouteTypes {
     | '/_auth/set-password'
     | '/_auth/verify-otp'
     | '/_landing/'
+    | '/_dashboard/admin-listing/$id'
     | '/_dashboard/blogs/create'
     | '/_dashboard/listing/$id'
     | '/_dashboard/properties/$id'
@@ -489,6 +513,7 @@ export interface FileRouteTypes {
     | '/_landing/rent/$id'
     | '/_landing/sell/$id'
     | '/_dashboard/admin-insights/'
+    | '/_dashboard/admin-listing/'
     | '/_dashboard/blogs/'
     | '/_dashboard/dashboard/'
     | '/_dashboard/getting-started/'
@@ -743,6 +768,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardBlogsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/admin-listing/': {
+      id: '/_dashboard/admin-listing/'
+      path: '/admin-listing'
+      fullPath: '/admin-listing'
+      preLoaderRoute: typeof DashboardAdminListingIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/_dashboard/admin-insights/': {
       id: '/_dashboard/admin-insights/'
       path: '/admin-insights'
@@ -806,6 +838,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardBlogsCreateRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/admin-listing/$id': {
+      id: '/_dashboard/admin-listing/$id'
+      path: '/admin-listing/$id'
+      fullPath: '/admin-listing/$id'
+      preLoaderRoute: typeof DashboardAdminListingIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
@@ -834,11 +873,13 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardRouteChildren {
+  DashboardAdminListingIdRoute: typeof DashboardAdminListingIdRoute
   DashboardBlogsCreateRoute: typeof DashboardBlogsCreateRoute
   DashboardListingIdRoute: typeof DashboardListingIdRoute
   DashboardPropertiesIdRoute: typeof DashboardPropertiesIdRoute
   DashboardPropertiesCreateRoute: typeof DashboardPropertiesCreateRoute
   DashboardAdminInsightsIndexRoute: typeof DashboardAdminInsightsIndexRoute
+  DashboardAdminListingIndexRoute: typeof DashboardAdminListingIndexRoute
   DashboardBlogsIndexRoute: typeof DashboardBlogsIndexRoute
   DashboardDashboardIndexRoute: typeof DashboardDashboardIndexRoute
   DashboardGettingStartedIndexRoute: typeof DashboardGettingStartedIndexRoute
@@ -855,11 +896,13 @@ interface DashboardRouteChildren {
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAdminListingIdRoute: DashboardAdminListingIdRoute,
   DashboardBlogsCreateRoute: DashboardBlogsCreateRoute,
   DashboardListingIdRoute: DashboardListingIdRoute,
   DashboardPropertiesIdRoute: DashboardPropertiesIdRoute,
   DashboardPropertiesCreateRoute: DashboardPropertiesCreateRoute,
   DashboardAdminInsightsIndexRoute: DashboardAdminInsightsIndexRoute,
+  DashboardAdminListingIndexRoute: DashboardAdminListingIndexRoute,
   DashboardBlogsIndexRoute: DashboardBlogsIndexRoute,
   DashboardDashboardIndexRoute: DashboardDashboardIndexRoute,
   DashboardGettingStartedIndexRoute: DashboardGettingStartedIndexRoute,

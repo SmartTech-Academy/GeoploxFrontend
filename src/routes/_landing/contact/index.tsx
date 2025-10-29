@@ -82,7 +82,7 @@ function RouteComponent() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-white pt-[var(--landing-header-height)]">
+    <div className="min-h-screen w-full bg-white pt-(--landing-header-height)">
       <Toaster />
       <PageMetaTags
         title="Contact Us"
@@ -96,7 +96,7 @@ function RouteComponent() {
           <div className="flex w-full max-w-[554px] flex-col items-start gap-12">
             <h1 className="text-[50px] leading-[60px] font-semibold tracking-[-0.02em] text-[#1F2130]">Get in Touch</h1>
 
-            <p className="text-[20px] leading-[28px] text-[#4D5462]">
+            <p className="text-[20px] leading-7 text-[#4D5462]">
               If you would prefer to chat in real time with our support team, we are available online every week day.
             </p>
 
@@ -115,7 +115,7 @@ function RouteComponent() {
                 Our Address
               </h2>
 
-              <p className="text-[20px] leading-[28px] text-[#4D5462]">
+              <p className="text-[20px] leading-7 text-[#4D5462]">
                 Plot 8, Block A9, Wole Olateju Crescent, Off Admiralty Way Eti-Osa, Lekki Phase 1
               </p>
             </div>
@@ -150,7 +150,7 @@ function RouteComponent() {
                           <Input
                             placeholder="Femi Idowu"
                             {...field}
-                            className="h-10 self-stretch rounded-[8px] border-[#D5D5DD] px-3"
+                            className="h-10 self-stretch rounded-xl border-[#D5D5DD] px-3"
                           />
                         </FormControl>
                         <FormMessage />
@@ -171,7 +171,7 @@ function RouteComponent() {
                             type="email"
                             placeholder="rene_realty@forbes.com"
                             {...field}
-                            className="h-10 self-stretch rounded-[8px] border-[#D5D5DD] px-3"
+                            className="h-10 self-stretch rounded-xl border-[#D5D5DD] px-3"
                           />
                         </FormControl>
                         <FormMessage />
@@ -190,7 +190,7 @@ function RouteComponent() {
                             type="tel"
                             placeholder="+234 807 6775"
                             {...field}
-                            className="h-10 self-stretch rounded-[8px] border-[#D5D5DD] px-3"
+                            className="h-10 self-stretch rounded-xl border-[#D5D5DD] px-3"
                           />
                         </FormControl>
                         <FormMessage />
@@ -208,7 +208,7 @@ function RouteComponent() {
                           <Textarea
                             placeholder="Hi. Would like to check the availability the property. Please acknowledge. Thank you!"
                             {...field}
-                            className="min-h-[84px] resize-none rounded-[8px] border-[#D5D5DD] px-3"
+                            className="min-h-[84px] resize-none rounded-xl border-[#D5D5DD] px-3"
                           />
                         </FormControl>
                         <FormMessage />
@@ -224,7 +224,7 @@ function RouteComponent() {
                     background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
                     boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                   }}
-                  className="h-12 self-stretch rounded-[40px] border border-[oklch(0.235_0_0_/_50%)] p-4 text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+                  className="h-12 self-stretch rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
                 >
                   {isPending ? 'Submitting...' : 'Submit'}
                 </Button>
@@ -255,7 +255,7 @@ function RouteComponent() {
                   >
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent className="pb-6 text-[14px] leading-[20px] text-[#787878]">
+                  <AccordionContent className="pb-6 text-[14px] leading-5 text-[#787878]">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>

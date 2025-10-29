@@ -1,5 +1,3 @@
-'use client';
-
 import { CropIcon, RotateCcwIcon } from 'lucide-react';
 import { Slot } from 'radix-ui';
 import {
@@ -249,8 +247,12 @@ export const ImageCropApply = ({ asChild = false, children, onClick, ...props }:
   }
 
   return (
-    <Button onClick={handleClick} size="icon" variant="ghost" {...props}>
-      {children ?? <CropIcon className="size-4" />}
+    <Button onClick={handleClick} variant="outline" {...props}>
+      {children ?? (
+        <>
+          <CropIcon className="mr-2 size-4" /> Apply
+        </>
+      )}
     </Button>
   );
 };
@@ -276,8 +278,12 @@ export const ImageCropReset = ({ asChild = false, children, onClick, ...props }:
   }
 
   return (
-    <Button onClick={handleClick} size="icon" variant="ghost" {...props}>
-      {children ?? <RotateCcwIcon className="size-4" />}
+    <Button onClick={handleClick} variant="outline" {...props}>
+      {children ?? (
+        <>
+          <RotateCcwIcon className="mr-2 size-4" /> Reset
+        </>
+      )}
     </Button>
   );
 };

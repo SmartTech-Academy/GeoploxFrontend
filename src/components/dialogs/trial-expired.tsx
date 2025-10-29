@@ -84,7 +84,7 @@ const TrialExpired: React.FC<Props> = ({ setOpen, open }) => {
             <div className="space-y-3">
               {currentPlanData.features.map((feature, index) => (
                 <div key={index} className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#D4B04A]" />
+                  <Check className="mt-0.5 h-5 w-5 shrink-0 text-[#D4B04A]" />
                   <span className="text-sm leading-5 text-[#6B7280]">{feature}</span>
                 </div>
               ))}
@@ -117,7 +117,7 @@ const TrialExpired: React.FC<Props> = ({ setOpen, open }) => {
               background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
-            className="h-10 w-full rounded-[32px] border border-[oklch(0.235_0_0_/_50%)] p-4"
+            className="h-10 w-full rounded-4xl border border-[oklch(0.235_0_0/50%)] p-4"
           >
             {currentPlanData.buttonText}
           </Button>

@@ -46,7 +46,7 @@ export function AppSidebar() {
           {isLoading
             ? Array.from({ length: 5 }).map((_, i) => (
                 <SidebarMenuItem key={i}>
-                  <Skeleton className="h-10 w-full rounded-[8px]" />
+                  <Skeleton className="h-10 w-full rounded-xl" />
                 </SidebarMenuItem>
               ))
             : mainNavigation.map((item) => {
@@ -56,7 +56,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       asChild
                       isActive={isActive}
-                      className="h-10 w-full rounded-[8px] text-[16px] leading-[18px] hover:bg-white hover:text-[#D4AF36] data-[active=true]:bg-white data-[active=true]:font-medium data-[active=true]:text-[#D4AF36]"
+                      className="h-10 w-full rounded-xl text-[16px] leading-[18px] hover:bg-white hover:text-[#D4AF36] data-[active=true]:bg-white data-[active=true]:font-medium data-[active=true]:text-[#D4AF36]"
                     >
                       <Link to={item.href}>
                         <item.icon className={isActive ? 'fill-[#D4AF36] text-[#D4AF36]' : ''} />
@@ -81,7 +81,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     onClick={handleLogout}
                     isActive={isActive}
-                    className="group h-10 rounded-[8px] text-[16px] leading-[18px] hover:bg-white hover:text-[#D4AF36] data-[active=true]:bg-white data-[active=true]:font-medium data-[active=true]:text-[#D4AF36]"
+                    className="group h-10 rounded-xl text-[16px] leading-[18px] hover:bg-white hover:text-[#D4AF36] data-[active=true]:bg-white data-[active=true]:font-medium data-[active=true]:text-[#D4AF36]"
                   >
                     <item.icon className="" />
                     <span>{item.name}</span>
@@ -94,7 +94,7 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   asChild
                   isActive={isActive}
-                  className="group h-10 rounded-[8px] text-[16px] leading-[18px] hover:bg-white hover:text-[#D4AF36] data-[active=true]:bg-white data-[active=true]:font-medium data-[active=true]:text-[#D4AF36]"
+                  className="group h-10 rounded-xl text-[16px] leading-[18px] hover:bg-white hover:text-[#D4AF36] data-[active=true]:bg-white data-[active=true]:font-medium data-[active=true]:text-[#D4AF36]"
                 >
                   <Link to={item.href}>
                     <item.icon className="" />

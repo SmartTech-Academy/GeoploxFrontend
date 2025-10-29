@@ -82,14 +82,14 @@ function RouteComponent() {
               </div>
 
               {/* Subheading */}
-              <p className="text-primary-foreground text-[20px] leading-[28px]">
+              <p className="text-primary-foreground text-[20px] leading-7">
                 Updates about current market trends and news
               </p>
             </div>
 
             <div className="flex w-full max-w-[817px] grow flex-col gap-3">
               {/* Search Interface */}
-              <div className="flex w-full max-w-[817px] items-center gap-3 rounded-[32px] bg-[oklch(1_0_0_/_50%)] p-4 backdrop-blur-[12px]">
+              <div className="flex w-full max-w-[817px] items-center gap-3 rounded-4xl bg-[oklch(1_0_0_/_50%)] p-4 backdrop-blur-[12px]">
                 <div className="relative flex flex-1 items-center gap-2">
                   <Input
                     type="email"
@@ -110,7 +110,7 @@ function RouteComponent() {
                 </Button>
               </div>
 
-              <p className="text-[14px] leading-[20px] text-white">
+              <p className="text-[14px] leading-5 text-white">
                 Subscribe to our monthly newsletter. You can unsubscribe anytime.
               </p>
             </div>
@@ -120,7 +120,7 @@ function RouteComponent() {
 
       <section className="flex w-full flex-col gap-[64px] bg-white py-16">
         <div className="mx-auto flex w-full max-w-[719px] flex-col items-center text-center">
-          <div className="w-full overflow-hidden rounded-[8px] border border-[#F1F1F4] bg-white p-1.5">
+          <div className="w-full overflow-hidden rounded-xl border border-[#F1F1F4] bg-white p-1.5">
             <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto">
               {tabs.map((tab) => (
                 <Button
@@ -156,8 +156,8 @@ function RouteComponent() {
               <div className="flex flex-col items-start lg:w-1/2">
                 <div className="flex flex-col gap-6 self-stretch">
                   <div className="flex items-center gap-3">
-                    <span className="text-[15px] leading-[20px] tracking-[-0.12px] text-[#060809]">Market Trends</span>
-                    <span className="text-[15px] leading-[20px] tracking-[-0.12px] text-[#7B828E]">{blog.date}</span>
+                    <span className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">Market Trends</span>
+                    <span className="text-[15px] leading-5 tracking-[-0.12px] text-[#7B828E]">{blog.date}</span>
                   </div>
 
                   <div className="flex flex-col gap-8 self-stretch pb-8">
@@ -165,9 +165,7 @@ function RouteComponent() {
                       {blog.title}
                     </h4>
 
-                    <p className="line-clamp-2 text-[15px] leading-[20px] tracking-[-0.12px] text-[#060809]">
-                      {blog.text}
-                    </p>
+                    <p className="line-clamp-2 text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">{blog.text}</p>
                   </div>
                 </div>
               </div>

@@ -26,7 +26,7 @@ export const ListingDetailSkeleton = () => {
               <Skeleton className="h-[500px] w-full rounded-lg" />
               <div className="flex gap-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Skeleton key={i} className="size-[135px] flex-shrink-0" />
+                  <Skeleton key={i} className="size-[135px] shrink-0" />
                 ))}
               </div>
             </div>

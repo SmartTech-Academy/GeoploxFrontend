@@ -1,5 +1,3 @@
-'use client';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import type React from 'react';
 import { useEffect } from 'react';
 import {
@@ -11,7 +9,6 @@ import {
 import { useState, useMemo } from 'react';
 import {
   Search,
-  Filter,
   MapPin,
   Square,
   ChevronLeft,
@@ -37,8 +34,10 @@ import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
 import DeleteProperty from '@/components/dialogs/delete-property';
 import { PageMetaTags } from '@/components/page-meta-data';
-import { useGetProperties } from '@/lib/services/properties';
+import { useArchiveProperty, useDeleteProperty, useGetProperties } from '@/lib/services/properties';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
+import FilterPopover, { FilterValues } from './filter-popover';
 
 // TypeScript interfaces
 interface PropertyImage {
@@ -85,15 +84,18 @@ interface Property {
   updated_at: string;
 }
 
-type FilterType = 'published' | 'archived' | 'draft';
+type StatusFilterType = 'published' | 'archived' | 'draft';
 
 const PropertiesPage: React.FC = () => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const [filter, setFilter] = useState<FilterType>('published');
+  const [statusFilter, setStatusFilter] = useState<StatusFilterType>('published');
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [filters, setFilters] = useState<FilterValues>({});
 
-  const { data: propertiesData, isLoading, isError } = useGetProperties({ status: filter });
+  const { data: propertiesData, isLoading, isError } = useGetProperties({ status: statusFilter, ...filters });
+  const { mutate: archiveProperty, isPending: isArchiving } = useArchiveProperty();
+  const { mutate: deleteProperty, isPending: isDeleting } = useDeleteProperty();
 
   const properties = useMemo(() => propertiesData?.data?.data?.data || [], [propertiesData]);
 
@@ -105,6 +107,25 @@ const PropertiesPage: React.FC = () => {
     }
   }, [properties, selectedProperty]);
 
+  const handleDelete = async () => {
+    if (!selectedProperty) return;
+    deleteProperty(selectedProperty.id, {
+      onSuccess: () => {
+        toast.success('Property deleted successfully.');
+        setOpenDeleteModal(false);
+        setSelectedProperty(null); // Deselect after deletion
+      },
+      onError: () => {
+        toast.error('Failed to delete property.');
+      },
+    });
+  };
+
+  const handleArchive = (action: 'archive' | 'restore') => {
+    if (!selectedProperty) return;
+    archiveProperty({ propertyId: selectedProperty.id, action });
+  };
+
   const EmptyState = ({ type }: { type: 'chat' | 'list' }) => {
     if (type === 'chat') {
       return (
@@ -113,13 +134,13 @@ const PropertiesPage: React.FC = () => {
             <img
               src={assets.messagingloading}
               alt="No properties"
-              className="h-[84px] w-[224px] animate-pulse"
+              className="h-[84px] w-56 animate-pulse"
               width={224}
               height={84}
             />
             <div className="flex flex-col items-center justify-center gap-3">
-              <h5 className="text-[20px] leading-[28px] font-normal text-[#1F2130]">No property selected</h5>
-              <p className="text-center text-[14px] leading-[20px] tracking-[-0.02em] text-[#71748C]">
+              <h5 className="text-[20px] leading-7 font-normal text-[#1F2130]">No property selected</h5>
+              <p className="text-center text-[14px] leading-5 tracking-[-0.02em] text-[#71748C]">
                 Select a property from the list <br />
                 to view its details.
               </p>
@@ -130,9 +151,9 @@ const PropertiesPage: React.FC = () => {
     }
     return (
       <div className="flex w-full flex-col items-center justify-center gap-8 self-stretch py-14">
-        <img src={assets.chatloading} className="h-[112px] w-[211px] animate-pulse" width={211} height={112} />
+        <img src={assets.chatloading} className="h-28 w-[211px] animate-pulse" width={211} height={112} />
         <div className="flex flex-col items-center justify-center gap-3">
-          <h5 className="text-[20px] leading-[28px] font-semibold text-[#1F2130]">Your property is empty</h5>
+          <h5 className="text-[20px] leading-7 font-semibold text-[#1F2130]">Your property is empty</h5>
           <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
             It looks like you haven’t created a proprety yet.
           </p>
@@ -142,8 +163,9 @@ const PropertiesPage: React.FC = () => {
   };
   const PropertyList: React.FC = () => (
     <div className="flex h-full flex-col gap-4 bg-white lg:px-6">
-      <div className="border-b border-[#E8E8E8] pb-4">
+      <div className="flex items-center justify-between border-b border-[#E8E8E8] pb-4">
         <h1 className="text-[24px] font-semibold text-[#1F2130]">Properties</h1>
+        <FilterPopover onApply={setFilters} />
       </div>
       <div className="flex w-full flex-col gap-6 border-b border-[#E8E8E8] pb-4">
         <div className="relative pt-0.5">
@@ -151,7 +173,8 @@ const PropertiesPage: React.FC = () => {
           <Input
             type="text"
             placeholder="Search properties"
-            className="h-10 self-stretch rounded-[8px] border border-[#D5D5DD] px-3 pl-10"
+            className="h-10 self-stretch rounded-xl border border-[#D5D5DD] px-3 pl-10"
+            onChange={(e) => setFilters((prev) => ({ ...prev, q: e.target.value }))}
           />
         </div>
 
@@ -159,11 +182,11 @@ const PropertiesPage: React.FC = () => {
         <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-1.5">
             <Button
-              variant={filter === 'published' ? 'outline' : 'ghost'}
+              variant={statusFilter === 'published' ? 'outline' : 'ghost'}
               size="sm"
-              onClick={() => setFilter('published')}
+              onClick={() => setStatusFilter('published')}
               className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
-                filter === 'published'
+                statusFilter === 'published'
                   ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
@@ -171,11 +194,11 @@ const PropertiesPage: React.FC = () => {
               Published
             </Button>
             <Button
-              variant={filter === 'draft' ? 'outline' : 'ghost'}
+              variant={statusFilter === 'draft' ? 'outline' : 'ghost'}
               size="sm"
-              onClick={() => setFilter('draft')}
+              onClick={() => setStatusFilter('draft')}
               className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
-                filter === 'draft'
+                statusFilter === 'draft'
                   ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
@@ -183,11 +206,11 @@ const PropertiesPage: React.FC = () => {
               Draft
             </Button>
             <Button
-              variant={filter === 'archived' ? 'outline' : 'ghost'}
+              variant={statusFilter === 'archived' ? 'outline' : 'ghost'}
               size="sm"
-              onClick={() => setFilter('archived')}
+              onClick={() => setStatusFilter('archived')}
               className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
-                filter === 'archived'
+                statusFilter === 'archived'
                   ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
@@ -195,19 +218,6 @@ const PropertiesPage: React.FC = () => {
               Archive
             </Button>
           </div>
-          <Button variant="ghost" size="sm" className="p-2"></Button>
-          <Select defaultValue="this_month">
-            <SelectTrigger className="h-8 w-fit rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-transparent text-[#41415A] shadow-none focus:ring-0">
-              <div className="flex items-center gap-2">
-                <Filter className="size-4 text-gray-600" />
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="this_week">This week</SelectItem>
-              <SelectItem value="this_month">This month</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </div>
 
@@ -235,12 +245,12 @@ const PropertiesPage: React.FC = () => {
                   selectedProperty?.id === property.id ? 'bg-[#FDF9ED]' : ''
                 }`}
               >
-                <div className="flex w-full items-start gap-[14px]">
+                <div className="flex w-full items-start gap-3.5">
                   <div className="relative">
                     <img
                       src={coverImage || '/placeholder.svg'}
                       alt={property.title}
-                      className="size-[80px] rounded-[6px] object-cover"
+                      className="size-20 rounded-[6px] object-cover"
                     />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -251,7 +261,7 @@ const PropertiesPage: React.FC = () => {
                         </h3>
                         <div className="mt-1 flex items-center gap-1">
                           <MapPin className="size-3 text-gray-400" />
-                          <span className="text-[12px] leading-[14px] text-[#71748C]">
+                          <span className="text-[12px] leading-3.5 text-[#71748C]">
                             {property.city}, {property.state}
                           </span>
                         </div>
@@ -308,7 +318,7 @@ const PropertiesPage: React.FC = () => {
               background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
-            className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-[12px] font-normal text-white"
+            className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-3 font-normal text-white"
           >
             <Link to="/properties/create">
               <HousePlus className="mr-2 size-4" /> New Listing
@@ -355,7 +365,7 @@ const PropertiesPage: React.FC = () => {
                       <button
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
-                        className={`relative h-[80px] w-[80px] overflow-hidden rounded-[6px] ${
+                        className={`relative size-20 overflow-hidden rounded-[6px] ${
                           currentImageIndex === index ? 'ring-2 ring-[#D4AF36]' : ''
                         }`}
                       >
@@ -396,9 +406,7 @@ const PropertiesPage: React.FC = () => {
                         </Badge>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <h2 className="text-[14px] leading-[16px] font-semibold text-[#1F2130]">
-                          {selectedProperty.title}
-                        </h2>
+                        <h2 className="text-[14px] leading-4 font-semibold text-[#1F2130]">{selectedProperty.title}</h2>
                         <h3 className="text-[16px] leading-[21px] font-bold text-[#1F2130]">
                           {new Intl.NumberFormat('en-NG', {
                             style: 'currency',
@@ -409,7 +417,7 @@ const PropertiesPage: React.FC = () => {
 
                       <div className="flex items-center gap-1">
                         <MapPin className="size-4 text-gray-400" />
-                        <span className="text-[12px] leading-[14px] text-[#41415A]">{selectedProperty.address}</span>
+                        <span className="text-[12px] leading-3.5 text-[#41415A]">{selectedProperty.address}</span>
                       </div>
                     </div>
                     <DropdownMenu>
@@ -432,19 +440,23 @@ const PropertiesPage: React.FC = () => {
                           <Share2 className="h-4 w-4" />
                           <span>Share</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild className="flex items-center space-x-3">
+                        <DropdownMenuItem asChild className="flex cursor-pointer items-center space-x-3">
                           <Link to="/properties/$id" params={{ id: String(selectedProperty.id) }}>
                             <Edit3 className="h-4 w-4 text-gray-600" />
                             <span>Edit Details</span>
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center space-x-3">
+                        <DropdownMenuItem
+                          onClick={() => handleArchive(selectedProperty.status === 'archived' ? 'restore' : 'archive')}
+                          className="flex cursor-pointer items-center space-x-3"
+                          disabled={isArchiving}
+                        >
                           <ArchiveRestore className="h-4 w-4 text-gray-600" />
-                          <span>Archive</span>
+                          <span>{selectedProperty.status === 'archived' ? 'Restore' : 'Archive'}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => setOpenDeleteModal(true)}
-                          className="flex items-center space-x-3 text-red-600"
+                          className="flex cursor-pointer items-center space-x-3 text-red-600"
                         >
                           <Trash2 className="h-4 w-4 text-gray-600" />
                           <span>Delete</span>
@@ -475,9 +487,9 @@ const PropertiesPage: React.FC = () => {
                 {/* Description */}
                 <div className="mb-6">
                   <h4 className="mb-3 text-[18px] font-semibold text-[#1F2130]">Property Details</h4>
-                  <p className="text-[14px] leading-[20px] text-[#71748C]">{selectedProperty.desc}</p>
+                  <p className="text-[14px] leading-5 text-[#71748C]">{selectedProperty.desc}</p>
                   <div className="mt-4">
-                    <p className="text-[14px] leading-[20px] text-[#71748C]">
+                    <p className="text-[14px] leading-5 text-[#71748C]">
                       Located in a beautiful, serene, highly secured estate in the heart of Lekki.
                     </p>
                   </div>
@@ -488,7 +500,7 @@ const PropertiesPage: React.FC = () => {
                   <h4 className="mb-3 text-[18px] font-semibold text-[#1F2130]">Features include:</h4>
                   <ul className="space-y-2">
                     {selectedProperty.features.map((feature, index) => (
-                      <li key={index} className="text-[14px] leading-[20px] text-[#71748C]">
+                      <li key={index} className="text-[14px] leading-5 text-[#71748C]">
                         - {feature}
                       </li>
                     ))}
@@ -520,14 +532,17 @@ const PropertiesPage: React.FC = () => {
               </Avatar>
 
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-[13px] leading-[16px] font-semibold text-[#1F2130]">
-                  {selectedProperty.owner.name}
-                </h3>
+                <h3 className="text-[13px] leading-4 font-semibold text-[#1F2130]">{selectedProperty.owner.name}</h3>
 
-                {selectedProperty.is_verified && (
+                {selectedProperty.is_verified ? (
                   <div className="flex items-center gap-2">
                     <BadgeCheck className="fill-primary size-4 shrink-0 text-white" />
                     <span className="text-primary text-[12px] leading-[18px] font-semibold">Verified Owner</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <BadgeCheck className="size-4 shrink-0 text-gray-400" />
+                    <span className="text-[12px] leading-[18px] font-medium text-gray-500">Not Verified</span>
                   </div>
                 )}
               </div>
@@ -540,16 +555,16 @@ const PropertiesPage: React.FC = () => {
           <div className="box-border flex w-full flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
             <div className="flex flex-col items-start gap-2 self-stretch">
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px] leading-[12px] text-[#71748C]">Status</span>
-                <span className="text-[12px] leading-[12px] text-[#1F2130]">Active</span>
+                <span className="text-[12px] leading-3 text-[#71748C]">Status</span>
+                <span className="text-[12px] leading-3 text-[#1F2130]">Active</span>
               </div>
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px] leading-[12px] text-[#71748C]">Property ID</span>
-                <span className="text-[12px] leading-[12px] text-[#1F2130]">{selectedProperty.property_id}</span>
+                <span className="text-[12px] leading-3 text-[#71748C]">Property ID</span>
+                <span className="text-[12px] leading-3 text-[#1F2130]">{selectedProperty.property_id}</span>
               </div>
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px] leading-[12px] text-[#71748C]">Added</span>
-                <span className="text-[12px] leading-[12px] text-[#1F2130]">
+                <span className="text-[12px] leading-3 text-[#71748C]">Added</span>
+                <span className="text-[12px] leading-3 text-[#1F2130]">
                   {new Date(selectedProperty.created_at).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
@@ -558,14 +573,12 @@ const PropertiesPage: React.FC = () => {
                 </span>
               </div>
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px] leading-[12px] text-[#71748C]">Leads</span>
-                <span className="text-[12px] leading-[12px] text-[#1F2130]">N/A</span>
+                <span className="text-[12px] leading-3 text-[#71748C]">Leads</span>
+                <span className="text-[12px] leading-3 text-[#1F2130]">N/A</span>
               </div>
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px] leading-[12px] text-[#71748C]">Views</span>
-                <span className="text-[12px] leading-[12px] text-[#1F2130]">
-                  {selectedProperty.views.toLocaleString()}
-                </span>
+                <span className="text-[12px] leading-3 text-[#71748C]">Views</span>
+                <span className="text-[12px] leading-3 text-[#1F2130]">{selectedProperty.views.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -615,7 +628,12 @@ const PropertiesPage: React.FC = () => {
         </ResizablePanelGroup>
       </div>
 
-      <DeleteProperty setOpenDeleteModal={setOpenDeleteModal} openDeleteModal={openDeleteModal} />
+      <DeleteProperty
+        setOpenDeleteModal={setOpenDeleteModal}
+        openDeleteModal={openDeleteModal}
+        onConfirm={handleDelete}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 };
