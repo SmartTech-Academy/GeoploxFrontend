@@ -11,6 +11,39 @@ interface ProfileResponse {
   data: UserProfile;
 }
 
+interface Payment {
+  id: string;
+  plan_name: string;
+  amount: number;
+  currency: string;
+  paid_at: string;
+}
+
+interface BillingData {
+  currentPlan: any;
+  payments: Payment[];
+  summary: {
+    next_renewal: string;
+  };
+}
+
+interface BillingResponse {
+  status: string;
+  message: string;
+  data: BillingData;
+}
+
+export const useGetBillingInfo = () => {
+  return useQuery<BillingData>({
+    queryKey: ['billing-info'],
+    queryFn: async () => {
+      const response: AxiosResponse<BillingResponse> = await api.get('/dashboard/billing/subscriptions');
+      return response.data.data;
+    },
+    retry: false,
+  });
+}
+
 export const useGetProfileData = () => {
   return useQuery({
     queryKey: ['profile'],

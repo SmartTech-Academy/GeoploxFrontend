@@ -25,6 +25,7 @@ import {
   useSetBusinessInformation,
   useSetPersonalInformation,
   useSubscribeToPlan,
+  useUploadOwnerKycDocuments,
   useUploadKycDocuments,
 } from '@/lib/services/onboarding';
 import { toast } from 'sonner';
@@ -145,6 +146,7 @@ const GettingStarted = () => {
   const { mutateAsync: setPersonalInfoMutate } = useSetPersonalInformation();
   const { mutateAsync: setBusinessInfoMutate } = useSetBusinessInformation();
   const { mutateAsync: uploadKycMutate } = useUploadKycDocuments();
+  const { mutateAsync: uploadOwnerKycMutate } = useUploadOwnerKycDocuments();
   const { mutateAsync: subscribeToPlanMutate } = useSubscribeToPlan();
   const { mutateAsync: completeOnboardingMutate } = useCompleteOnboarding();
   const { data: profileData, isPending: isProfileLoading } = useGetProfileData();
@@ -256,9 +258,14 @@ const GettingStarted = () => {
           });
           break;
         case 'kyc-documents':
-          kycFormData.append('cac_doc', data.cacDocument);
-          kycFormData.append('gov_id_doc', data.govtIssuedId);
-          await uploadKycMutate(kycFormData);
+          if (accountType === 'owner') {
+            kycFormData.append('gov_id_doc', data.govtIssuedId);
+            await uploadOwnerKycMutate(kycFormData);
+          } else {
+            kycFormData.append('cac_doc', data.cacDocument);
+            kycFormData.append('gov_id_doc', data.govtIssuedId);
+            await uploadKycMutate(kycFormData);
+          }
           toast.success('KYC documents uploaded!', {
             action: {
               label: 'Dismiss',
@@ -405,7 +412,7 @@ const GettingStarted = () => {
         return <BusinessInfo form={form} profileData={profileData} />;
 
       case 'kyc-documents':
-        return <KYCDocuments form={form} />;
+        return <KYCDocuments form={form} isOwner={accountType === 'owner'} />;
 
       case 'subscription':
         return <Subscription form={form} />;

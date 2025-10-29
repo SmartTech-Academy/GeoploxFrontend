@@ -47,6 +47,21 @@ export const useSetBusinessInformation = () => {
   });
 };
 
+export const useUploadOwnerKycDocuments = () => {
+  return useMutation({
+    mutationFn: (data: any) =>
+      api.post(
+        '/dashboard/onboarding/owner_kycUpload', // Endpoint for property owner
+        data,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['onboarding-summary'] });
+    },
+  });
+};
 export const useUploadKycDocuments = () => {
   return useMutation({
     mutationFn: (data: any) =>

@@ -150,7 +150,7 @@ function RouteComponent() {
                     <div className="flex flex-1 flex-col gap-4">
                       {plan.features.map((feature: string) => (
                         <div key={feature} className="flex items-center gap-4">
-                          <Check className="size-4 flex-shrink-0 text-[#D4AF36]" />
+                          <Check className="size-4 shrink-0 text-[#D4AF36]" />
                           <span className="text-[14px] leading-5 text-[#71748C]">{feature}</span>
                         </div>
                       ))}
@@ -167,14 +167,14 @@ function RouteComponent() {
         </div>
       </section>
 
-      <section className="relative min-h-[527px] w-full rounded-[13px] bg-[oklch(0.7898_0.1514_90.07_/_20%)] py-5 lg:py-[106px]">
+      <section className="relative min-h-[527px] w-full rounded-[13px] bg-[oklch(0.7898_0.1514_90.07/20%)] py-5 lg:py-[106px]">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${assets.yellowbackground})`,
           }}
         >
-          <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07_/_20%)]/20" />
+          <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07/20%)]" />
         </div>
         <div className="landing-container relative z-10 flex w-full flex-col items-center justify-center gap-10 lg:flex-row">
           <div className="flex grow flex-col items-start gap-10 lg:w-1/2">

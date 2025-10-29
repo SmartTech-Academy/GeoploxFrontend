@@ -2,23 +2,16 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { UpgradePlanDialog } from '@/components/dialogs/upgrade-plan-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useGetBillingInfo } from '@/lib/services/profile';
+import { format } from 'date-fns';
 
-const SubscriptionsSection = ({ user }: { user: any }) => {
+const SubscriptionsSection = () => {
   const [openModal, setOpenModal] = useState(false);
+  const { data: billingInfo, isPending: isBillingLoading } = useGetBillingInfo();
 
-  const currentPlan = user?.plan?.plan;
-  const subscription = user?.plan;
-
-  // Billing history is still static as there's no API for it yet.
-  const billHistory = [
-    { date: '12 Mar, 2025', description: 'Premium Plan, Monthly', amount: '₦10,000/Month' },
-    { date: '12 Mar, 2025', description: 'Premium Plan, Monthly', amount: '₦10,000/Month' },
-    { date: '12 Mar, 2025', description: 'Premium Plan, Monthly', amount: '₦10,000/Month' },
-    { date: '12 Mar, 2025', description: 'Premium Plan, Monthly', amount: '₦10,000/Month' },
-    { date: '12 Mar, 2025', description: 'Premium Plan, Monthly', amount: '₦10,000/Month' },
-    { date: '12 Mar, 2025', description: 'Premium Plan, Monthly', amount: '₦10,000/Month' },
-    { date: '12 Mar, 2025', description: 'Premium Plan, Monthly', amount: '₦10,000/Month' },
-  ];
+  const currentPlan = billingInfo?.currentPlan;
+  const subscription = billingInfo?.summary;
+  const billHistory = billingInfo?.payments || [];
 
   return (
     <div className="flex w-full flex-col gap-10">
@@ -29,7 +22,7 @@ const SubscriptionsSection = ({ user }: { user: any }) => {
 
       <div className="flex w-full flex-col gap-8">
         {/* Current Plan Section */}
-        {!user ? (
+        {isBillingLoading ? (
           <Skeleton className="h-24 w-full" />
         ) : (
           <div className="flex flex-col items-start gap-5 self-stretch border-b border-[#F1F1F4] pb-8">
@@ -40,15 +33,15 @@ const SubscriptionsSection = ({ user }: { user: any }) => {
                     <h3 className="text-[16px] leading-4 font-semibold tracking-[-0.02em] text-[#282828]">
                       {currentPlan.name} Plan
                     </h3>
-                    {subscription.active && (
-                      <span className="rounded-[4px] bg-[oklch(0.7665_0.1393_91.15_/_5%)] px-2 py-1 text-[12px] leading-3 text-[#D4AF36]">
+                    {subscription?.next_renewal && (
+                      <span className="rounded bg-[oklch(0.7665_0.1393_91.15/5%)] px-2 py-1 text-[12px] leading-3 text-[#D4AF36]">
                         Active Plan
                       </span>
                     )}
                   </div>
                   <p className="text-[14px] leading-5 text-[#71748C]">
-                    {subscription.active
-                      ? `Expires on ${new Date(subscription.expires_at).toLocaleDateString()}`
+                    {subscription?.next_renewal
+                      ? `Expires on ${new Date(subscription.next_renewal).toLocaleDateString()}`
                       : 'Plan Inactive'}
                   </p>
                 </div>
@@ -86,10 +79,14 @@ const SubscriptionsSection = ({ user }: { user: any }) => {
 
             {/* Table Rows */}
             {billHistory.map((item, index) => (
-              <div key={index} className={`grid w-full grid-cols-3 ${index % 2 === 0 ? 'bg-[#F8F8F8]' : ''}`}>
-                <span className="px-4 py-[18px] text-[14px] leading-4 text-[#41415A]">{item.date}</span>
-                <span className="px-4 py-[18px] text-[14px] leading-4 text-[#41415A]">{item.description}</span>
-                <span className="px-4 py-[18px] text-right text-[14px] leading-4 text-[#41415A]">{item.amount}</span>
+              <div key={item.id} className={`grid w-full grid-cols-3 ${index % 2 === 0 ? 'bg-[#F8F8F8]' : ''}`}>
+                <span className="px-4 py-[18px] text-[14px] leading-4 text-[#41415A]">
+                  {format(new Date(item.paid_at), 'dd MMM, yyyy')}
+                </span>
+                <span className="px-4 py-[18px] text-[14px] leading-4 text-[#41415A]">{item.plan_name} Plan</span>
+                <span className="px-4 py-[18px] text-right text-[14px] leading-4 text-[#41415A]">
+                  {new Intl.NumberFormat('en-NG', { style: 'currency', currency: item.currency }).format(item.amount)}
+                </span>
               </div>
             ))}
           </div>

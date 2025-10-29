@@ -167,14 +167,14 @@ function RouteComponent() {
         </header>
       </section>
 
-      <section className="relative min-h-[647.5px] w-full bg-[oklch(0.7898_0.1514_90.07_/_20%)] py-5 lg:rounded-[13px] lg:py-[106px]">
+      <section className="relative min-h-[647.5px] w-full bg-[oklch(0.7898_0.1514_90.07/20%)] py-5 lg:rounded-[13px] lg:py-[106px]">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${assets.yellowbackground})`,
           }}
         >
-          <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07_/_20%)]/20" />
+          <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07/20%)]/20" />
         </div>
         <div className="landing-container relative z-10 flex flex-col gap-5 lg:gap-[52px]">
           <h4 className="text-[34px] leading-[41px] font-semibold text-black">More posts like this</h4>

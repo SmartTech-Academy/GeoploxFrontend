@@ -1,4 +1,5 @@
 import {
+  MoreVertical,
   Heart,
   Share2,
   ChevronLeft,
@@ -22,11 +23,18 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator as DropdownMenuSeparatorAction,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn, formatPrice } from '@/lib/utils';
 import { useState } from 'react';
-import { Link, useLocation, useParams } from '@tanstack/react-router';
+import { Link, useLocation, useNavigate, useParams } from '@tanstack/react-router';
 import { PageMetaTags } from './page-meta-data';
-import { useGetPropertyDetails, useGetRelatedProperties } from '@/lib/services';
+import { useDeleteProperty, useFlagProperty, useGetPropertyDetails, useGetRelatedProperties } from '@/lib/services';
 import { ListingDetailSkeleton } from './listing-detail-skeleton';
 
 import { ContactOwnerDialog } from './dialogs/contact-owner-dialog';
@@ -46,17 +54,35 @@ const ListingDetail = () => {
     if (location.pathname.startsWith('/sell/')) {
       return '/_landing/sell/$id';
     }
+    if (location.pathname.startsWith('/admin-listing/')) {
+      return '/_dashboard/admin-listing/$id';
+    }
     // Add other paths like /sell if they exist
     return '/_landing/buy/$id'; // Fallback
   };
 
   const { id: slug } = useParams({ from: getRoutePath() });
+  const navigate = useNavigate();
   const isDashboard = location.pathname.includes('/listing/');
+  const isAdminListing = location.pathname.includes('/admin-listing/');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isContactDialogOpen, setContactDialogOpen] = useState(false);
 
-  const { data: propertyDetailsResponse, isLoading: isLoadingDetails } = useGetPropertyDetails(slug);
+  const { mutate: flagProperty, isPending: isFlagging } = useFlagProperty();
+  const { mutate: deleteProperty, isPending: isDeleting } = useDeleteProperty();
+
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+      deleteProperty(property.id, {
+        onSuccess: () => {
+          navigate({ to: '/admin-listing' });
+        },
+      });
+    }
+  };
+
+  const { data: propertyDetailsResponse, isLoading: isLoadingDetails } = useGetPropertyDetails(slug, isDashboard);
   const { data: relatedPropertiesResponse, isLoading: isLoadingRelated } = useGetRelatedProperties(slug);
 
   const property = propertyDetailsResponse?.data.data;
@@ -80,7 +106,12 @@ const ListingDetail = () => {
   }
 
   return (
-    <div className={cn('min-h-screen w-full bg-white', isDashboard ? 'py-8' : 'py-(--landing-header-height)')}>
+    <div
+      className={cn(
+        'min-h-screen w-full bg-white',
+        isDashboard || isAdminListing ? 'py-8' : 'py-(--landing-header-height)'
+      )}
+    >
       {isDashboard ? (
         <PageMetaTags title={`Listing: ${property.title}`} description={property.desc} keywords="listing management" />
       ) : (
@@ -96,11 +127,29 @@ const ListingDetail = () => {
         />
       )}
 
-      <div className={cn('w-full', !isDashboard && 'landing-container flex flex-col gap-8 pt-[77px]')}>
+      <div
+        className={cn('w-full', !isDashboard && !isAdminListing && 'landing-container flex flex-col gap-8 pt-[77px]')}
+      >
         <header className="flex w-full flex-col items-center justify-between lg:flex-row">
           <div className="flex flex-col items-start self-stretch">
             <div className="flex flex-col gap-3 self-stretch py-[15px] lg:flex-row">
-              {isDashboard ? (
+              {isAdminListing ? (
+                <Breadcrumb>
+                  <BreadcrumbList>
+                    <BreadcrumbItem>
+                      <BreadcrumbLink asChild>
+                        <Link to="/admin-listing">Admin Listing</Link>
+                      </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator>
+                      <Slash />
+                    </BreadcrumbSeparator>
+                    <BreadcrumbItem>
+                      <BreadcrumbPage>{property.title}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </BreadcrumbList>
+                </Breadcrumb>
+              ) : isDashboard ? (
                 <Breadcrumb>
                   <BreadcrumbList>
                     <BreadcrumbItem>
@@ -111,7 +160,6 @@ const ListingDetail = () => {
                     <BreadcrumbSeparator>
                       <Slash />
                     </BreadcrumbSeparator>
-
                     <BreadcrumbItem>
                       <BreadcrumbPage>{property.title}</BreadcrumbPage>
                     </BreadcrumbItem>
@@ -128,7 +176,6 @@ const ListingDetail = () => {
                     <BreadcrumbSeparator>
                       <Slash />
                     </BreadcrumbSeparator>
-
                     <BreadcrumbItem>
                       <BreadcrumbLink asChild>
                         <Link
@@ -163,16 +210,39 @@ const ListingDetail = () => {
           </div>
 
           <div className="flex items-start justify-end self-stretch">
-            <div className="flex w-full items-center justify-between gap-1 self-stretch lg:justify-start">
-              <Button variant="ghost" className="text-[14px] leading-[21px] font-semibold text-[#1A2258]">
-                <Heart className="size-4" />
-                Save to Favourites
-              </Button>
+            <div className="flex w-full items-center justify-between gap-2 self-stretch lg:justify-start">
+              {!isAdminListing && (
+                <>
+                  <Button variant="ghost" className="text-[14px] leading-[21px] font-semibold text-[#1A2258]">
+                    <Heart className="mr-2 size-4" />
+                    Save to Favourites
+                  </Button>
 
-              <Button variant="ghost" className="text-[14px] leading-[21px] font-semibold text-[#1A2258]">
-                <Share2 className="size-4" />
-                Share
-              </Button>
+                  <Button variant="ghost" className="text-[14px] leading-[21px] font-semibold text-[#1A2258]">
+                    <Share2 className="mr-2 size-4" />
+                    Share
+                  </Button>
+                </>
+              )}
+
+              {isAdminListing && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <MoreVertical className="size-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => flagProperty(property.id)} disabled={isFlagging}>
+                      {isFlagging ? 'Flagging...' : 'Flag Property'}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparatorAction />
+                    <DropdownMenuItem onClick={handleDelete} disabled={isDeleting} className="text-red-600">
+                      {isDeleting ? 'Deleting...' : 'Delete Property'}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </div>
         </header>
@@ -230,7 +300,7 @@ const ListingDetail = () => {
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`size-[135.2px] flex-shrink-0 overflow-hidden border-2 ${
+                    className={`size-[135.2px] shrink-0 overflow-hidden border-2 ${
                       currentImageIndex === index ? 'border-primary' : 'border-gray-200'
                     }`}
                   >
@@ -250,11 +320,11 @@ const ListingDetail = () => {
             <div className="flex w-full flex-col gap-11">
               <div className="flex flex-col items-start gap-3 self-stretch border-b border-[#EAEBF0] pb-[21px]">
                 <div className="flex items-center gap-3">
-                  <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
+                  <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
                     <div className="size-1.5 rounded-full bg-[#D20832]" /> {property.category}
                   </Badge>
 
-                  <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
+                  <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
                     {property.property_type}
                   </Badge>
                 </div>
@@ -425,7 +495,7 @@ const ListingDetail = () => {
             </div>
           </div>
         </div>
-        {!isDashboard && relatedProperties.length > 0 && (
+        {!(isDashboard || isAdminListing) && relatedProperties.length > 0 && (
           <div className="flex flex-col items-start gap-10">
             <h4 className="text-[28px] leading-[34px] font-semibold tracking-[-0.5px] text-[#15181E]">
               Recommended Properties
@@ -454,7 +524,7 @@ const ListingDetail = () => {
                           <Badge
                             key={tag}
                             className={cn(
-                              'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D] capitalize'
+                              'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D] capitalize'
                             )}
                           >
                             {' '}

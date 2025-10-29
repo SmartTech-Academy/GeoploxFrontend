@@ -116,7 +116,7 @@ export const UpgradePlanDialog: React.FC<UpgradePlanDialogProps> = ({ open, onOp
                   <div className="space-y-3">
                     {currentPlanData.features.map((feature: string, index: number) => (
                       <div key={index} className="flex items-start gap-3">
-                        <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#D4B04A]" />
+                        <Check className="mt-0.5 h-5 w-5 shrink-0 text-[#D4B04A]" />
                         <span className="text-sm leading-5 text-[#6B7280]">{feature}</span>
                       </div>
                     ))}

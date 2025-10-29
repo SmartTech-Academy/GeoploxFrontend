@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils';
 
 const ListingProperties = () => {
   const location = useLocation();
+  const isListingPage = location.pathname.includes('/listing');
+  const isAdminListingPage = location.pathname.includes('/admin-listing');
   const [page, setPage] = useState(1);
   const [propertyType, setPropertyType] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState('newest');
@@ -21,9 +23,27 @@ const ListingProperties = () => {
     sort: sortBy,
   });
 
-  const { data: propertiesResponse, isPending: isLoadingProperties } = useGetProperties(filters);
+  const { data: propertiesResponse, isPending: isLoadingProperties } = useGetProperties(
+    filters,
+    isListingPage || isAdminListingPage,
+    isAdminListingPage
+  );
 
-  const properties: Property[] = propertiesResponse?.data.data.data ?? [];
+  // The API response structure seems to be different for dashboard and user endpoints.
+  const rawProperties = propertiesResponse?.data.data.data ?? [];
+  const properties: Property[] =
+    isListingPage || isAdminListingPage
+      ? rawProperties.map((p: any) => ({
+          ...p,
+          id: String(p.id), // Ensure id is a string
+          location: {
+            city: p.city,
+            state: p.state,
+          },
+          // dashboard endpoint seems to be missing category, so we add a default
+          category: p.category || 'N/A',
+        }))
+      : rawProperties;
   const totalResults = propertiesResponse?.data.data.meta.total ?? 0;
 
   const propertyTypes = ['flat', 'apartment', 'house', 'land', 'commercial', 'villa', 'duplex'];
@@ -92,8 +112,13 @@ const ListingProperties = () => {
           {/* Left Sidebar - Filters */}
           <div className="flex h-dvh w-[334px] shrink-0 flex-col items-start gap-[17px]">
             <h2 className="text-[32px] leading-[38px] font-semibold tracking-[-0.02em] text-[#1F2130]">
-              {location.pathname.includes('/buy') ? 'Buy' : location.pathname.includes('/rent') ? 'Rent' : 'Sell'}{' '}
-              Property
+              {isAdminListingPage
+                ? 'Admin Listings'
+                : isListingPage
+                  ? 'My Listings'
+                  : `${
+                      location.pathname.includes('/buy') ? 'Buy' : location.pathname.includes('/rent') ? 'Rent' : 'Sell'
+                    } Property`}
             </h2>
 
             <PropertyFilterSidebar onFiltersChange={handleFilterChange} onClear={handleClearFilters} />
@@ -206,7 +231,14 @@ const ListingProperties = () => {
               <div className="flex w-full flex-col gap-10">
                 {isLoadingProperties
                   ? Array.from({ length: 5 }).map((_, index) => <PropertyListingCardSkeleton key={index} />)
-                  : properties.map((property) => <PropertyListingCard key={property.id} property={property} />)}
+                  : properties.map((property) => (
+                      <PropertyListingCard
+                        key={property.id}
+                        property={property}
+                        isDashboard={isListingPage || isAdminListingPage}
+                        identifier={isListingPage ? property.id : property.slug}
+                      />
+                    ))}
                 {properties.length === 0 && !isLoadingProperties && (
                   <div className="py-10 text-center">No properties found.</div>
                 )}
@@ -256,7 +288,7 @@ const ListingProperties = () => {
           {/* Mobile Quick Filter */}
           <div className="mx-4 mb-6">
             <div className="flex w-full flex-col gap-4 rounded-xl bg-[#F8F8F8] p-4 text-[#41415A]">
-              <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">Quick Filter</h3>
+              <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]"> Quick Filter</h3>
               <div className="flex flex-wrap items-center gap-1">
                 {propertyTypes.map((type, index) => (
                   <React.Fragment key={type}>
@@ -305,7 +337,14 @@ const ListingProperties = () => {
           <div className="flex flex-col gap-6 px-4">
             {isLoadingProperties
               ? Array.from({ length: 3 }).map((_, index) => <PropertyListingCardSkeleton key={index} />)
-              : properties.map((property) => <PropertyListingCard key={property.id} property={property} />)}
+              : properties.map((property) => (
+                  <PropertyListingCard
+                    key={property.id}
+                    property={property}
+                    isDashboard={isListingPage || isAdminListingPage}
+                    identifier={isListingPage ? property.id : property.slug}
+                  />
+                ))}
 
             {properties.length === 0 && !isLoadingProperties && (
               <div className="py-10 text-center">No properties found.</div>

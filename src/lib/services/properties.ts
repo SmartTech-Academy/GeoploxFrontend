@@ -3,17 +3,28 @@ import api from '../api';
 import { queryClient } from '../queryClient';
 import { toast } from 'sonner';
 
-export const useGetProperties = (params?: any) => {
+export const useGetProperties = (params?: any, isDashboard?: boolean, isAdminListing?: boolean) => {
+  const endpoint = isAdminListing
+    ? '/user/properties'
+    : isDashboard
+      ? '/dashboard/properties'
+      : '/user/properties';
   return useQuery({
-    queryKey: ['properties', params],
-    queryFn: () => api.get('/dashboard/properties', { params }),
+    queryKey: ['properties', params, isDashboard, isAdminListing, endpoint],
+    queryFn: () => api.get(endpoint, { params }),
   });
 };
 
-export const useGetPropertyDetails = (slug: string) => {
+
+export const useGetPropertyDetails = (identifier: string, isDashboard?: boolean) => {
+  const endpoint = isDashboard
+    ? location.pathname.includes('/admin-listing/')
+      ? `/dashboard/admin/fetch-property/${identifier}`
+      : `/dashboard/fetch-property/${identifier}`
+    : `/user/properties/${identifier}`;
   return useQuery({
-    queryKey: ['property', slug],
-    queryFn: () => api.get(`/user/properties/${slug}`),
+    queryKey: ['property', identifier, isDashboard, endpoint],
+    queryFn: () => api.get(endpoint), // Pass identifier to queryFn
   });
 };
 
@@ -89,13 +100,35 @@ export const useCreateProperty = () => {
 export const useUpdateProperty = (propertyId: string) => {
   return useMutation({
     mutationFn: (data: any) => {
-      const formData = new FormData();
-      Object.keys(data).forEach((key) => {
-        formData.append(key, data[key]);
-      });
-      formData.append('_method', 'PUT');
-      return api.post(`/dashboard/update/property/${propertyId}`, formData);
+      return api.put(`/dashboard/update/property/${propertyId}`, data);
     },
+  });
+};
+
+export const useFlagProperty = () => {
+  return useMutation({
+    mutationFn: (propertyId: string) => api.put(`/dashboard/admin/flag-property/${propertyId}`),
+    onSuccess: (_, propertyId) => {
+      toast.success('Property flagged successfully!');
+      queryClient.invalidateQueries({ queryKey: ['property', propertyId] }); // Invalidate specific property
+    },
+  });
+};
+
+export const useRevokeUserVerification = () => {
+  return useMutation({
+    mutationFn: (userCodec: string) => {
+      const formData = new FormData();
+      formData.append('user_codec', userCodec);
+      return api.post('/dashboard/admin/revoke/user-verification', formData);
+    },
+  });
+};
+
+export const useBlacklistUser = () => {
+  return useMutation({
+    mutationFn: (userCodec: string) =>
+      api.post('/dashboard/admin/blacklist/user', { user_codec: userCodec }),
   });
 };
 
@@ -116,7 +149,8 @@ export const useArchiveProperty = () => {
 export const useDeleteProperty = () => {
   return useMutation({
     mutationFn: (propertyId: string) => api.delete(`/dashboard/property/${propertyId}/delete`),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      toast.success(data.data.message || 'Property deleted successfully!');
       queryClient.invalidateQueries({ queryKey: ['properties'] });
     },
   });

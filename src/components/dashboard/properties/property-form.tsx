@@ -134,7 +134,9 @@ const amenities = [
 
 const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData }) => {
   const router = useRouter();
-  const [propertyImages, setPropertyImages] = useState<FileState[]>([]);
+  const [propertyImages, setPropertyImages] = useState<FileState[]>(
+    initialData?.propertyImages?.map((url) => ({ file: new File([], ''), preview: url, status: 'success', url })) || []
+  );
   const [propertyDocument, setPropertyDocument] = useState<DocumentState | null>(null);
   const [proofOfAddress, setProofOfAddress] = useState<DocumentState | null>(null);
   const [hoveredImage, setHoveredImage] = useState<number | null>(null);
@@ -163,8 +165,28 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
     mode: 'onTouched',
     reValidateMode: 'onChange',
     defaultValues: {
-      ...initialData,
-      nearbyAmenities: [], // 👈 prevents undefined
+      id: initialData?.id,
+      listingTitle: initialData?.listingTitle ?? '',
+      listingType: initialData?.listingType ?? 'Rent',
+      propertyType: initialData?.propertyType ?? '',
+      landType: initialData?.landType ?? '',
+      houseNumber: initialData?.houseNumber ?? '',
+      streetName: initialData?.streetName ?? '',
+      city: initialData?.city ?? '',
+      postalCode: initialData?.postalCode ?? '',
+      state: initialData?.state ?? '',
+      localGovernment: initialData?.localGovernment ?? '',
+      propertyDescription: initialData?.propertyDescription ?? '',
+      bedrooms: initialData?.bedrooms ?? 0,
+      bathrooms: initialData?.bathrooms ?? 0,
+      totalArea: initialData?.totalArea ?? 0,
+      propertyPrice: initialData?.propertyPrice ?? 0,
+      currency: initialData?.currency ?? 'NGN',
+      propertyImages: initialData?.propertyImages ?? [],
+      documentType: initialData?.documentType ?? '',
+      propertyDocument: initialData?.propertyDocument ?? '',
+      proofOfAddress: initialData?.proofOfAddress ?? '',
+      nearbyAmenities: initialData?.nearbyAmenities ?? [],
     },
   });
 
@@ -320,6 +342,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
       studio: 'apartment',
       penthouse: 'apartment',
     };
+    // const formData = new FormData();
 
     const payload = {
       title: data.listingTitle,
@@ -336,14 +359,52 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
       bathrooms: data.bathrooms,
       area_sqft: data.totalArea,
       features: data.nearbyAmenities,
+      images: data.propertyImages,
     };
+    // formData.append('title', data.listingTitle);
+    // formData.append('category_slug', categorySlugMap[data.listingType]);
+    // formData.append('description', data.propertyDescription);
+    // formData.append('price', String(data.propertyPrice));
+    // formData.append('currency', data.currency);
+    // formData.append('property_type', data.propertyType.toLowerCase());
+    // formData.append('address', `${data.houseNumber} ${data.streetName}`);
+    // formData.append('lga_or_city', data.localGovernment);
+    // formData.append('state', data.state);
+    // formData.append('country', 'Nigeria');
+    // formData.append('bedrooms', String(data.bedrooms));
+    // formData.append('bathrooms', String(data.bathrooms));
+    // formData.append('area_sqft', String(data.totalArea));
+
+    // Append array fields correctly for FormData
+    // if (data.nearbyAmenities && data.nearbyAmenities.length > 0) {
+    //   data.nearbyAmenities.forEach((amenity) => {
+    //     formData.append('features[]', amenity);
+    //   });
+    // } else {
+    //   formData.append('features', '');
+    // }
+
+    // if (data.propertyImages && data.propertyImages.length > 0) {
+    //   data.propertyImages.forEach((image) => {
+    //     formData.append('images[]', image);
+    //   });
+    // } else {
+    //   formData.append('images', '');
+    // }
+
+    // // For PUT requests spoofing with _method
+    // if (isEdit) {
+    //   formData.append('_method', 'PUT');
+    // }
 
     try {
       if (isEdit) {
         await updateProperty(payload);
+        // await updateProperty(formData);
         toast.success('Property updated successfully!');
       } else {
         await createProperty(payload);
+        // await createProperty(formData);
         toast.success('Property created successfully!');
       }
       router.navigate({ to: '/properties' });

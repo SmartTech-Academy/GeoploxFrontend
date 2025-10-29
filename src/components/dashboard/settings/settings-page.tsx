@@ -12,6 +12,63 @@ import { PageMetaTags } from '@/components/page-meta-data';
 import { useGetProfileData } from '@/lib/services/profile';
 import LoadingFallback from '@/components/loading-fallback';
 
+interface SidebarItemProps {
+  id: string;
+  label: string;
+  isActive: boolean;
+  onClick: () => void;
+}
+
+const SidebarItem: React.FC<SidebarItemProps> = ({ id, label, isActive, onClick }) => (
+  <div
+    id={id}
+    onClick={onClick}
+    className={`flex cursor-pointer items-center justify-between gap-4 rounded-[5px] p-6 text-[16px] leading-[18px] font-normal transition-colors ${
+      isActive
+        ? 'bg-[#FDF9ED] font-semibold text-[#4E4E4E]'
+        : 'bg-white text-[#41415A] hover:bg-gray-50 hover:text-gray-900'
+    }`}
+  >
+    <span>{label}</span>
+    {isActive && <ChevronRight className="size-4 fill-[#41415A]" />}
+  </div>
+);
+
+const SettingsSidebar = ({ user, activeTab, handleTabChange }: any) => (
+  <div className="flex h-full flex-col bg-white pr-6">
+    <div className="flex w-full flex-col">
+      <SidebarItem
+        id="personal"
+        label="Personal Information"
+        isActive={activeTab === 'personal' || !activeTab}
+        onClick={() => handleTabChange('personal')}
+      />
+      {user?.user_role === 'developer' && (
+        <SidebarItem
+          id="business"
+          label="Business Information"
+          isActive={activeTab === 'business'}
+          onClick={() => handleTabChange('business')}
+        />
+      )}
+      {(user?.user_role === 'agent' || user?.user_role === 'client') && (
+        <SidebarItem
+          id="subscriptions"
+          label="Subscriptions"
+          isActive={activeTab === 'subscriptions'}
+          onClick={() => handleTabChange('subscriptions')}
+        />
+      )}
+      <SidebarItem
+        id="security"
+        label="Security & Notifications"
+        isActive={activeTab === 'security'}
+        onClick={() => handleTabChange('security')}
+      />
+    </div>
+  </div>
+);
+
 const SettingsPage = () => {
   // Get initial tab from URL or default to personal
   const search = useSearch({
@@ -31,63 +88,6 @@ const SettingsPage = () => {
     });
   };
 
-  interface SidebarItemProps {
-    id: string;
-    label: string;
-    isActive: boolean;
-    onClick: () => void;
-  }
-
-  const SidebarItem: React.FC<SidebarItemProps> = ({ id, label, isActive, onClick }) => (
-    <div
-      id={id}
-      onClick={onClick}
-      className={`flex cursor-pointer items-center justify-between gap-4 rounded-[5px] p-6 text-[16px] leading-[18px] font-normal transition-colors ${
-        isActive
-          ? 'bg-[#FDF9ED] font-semibold text-[#4E4E4E]'
-          : 'bg-white text-[#41415A] hover:bg-gray-50 hover:text-gray-900'
-      }`}
-    >
-      <span>{label}</span>
-      {isActive && <ChevronRight className="size-4 fill-[#41415A]" />}
-    </div>
-  );
-
-  const SettingsSidebar = () => (
-    <div className="flex h-full flex-col bg-white pr-6">
-      <div className="flex w-full flex-col">
-        <SidebarItem
-          id="personal"
-          label="Personal Information"
-          isActive={activeTab === 'personal' || !activeTab}
-          onClick={() => handleTabChange('personal')}
-        />
-        {user?.user_role === 'developer' && (
-          <SidebarItem
-            id="business"
-            label="Business Information"
-            isActive={activeTab === 'business'}
-            onClick={() => handleTabChange('business')}
-          />
-        )}
-        {(user?.user_role === 'agent' || user?.user_role === 'client') && (
-          <SidebarItem
-            id="subscriptions"
-            label="Subscriptions"
-            isActive={activeTab === 'subscriptions'}
-            onClick={() => handleTabChange('subscriptions')}
-          />
-        )}
-        <SidebarItem
-          id="security"
-          label="Security & Notifications"
-          isActive={activeTab === 'security'}
-          onClick={() => handleTabChange('security')}
-        />
-      </div>
-    </div>
-  );
-
   const renderContent = () => {
     if (isProfileLoading) {
       return <LoadingFallback />;
@@ -101,7 +101,7 @@ const SettingsPage = () => {
       case 'security':
         return <SecurityNotificationsSection />;
       case 'subscriptions':
-        return <SubscriptionsSection user={user} />;
+        return <SubscriptionsSection />;
       default:
         return <PersonalInformationSection user={user} />;
     }
@@ -121,7 +121,7 @@ const SettingsPage = () => {
       <div className="w-full lg:hidden">
         {!activeTab ? (
           <div className="px-4">
-            <SettingsSidebar />
+            <SettingsSidebar user={user} activeTab={activeTab} handleTabChange={handleTabChange} />
           </div>
         ) : (
           <div className="w-full">
@@ -143,7 +143,7 @@ const SettingsPage = () => {
         <ResizablePanelGroup direction="horizontal" className="h-full w-full">
           {/* Sidebar Panel */}
           <ResizablePanel defaultSize={35} minSize={25} maxSize={50} className="border-r border-[#F1F1F4]">
-            <SettingsSidebar />
+            <SettingsSidebar user={user} activeTab={activeTab} handleTabChange={handleTabChange} />
           </ResizablePanel>
 
           {/* Resizable Handle */}

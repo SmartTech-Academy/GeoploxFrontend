@@ -134,7 +134,7 @@ export function DiscoverSection() {
                           : 'none',
                     }}
                     variant={activeTab === tab.name ? 'default' : 'outline'}
-                    className={`h-[33px] flex-shrink-0 rounded-[6px] px-3 py-[11px] text-[18px] leading-[21px] whitespace-nowrap text-[#41415A] transition-all duration-300 ease-in-out ${
+                    className={`h-[33px] shrink-0 rounded-[6px] px-3 py-[11px] text-[18px] leading-[21px] whitespace-nowrap text-[#41415A] transition-all duration-300 ease-in-out ${
                       activeTab === tab.name
                         ? 'border border-[#D5D5DD] bg-white font-semibold hover:bg-gray-100'
                         : 'border-none bg-[#F9F9FB] font-normal hover:bg-white hover:text-black'
@@ -151,7 +151,7 @@ export function DiscoverSection() {
 
         {/* Trending Homes Section - White Background */}
         <div className="w-full bg-[#21242E] py-16">
-          <div className="landing-container flex flex-col items-center gap-[80px] self-stretch">
+          <div className="landing-container flex flex-col items-center gap-20 self-stretch">
             <div className="flex w-full flex-col items-center gap-12 self-stretch">
               <div className="flex flex-col items-center gap-3 text-center">
                 <h3 className="text-[36px] leading-[41px] text-[#D4AF36]">{activeTab} around you</h3>
@@ -187,7 +187,7 @@ export function DiscoverSection() {
 
                         <Badge
                           className={cn(
-                            'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0_/_30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]'
+                            'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]'
                           )}
                         >
                           <div className={cn('size-1.5 rounded-full', getStatusDotColor(property.category))} />
@@ -276,14 +276,14 @@ export function DiscoverSection() {
             </div>
           </div>
 
-          <div className="relative w-full bg-[oklch(0.7898_0.1514_90.07_/_20%)] pt-24 lg:min-h-[595px] lg:rounded-r-[13px] lg:pt-0">
+          <div className="relative w-full bg-[oklch(0.7898_0.1514_90.07/20%)] pt-24 lg:min-h-[595px] lg:rounded-r-[13px] lg:pt-0">
             <div
               className="absolute inset-0 bg-cover bg-center bg-no-repeat"
               style={{
                 backgroundImage: `url(${assets.yellowbackground})`,
               }}
             >
-              <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07_/_20%)]/20" />
+              <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07/20%)]/20" />
             </div>
 
             <div className=";lg:pl-10 relative z-10 flex w-full flex-col items-center justify-between gap-[95px] rounded-[13px] pr-5 pl-5 lg:flex-row lg:pr-0">
@@ -351,20 +351,14 @@ export function DiscoverSection() {
                   key={index}
                   className="flex grow flex-col items-start gap-[19px]"
                 >
-                  <img
-                    className="h-[229px] w-full rounded-t-[8px]"
-                    src={blog.image}
-                    alt="blog"
-                    width={394}
-                    height={229}
-                  />
+                  <img className="h-[229px] w-full rounded-t-xl" src={blog.image} alt="blog" width={394} height={229} />
 
                   <div className="flex flex-col items-start gap-4 self-stretch">
                     <div className="flex items-start gap-2">
                       {blog.tags.map((tag, index) => (
                         <div
                           key={index}
-                          className="bg-[ flex h-[25px] items-center justify-center rounded bg-[oklch(0.7665_0.1393_91.15_/_5%)] px-2 py-0.5 text-[14px] leading-[21px] text-[#D4AF36]"
+                          className="flex h-[25px] items-center justify-center rounded bg-[oklch(0.7665_0.1393_91.15/5%)] px-2 py-0.5 text-[14px] leading-[21px] text-[#D4AF36]"
                         >
                           {tag}
                         </div>
