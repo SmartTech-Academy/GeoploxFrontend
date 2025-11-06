@@ -149,22 +149,25 @@ const Dashboard = () => {
                     key={item.conversation_id}
                     className="flex w-full items-center justify-between gap-3.5 self-stretch border-b border-[#E3E3E8] pb-4 last:border-b-0"
                   >
-                    <div className="flex items-center gap-3.5">
+                    <div className="flex w-full items-center gap-3.5">
                       <img src={item.last_message.sender.avatar} alt="" className="size-11" width={44} height={44} />
-                      <div className="flex flex-col items-start justify-center gap-2.5">
-                        <h5 className="text-[14px] leading-[17px] font-semibold text-[#41415A]">
-                          {item.last_message.sender.name}
-                        </h5>
-                        <p className="truncate text-[12px] leading-3.5 tracking-[0.01em] text-[#71748C]">
+                      <div className="flex w-full flex-col items-start justify-center gap-2.5">
+                        <div className="flex w-full items-center justify-between">
+                          <h5 className="text-[14px] leading-[17px] font-semibold text-[#41415A]">
+                            {item.last_message.sender.name}
+                          </h5>
+                          <div className="flex items-center justify-center gap-2.5">
+                            <p className="text-right text-[12px] leading-3.5 tracking-[0.01em] whitespace-nowrap text-[#71748C]">
+                              {formatTime(item.last_message.created_at)}
+                            </p>
+                            {item.is_unread && <div className="size-2 rounded-full bg-[#D20832]" />}
+                          </div>
+                        </div>
+
+                        <p className="max-w-72 truncate text-[12px] leading-3.5 tracking-[0.01em] text-[#71748C]">
                           {item.last_message.body}
                         </p>
                       </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-2.5">
-                      <p className="text-right text-[12px] leading-3.5 tracking-[0.01em] whitespace-nowrap text-[#71748C]">
-                        {formatTime(item.last_message.created_at)}
-                      </p>
-                      {item.is_unread && <div className="size-2 rounded-full bg-[#D20832]" />}
                     </div>
                   </div>
                 ))

@@ -29,22 +29,27 @@ const ListingProperties = () => {
     isAdminListingPage
   );
 
-  // The API response structure seems to be different for dashboard and user endpoints.
-  const rawProperties = propertiesResponse?.data.data.data ?? [];
+  // The API response structure is different for dashboard/admin and public endpoints.
+  const responseData = propertiesResponse?.data?.data;
+  const rawProperties = responseData?.data ?? [];
+
   const properties: Property[] =
     isListingPage || isAdminListingPage
       ? rawProperties.map((p: any) => ({
           ...p,
           id: String(p.id), // Ensure id is a string
+          // Admin/dashboard endpoints have flat location properties
           location: {
             city: p.city,
             state: p.state,
           },
-          // dashboard endpoint seems to be missing category, so we add a default
+          // Admin/dashboard endpoints might be missing some fields, so we add defaults
           category: p.category || 'N/A',
+          cover_image: p.cover_image || p.images?.find((img: any) => img.is_cover)?.url || '/placeholder.png',
+          excerpt: p.excerpt || p.desc,
         }))
       : rawProperties;
-  const totalResults = propertiesResponse?.data.data.meta.total ?? 0;
+  const totalResults = responseData?.meta?.total ?? 0;
 
   const propertyTypes = ['flat', 'apartment', 'house', 'land', 'commercial', 'villa', 'duplex'];
 
@@ -250,11 +255,11 @@ const ListingProperties = () => {
                   Previous
                 </Button>
                 <span className="text-sm">
-                  Page {page} of {propertiesResponse?.data.data.meta.last_page ?? 1}
+                  Page {page} of {responseData?.meta?.last_page ?? 1}
                 </span>
                 <Button
                   onClick={handleNextPage}
-                  disabled={page >= (propertiesResponse?.data.data.meta.last_page ?? 1) || isLoadingProperties}
+                  disabled={page >= (responseData?.meta?.last_page ?? 1) || isLoadingProperties}
                 >
                   Next
                 </Button>
@@ -356,11 +361,11 @@ const ListingProperties = () => {
                 Previous
               </Button>
               <span className="text-sm">
-                Page {page} of {propertiesResponse?.data.data.meta.last_page ?? 1}
+                Page {page} of {responseData?.meta?.last_page ?? 1}
               </span>
               <Button
                 onClick={handleNextPage}
-                disabled={page >= (propertiesResponse?.data.data.meta.last_page ?? 1) || isLoadingProperties}
+                disabled={page >= (responseData?.meta?.last_page ?? 1) || isLoadingProperties}
                 size="sm"
               >
                 Next

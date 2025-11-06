@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 export const useGetProperties = (params?: any, isDashboard?: boolean, isAdminListing?: boolean) => {
   const endpoint = isAdminListing
-    ? '/user/properties'
+    ? '/dashboard/admin/properties'
     : isDashboard
       ? '/dashboard/properties'
       : '/user/properties';
@@ -122,13 +122,30 @@ export const useRevokeUserVerification = () => {
       formData.append('user_codec', userCodec);
       return api.post('/dashboard/admin/revoke/user-verification', formData);
     },
+    onSuccess: (data) => {
+      toast.success(data.data.message || 'User verification revoked!');
+      queryClient.invalidateQueries({ queryKey: ['property'] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to revoke verification.');
+    },
   });
 };
 
 export const useBlacklistUser = () => {
   return useMutation({
-    mutationFn: (userCodec: string) =>
-      api.post('/dashboard/admin/blacklist/user', { user_codec: userCodec }),
+    mutationFn: (userCodec: string) => {
+      const formData = new FormData();
+      formData.append('user_codec', userCodec);
+      return api.post('/dashboard/admin/blacklist/user', formData);
+    },
+    onSuccess: (data) => {
+      toast.success(data.data.message || 'User blacklisted successfully!');
+      queryClient.invalidateQueries({ queryKey: ['property'] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to blacklist user.');
+    },
   });
 };
 

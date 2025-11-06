@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   MoreVertical,
   Heart,
@@ -34,10 +35,18 @@ import { cn, formatPrice } from '@/lib/utils';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from '@tanstack/react-router';
 import { PageMetaTags } from './page-meta-data';
-import { useDeleteProperty, useFlagProperty, useGetPropertyDetails, useGetRelatedProperties } from '@/lib/services';
+import {
+  useBlacklistUser,
+  useDeleteProperty,
+  useFlagProperty,
+  useGetPropertyDetails,
+  useGetRelatedProperties,
+  useRevokeUserVerification,
+} from '@/lib/services';
 import { ListingDetailSkeleton } from './listing-detail-skeleton';
 
 import { ContactOwnerDialog } from './dialogs/contact-owner-dialog';
+import DeletePropertyModal from './dialogs/delete-property';
 import assets from '@/assets';
 import { PropertyListingCardSkeleton } from './property-listing-card-skeleton';
 
@@ -57,6 +66,9 @@ const ListingDetail = () => {
     if (location.pathname.startsWith('/admin-listing/')) {
       return '/_dashboard/admin-listing/$id';
     }
+    if (location.pathname.startsWith('/listing/')) {
+      return '/_dashboard/listing/$id';
+    }
     // Add other paths like /sell if they exist
     return '/_landing/buy/$id'; // Fallback
   };
@@ -68,24 +80,38 @@ const ListingDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isContactDialogOpen, setContactDialogOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const { mutate: flagProperty, isPending: isFlagging } = useFlagProperty();
   const { mutate: deleteProperty, isPending: isDeleting } = useDeleteProperty();
-
-  const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
-      deleteProperty(property.id, {
-        onSuccess: () => {
-          navigate({ to: '/admin-listing' });
-        },
-      });
-    }
-  };
+  const { mutate: blacklistUser, isPending: isBlacklisting } = useBlacklistUser();
+  const { mutate: revokeVerification, isPending: isRevoking } = useRevokeUserVerification();
 
   const { data: propertyDetailsResponse, isLoading: isLoadingDetails } = useGetPropertyDetails(slug, isDashboard);
   const { data: relatedPropertiesResponse, isLoading: isLoadingRelated } = useGetRelatedProperties(slug);
 
   const property = propertyDetailsResponse?.data.data;
+
+  const handleDelete = () => {
+    if (!property) return;
+    deleteProperty(property.id, {
+      onSuccess: () => {
+        setDeleteModalOpen(false);
+        navigate({ to: '/admin-listing' });
+      },
+    });
+  };
+
+  const handleBlacklist = () => {
+    if (!property) return;
+    blacklistUser(property.owner.id);
+  };
+
+  const handleRevokeVerification = () => {
+    if (!property) return;
+    revokeVerification(property.owner.id);
+  };
+
   const relatedProperties = relatedPropertiesResponse?.data.data ?? [];
   const images = property?.images.map((img: { url: string }) => img.url) ?? [];
 
@@ -206,7 +232,7 @@ const ListingDetail = () => {
               )}
             </div>
 
-            <h1 className="text-[26px] leading-[40px] font-semibold text-[#1A2258]">{property.title}</h1>
+            <h1 className="text-[26px] leading-10 font-semibold text-[#1A2258]">{property.title}</h1>
           </div>
 
           <div className="flex items-start justify-end self-stretch">
@@ -235,6 +261,17 @@ const ListingDetail = () => {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => flagProperty(property.id)} disabled={isFlagging}>
                       {isFlagging ? 'Flagging...' : 'Flag Property'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleRevokeVerification} disabled={isRevoking}>
+                      {isRevoking ? 'Revoking...' : 'Revoke Verification'}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparatorAction />
+                    <DropdownMenuItem
+                      onClick={() => handleBlacklist()}
+                      disabled={isBlacklisting}
+                      className="text-red-600"
+                    >
+                      {isBlacklisting ? 'Blacklisting...' : 'Blacklist Owner'}
                     </DropdownMenuItem>
                     <DropdownMenuSeparatorAction />
                     <DropdownMenuItem onClick={handleDelete} disabled={isDeleting} className="text-red-600">
@@ -278,7 +315,7 @@ const ListingDetail = () => {
                   <Button
                     size="sm"
                     variant="secondary"
-                    className="h-[31px] rounded-[100px] bg-white p-[15px] py-[5px] text-[14px] leading-[21px] font-normal text-[#1A2258]"
+                    className="h-[31px] rounded-[100px] bg-white p-[15px] py-1 text-[14px] leading-[21px] font-normal text-[#1A2258]"
                   >
                     <Download className="size-4" />
                     Download
@@ -442,13 +479,10 @@ const ListingDetail = () => {
           <div className="flex flex-col items-end">
             <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
               <div className="flex w-full items-center gap-4 border-b border-[#F1F1F4] pb-5">
-                <img
-                  src={property.owner.image_url}
-                  alt="Agent"
-                  width={68}
-                  height={68}
-                  className="size-[68px] rounded-[5px]"
-                />
+                <Avatar className="size-[68px] rounded-[5px]">
+                  <AvatarImage src={property?.owner?.image_url} alt={property.owner.name} />
+                  <AvatarFallback>{property.owner.name.charAt(0)}</AvatarFallback>
+                </Avatar>
 
                 <div className="flex flex-col items-start gap-2 self-stretch">
                   <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">{property.owner.name}</h4>
@@ -592,6 +626,14 @@ const ListingDetail = () => {
         )}
       </div>
       <ContactOwnerDialog propertyId={property.id} open={isContactDialogOpen} onOpenChange={setContactDialogOpen} />
+      {isAdminListing && (
+        <DeletePropertyModal
+          openDeleteModal={isDeleteModalOpen}
+          setOpenDeleteModal={setDeleteModalOpen}
+          onConfirm={handleDelete}
+          isDeleting={isDeleting}
+        />
+      )}
     </div>
   );
 };

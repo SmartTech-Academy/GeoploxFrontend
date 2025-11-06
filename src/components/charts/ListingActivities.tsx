@@ -1,21 +1,10 @@
+import { useMemo } from 'react';
 import { Line, LineChart, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-
-const chartData = [
-  { month: 'Jan', rent: 1, forSale: 1, shortLet: 26 },
-  { month: 'Feb', rent: 5, forSale: 8, shortLet: 24 },
-  { month: 'Mar', rent: 12, forSale: 15, shortLet: 22 },
-  { month: 'Apr', rent: 18, forSale: 17, shortLet: 20 },
-  { month: 'May', rent: 22, forSale: 18, shortLet: 17 },
-  { month: 'Jun', rent: 24, forSale: 19, shortLet: 15 },
-  { month: 'Jul', rent: 25, forSale: 19, shortLet: 13 },
-  { month: 'Aug', rent: 26, forSale: 18, shortLet: 20 },
-  { month: 'Sep', rent: 24, forSale: 12, shortLet: 18 },
-  { month: 'Oct', rent: 26, forSale: 13, shortLet: 12 },
-  { month: 'Nov', rent: 27, forSale: 14, shortLet: 8 },
-  { month: 'Dec', rent: 28, forSale: 17, shortLet: 6 },
-];
+import { format, parseISO } from 'date-fns';
+import { Skeleton } from '../ui/skeleton';
+import { EmptyState } from '../empty-state';
 
 const chartConfig = {
   rent: {
@@ -32,7 +21,43 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const ListingActivities = () => {
+interface Point {
+  x: string;
+  y: number;
+}
+
+interface Series {
+  slug: 'for-rent' | 'for-sale' | 'shortlet';
+  label: string;
+  points: Point[];
+}
+
+interface ListingActivitiesProps {
+  data: Series[];
+  isLoading: boolean;
+}
+
+const ListingActivities = ({ data, isLoading }: ListingActivitiesProps) => {
+  const chartData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+
+    const rentSeries = data.find((s) => s.slug === 'for-rent');
+    const saleSeries = data.find((s) => s.slug === 'for-sale');
+    const shortletSeries = data.find((s) => s.slug === 'shortlet');
+
+    if (!rentSeries) return [];
+
+    return rentSeries.points.map((point, index) => ({
+      month: format(parseISO(point.x), 'MMM'),
+      rent: point.y,
+      forSale: saleSeries?.points[index]?.y ?? 0,
+      shortLet: shortletSeries?.points[index]?.y ?? 0,
+    }));
+  }, [data]);
+
+  const yMax = useMemo(() => Math.max(...chartData.flatMap((d) => [d.rent, d.forSale, d.shortLet]), 45), [chartData]);
+  const yTicks = useMemo(() => Array.from({ length: 5 }, (_, i) => Math.round((yMax / 4) * i)), [yMax]);
+
   return (
     <div className="flex items-start gap-12 self-stretch rounded-xl border border-[#E3E3E8] bg-white p-6">
       <div className="flex w-full grow flex-col items-start gap-6">
@@ -71,72 +96,78 @@ const ListingActivities = () => {
 
         {/* Chart */}
         <div className="h-[300px] w-full">
-          <ChartContainer config={chartConfig} className="h-[300px]">
-            <LineChart
-              accessibilityLayer
-              data={chartData}
-              margin={{
-                left: 12,
-                right: 12,
-                top: 12,
-                bottom: 12,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" horizontal={true} vertical={false} />
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tick={{ fontSize: 12, fill: '#9CA3AF' }}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tick={{ fontSize: 12, fill: '#9CA3AF' }}
-                domain={[0, 45]}
-                ticks={[0, 10, 20, 30, 40, 45]}
-              />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-              <Line
-                dataKey="rent"
-                type="monotone"
-                stroke="var(--color-rent)"
-                strokeWidth={2}
-                dot={false}
-                activeDot={{
-                  r: 4,
-                  stroke: 'var(--color-rent)',
-                  strokeWidth: 2,
+          {isLoading ? (
+            <Skeleton className="h-full w-full" />
+          ) : chartData.length === 0 ? (
+            <EmptyState type="chart" message="No listing activities to display." />
+          ) : (
+            <ChartContainer config={chartConfig} className="h-[300px]">
+              <LineChart
+                accessibilityLayer
+                data={chartData}
+                margin={{
+                  left: 12,
+                  right: 12,
+                  top: 12,
+                  bottom: 12,
                 }}
-              />
-              <Line
-                dataKey="forSale"
-                type="monotone"
-                stroke="var(--color-forSale)"
-                strokeWidth={2}
-                dot={false}
-                activeDot={{
-                  r: 4,
-                  stroke: 'var(--color-forSale)',
-                  strokeWidth: 2,
-                }}
-              />
-              <Line
-                dataKey="shortLet"
-                type="monotone"
-                stroke="var(--color-shortLet)"
-                strokeWidth={2}
-                dot={false}
-                activeDot={{
-                  r: 4,
-                  stroke: 'var(--color-shortLet)',
-                  strokeWidth: 2,
-                }}
-              />
-            </LineChart>
-          </ChartContainer>
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" horizontal={true} vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                  domain={[0, yMax]}
+                  ticks={yTicks}
+                />
+                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                <Line
+                  dataKey="rent"
+                  type="monotone"
+                  stroke="var(--color-rent)"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{
+                    r: 4,
+                    stroke: 'var(--color-rent)',
+                    strokeWidth: 2,
+                  }}
+                />
+                <Line
+                  dataKey="forSale"
+                  type="monotone"
+                  stroke="var(--color-forSale)"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{
+                    r: 4,
+                    stroke: 'var(--color-forSale)',
+                    strokeWidth: 2,
+                  }}
+                />
+                <Line
+                  dataKey="shortLet"
+                  type="monotone"
+                  stroke="var(--color-shortLet)"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{
+                    r: 4,
+                    stroke: 'var(--color-shortLet)',
+                    strokeWidth: 2,
+                  }}
+                />
+              </LineChart>
+            </ChartContainer>
+          )}
         </div>
       </div>
     </div>
