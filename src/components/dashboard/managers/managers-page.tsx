@@ -112,6 +112,45 @@ const conversionChartData = [
   { month: 'Jun', rent: 214, forSale: 140, shortLet: 220 },
 ];
 
+const listingActivitiesData = [
+  {
+    slug: 'for-rent' as const,
+    label: 'Rent',
+    points: [
+      { x: '2025-01-01', y: 18 },
+      { x: '2025-02-01', y: 22 },
+      { x: '2025-03-01', y: 19 },
+      { x: '2025-04-01', y: 35 },
+      { x: '2025-05-01', y: 29 },
+      { x: '2025-06-01', y: 42 },
+    ],
+  },
+  {
+    slug: 'for-sale' as const,
+    label: 'For Sale',
+    points: [
+      { x: '2025-01-01', y: 12 },
+      { x: '2025-02-01', y: 19 },
+      { x: '2025-03-01', y: 14 },
+      { x: '2025-04-01', y: 28 },
+      { x: '2025-05-01', y: 24 },
+      { x: '2025-06-01', y: 38 },
+    ],
+  },
+  {
+    slug: 'shortlet' as const,
+    label: 'Short Let',
+    points: [
+      { x: '2025-01-01', y: 15 },
+      { x: '2025-02-01', y: 10 },
+      { x: '2025-03-01', y: 25 },
+      { x: '2025-04-01', y: 20 },
+      { x: '2025-05-01', y: 33 },
+      { x: '2025-06-01', y: 24 },
+    ],
+  },
+];
+
 const ManagersPage = () => {
   const [selectedManager, setSelectedManager] = useState<Manager | null>(null);
   const [filter, setFilter] = useState<ManagerFilterType>('all');
@@ -799,7 +838,7 @@ const ManagerView = ({
             </section>
 
             <section className="grid w-full grid-cols-1 gap-6 rounded-lg">
-              <ListingActivities />
+              <ListingActivities data={listingActivitiesData} isLoading={false} />
               <ConversionsChart
                 data={conversionChartData}
                 period={conversionPeriod}

@@ -52,6 +52,45 @@ const conversionChartData = [
   { month: 'Jun', rent: 214, forSale: 140, shortLet: 220 },
 ];
 
+const listingActivitiesData = [
+  {
+    slug: 'for-rent' as const,
+    label: 'Rent',
+    points: [
+      { x: '2025-01-01', y: 10 },
+      { x: '2025-02-01', y: 20 },
+      { x: '2025-03-01', y: 15 },
+      { x: '2025-04-01', y: 30 },
+      { x: '2025-05-01', y: 25 },
+      { x: '2025-06-01', y: 40 },
+    ],
+  },
+  {
+    slug: 'for-sale' as const,
+    label: 'For Sale',
+    points: [
+      { x: '2025-01-01', y: 5 },
+      { x: '2025-02-01', y: 15 },
+      { x: '2025-03-01', y: 10 },
+      { x: '2025-04-01', y: 25 },
+      { x: '2025-05-01', y: 20 },
+      { x: '2025-06-01', y: 35 },
+    ],
+  },
+  {
+    slug: 'shortlet' as const,
+    label: 'Short Let',
+    points: [
+      { x: '2025-01-01', y: 12 },
+      { x: '2025-02-01', y: 8 },
+      { x: '2025-03-01', y: 22 },
+      { x: '2025-04-01', y: 18 },
+      { x: '2025-05-01', y: 30 },
+      { x: '2025-06-01', y: 20 },
+    ],
+  },
+];
+
 const AdminInsigths = () => {
   const [metricType, setMetricType] = useState('properties');
   const [conversionPeriod, setConversionPeriod] = useState('last_6_months');
@@ -107,7 +146,7 @@ const AdminInsigths = () => {
       </section>
 
       <section className="grid w-full grid-cols-1 gap-6 rounded-lg lg:grid-cols-2">
-        <ListingActivities />
+        <ListingActivities data={listingActivitiesData} isLoading={false} />
 
         <ConversionsChart data={conversionChartData} period={conversionPeriod} onPeriodChange={setConversionPeriod} />
       </section>
