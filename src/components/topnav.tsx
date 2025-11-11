@@ -117,7 +117,8 @@ const Topnav = () => {
                     <p className="text-muted-foreground truncate text-xs leading-none">{user?.email_address}</p>
                     {getOnboardingStatus(user?.onboarding_status) && (
                       <p className="text-warning-foreground text-xs leading-none font-semibold">
-                        {getOnboardingStatus(user?.onboarding_status)}
+                        {getOnboardingStatus(user?.onboarding_status)} |{' '}
+                        <span className="capitalize">{user?.user_role?.replace('_', ' ')}</span>
                       </p>
                     )}
                   </div>
@@ -218,6 +219,9 @@ const Topnav = () => {
                           {user?.firstname} {user?.lastname}
                         </p>
                         <p className="text-muted-foreground text-sm">{user?.email_address}</p>
+                        <p className="text-warning-foreground text-xs font-semibold capitalize">
+                          {user?.user_role?.replace('_', ' ')}
+                        </p>
                       </div>
                     </div>
                     <div className="mt-4 flex flex-col gap-2">

@@ -49,6 +49,7 @@ export const queryClient = new QueryClient({
 
       // Global mutation error handling
       onError: (error: any) => {
+        // console.log('mutation error',error)
         const errorMessage = error.response?.data?.message || 'An error occurred';
         const toastId = toast.error('An error occurred', {
           description: errorMessage,

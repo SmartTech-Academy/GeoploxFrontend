@@ -93,7 +93,7 @@ const PropertiesPage: React.FC = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [filters, setFilters] = useState<FilterValues>({});
 
-  const { data: propertiesData, isLoading, isError } = useGetProperties({ status: statusFilter, ...filters });
+  const { data: propertiesData, isLoading, isError } = useGetProperties({ status: statusFilter, ...filters }, true);
   const { mutate: archiveProperty, isPending: isArchiving } = useArchiveProperty();
   const { mutate: deleteProperty, isPending: isDeleting } = useDeleteProperty();
 

@@ -64,6 +64,7 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
   const pageTitle = getPageTitle(location.pathname);
   const { data: user } = useGetProfileData();
 
+  console.log('user', user);
   const getInitials = (firstName?: string, lastName?: string) => {
     if (!firstName || !lastName) return '';
     return `${firstName[0]}${lastName[0]}`.toUpperCase();
@@ -160,7 +161,8 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
                   <p className="text-muted-foreground truncate text-xs leading-none">{user?.email_address}</p>
                   {getOnboardingStatus(user?.onboarding_status) && (
                     <p className="text-warning-foreground text-xs leading-none font-semibold">
-                      {getOnboardingStatus(user?.onboarding_status)}
+                      {getOnboardingStatus(user?.onboarding_status)} |{' '}
+                      <span className="capitalize">{user?.user_role?.replace('_', ' ')}</span>
                     </p>
                   )}
                 </div>
