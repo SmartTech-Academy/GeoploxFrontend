@@ -78,7 +78,7 @@ const FormAccountType: React.FC<AccountTypeProps> = ({ form }) => {
                           Property Developer
                         </label>
                         <p className="text-[12px] leading-3.5 text-[#71748C]">
-                          I want to list and connect with interested buyers.
+                          I run a real estate company and would like to list my properties.
                         </p>
                       </div>
                     </div>
@@ -106,9 +106,11 @@ const FormAccountType: React.FC<AccountTypeProps> = ({ form }) => {
                           htmlFor="client"
                           className="cursor-pointer text-[16px] leading-[19px] font-semibold text-[#41415A]"
                         >
-                          Client
+                          Property Seeker
                         </label>
-                        <p className="text-[12px] leading-3.5 text-[#71748C]">I want to buy or rent properties.</p>
+                        <p className="text-[12px] leading-3.5 text-[#71748C]">
+                          I want to buy, lease or rent properties
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -136,7 +138,7 @@ const FormAccountType: React.FC<AccountTypeProps> = ({ form }) => {
                           Agent
                         </label>
                         <p className="text-[12px] leading-3.5 text-[#71748C]">
-                          I want to buy properties and connect with sellers.
+                          I want to reach out and connect with sellers for my clients.
                         </p>
                       </div>
                     </div>

@@ -4,7 +4,7 @@ import { useSidebar } from '../ui/sidebar';
 import { TriangleAlert } from 'lucide-react';
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme();
+  const { theme = 'dark' } = useTheme();
   const { state, isMobile } = useSidebar();
 
   // Calculate the left offset based on sidebar state and mobile

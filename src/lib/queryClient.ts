@@ -49,10 +49,26 @@ export const queryClient = new QueryClient({
 
       // Global mutation error handling
       onError: (error: any) => {
-        // console.log('mutation error',error)
-        const errorMessage = error.response?.data?.message || 'An error occurred';
-        const toastId = toast.error('An error occurred', {
-          description: errorMessage,
+console.log('mutation error',error)
+        const title = error.response?.data?.message || error.message || 'An error occurred';
+       let description = '';
+
+const errorData = error.response?.data?.errors || error.response?.data?.data;
+
+if (errorData) {
+  description = Object.entries(errorData)
+    .map(([field, messages]) => {
+      const fieldName = field.replace(/_/g, ' ');
+      const messageStr = Array.isArray(messages)
+        ? messages.join(', ')
+        : String(messages);
+      return `${fieldName}: ${messageStr}`;
+    })
+    .join('; ');
+}
+console.log('description', description)
+        const toastId = toast.error(title, {
+          description: description,
           action: {
             label: 'Dismiss',
             onClick: () => toast.dismiss(toastId), // dismisses the toast

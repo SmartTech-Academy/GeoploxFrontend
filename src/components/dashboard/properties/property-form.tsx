@@ -162,7 +162,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   }, [selectedState]);
   const form = useForm<PropertyFormValues>({
     resolver: customResolver(PropertyFormSchema),
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       id: initialData?.id,
@@ -900,7 +900,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
               <input
                 ref={imageInputRef}
                 type="file"
-                accept=".jpg,.jpeg,.png"
+                accept=".jpg,.jpeg,.png,.webp"
                 multiple
                 onChange={handleImageUpload}
                 className="hidden"

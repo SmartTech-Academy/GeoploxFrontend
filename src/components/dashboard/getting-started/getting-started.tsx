@@ -165,7 +165,7 @@ const GettingStarted = () => {
       accountType: 'developer',
       plan: 'basic',
     },
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
   });
 

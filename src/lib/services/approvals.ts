@@ -25,9 +25,7 @@ export const useVerifyUser = (options?: UseMutationOptions<any, any, string>) =>
       toast.success(response.data.message || 'User verified successfully!');
       queryClient.invalidateQueries({ queryKey: ['approvals'] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to verify user.');
-    },
+
     ...options,
   });
 };
@@ -43,9 +41,7 @@ export const useApproveRequest = (options?: UseMutationOptions<any, any, string>
       toast.success(response.data.message || 'Request approved successfully!');
       queryClient.invalidateQueries({ queryKey: ['approvals'] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to approve request.');
-    },
+
     ...options,
   });
 };
@@ -64,9 +60,6 @@ export const useDeclineRequest = (options?: UseMutationOptions<any, any, { id: s
     onSuccess: (response: AxiosResponse<ApiResponse>) => {
       toast.success(response.data.message || 'Request declined successfully!');
       queryClient.invalidateQueries({ queryKey: ['approvals'] });
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to decline request.');
     },
     ...options,
   });

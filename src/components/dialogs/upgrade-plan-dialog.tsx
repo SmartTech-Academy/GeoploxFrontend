@@ -59,9 +59,6 @@ export const UpgradePlanDialog: React.FC<UpgradePlanDialogProps> = ({ open, onOp
           toast.success('Subscription updated successfully!');
           onOpenChange(false);
         },
-        onError: () => {
-          toast.error('Failed to update subscription. Please try again.');
-        },
       }
     );
   };

@@ -53,7 +53,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
 
   const form = useForm({
     resolver: customResolver(step3BusinessSchema),
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       businessName: user?.business?.name || '',
@@ -140,7 +140,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".jpg,.jpeg,.png"
+                  accept=".jpg,.jpeg,.png,.webp"
                   onChange={handleLogoUpload}
                   className="sr-only"
                 />

@@ -115,9 +115,6 @@ const PropertiesPage: React.FC = () => {
         setOpenDeleteModal(false);
         setSelectedProperty(null); // Deselect after deletion
       },
-      onError: () => {
-        toast.error('Failed to delete property.');
-      },
     });
   };
 

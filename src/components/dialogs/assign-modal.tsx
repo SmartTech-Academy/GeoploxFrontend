@@ -39,7 +39,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange }) => {
       state: 'lagos',
       selectedRegions: ['lagos-mainland'],
     },
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
   });
 

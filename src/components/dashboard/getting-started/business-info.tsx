@@ -103,7 +103,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             <input
               ref={fileInputRef}
               type="file"
-              accept=".jpg,.jpeg,.png"
+              accept=".jpg,.jpeg,.png,.webp"
               onChange={handleLogoUpload}
               className="sr-only"
             />

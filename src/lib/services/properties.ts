@@ -126,9 +126,6 @@ export const useRevokeUserVerification = () => {
       toast.success(data.data.message || 'User verification revoked!');
       queryClient.invalidateQueries({ queryKey: ['property'] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to revoke verification.');
-    },
   });
 };
 
@@ -142,9 +139,6 @@ export const useBlacklistUser = () => {
     onSuccess: (data) => {
       toast.success(data.data.message || 'User blacklisted successfully!');
       queryClient.invalidateQueries({ queryKey: ['property'] });
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to blacklist user.');
     },
   });
 };

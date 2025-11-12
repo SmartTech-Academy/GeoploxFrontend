@@ -68,7 +68,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
   const form = useForm<BlogFormValues>({
     resolver: customResolver(BlogFormSchema),
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       seoTitle: [],
@@ -315,7 +315,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                   <input
                     ref={imageInputRef}
                     type="file"
-                    accept=".jpg,.jpeg,.png"
+                    accept=".jpg,.jpeg,.png,.webp"
                     onChange={handleImageUpload}
                     className="hidden"
                   />

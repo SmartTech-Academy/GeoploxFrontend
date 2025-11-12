@@ -11,13 +11,14 @@ import { ActiveListingsChart } from '@/components/charts/ActiveListingsChart';
 const PerformancePage = () => {
   const [period, setPeriod] = useState('last_6_months');
   const [filter, setFilter] = useState('all');
-  const { data: performanceData, isLoading } = useGetPerformance({ period, filter });
+  const { data: performanceData, isPending } = useGetPerformance({ period, filter });
 
-  const cards = performanceData?.data?.data?.cards;
-  const deltas = performanceData?.data?.data?.deltas;
+  const cards = performanceData?.data?.data?.data?.cards;
+  const deltas = performanceData?.data?.data?.data?.deltas;
   const listingActivities =
-    performanceData?.data?.data?.listingActivities?.map((d: any) => ({ ...d, rent: d.forRent })) ?? [];
-  const conversions = performanceData?.data?.data?.conversions?.map((d: any) => ({ ...d, rent: d.forRent })) ?? [];
+    performanceData?.data?.data?.data?.listingActivities?.map((d: any) => ({ ...d, rent: d.forRent })) ?? [];
+  const conversions =
+    performanceData?.data?.data?.data?.conversions?.map((d: any) => ({ ...d, rent: d.forRent })) ?? [];
 
   const overviewCards = [
     { title: 'Total Listings', value: cards?.totalListings ?? 0 },
@@ -64,7 +65,7 @@ const PerformancePage = () => {
       </header>
 
       <section className="grid grid-cols-1 gap-5 self-stretch lg:grid-cols-3">
-        {isLoading
+        {isPending
           ? Array.from({ length: 3 }).map((_, index) => <Skeleton key={index} className="h-[150px] w-full" />)
           : overviewCards.map((item, index) => (
               <div
@@ -88,7 +89,7 @@ const PerformancePage = () => {
       </section>
 
       <section className="grid w-full grid-cols-1 gap-5 self-stretch lg:grid-cols-4">
-        {isLoading
+        {isPending
           ? Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-[150px] w-full" />)
           : totalsCards.map((item, index) => (
               <div

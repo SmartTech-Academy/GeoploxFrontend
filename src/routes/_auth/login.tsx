@@ -34,7 +34,7 @@ function RouteComponent() {
 
   const form = useForm<LoginFormValues>({
     resolver: customResolver(loginSchema),
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       email_or_username: '',

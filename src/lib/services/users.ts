@@ -24,9 +24,6 @@ export const useVerifyUser = (options?: UseMutationOptions<any, any, string>) =>
       toast.success(response.data.message || 'User verified successfully!');
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to verify user.');
-    },
     ...options,
   });
 };

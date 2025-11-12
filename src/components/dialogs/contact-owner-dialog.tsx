@@ -48,9 +48,6 @@ export const ContactOwnerDialog: React.FC<ContactOwnerDialogProps> = ({ property
           onOpenChange(false);
           form.reset();
         },
-        onError: () => {
-          toast.error('Failed to send message. Please try again.');
-        },
       }
     );
   };

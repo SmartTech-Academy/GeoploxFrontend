@@ -55,7 +55,7 @@ function RouteComponent() {
 
   const form = useForm<OTPFormValues>({
     resolver: customResolver(otpSchema),
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       otp: '',
@@ -85,9 +85,7 @@ function RouteComponent() {
           search: { email: userEmail || email },
         });
       },
-      onError: (error: any) => {
-        const message = error.response?.data?.message || 'Registration failed. Please try again.';
-        toast.error(message);
+      onError: () => {
         form.setError('otp', {
           message: 'Invalid verification code. Please try again.',
         });

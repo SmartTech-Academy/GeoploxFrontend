@@ -29,7 +29,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
       current_password: '',
       new_password: '',
     },
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
   });
 

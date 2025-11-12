@@ -54,7 +54,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
 
   const form = useForm<PersonalInfoFormValues>({
     resolver: customResolver(step2Schema),
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       firstName: user?.firstname || '',
@@ -141,7 +141,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept=".jpg,.jpeg,.png"
+                    accept=".jpg,.jpeg,.png,.webp"
                     onChange={handlePictureUpload}
                     className="sr-only"
                   />

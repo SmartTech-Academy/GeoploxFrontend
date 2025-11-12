@@ -84,7 +84,7 @@ function RouteComponent() {
 
   const form = useForm<FormValues>({
     resolver: customResolver(formSchema),
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       password: '',
@@ -108,12 +108,6 @@ function RouteComponent() {
           to: '/verify-otp',
           search: { email: registrationData.email, phone: registrationData.phone },
         });
-      },
-      onError: (error: any) => {
-        const message = error.response?.data?.message || 'An error occurred during registration.';
-        toast.error(message);
-        // You could also parse and display field-specific errors here if the API provides them
-        // console.error('Registration error:', error.response?.data);
       },
     });
   };
