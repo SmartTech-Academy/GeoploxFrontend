@@ -154,7 +154,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
 
         <div className="flex w-full flex-col gap-1.5">
           <label className="cursor-pointer text-[14px] leading-[17px] font-normal text-[#41415A]">
-            Govt. Issued ID
+            Proof of Address
           </label>
           {!govtId ? (
             <div
