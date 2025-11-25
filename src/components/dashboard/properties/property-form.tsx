@@ -47,7 +47,7 @@ const PropertyFormSchema = z.object({
   //   city: z.string().min(1, 'City is required'),
   //   postalCode: z.string().min(1, 'Postal code is required'),
   state: z.string().min(1, 'State is required'),
-  localGovernment: z.string().min(1, 'Local government is required'),
+  localGovernment: z.string().min(1, 'Locality/Area is required'),
   propertyDescription: z.string().min(10, 'Property description must be at least 10 characters'),
   bedrooms: z.coerce.number().int().min(1, 'Number of bedrooms is required'),
   bathrooms: z.coerce.number().int().min(1, 'Number of bathrooms is required'),

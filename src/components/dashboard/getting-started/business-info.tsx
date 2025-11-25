@@ -308,9 +308,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="businessLocalGovernment"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                  Local Government
-                </FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Locality/Area</FormLabel>
                 <Select
                   disabled={!selectedState || lgas.length === 0}
                   onValueChange={field.onChange}

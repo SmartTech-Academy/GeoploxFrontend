@@ -28,7 +28,7 @@ const step3BusinessSchema = z.object({
   instagram: z.string().optional(),
   businessAddress: z.string().min(1, 'Business address is required'),
   businessState: z.string().min(1, 'State is required'),
-  businessLocalGovernment: z.string().min(1, 'Local government is required'),
+  businessLocalGovernment: z.string().min(1, 'Locality/Area is required'),
 });
 
 interface BusinessInformationSectionProps {
@@ -367,7 +367,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                      Local Government
+                      Locality/Area
                     </FormLabel>
                     <Select
                       disabled={!selectedState || lgas.length === 0}

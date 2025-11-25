@@ -26,7 +26,7 @@ const step2Schema = z.object({
   whatsappNumber: z.string().min(11, 'WhatsApp number must be 11 digits'),
   homeAddress: z.string().min(1, 'Home address is required'),
   state: z.string().min(1, 'State is required'),
-  localGovernment: z.string().min(1, 'Local government is required'),
+  localGovernment: z.string().min(1, 'Locality/Area is required'),
   bio: z.string().optional(),
 });
 
@@ -340,7 +340,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                      Local Government
+                      Locality/Area
                     </FormLabel>
                     <Select
                       disabled={!selectedState || lgas.length === 0}

@@ -256,9 +256,7 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="localGovernment"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                  Local Government
-                </FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Locality/Area</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   value={field.value}

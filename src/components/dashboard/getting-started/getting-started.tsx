@@ -59,7 +59,7 @@ const step2Schema = z.object({
   whatsappNumber: z.string().min(11, 'WhatsApp number must be 11 digits'),
   homeAddress: z.string().min(1, 'Home address is required'),
   state: z.string().min(1, 'State is required'),
-  localGovernment: z.string().min(1, 'Local government is required'),
+  localGovernment: z.string().min(1, 'Locality/Area is required'),
 });
 
 const step3BusinessSchema = z.object({
@@ -72,7 +72,7 @@ const step3BusinessSchema = z.object({
   instagram: z.string().optional(),
   businessAddress: z.string().min(1, 'Business address is required'),
   businessState: z.string().min(1, 'State is required'),
-  businessLocalGovernment: z.string().min(1, 'Local government is required'),
+  businessLocalGovernment: z.string().min(1, 'Locality/Area is required'),
 });
 
 const step4KYCSchema = z.object({
