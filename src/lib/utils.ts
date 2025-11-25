@@ -12,4 +12,13 @@ export const formatPrice = (price: number, currency: string) => {
   }).format(price);
 };
 
+export const formatNumberWithCommas = (value: string) => {
+  if (!value) return "";
+  return value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+export const parseNumber = (value: string) => {
+  if (!value) return "";
+  return value.replace(/,/g, "");
+};
 export const NIGERIAN_PHONE_REGEX = /^(070|080|081|090|091)\d{8}$/;

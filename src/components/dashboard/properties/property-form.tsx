@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { cn } from '@/lib/utils';
+import { cn, formatNumberWithCommas, parseNumber } from '@/lib/utils';
 import { Upload, RotateCcw, Trash, X, Slash, Loader2 } from 'lucide-react';
 import type React from 'react';
 import { useState, useRef, useEffect, useMemo } from 'react';
@@ -31,6 +31,7 @@ import {
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 import statesAndLgasData from '@/data/statesAndLocalGov.json';
+import { useGetProfileData } from '@/lib/services/profile';
 
 // Zod Schema
 const PropertyFormSchema = z.object({
@@ -43,8 +44,8 @@ const PropertyFormSchema = z.object({
   landType: z.string().min(1, 'Land type is required'),
   houseNumber: z.string().min(1, 'House/Apartment number is required'),
   streetName: z.string().min(1, 'Street name is required'),
-  city: z.string().min(1, 'City is required'),
-  postalCode: z.string().min(1, 'Postal code is required'),
+  //   city: z.string().min(1, 'City is required'),
+  //   postalCode: z.string().min(1, 'Postal code is required'),
   state: z.string().min(1, 'State is required'),
   localGovernment: z.string().min(1, 'Local government is required'),
   propertyDescription: z.string().min(10, 'Property description must be at least 10 characters'),
@@ -104,7 +105,7 @@ const documentTypes = [
   'C of O',
   'Deed of Assignment',
   'Tenancy Agreement',
-  'Photo of the Contact Banner',
+  //   'Photo of the Contact Banner',
   'Power of Attorney',
   'Others',
 ];
@@ -134,6 +135,7 @@ const amenities = [
 
 const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData }) => {
   const router = useRouter();
+  const { data: user, isPending: isLoading } = useGetProfileData();
   const [propertyImages, setPropertyImages] = useState<FileState[]>(
     initialData?.propertyImages?.map((url) => ({ file: new File([], ''), preview: url, status: 'success', url })) || []
   );
@@ -172,8 +174,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
       landType: initialData?.landType ?? '',
       houseNumber: initialData?.houseNumber ?? '',
       streetName: initialData?.streetName ?? '',
-      city: initialData?.city ?? '',
-      postalCode: initialData?.postalCode ?? '',
+      //   city: initialData?.city ?? '',
+      //   postalCode: initialData?.postalCode ?? '',
       state: initialData?.state ?? '',
       localGovernment: initialData?.localGovernment ?? '',
       propertyDescription: initialData?.propertyDescription ?? '',
@@ -599,8 +601,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
               />
             </div>
 
-            <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              <FormField
+            <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
+              {/* <FormField
                 control={form.control}
                 name="city"
                 render={({ field }) => (
@@ -626,7 +628,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <FormField
                 control={form.control}
@@ -666,7 +668,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                      Local Government
+                      Locality/Area
                     </FormLabel>
                     <Select
                       disabled={!selectedState || lgas.length === 0}
@@ -705,7 +707,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     <FormControl>
                       <Textarea
                         placeholder="5  Bedroom fully detached house with 2 maid rooms, an elevator, rooftop terraces (front and back), a swimming pool, a cinema/movie theater, etc."
-                        className="min-h-20 resize-none rounded-lg border-[#D5D5DD] sm:min-h-16"
+                        className="min-h-40 resize-none rounded-lg border-[#D5D5DD] sm:min-h-16"
                         {...field}
                       />
                     </FormControl>
@@ -726,7 +728,16 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Bedrooms</FormLabel>
                     <FormControl>
-                      <Input placeholder="5" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="5"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                        value={formatNumberWithCommas(field.value?.toString() || '')}
+                        onChange={(e) => {
+                          const raw = parseNumber(e.target.value);
+                          field.onChange(raw); // store raw number
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -740,7 +751,16 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Bathroom</FormLabel>
                     <FormControl>
-                      <Input placeholder="6" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="6"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                        value={formatNumberWithCommas(field.value?.toString() || '')}
+                        onChange={(e) => {
+                          const raw = parseNumber(e.target.value);
+                          field.onChange(raw); // store raw number
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -755,8 +775,17 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Total Area</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input placeholder="800" className="h-10 rounded-lg border-[#D5D5DD] pr-12" {...field} />
-                        <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-[#71748C]">sq ft</span>
+                        <Input
+                          placeholder="800"
+                          className="h-10 rounded-lg border-[#D5D5DD] pr-12"
+                          {...field}
+                          value={formatNumberWithCommas(field.value?.toString() || '')}
+                          onChange={(e) => {
+                            const raw = parseNumber(e.target.value);
+                            field.onChange(raw); // store raw number
+                          }}
+                        />
+                        <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-[#71748C]">sq m</span>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -773,7 +802,16 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       Property Price
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="56,000,000.00" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="56,000,000.00"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                        value={formatNumberWithCommas(field.value?.toString() || '')}
+                        onChange={(e) => {
+                          const raw = parseNumber(e.target.value);
+                          field.onChange(raw); // store raw number
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -909,167 +947,171 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
             <Separator className="h-px w-full bg-[#EEEEF1]" />
 
-            {/* Property Document */}
-            <div className="flex w-full flex-col gap-3">
-              <h3 className="text-[14px] leading-[17px] font-semibold tracking-[0.01em] text-[#41415A] capitalize">
-                Property Document
-              </h3>
+            {user?.user_role === 'owner' && (
+              <>
+                {/* Property Document */}
+                <div className="flex w-full flex-col gap-3">
+                  <h3 className="text-[14px] leading-[17px] font-semibold tracking-[0.01em] text-[#41415A] capitalize">
+                    Property Document
+                  </h3>
 
-              <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="documentType"
-                  render={({ field }) => (
-                    <FormItem className="w-full gap-1.5">
-                      <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                        Document Type
-                      </FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
-                            <SelectValue placeholder="Select..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {documentTypes.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                    Supports JPEG, or PNG files.
-                  </label>
-
-                  {propertyDocument?.status === 'uploading' ? (
-                    <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
-                      <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
-                    </div>
-                  ) : !propertyDocument ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="h-10 w-full px-4 sm:w-fit"
-                      onClick={() => documentInputRef.current?.click()}
-                    >
-                      <Upload className="mr-2 size-4" />
-                      Choose file
-                    </Button>
-                  ) : (
-                    <div
-                      className={cn(
-                        'flex items-center gap-3 rounded-lg border p-3',
-                        propertyDocument.status === 'error' ? 'border-red-500' : 'border-[#E3E3E8]'
+                  <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="documentType"
+                      render={({ field }) => (
+                        <FormItem className="w-full gap-1.5">
+                          <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                            Document Type
+                          </FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
+                                <SelectValue placeholder="Select..." />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {documentTypes.map((type) => (
+                                <SelectItem key={type} value={type}>
+                                  {type}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
                       )}
-                    >
-                      <span className="flex-1 truncate text-sm text-[#1F2130]">{propertyDocument.file.name}</span>
-                      <div className="flex items-center gap-2">
+                    />
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                        Supports JPEG, or PNG files.
+                      </label>
+
+                      {propertyDocument?.status === 'uploading' ? (
+                        <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
+                          <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+                        </div>
+                      ) : !propertyDocument ? (
                         <Button
                           type="button"
-                          size="sm"
-                          variant="ghost"
-                          className="h-6 w-6 p-0"
-                          onClick={handleDocumentReplace}
+                          variant="outline"
+                          className="h-10 w-full px-4 sm:w-fit"
+                          onClick={() => documentInputRef.current?.click()}
                         >
-                          <RotateCcw className="size-3" />
+                          <Upload className="mr-2 size-4" />
+                          Choose file
                         </Button>
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="ghost"
-                          className="h-6 w-6 p-0 text-red-600"
-                          onClick={handleDocumentRemove}
+                      ) : (
+                        <div
+                          className={cn(
+                            'flex items-center gap-3 rounded-lg border p-3',
+                            propertyDocument.status === 'error' ? 'border-red-500' : 'border-[#E3E3E8]'
+                          )}
                         >
-                          <X className="size-3" />
-                        </Button>
-                      </div>
+                          <span className="flex-1 truncate text-sm text-[#1F2130]">{propertyDocument.file.name}</span>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 w-6 p-0"
+                              onClick={handleDocumentReplace}
+                            >
+                              <RotateCcw className="size-3" />
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 w-6 p-0 text-red-600"
+                              onClick={handleDocumentRemove}
+                            >
+                              <X className="size-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      <input
+                        ref={documentInputRef}
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={handleDocumentUpload}
+                        className="hidden"
+                      />
                     </div>
-                  )}
-
-                  <input
-                    ref={documentInputRef}
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={handleDocumentUpload}
-                    className="hidden"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <Separator className="h-px w-full bg-[#EEEEF1]" />
-
-            {/* Proof of Address */}
-            <div className="flex w-full flex-col gap-3">
-              <h3 className="text-[14px] leading-[17px] font-semibold tracking-[0.01em] text-[#41415A] capitalize">
-                Proof of Address
-              </h3>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                  Upload a utility bill or other document as proof of address.
-                </label>
-
-                {proofOfAddress?.status === 'uploading' ? (
-                  <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
-                    <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
                   </div>
-                ) : !proofOfAddress ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-10 w-full px-4 sm:w-fit"
-                    onClick={() => proofOfAddressInputRef.current?.click()}
-                  >
-                    <Upload className="mr-2 size-4" />
-                    Choose file
-                  </Button>
-                ) : (
-                  <div
-                    className={cn(
-                      'flex items-center gap-3 rounded-lg border p-3',
-                      proofOfAddress.status === 'error' ? 'border-red-500' : 'border-[#E3E3E8]'
-                    )}
-                  >
-                    <span className="flex-1 truncate text-sm text-[#1F2130]">{proofOfAddress.file.name}</span>
-                    <div className="flex items-center gap-2">
+                </div>
+
+                <Separator className="h-px w-full bg-[#EEEEF1]" />
+
+                {/* Proof of Address */}
+                <div className="flex w-full flex-col gap-3">
+                  <h3 className="text-[14px] leading-[17px] font-semibold tracking-[0.01em] text-[#41415A] capitalize">
+                    Proof of Address
+                  </h3>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Upload a utility bill or other document as proof of address.
+                    </label>
+
+                    {proofOfAddress?.status === 'uploading' ? (
+                      <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
+                        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+                      </div>
+                    ) : !proofOfAddress ? (
                       <Button
                         type="button"
-                        size="sm"
-                        variant="ghost"
-                        className="h-6 w-6 p-0"
+                        variant="outline"
+                        className="h-10 w-full px-4 sm:w-fit"
                         onClick={() => proofOfAddressInputRef.current?.click()}
                       >
-                        <RotateCcw className="size-3" />
+                        <Upload className="mr-2 size-4" />
+                        Choose file
                       </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        className="h-6 w-6 p-0 text-red-600"
-                        onClick={handleProofOfAddressRemove}
+                    ) : (
+                      <div
+                        className={cn(
+                          'flex items-center gap-3 rounded-lg border p-3',
+                          proofOfAddress.status === 'error' ? 'border-red-500' : 'border-[#E3E3E8]'
+                        )}
                       >
-                        <X className="size-3" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
+                        <span className="flex-1 truncate text-sm text-[#1F2130]">{proofOfAddress.file.name}</span>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0"
+                            onClick={() => proofOfAddressInputRef.current?.click()}
+                          >
+                            <RotateCcw className="size-3" />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0 text-red-600"
+                            onClick={handleProofOfAddressRemove}
+                          >
+                            <X className="size-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
 
-                <input
-                  ref={proofOfAddressInputRef}
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={handleProofOfAddressUpload}
-                  className="hidden"
-                />
-              </div>
-            </div>
+                    <input
+                      ref={proofOfAddressInputRef}
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={handleProofOfAddressUpload}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Nearby Amenities */}
             <FormField
