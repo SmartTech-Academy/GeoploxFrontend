@@ -42,7 +42,7 @@ const PropertiesDetails = () => {
         // Splitting address into houseNumber and streetName
         houseNumber: property.address?.split(' ')[0] || '',
         streetName: property.address?.split(' ').slice(1).join(' ') || '',
-        city: property.city, // API provides LGA as city
+        // city: property.city, // API provides LGA as city
         // postalCode: '', // Not in API response
         state: property.state,
         localGovernment: property.city, // API provides LGA in the 'city' field

@@ -135,7 +135,7 @@ const amenities = [
 
 const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData }) => {
   const router = useRouter();
-  const { data: user, isPending: isLoading } = useGetProfileData();
+  const { data: user } = useGetProfileData();
   const [propertyImages, setPropertyImages] = useState<FileState[]>(
     initialData?.propertyImages?.map((url) => ({ file: new File([], ''), preview: url, status: 'success', url })) || []
   );
