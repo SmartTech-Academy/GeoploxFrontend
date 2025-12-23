@@ -58,10 +58,10 @@ const ListingDetail = () => {
       return '/_landing/buy/$id';
     }
     if (location.pathname.startsWith('/for-rent/')) {
-      return '/_landing/rent/$id';
+      return '/_landing/for-rent/$id';
     }
     if (location.pathname.startsWith('/for-sale/')) {
-      return '/_landing/sell/$id';
+      return '/_landing/for-sale/$id';
     }
     if (location.pathname.startsWith('/admin-listing/')) {
       return '/_dashboard/admin-listing/$id';
@@ -221,13 +221,13 @@ const ListingDetail = () => {
                             location.pathname.includes('/buy')
                               ? '/buy'
                               : location.pathname.includes('/rent')
-                                ? '/rent'
-                                : '/sell'
+                                ? '/for-rent'
+                                : '/for-sale'
                           }
                         >
                           {location.pathname.includes('/buy')
                             ? 'Buy'
-                            : location.pathname.includes('/rent')
+                            : location.pathname.includes('/for-rent')
                               ? 'Rent'
                               : 'Sell'}
                         </Link>
