@@ -57,10 +57,10 @@ const ListingDetail = () => {
     if (location.pathname.startsWith('/buy/')) {
       return '/_landing/buy/$id';
     }
-    if (location.pathname.startsWith('/rent/')) {
+    if (location.pathname.startsWith('/for-rent/')) {
       return '/_landing/rent/$id';
     }
-    if (location.pathname.startsWith('/sell/')) {
+    if (location.pathname.startsWith('/for-sale/')) {
       return '/_landing/sell/$id';
     }
     if (location.pathname.startsWith('/admin-listing/')) {
@@ -69,7 +69,7 @@ const ListingDetail = () => {
     if (location.pathname.startsWith('/listing/')) {
       return '/_dashboard/listing/$id';
     }
-    // Add other paths like /sell if they exist
+    // Add other paths like /for-sale if they exist
     return '/_landing/buy/$id'; // Fallback
   };
 
@@ -91,6 +91,18 @@ const ListingDetail = () => {
   const { data: relatedPropertiesResponse, isLoading: isLoadingRelated } = useGetRelatedProperties(slug);
 
   const property = propertyDetailsResponse?.data.data;
+
+  const displayTitle = property
+    ? `${property.property_type} ${
+        property.category.toLowerCase().startsWith('for') ? property.category : `for ${property.category}`
+      } in ${property.state} | ${property.city}${
+        property.bedrooms
+          ? ` | ${property.bedrooms} Bedrooms`
+          : property.features && property.features.length > 0
+            ? ` | ${property.features[0]}`
+            : ''
+      }`
+    : '';
 
   const handleDelete = () => {
     if (!property) return;
@@ -139,10 +151,10 @@ const ListingDetail = () => {
       )}
     >
       {isDashboard ? (
-        <PageMetaTags title={`Listing: ${property.title}`} description={property.desc} keywords="listing management" />
+        <PageMetaTags title={`Listing: ${displayTitle}`} description={property.desc} keywords="listing management" />
       ) : (
         <PageMetaTags
-          title={property.title}
+          title={displayTitle}
           description={property.desc}
           price={String(property.price)}
           location={`${property.city}, ${property.state}`}
@@ -171,7 +183,7 @@ const ListingDetail = () => {
                       <Slash />
                     </BreadcrumbSeparator>
                     <BreadcrumbItem>
-                      <BreadcrumbPage>{property.title}</BreadcrumbPage>
+                      <BreadcrumbPage>{displayTitle}</BreadcrumbPage>
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>
@@ -187,7 +199,7 @@ const ListingDetail = () => {
                       <Slash />
                     </BreadcrumbSeparator>
                     <BreadcrumbItem>
-                      <BreadcrumbPage>{property.title}</BreadcrumbPage>
+                      <BreadcrumbPage>{displayTitle}</BreadcrumbPage>
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>
@@ -225,14 +237,14 @@ const ListingDetail = () => {
                       <Slash />
                     </BreadcrumbSeparator>
                     <BreadcrumbItem>
-                      <BreadcrumbPage>{property.title}</BreadcrumbPage>
+                      <BreadcrumbPage>{displayTitle}</BreadcrumbPage>
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>
               )}
             </div>
 
-            <h1 className="text-[26px] leading-10 font-semibold text-[#1A2258]">{property.title}</h1>
+            <h1 className="text-[26px] leading-10 font-semibold text-[#1A2258]">{displayTitle}</h1>
           </div>
 
           <div className="flex items-start justify-end self-stretch">

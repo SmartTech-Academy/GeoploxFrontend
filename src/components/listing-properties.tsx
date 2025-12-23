@@ -8,6 +8,7 @@ import { Property, PropertyListingCard } from './property-listing-card';
 import { useGetProperties } from '@/lib/services';
 import { PropertyListingCardSkeleton } from './property-listing-card-skeleton';
 import { cn } from '@/lib/utils';
+import statesAndLocalGov from '@/data/statesAndLocalGov.json';
 
 const ListingProperties = () => {
   const location = useLocation();
@@ -16,7 +17,8 @@ const ListingProperties = () => {
   const [page, setPage] = useState(1);
   const [propertyType, setPropertyType] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState('newest');
-  const [filters, setFilters] = useState({
+  const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [filters, setFilters] = useState<any>({
     per_page: 5,
     page: 1,
     property_type: propertyType,
@@ -53,26 +55,6 @@ const ListingProperties = () => {
 
   const propertyTypes = ['flat', 'apartment', 'house', 'land', 'commercial', 'villa', 'duplex'];
 
-  const locations = [
-    'Abijo',
-    'Agungi',
-    'Ajiran Road',
-    'Idado',
-    'Igbi Efon',
-    'Ikate',
-    'Ikate Elegushi',
-    'Ikota',
-    'Ikota Estates',
-  ];
-
-  const estates = [
-    'Admiralty Home Estate',
-    'Alpha Beach Estate',
-    'Alperton Estate',
-    'Atlantic View Estate',
-    'Bakare Estate',
-  ];
-
   const sortOptions = [
     { label: 'Newest', value: 'newest' },
     { label: 'Price (Lowest-Highest)', value: 'price_asc' },
@@ -83,33 +65,56 @@ const ListingProperties = () => {
   const handleNextPage = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    setFilters((prev) => ({ ...prev, page: nextPage }));
+    setFilters((prev: any) => ({ ...prev, page: nextPage }));
   };
 
   const handlePreviousPage = () => {
     const prevPage = Math.max(1, page - 1);
     setPage(prevPage);
-    setFilters((prev) => ({ ...prev, page: prevPage }));
+    setFilters((prev: any) => ({ ...prev, page: prevPage }));
   };
 
   const handlePropertyTypeChange = (newPropertyType: string | null) => {
     setPropertyType(newPropertyType);
-    setFilters((prev) => ({ ...prev, property_type: newPropertyType, page: 1 }));
+    setFilters((prev: any) => ({ ...prev, property_type: newPropertyType, page: 1 }));
   };
   const handleSortChange = (newSortBy: string) => {
     setSortBy(newSortBy);
-    setFilters((prev) => ({ ...prev, sort: newSortBy, page: 1 }));
+    setFilters((prev: any) => ({ ...prev, sort: newSortBy, page: 1 }));
   };
 
   const handleFilterChange = (newFilters: any) => {
-    setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }));
+    setFilters((prev: any) => ({ ...prev, ...newFilters, page: 1 }));
   };
 
   const handleClearFilters = () => {
     setPropertyType(null);
     setSortBy('newest');
+    setSelectedState(null);
     setFilters({ per_page: 5, page: 1, property_type: null, sort: 'newest' });
   };
+
+  const handleStateClick = (state: string) => {
+    setSelectedState(state);
+    setFilters((prev: any) => ({ ...prev, state: state, page: 1 }));
+  };
+
+  const handleLgaClick = (lga: string) => {
+    setFilters((prev: any) => ({ ...prev, city: lga, page: 1 }));
+  };
+
+  const handleBackToStates = () => {
+    setSelectedState(null);
+    setFilters((prev: any) => {
+      const { state, city, ...rest } = prev;
+      return { ...rest, page: 1 };
+    });
+  };
+
+  const displayedLocations = selectedState
+    ? statesAndLocalGov.find((s) => s.state === selectedState)?.lgas || []
+    : statesAndLocalGov.map((s) => s.state);
+
   return (
     <div className="min-h-screen w-full bg-white py-(--landing-header-height)">
       <div className="landing-container w-full">
@@ -188,35 +193,36 @@ const ListingProperties = () => {
                   </div>
 
                   {/* Locations Row */}
-                  <div className="flex flex-wrap items-center gap-1">
-                    {locations.map((location, index) => (
-                      <React.Fragment key={location}>
-                        <span className="hover:text-primary cursor-pointer text-[12px] leading-[17px] transition-colors hover:underline">
-                          {location}
-                        </span>
-                        {index < locations.length - 1 && <span className="mx-2 text-gray-300">|</span>}
-                      </React.Fragment>
-                    ))}
+                  <div className="flex flex-col gap-2">
+                    {selectedState && (
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="link"
+                          onClick={handleBackToStates}
+                          className="h-auto p-0 text-[12px] font-semibold text-[#1F2130]"
+                        >
+                          ← Back to States
+                        </Button>
+                        <span className="text-[12px] font-semibold text-[#1F2130]">{selectedState}</span>
+                      </div>
+                    )}
+                    <div className="flex flex-wrap items-center gap-1">
+                      {displayedLocations.map((location, index) => (
+                        <React.Fragment key={location}>
+                          <span
+                            onClick={() => (selectedState ? handleLgaClick(location) : handleStateClick(location))}
+                            className={cn(
+                              'hover:text-primary cursor-pointer text-[12px] leading-[17px] transition-colors hover:underline',
+                              !selectedState && 'font-medium'
+                            )}
+                          >
+                            {location}
+                          </span>
+                          {index < displayedLocations.length - 1 && <span className="mx-2 text-gray-300">|</span>}
+                        </React.Fragment>
+                      ))}
+                    </div>
                   </div>
-
-                  {/* Estates Row */}
-                  <div className="flex flex-wrap items-center gap-1">
-                    {estates.map((estate, index) => (
-                      <React.Fragment key={estate}>
-                        <span className="hover:text-primary cursor-pointer text-[12px] leading-[17px] transition-colors hover:underline">
-                          {estate}
-                        </span>
-                        {index < estates.length - 1 && <span className="mx-2 text-gray-300">|</span>}
-                      </React.Fragment>
-                    ))}
-                  </div>
-
-                  {/* Show more link */}
-                  {/* <div className="flex">
-                    <span className="text-primary cursor-pointer text-[12px] leading-[17px] transition-colors hover:underline">
-                      Show more
-                    </span>
-                  </div> */}
 
                   {/* Verification Status Row */}
                   <div className="flex items-center gap-1">
@@ -310,21 +316,45 @@ const ListingProperties = () => {
                   </React.Fragment>
                 ))}
               </div>
-              <div className="flex flex-wrap items-center gap-1">
-                {locations.slice(0, 6).map((location, index) => (
-                  <React.Fragment key={location}>
-                    <span className="cursor-pointer text-[12px] leading-[17px] transition-colors hover:text-[#D4AF36] hover:underline">
-                      {location}
-                    </span>
-                    {index < 5 && <span className="mx-2 text-gray-300">|</span>}
-                  </React.Fragment>
-                ))}
+              <div className="flex flex-col gap-2">
+                {selectedState && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="link"
+                      onClick={handleBackToStates}
+                      className="h-auto p-0 text-[12px] font-semibold text-[#1F2130]"
+                    >
+                      ← Back to States
+                    </Button>
+                    <span className="text-[12px] font-semibold text-[#1F2130]">{selectedState}</span>
+                  </div>
+                )}
+                <div className="flex flex-wrap items-center gap-1">
+                  {displayedLocations.slice(0, selectedState ? undefined : 6).map((location, index) => (
+                    <React.Fragment key={location}>
+                      <span
+                        onClick={() => (selectedState ? handleLgaClick(location) : handleStateClick(location))}
+                        className={cn(
+                          'cursor-pointer text-[12px] leading-[17px] transition-colors hover:text-[#D4AF36] hover:underline',
+                          !selectedState && 'font-medium'
+                        )}
+                      >
+                        {location}
+                      </span>
+                      {index < (selectedState ? displayedLocations.length : 5) && (
+                        <span className="mx-2 text-gray-300">|</span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
               </div>
-              <div className="flex">
-                <span className="cursor-pointer text-[12px] leading-[17px] text-[#D4AF36] transition-colors hover:underline">
-                  Show more
-                </span>
-              </div>
+              {!selectedState && (
+                <div className="flex">
+                  <span className="cursor-pointer text-[12px] leading-[17px] text-[#D4AF36] transition-colors hover:underline">
+                    Show more
+                  </span>
+                </div>
+              )}
               <div className="flex items-center gap-1">
                 {verificationStatus.map((status, index) => (
                   <React.Fragment key={status}>

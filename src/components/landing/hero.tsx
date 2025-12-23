@@ -70,8 +70,8 @@ export function Hero() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="buy">Buy</SelectItem>
-                    <SelectItem value="rent">Rent</SelectItem>
-                    <SelectItem value="sell">Sell</SelectItem>
+                    <SelectItem value="for-rent">Rent</SelectItem>
+                    <SelectItem value="for-sale">Sell</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

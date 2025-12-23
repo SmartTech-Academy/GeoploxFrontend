@@ -38,9 +38,9 @@ function generateMetaInfo(options: MetaInfoOptions = {}) {
     siteName: 'Geoplox',
     baseTitle: 'Geoplox - Real Estate Done Right',
     baseDescription:
-      'Find your perfect home or investment property. Buy, sell, and rent properties with direct access to listings from real owners and developers. No fake agents, no hidden fees.',
+      'Find your perfect home or investment property. Buy, for-sale, and for-rent properties with direct access to listings from real owners and developers. No fake agents, no hidden fees.',
     baseKeywords:
-      'real estate, property, buy house, rent apartment, sell property, homes for sale, rental properties, real estate listings, property investment, residential, commercial',
+      'real estate, property, buy house, for-rent apartment, for-sale property, homes for sale, rental properties, real estate listings, property investment, residential, commercial',
     baseImage: assets.logotext || '/logo.svg',
   };
 
@@ -114,8 +114,8 @@ function generateMetaInfo(options: MetaInfoOptions = {}) {
     if (options.listingType) {
       const typeKeywords = {
         buy: 'homes for sale, buy property, purchase real estate, property investment',
-        rent: 'rental properties, apartments for rent, house rental, lease property',
-        sell: 'sell property, list property, property listing, real estate agent',
+        rent: 'rental properties, apartments for for-rent, house rental, lease property',
+        sell: 'for-sale property, list property, property listing, real estate agent',
       };
       keywords.push(typeKeywords[options.listingType]);
     }
@@ -254,7 +254,7 @@ export function PageMetaTags({
   price="$2,500/month"
   location="Downtown Miami"
   propertyType="Apartment"
-  listingType="rent"
+  listingType="for-rent"
   image="/property-images/apartment-1.jpg"
 />
 
@@ -269,6 +269,6 @@ export function PageMetaTags({
 <PageMetaTags
   title="Real Estate in Lagos"
   location="Lagos"
-  description="Find the best properties for sale and rent in Lagos"
+  description="Find the best properties for sale and for-rent in Lagos"
 />
 */

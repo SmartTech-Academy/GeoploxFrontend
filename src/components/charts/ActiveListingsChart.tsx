@@ -93,7 +93,7 @@ export function ActiveListingsChart({ data, period, onPeriodChange }: ActiveList
                     stroke="var(--color-rent)"
                     strokeWidth={2}
                     dot={false}
-                    activeDot={{ r: 4, stroke: 'var(--color-rent)', strokeWidth: 2 }}
+                    activeDot={{ r: 4, stroke: 'var(--color-for-rent)', strokeWidth: 2 }}
                   />
                   <Line
                     dataKey="forSale"

@@ -22,6 +22,7 @@ export interface Property {
   cover_image: string;
   thumbnail_images?: string[];
   category: string;
+  property_type: string;
 }
 
 interface PropertyListingCardProps {
@@ -42,6 +43,11 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
       : location.pathname.includes('/rent')
         ? `/rent/${identifier}`
         : `/sell/${identifier}`;
+
+  const displayTitle = `${property.bedrooms ? `${property.bedrooms} Bedroom ` : ''}${property.property_type} ${
+    property.category.toLowerCase().startsWith('for') ? property.category : `for ${property.category}`
+  } in ${property.location.city} ${property.location.state} | Nigeria Property Centre`;
+
   return (
     <div className="flex w-full items-center justify-between gap-[89px] self-stretch border-b border-[#F1F1F4] pb-10">
       <div className="grid h-[266px] w-[463px] grid-cols-2 gap-2">
@@ -76,7 +82,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
               {property.category}
             </Badge>
 
-            <p className="text-[16px] leading-[18px] text-[#7F7F7F]">{property.title}</p>
+            <p className="text-[16px] leading-[18px] text-[#7F7F7F]">{displayTitle}</p>
 
             <p className="font-dm_sans text-[20px] leading-[26px] font-bold text-[#1F2130]">
               {formatPrice(property.price, property.currency)}

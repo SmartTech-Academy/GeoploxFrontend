@@ -114,7 +114,7 @@ const conversionChartData = [
 
 const listingActivitiesData = [
   {
-    slug: 'for-rent' as const,
+    slug: 'for-for-rent' as const,
     label: 'Rent',
     points: [
       { x: '2025-01-01', y: 18 },

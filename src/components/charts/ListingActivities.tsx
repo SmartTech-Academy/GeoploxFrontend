@@ -27,7 +27,7 @@ interface Point {
 }
 
 interface Series {
-  slug: 'for-rent' | 'for-sale' | 'shortlet';
+  slug: 'for-for-rent' | 'for-sale' | 'shortlet';
   label: string;
   points: Point[];
 }
@@ -41,7 +41,7 @@ const ListingActivities = ({ data, isLoading }: ListingActivitiesProps) => {
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return [];
 
-    const rentSeries = data.find((s) => s.slug === 'for-rent');
+    const rentSeries = data.find((s) => s.slug === 'for-for-rent');
     const saleSeries = data.find((s) => s.slug === 'for-sale');
     const shortletSeries = data.find((s) => s.slug === 'shortlet');
 
@@ -137,7 +137,7 @@ const ListingActivities = ({ data, isLoading }: ListingActivitiesProps) => {
                   dot={false}
                   activeDot={{
                     r: 4,
-                    stroke: 'var(--color-rent)',
+                    stroke: 'var(--color-for-rent)',
                     strokeWidth: 2,
                   }}
                 />

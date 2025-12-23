@@ -2,7 +2,7 @@ import ListingProperties from '@/components/listing-properties';
 import { PageMetaTags } from '@/components/page-meta-data';
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/_landing/rent/')({
+export const Route = createFileRoute('/_landing/for-rent/')({
   component: () => (
     <>
       <PageMetaTags

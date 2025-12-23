@@ -329,7 +329,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const onSubmit = async (data: PropertyFormValues) => {
     const categorySlugMap: Record<PropertyFormValues['listingType'], string> = {
       'For Sale': 'for-sale',
-      Rent: 'for-rent',
+      Rent: 'for-for-rent',
       'Short Let': 'short-let',
     };
 

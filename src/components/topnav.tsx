@@ -26,8 +26,8 @@ const Topnav = () => {
 
   const navigationLinks = [
     { to: '/buy', label: 'Buy' },
-    { to: '/rent', label: 'Rent' },
-    { to: '/sell', label: 'Sell' },
+    { to: '/for-rent', label: 'Rent' },
+    { to: '/for-sale', label: 'Sell' },
     { to: '/blog', label: 'Blog' },
     { to: '/pricing', label: 'Pricing' },
   ];

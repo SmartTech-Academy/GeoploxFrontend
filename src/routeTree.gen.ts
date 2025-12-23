@@ -21,9 +21,9 @@ import { Route as AuthPasswordResetSentRouteImport } from './routes/_auth/passwo
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthAccountReadyRouteImport } from './routes/_auth/account-ready'
-import { Route as LandingSellIndexRouteImport } from './routes/_landing/sell/index'
-import { Route as LandingRentIndexRouteImport } from './routes/_landing/rent/index'
 import { Route as LandingPricingIndexRouteImport } from './routes/_landing/pricing/index'
+import { Route as LandingForSaleIndexRouteImport } from './routes/_landing/for-sale/index'
+import { Route as LandingForRentIndexRouteImport } from './routes/_landing/for-rent/index'
 import { Route as LandingContactIndexRouteImport } from './routes/_landing/contact/index'
 import { Route as LandingBuyIndexRouteImport } from './routes/_landing/buy/index'
 import { Route as LandingBlogIndexRouteImport } from './routes/_landing/blog/index'
@@ -43,8 +43,8 @@ import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard
 import { Route as DashboardBlogsIndexRouteImport } from './routes/_dashboard/blogs/index'
 import { Route as DashboardAdminListingIndexRouteImport } from './routes/_dashboard/admin-listing/index'
 import { Route as DashboardAdminInsightsIndexRouteImport } from './routes/_dashboard/admin-insights/index'
-import { Route as LandingSellIdRouteImport } from './routes/_landing/sell/$id'
-import { Route as LandingRentIdRouteImport } from './routes/_landing/rent/$id'
+import { Route as LandingForSaleIdRouteImport } from './routes/_landing/for-sale/$id'
+import { Route as LandingForRentIdRouteImport } from './routes/_landing/for-rent/$id'
 import { Route as LandingBuyIdRouteImport } from './routes/_landing/buy/$id'
 import { Route as LandingBlogIdRouteImport } from './routes/_landing/blog/$id'
 import { Route as DashboardPropertiesCreateRouteImport } from './routes/_dashboard/properties/create'
@@ -110,19 +110,19 @@ const AuthAccountReadyRoute = AuthAccountReadyRouteImport.update({
   path: '/account-ready',
   getParentRoute: () => AuthRoute,
 } as any)
-const LandingSellIndexRoute = LandingSellIndexRouteImport.update({
-  id: '/sell/',
-  path: '/sell/',
-  getParentRoute: () => LandingRoute,
-} as any)
-const LandingRentIndexRoute = LandingRentIndexRouteImport.update({
-  id: '/rent/',
-  path: '/rent/',
-  getParentRoute: () => LandingRoute,
-} as any)
 const LandingPricingIndexRoute = LandingPricingIndexRouteImport.update({
   id: '/pricing/',
   path: '/pricing/',
+  getParentRoute: () => LandingRoute,
+} as any)
+const LandingForSaleIndexRoute = LandingForSaleIndexRouteImport.update({
+  id: '/for-sale/',
+  path: '/for-sale/',
+  getParentRoute: () => LandingRoute,
+} as any)
+const LandingForRentIndexRoute = LandingForRentIndexRouteImport.update({
+  id: '/for-rent/',
+  path: '/for-rent/',
   getParentRoute: () => LandingRoute,
 } as any)
 const LandingContactIndexRoute = LandingContactIndexRouteImport.update({
@@ -227,14 +227,14 @@ const DashboardAdminInsightsIndexRoute =
     path: '/admin-insights/',
     getParentRoute: () => DashboardRoute,
   } as any)
-const LandingSellIdRoute = LandingSellIdRouteImport.update({
-  id: '/sell/$id',
-  path: '/sell/$id',
+const LandingForSaleIdRoute = LandingForSaleIdRouteImport.update({
+  id: '/for-sale/$id',
+  path: '/for-sale/$id',
   getParentRoute: () => LandingRoute,
 } as any)
-const LandingRentIdRoute = LandingRentIdRouteImport.update({
-  id: '/rent/$id',
-  path: '/rent/$id',
+const LandingForRentIdRoute = LandingForRentIdRouteImport.update({
+  id: '/for-rent/$id',
+  path: '/for-rent/$id',
   getParentRoute: () => LandingRoute,
 } as any)
 const LandingBuyIdRoute = LandingBuyIdRouteImport.update({
@@ -291,8 +291,8 @@ export interface FileRoutesByFullPath {
   '/properties/create': typeof DashboardPropertiesCreateRoute
   '/blog/$id': typeof LandingBlogIdRoute
   '/buy/$id': typeof LandingBuyIdRoute
-  '/rent/$id': typeof LandingRentIdRoute
-  '/sell/$id': typeof LandingSellIdRoute
+  '/for-rent/$id': typeof LandingForRentIdRoute
+  '/for-sale/$id': typeof LandingForSaleIdRoute
   '/admin-insights': typeof DashboardAdminInsightsIndexRoute
   '/admin-listing': typeof DashboardAdminListingIndexRoute
   '/blogs': typeof DashboardBlogsIndexRoute
@@ -312,9 +312,9 @@ export interface FileRoutesByFullPath {
   '/blog': typeof LandingBlogIndexRoute
   '/buy': typeof LandingBuyIndexRoute
   '/contact': typeof LandingContactIndexRoute
+  '/for-rent': typeof LandingForRentIndexRoute
+  '/for-sale': typeof LandingForSaleIndexRoute
   '/pricing': typeof LandingPricingIndexRoute
-  '/rent': typeof LandingRentIndexRoute
-  '/sell': typeof LandingSellIndexRoute
 }
 export interface FileRoutesByTo {
   '/account-ready': typeof AuthAccountReadyRoute
@@ -333,8 +333,8 @@ export interface FileRoutesByTo {
   '/properties/create': typeof DashboardPropertiesCreateRoute
   '/blog/$id': typeof LandingBlogIdRoute
   '/buy/$id': typeof LandingBuyIdRoute
-  '/rent/$id': typeof LandingRentIdRoute
-  '/sell/$id': typeof LandingSellIdRoute
+  '/for-rent/$id': typeof LandingForRentIdRoute
+  '/for-sale/$id': typeof LandingForSaleIdRoute
   '/admin-insights': typeof DashboardAdminInsightsIndexRoute
   '/admin-listing': typeof DashboardAdminListingIndexRoute
   '/blogs': typeof DashboardBlogsIndexRoute
@@ -354,9 +354,9 @@ export interface FileRoutesByTo {
   '/blog': typeof LandingBlogIndexRoute
   '/buy': typeof LandingBuyIndexRoute
   '/contact': typeof LandingContactIndexRoute
+  '/for-rent': typeof LandingForRentIndexRoute
+  '/for-sale': typeof LandingForSaleIndexRoute
   '/pricing': typeof LandingPricingIndexRoute
-  '/rent': typeof LandingRentIndexRoute
-  '/sell': typeof LandingSellIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -379,8 +379,8 @@ export interface FileRoutesById {
   '/_dashboard/properties/create': typeof DashboardPropertiesCreateRoute
   '/_landing/blog/$id': typeof LandingBlogIdRoute
   '/_landing/buy/$id': typeof LandingBuyIdRoute
-  '/_landing/rent/$id': typeof LandingRentIdRoute
-  '/_landing/sell/$id': typeof LandingSellIdRoute
+  '/_landing/for-rent/$id': typeof LandingForRentIdRoute
+  '/_landing/for-sale/$id': typeof LandingForSaleIdRoute
   '/_dashboard/admin-insights/': typeof DashboardAdminInsightsIndexRoute
   '/_dashboard/admin-listing/': typeof DashboardAdminListingIndexRoute
   '/_dashboard/blogs/': typeof DashboardBlogsIndexRoute
@@ -400,9 +400,9 @@ export interface FileRoutesById {
   '/_landing/blog/': typeof LandingBlogIndexRoute
   '/_landing/buy/': typeof LandingBuyIndexRoute
   '/_landing/contact/': typeof LandingContactIndexRoute
+  '/_landing/for-rent/': typeof LandingForRentIndexRoute
+  '/_landing/for-sale/': typeof LandingForSaleIndexRoute
   '/_landing/pricing/': typeof LandingPricingIndexRoute
-  '/_landing/rent/': typeof LandingRentIndexRoute
-  '/_landing/sell/': typeof LandingSellIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -423,8 +423,8 @@ export interface FileRouteTypes {
     | '/properties/create'
     | '/blog/$id'
     | '/buy/$id'
-    | '/rent/$id'
-    | '/sell/$id'
+    | '/for-rent/$id'
+    | '/for-sale/$id'
     | '/admin-insights'
     | '/admin-listing'
     | '/blogs'
@@ -444,9 +444,9 @@ export interface FileRouteTypes {
     | '/blog'
     | '/buy'
     | '/contact'
+    | '/for-rent'
+    | '/for-sale'
     | '/pricing'
-    | '/rent'
-    | '/sell'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/account-ready'
@@ -465,8 +465,8 @@ export interface FileRouteTypes {
     | '/properties/create'
     | '/blog/$id'
     | '/buy/$id'
-    | '/rent/$id'
-    | '/sell/$id'
+    | '/for-rent/$id'
+    | '/for-sale/$id'
     | '/admin-insights'
     | '/admin-listing'
     | '/blogs'
@@ -486,9 +486,9 @@ export interface FileRouteTypes {
     | '/blog'
     | '/buy'
     | '/contact'
+    | '/for-rent'
+    | '/for-sale'
     | '/pricing'
-    | '/rent'
-    | '/sell'
   id:
     | '__root__'
     | '/_auth'
@@ -510,8 +510,8 @@ export interface FileRouteTypes {
     | '/_dashboard/properties/create'
     | '/_landing/blog/$id'
     | '/_landing/buy/$id'
-    | '/_landing/rent/$id'
-    | '/_landing/sell/$id'
+    | '/_landing/for-rent/$id'
+    | '/_landing/for-sale/$id'
     | '/_dashboard/admin-insights/'
     | '/_dashboard/admin-listing/'
     | '/_dashboard/blogs/'
@@ -531,9 +531,9 @@ export interface FileRouteTypes {
     | '/_landing/blog/'
     | '/_landing/buy/'
     | '/_landing/contact/'
+    | '/_landing/for-rent/'
+    | '/_landing/for-sale/'
     | '/_landing/pricing/'
-    | '/_landing/rent/'
-    | '/_landing/sell/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -628,25 +628,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAccountReadyRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_landing/sell/': {
-      id: '/_landing/sell/'
-      path: '/sell'
-      fullPath: '/sell'
-      preLoaderRoute: typeof LandingSellIndexRouteImport
-      parentRoute: typeof LandingRoute
-    }
-    '/_landing/rent/': {
-      id: '/_landing/rent/'
-      path: '/rent'
-      fullPath: '/rent'
-      preLoaderRoute: typeof LandingRentIndexRouteImport
-      parentRoute: typeof LandingRoute
-    }
     '/_landing/pricing/': {
       id: '/_landing/pricing/'
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof LandingPricingIndexRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/for-sale/': {
+      id: '/_landing/for-sale/'
+      path: '/for-sale'
+      fullPath: '/for-sale'
+      preLoaderRoute: typeof LandingForSaleIndexRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/for-rent/': {
+      id: '/_landing/for-rent/'
+      path: '/for-rent'
+      fullPath: '/for-rent'
+      preLoaderRoute: typeof LandingForRentIndexRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_landing/contact/': {
@@ -782,18 +782,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminInsightsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/_landing/sell/$id': {
-      id: '/_landing/sell/$id'
-      path: '/sell/$id'
-      fullPath: '/sell/$id'
-      preLoaderRoute: typeof LandingSellIdRouteImport
+    '/_landing/for-sale/$id': {
+      id: '/_landing/for-sale/$id'
+      path: '/for-sale/$id'
+      fullPath: '/for-sale/$id'
+      preLoaderRoute: typeof LandingForSaleIdRouteImport
       parentRoute: typeof LandingRoute
     }
-    '/_landing/rent/$id': {
-      id: '/_landing/rent/$id'
-      path: '/rent/$id'
-      fullPath: '/rent/$id'
-      preLoaderRoute: typeof LandingRentIdRouteImport
+    '/_landing/for-rent/$id': {
+      id: '/_landing/for-rent/$id'
+      path: '/for-rent/$id'
+      fullPath: '/for-rent/$id'
+      preLoaderRoute: typeof LandingForRentIdRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_landing/buy/$id': {
@@ -926,30 +926,30 @@ interface LandingRouteChildren {
   LandingIndexRoute: typeof LandingIndexRoute
   LandingBlogIdRoute: typeof LandingBlogIdRoute
   LandingBuyIdRoute: typeof LandingBuyIdRoute
-  LandingRentIdRoute: typeof LandingRentIdRoute
-  LandingSellIdRoute: typeof LandingSellIdRoute
+  LandingForRentIdRoute: typeof LandingForRentIdRoute
+  LandingForSaleIdRoute: typeof LandingForSaleIdRoute
   LandingAboutIndexRoute: typeof LandingAboutIndexRoute
   LandingBlogIndexRoute: typeof LandingBlogIndexRoute
   LandingBuyIndexRoute: typeof LandingBuyIndexRoute
   LandingContactIndexRoute: typeof LandingContactIndexRoute
+  LandingForRentIndexRoute: typeof LandingForRentIndexRoute
+  LandingForSaleIndexRoute: typeof LandingForSaleIndexRoute
   LandingPricingIndexRoute: typeof LandingPricingIndexRoute
-  LandingRentIndexRoute: typeof LandingRentIndexRoute
-  LandingSellIndexRoute: typeof LandingSellIndexRoute
 }
 
 const LandingRouteChildren: LandingRouteChildren = {
   LandingIndexRoute: LandingIndexRoute,
   LandingBlogIdRoute: LandingBlogIdRoute,
   LandingBuyIdRoute: LandingBuyIdRoute,
-  LandingRentIdRoute: LandingRentIdRoute,
-  LandingSellIdRoute: LandingSellIdRoute,
+  LandingForRentIdRoute: LandingForRentIdRoute,
+  LandingForSaleIdRoute: LandingForSaleIdRoute,
   LandingAboutIndexRoute: LandingAboutIndexRoute,
   LandingBlogIndexRoute: LandingBlogIndexRoute,
   LandingBuyIndexRoute: LandingBuyIndexRoute,
   LandingContactIndexRoute: LandingContactIndexRoute,
+  LandingForRentIndexRoute: LandingForRentIndexRoute,
+  LandingForSaleIndexRoute: LandingForSaleIndexRoute,
   LandingPricingIndexRoute: LandingPricingIndexRoute,
-  LandingRentIndexRoute: LandingRentIndexRoute,
-  LandingSellIndexRoute: LandingSellIndexRoute,
 }
 
 const LandingRouteWithChildren =
