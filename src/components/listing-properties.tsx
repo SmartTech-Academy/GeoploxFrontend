@@ -18,6 +18,7 @@ const ListingProperties = () => {
   const [propertyType, setPropertyType] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState('newest');
   const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [selectedLga, setSelectedLga] = useState<string | null>(null);
   const [filters, setFilters] = useState<any>({
     per_page: 5,
     page: 1,
@@ -91,29 +92,50 @@ const ListingProperties = () => {
     setPropertyType(null);
     setSortBy('newest');
     setSelectedState(null);
+    setSelectedLga(null);
     setFilters({ per_page: 5, page: 1, property_type: null, sort: 'newest' });
   };
 
   const handleStateClick = (state: string) => {
     setSelectedState(state);
-    setFilters((prev: any) => ({ ...prev, state: state, page: 1 }));
+    setSelectedLga(null);
+    setFilters((prev: any) => ({ ...prev, state: state, city: undefined, area: undefined, page: 1 }));
   };
 
   const handleLgaClick = (lga: string) => {
-    setFilters((prev: any) => ({ ...prev, city: lga, page: 1 }));
+    setSelectedLga(lga);
+    setFilters((prev: any) => ({ ...prev, city: lga, area: undefined, page: 1 }));
+  };
+
+  const handleAreaClick = (area: string) => {
+    setFilters((prev: any) => ({ ...prev, area: area, page: 1 }));
   };
 
   const handleBackToStates = () => {
     setSelectedState(null);
+    setSelectedLga(null);
     setFilters((prev: any) => {
-      const { state, city, ...rest } = prev;
+      const { state, city, area, ...rest } = prev;
       return { ...rest, page: 1 };
     });
   };
 
-  const displayedLocations = selectedState
-    ? statesAndLocalGov.find((s) => s.state === selectedState)?.lgas || []
-    : statesAndLocalGov.map((s) => s.state);
+  const handleBackToLgas = () => {
+    setSelectedLga(null);
+    setFilters((prev: any) => {
+      const { city, area, ...rest } = prev;
+      return { ...rest, page: 1 };
+    });
+  };
+
+  let displayedLocations: string[] = [];
+  if (selectedState && selectedLga) {
+    displayedLocations = (statesAndLocalGov.find((s) => s.state === selectedState) as any)?.[selectedLga] || [];
+  } else if (selectedState) {
+    displayedLocations = statesAndLocalGov.find((s) => s.state === selectedState)?.lgas || [];
+  } else {
+    displayedLocations = statesAndLocalGov.map((s) => s.state);
+  }
 
   return (
     <div className="min-h-screen w-full bg-white py-(--landing-header-height)">
@@ -204,13 +226,31 @@ const ListingProperties = () => {
                           ← Back to States
                         </Button>
                         <span className="text-[12px] font-semibold text-[#1F2130]">{selectedState}</span>
+                        {selectedLga && (
+                          <>
+                            <span className="text-[12px] text-[#1F2130]">{'>'}</span>
+                            <Button
+                              variant="link"
+                              onClick={handleBackToLgas}
+                              className="h-auto p-0 text-[12px] font-semibold text-[#1F2130]"
+                            >
+                              {selectedLga}
+                            </Button>
+                          </>
+                        )}
                       </div>
                     )}
                     <div className="flex flex-wrap items-center gap-1">
                       {displayedLocations.map((location, index) => (
                         <React.Fragment key={location}>
                           <span
-                            onClick={() => (selectedState ? handleLgaClick(location) : handleStateClick(location))}
+                            onClick={() =>
+                              selectedState
+                                ? selectedLga
+                                  ? handleAreaClick(location)
+                                  : handleLgaClick(location)
+                                : handleStateClick(location)
+                            }
                             className={cn(
                               'hover:text-primary cursor-pointer text-[12px] leading-[17px] transition-colors hover:underline',
                               !selectedState && 'font-medium'
@@ -277,7 +317,7 @@ const ListingProperties = () => {
         {/* Mobile Layout */}
         <div className="flex w-full flex-col pt-4 lg:hidden">
           {/* Mobile Filters */}
-          <MobilePropertyFilters />
+          <MobilePropertyFilters onFiltersChange={handleFilterChange} onClear={handleClearFilters} />
 
           {/* Mobile Results Header */}
           <div className="mb-4 px-4">
@@ -327,13 +367,31 @@ const ListingProperties = () => {
                       ← Back to States
                     </Button>
                     <span className="text-[12px] font-semibold text-[#1F2130]">{selectedState}</span>
+                    {selectedLga && (
+                      <>
+                        <span className="text-[12px] text-[#1F2130]">{'>'}</span>
+                        <Button
+                          variant="link"
+                          onClick={handleBackToLgas}
+                          className="h-auto p-0 text-[12px] font-semibold text-[#1F2130]"
+                        >
+                          {selectedLga}
+                        </Button>
+                      </>
+                    )}
                   </div>
                 )}
                 <div className="flex flex-wrap items-center gap-1">
                   {displayedLocations.slice(0, selectedState ? undefined : 6).map((location, index) => (
                     <React.Fragment key={location}>
                       <span
-                        onClick={() => (selectedState ? handleLgaClick(location) : handleStateClick(location))}
+                        onClick={() =>
+                          selectedState
+                            ? selectedLga
+                              ? handleAreaClick(location)
+                              : handleLgaClick(location)
+                            : handleStateClick(location)
+                        }
                         className={cn(
                           'cursor-pointer text-[12px] leading-[17px] transition-colors hover:text-[#D4AF36] hover:underline',
                           !selectedState && 'font-medium'

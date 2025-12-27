@@ -7,6 +7,8 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 import { useGetPropertyCategories, useGetPropertyTags } from '@/lib/services';
+import statesAndLocalGov from '@/data/statesAndLocalGov.json';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type CollapsibleSectionProps = {
   title: React.ReactNode;
@@ -70,7 +72,10 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
   const [selectedBedrooms, setSelectedBedrooms] = useState<any>([2]);
   const [selectedBathrooms, setSelectedBathrooms] = useState<any>([3]);
 
-  const [location, setLocation] = useState<string>('');
+  const [selectedState, setSelectedState] = useState<string>('');
+  const [selectedLga, setSelectedLga] = useState<string>('');
+  const [selectedArea, setSelectedArea] = useState<string>('');
+
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [propertyType, setPropertyType] = useState({
     flat: false,
@@ -98,6 +103,12 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
   const categories = categoriesResponse?.data.data ?? [];
   const tags = tagsResponse?.data.data ?? [];
 
+  const lgas = selectedState ? statesAndLocalGov.find((s) => s.state === selectedState)?.lgas || [] : [];
+  const areas =
+    selectedState && selectedLga
+      ? (statesAndLocalGov.find((s) => s.state === selectedState) as any)?.[selectedLga] || []
+      : [];
+
   const handleApplyFilters = useCallback(() => {
     const property_type = Object.entries(propertyType)
       .filter(([, value]) => value)
@@ -112,7 +123,9 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
     const newFilters: Record<string, any> = {
       category_id: selectedCategories.length > 0 ? selectedCategories[0] : undefined, // API expects a single integer
       property_type: property_type || undefined,
-      city: location || undefined,
+      state: selectedState || undefined,
+      city: selectedLga || undefined,
+      area: selectedArea || undefined,
       q: keyword || undefined,
       min_price: priceRange[0],
       max_price: priceRange[1],
@@ -134,7 +147,9 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
   }, [
     selectedCategories,
     propertyType,
-    location,
+    selectedState,
+    selectedLga,
+    selectedArea,
     keyword,
     priceRange,
     landAreaMin,
@@ -153,7 +168,9 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
     setLandAreaMax(5000);
     setSelectedBedrooms([2]);
     setSelectedBathrooms([3]);
-    setLocation('');
+    setSelectedState('');
+    setSelectedLga('');
+    setSelectedArea('');
     setSelectedCategories([]);
     setPropertyType({ flat: false, apartment: true, house: true, land: false, commercial: true });
     setLandType({
@@ -180,12 +197,63 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
           isOpen={isLocationOpen}
           onToggle={() => setIsLocationOpen(!isLocationOpen)}
         >
-          <Input
-            placeholder="e.g Lekki, Lagos"
-            className="h-8 w-full rounded-xl border border-[#D5D5DD] px-3"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
+          <div className="flex flex-col gap-3">
+            <Select
+              value={selectedState}
+              onValueChange={(val) => {
+                setSelectedState(val);
+                setSelectedLga('');
+                setSelectedArea('');
+              }}
+            >
+              <SelectTrigger className="h-8 w-full text-sm">
+                <SelectValue placeholder="Select State" />
+              </SelectTrigger>
+              <SelectContent>
+                {statesAndLocalGov.map((s) => (
+                  <SelectItem key={s.state} value={s.state}>
+                    {s.state}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {selectedState && (
+              <Select
+                value={selectedLga}
+                onValueChange={(val) => {
+                  setSelectedLga(val);
+                  setSelectedArea('');
+                }}
+              >
+                <SelectTrigger className="h-8 w-full text-sm">
+                  <SelectValue placeholder="Select LGA" />
+                </SelectTrigger>
+                <SelectContent>
+                  {lgas.map((lga: string) => (
+                    <SelectItem key={lga} value={lga}>
+                      {lga}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
+            {selectedLga && areas.length > 0 && (
+              <Select value={selectedArea} onValueChange={setSelectedArea}>
+                <SelectTrigger className="h-8 w-full text-sm">
+                  <SelectValue placeholder="Select Area" />
+                </SelectTrigger>
+                <SelectContent>
+                  {areas.map((area: string) => (
+                    <SelectItem key={area} value={area}>
+                      {area}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
         </CollapsibleSection>
 
         {/* Category */}

@@ -7,19 +7,42 @@
         "Abia South"
       ],
       "lgas": [
-        "Aba North",
+        "Aba",
         "Arochukwu",
-        "Aba South",
         "Isiala Ngwa South",
         "Bende",
         "Ikwuano",
         "Isiala",
         "Ngwa North",
         "Isukwuato",
-        "Ukwa West",
-        "Ukwa East",
+        "Ukwa", 
         "Umuahia South",
         "Umuahia"
+      ],
+      "Aba": [
+        "Aba South",
+        "Aba North",
+        "Sunshine city Estate", 
+        "Obuzor", 
+        "Ogbor Hills", 
+        "Crystal City Estate", 
+        "Ubakala", 
+        "Landview City", 
+        "Erote", 
+        "Ajata"
+      ],
+      "Ukwa": [
+        "Obehie",  
+        "Obiga", 
+        "Ukwa West", 
+        "Ukwa East",
+        "Asa Obehie", 
+        "Aba Portharcourt Road", 
+        "Obeakpu"
+      ],
+      "Umuahia": [
+        "Azikiwe Road", 
+        "World Bank Housing Estate"
       ]
     },
     {
@@ -36,6 +59,7 @@
         "Girei",
         "Gombi",
         "Jada",
+        "Yola", 
         "Yola North",
         "Lamurde",
         "Madagali",
@@ -63,6 +87,7 @@
         "Abak",
         "Eastern Obolo",
         "Eket",
+        "Esit-Eket", 
         "Essien Udim",
         "Etimekpo",
         "Etinan",
@@ -91,6 +116,19 @@
         "Urue Offoung",
         "Oruko Ete",
         "Uyo"
+      ],
+      "Etinan": [
+        "Ekom Imam"
+      ],
+      "Uruan": [
+        "Ndom Ebom"
+      ],
+      "Uyo": [
+        "Ewet Housing Estate", 
+        "Oron Road", 
+        "Osongama Estate", 
+        "Shelter Afrique Estate", 
+        "University of Uyo"
       ]
     },
     {
@@ -106,29 +144,67 @@
         "Anambra",
         "Anambra-West",
         "Anaocha",
-        "Awka-North",
-        "Awka-South",
+        "Awka",
         "Ayamelum",
         "Dunukofia",
         "Ekwusigo",
-        "Idemili-North",
-        "Idemili-South",
+        "Idemili",
         "Ihiala",
         "Imo",
         "Nibo",
         "Njikoka",
-        "Nnewi-North",
-        "Nnewi-South",
+        "Nnewi",
         "Ogbaru",
         "Olumba",
-        "Onitsha-North",
-        "Onitsha-South",
+        "Onitsha",
         "Orumba-North",
         "Orumba-South",
         "Oti",
         "Otu-Ocha",
+        "Oyi", 
         "Ubuluizor Ihiala",
         "Uyi"
+      ],
+      "Awka": [
+        "Awka-North",
+        "Awka-South",
+        "Amansea", 
+        "Amawbia", 
+        "Isiagu", 
+        "Billionaire Estate", 
+        "Dubai Estate", 
+        "Ifite Road", 
+        "Millennium City", 
+        "Ngozika Estate", 
+        "Udoka Housing Estate"
+      ],
+      "Idemili": [
+        "Idemili-North",
+        "Idemili-South",
+        "Onwatibe Estate Phase 5", 
+        "Oba"
+      ],
+      "Njikoka": [
+        "Precious Ville"
+      ],
+      "Nnewi": [
+        "Owerri Road", 
+        "Umunnealam Umudim",
+        "Nnewi-North",
+        "Nnewi-South"
+      ],
+      "Onitsha": [
+        "Nkwelli", 
+        "Akunnia Njote", 
+        "Oguta Road", 
+        "Onitsha-North",
+        "Onitsha-South",
+        "Awada", 
+        "Trans Nkisi Federal Housing Estate GRA", 
+        "Umuokpa Awka"
+      ],
+      "Oyi": [
+        "Onacha Njete"
       ]
     },
     {
@@ -148,7 +224,7 @@
         "Gamawa",
         "Ganjuwa",
         "Giade",
-        "Itas\/Gadau",
+        "Itas-Gadau",
         "Jama'Are",
         "Katagum",
         "Kirfi",
@@ -191,6 +267,12 @@
         "Tarka",
         "Ukum",
         "Vandekya"
+      ],
+      "Ogbadibo": [
+        "Ogbadibo"
+      ],
+      "Makurdi": [
+        "Makurdi"
       ]
     },
     {
@@ -215,7 +297,7 @@
         "Hawul",
         "Jere",
         "Kaga",
-        "Kala\/Balge",
+        "Kala-Balge",
         "Konduga",
         "Kukawa",
         "Kwaya-Kusar",
@@ -228,6 +310,12 @@
         "Ngala",
         "Nganzai",
         "Shani"
+      ],
+      "Guzamala": [
+        "Guzamala"
+      ],
+      "Maiduguri": [
+        "GRA Maiduguri"
       ]
     },
     {
@@ -243,13 +331,24 @@
         "Ekeremor",
         "Kembe",
         "Kolokuma",
-        "Kolokuma\/Opkuma",
+        "Kolokuma-Opkuma",
         "Nembe",
         "Ogbia",
         "Sagbama",
         "Southern-Ijaw",
         "Toru-Abubo",
         "Yenegoa"
+      ], 
+      "Brass": [
+        "Brass"
+      ], 
+      "Ogbia": [
+        "Ogbia"
+      ], 
+      "Yenegoa": [
+        "Palmgrove Estate", 
+        "Palm/Otueke Road", 
+        "Coral Garden Okaka"
       ]
     },
     {
@@ -268,8 +367,7 @@
         "Bekwara",
         "Biasi",
         "Boki",
-        "Calabar-Municipal",
-        "Calabar-South",
+        "Calabar",
         "Etunk",
         "Ikom",
         "Obanliku",
@@ -280,6 +378,14 @@
         "Ugep-North",
         "Yakurr",
         "Yala"
+      ], 
+      "Akpabuyo": [
+        "Akpabuyo"
+      ], 
+      "Calabar": [
+        "Calabar-Municipal",
+        "Calabar-South",
+        "Ekorinim"
       ]
     },
     {
@@ -290,7 +396,6 @@
         "Delta South"
       ],
       "lgas": [
-        "Aniocha North",
         "Aniocha-North",
         "Aniocha-South",
         "Bomadi",
@@ -332,6 +437,62 @@
         "Uvwei",
         "Uvwie",
         "Uwvie",
+        "Warri"
+      ], 
+      "Aniocha-North": [
+        "Landview City Estate Extension", 
+        "Issele Mkpetime", 
+        "Ogwashi Uku"
+      ], 
+      "Aniocha-South": [
+        "Otulu", 
+        "Green Haven Estate", 
+        "Cedar Hills Estate", 
+        "Enuani Mega City Estate"
+      ], 
+      "Burutu": [
+        "Burutu"
+      ], 
+      "Ethiope-West": [
+        "Oghara"
+      ], 
+      "Asaba": [
+        "Macberry Estate", 
+        "Nnebisi Road", 
+        "Okpanam Road", 
+        "Summit Junction"
+      ], 
+      "Ika-South": [
+        "Imudia Estate", 
+        "California Heights"
+      ], 
+      "Ndokwa-East": [
+        "Onicha Ugba"
+      ], 
+      "Okpe": [
+        "Uviator Family Layout", 
+        "Mereje Town"
+      ], 
+      "Oshimili-North": [
+        "Ugbolo Town"
+      ], 
+      "Oshimili-South": [
+        "Anwai"
+      ], 
+      "Sapele": [
+        "Shell Road",
+        "Ogbeyiyi"
+      ], 
+      "Ughelli-North": [
+        "Ughelli-North"
+      ], 
+      "Warri": [
+        "Edjeba", 
+        "Airport Road", 
+        "Airport Road", 
+        "Army Estate", 
+        "Ekpan", 
+        "Idama Estate",
         "Warri-Central",
         "Warri-North",
         "Warri-South"
@@ -360,6 +521,14 @@
         "Ohakwu",
         "Onicha",
         "Ukaba"
+      ], 
+      "Abakaliki": [
+        "Ring Road", 
+        "Onueke", 
+        "Cedar City", 
+        "Newtown", 
+        "Ivy Estate", 
+        "Flourish Luxury Villa Estate"
       ]
     },
     {
@@ -399,6 +568,32 @@
         "Owan-East",
         "Owan-West",
         "Uhunmwonde"
+      ],
+      "Esan-West": [
+        "Ekpoma"
+      ],
+      "Etsako-West": [
+        "Agbede",
+        "Auchi",
+        "Awain",
+        "South Ibie",
+        "Uzairue"
+      ],
+      "Ikpoba-Okha": [
+        "Idogbo"
+      ],
+      "Oredo": [
+        "Benin",
+        "Airport Road",
+        "GRA Benin",
+        "Sapele Road",
+        "Uniben"
+      ],
+      "Ovia-North-East": [
+        "Okada"
+      ],
+      "Ovia-South-West": [
+        "Iguobazuwa"
       ]
     },
     {
@@ -415,7 +610,7 @@
         "Ekiti-East",
         "Ekiti-South-West",
         "Ekiti-West",
-        "Emure\/Ise\/Orun",
+        "Emure-Ise-Orun",
         "Gbonyin",
         "Ido-Osi",
         "Ijero",
@@ -423,10 +618,22 @@
         "Ikere",
         "Ikole",
         "Ilejemeje",
-        "Irepodun\/Ifelodun",
+        "Irepodun-Ifelodun",
         "Ise-Orun",
         "Moba",
         "Oye"
+      ],
+      "Ado-Ekiti": [
+        "Afao Road"
+      ],
+      "Ijero": [
+        "Ijero"
+      ],
+      "Oye": [
+        "Okun-inu",
+        "Club 009 Estate",
+        "Ayegbaju",
+        "Ifaki-oye Road"
       ]
     },
     {
@@ -439,36 +646,492 @@
       "lgas": [
         "Aninri",
         "Awgu",
-        "Enugu-East",
-        "Enugu-North",
-        "Enugu-South",
+        "Enugu",
         "Ezeagu",
         "Igbo-Etiti",
         "Igbo-Eze-North",
         "Igbo-Eze-South",
         "Isi-Uzo",
-        "Nkanu-East",
-        "Nkanu-West",
+        "Nkanu",
         "Nsukka",
         "Nukanu East",
         "Oji-River",
         "Udenu",
         "Udi",
         "Uzo-Uwani"
+      ],
+      "Awgu": [
+        "Obinze Estate"
+      ],
+      "Nkanu": [
+        "Nkanu-East",
+        "Nkanu-West",
+        "Habron Estate",
+        "Owo Nkanu",
+        "Crystal City"
+      ],
+      "Enugu": [
+        "Enugu-East",
+        "Enugu-North",
+        "Enugu-South",
+        "Abakpa Nike",
+        "Achara Layout",
+        "Asata",
+        "Coal Camp",
+        "Emene",
+        "Gariki",
+        "GRA",
+        "Independence Layout",
+        "Iva Valley",
+        "New Haven",
+        "Obiagu",
+        "Ogui New Layout",
+        "Ogui Road",
+        "Premier Layout",
+        "Thinkers Corner",
+        "Trans Ekulu",
+        "Uwani",
+        "Agbani Road",
+        "Airport Road",
+        "Goshen Estate",
+        "Heliu Estate",
+        "Independence Layout",
+        "Iva Valley",
+        "Legacy Estate",
+        "Pearl View Estate",
+        "Sunrise Estate",
+        "WTC Estate",
+        "Zoo Estate"
+      ],
+      "Nsukka": [
+        "Hilltop",
+        "Ugwogo Nike",
+        "Ogurugu Road"
+      ],
+      "Udi": [
+        "Mountain View Layout",
+        "9th Mile",
+        "Transit Estate Phase 2",
+        "Ameke Ngwo"
+      ],
+      "Uzo-Uwani": [
+        "Agbani Road",
+        "ESUT Front Gate",
+        "ESUT Back Gate"
       ]
     },
     {
-      "state": "Federal Capital Territory",
+      "state": "Abuja",
       "senatorial_districts": [
         "Federal Capital Territory"
       ],
       "lgas": [
         "Abaji",
         "Abuja Municipal",
-        "Gwagwalada",
+        "Apo",
+        "Asokoro District",
         "Kuje",
         "Bwari",
+        "Bude",
+        "Kwali",
+        "Central Area Phase 2",
+        "Central Business District",
+        "Cultural Zones",
+        "Dakibiyu",
+        "Dakwo",
+        "Dape",
+        "Dawaki",
+        "Dei-Dei",
+        "Diplomatic Zones",
+        "Duboyi",
+        "Durumi",
+        "Dutse",
+        "Gaduwa",
+        "Galadimawa",
+        "Garki",
+        "Gudu",
+        "Guzape District",
+        "Gwagwalada",
+        "Gwarinpa",
+        "Idu Industrial",
+        "Institution and Research",
+        "Jabi",
+        "Jahi",
+        "Jaite",
+        "Jikwoyi",
+        "kaba",
+        "Kabusa",
+        "Kado",
+        "Kafe",
+        "Kagini",
+        "Karmo",
+        "Karsana",
+        "Karshi",
+        "Karu",
+        "Katampe",
+        "Kaura",
+        "Kubwa",
+        "Kuje",
+        "Kukwaba",
+        "Kurudu",
+        "Kwali",
+        "Kyami",
+        "Life Camp",
+        "Lokogoma District",
+        "Lugbe District",
+        "Mabushi",
+        "Maitama District",
+        "Mararaba",
+        "Mbora (Nbora)",
+        "Mpape",
+        "Nyanya",
+        "Orozo",
+        "Sabo Gida",
+        "Sheretti",
+        "Utako",
+        "Wumba",
+        "Wuse",
+        "Wuse 2",
+        "Wuye",
+        "Zuba"
+      ],
+      "Apo": [
+        "Apo Resettlement",
+        "Gude",
+        "Wasa",
+        "Zone B",
+        "Centage Estate"
+      ],
+      "Asokoro District": [
+        "Admiralty Estate",
+        "Aso Rock",
+        "Aso Villa",
+        "Lillycrest Garden Estate",
+        "NAF Valley Estate",
+        "Yakubu Gowon Crescent"
+      ],
+      "Bwari": [
+        "Kuduru",
+        "Ushafa",
+        "Zango"
+      ],
+      "Central Area Phase 2": [
+        "Central Area Phase 2"
+      ],
+      "Central Business District": [
+        "World Trade Center"
+      ],
+      "Cultural Zones": [
+        "Queen Parks Estate",
+        "Gousa District",
+        "Von Road",
+        "Gbessa Sauka",
+        "Airport Road",
+        "Sun City Karshi Axis",
+        "MicheVille Estate"
+      ],
+      "Dakibiyu": [
+        "Kings Court Estate",
+        "Zavatti Phase 3",
+        "Tangerine Garden City",
+        "Wuje Extension",
+        "Anifowose Street",
+        "Jabi"
+      ],
+      "Dakwo": [
+        "Sunnyvale",
+        "Kabusa Gardens Estate",
+        "Vale City View Estate",
+        "Fabrice Estate",
+        "City Homes Estate",
+        "Biltmore Estate"
+      ],
+      "Dape": [
+        "Dape"
+      ],
+      "Dawaki": [
+        "Dawaki"
+      ],
+      "Dei-Dei": [
+        "Allison Court",
+        "Police Housing Scheme", 
+        "Shagare Quarters",
+        "Police Estate",
+        "Water Lake Farm Estate"
+      ],
+      "Diplomatic Zones": [
+        "Kuramo",
+        "Hutu",
+        "Kyari District"
+      ],
+      "Duboyi": [
+        "Prince And Princess Estate"
+      ],
+      "Durumi": [
+        "Durumi"
+      ],
+      "Dutse": [
+        "Dataset Avenue",
+        "Tipper Garage",
+        "Dutse Zone 6"
+      ],
+      "Gaduwa": [
+        "Gaduwa Estate"
+      ],
+      "Galadimawa": [
+        "Aldenco Estate",
+        "Ammsco Estate",
+        "Sam Nujoma Estate",
+        "Standard Estate"
+      ],
+      "Garki": [
+        "Area 1",
+        "Area 2",
+        "Area 3",
+        "Area 4",
+        "Area 5",
+        "Area 6",
+        "Area 7",
+        "Area 8",
+        "Area 9",
+        "Area 10",
+        "Area 11"
+      ],
+      "Gudu": [
+        "Adisa Estate"
+      ],
+      "Guzape District": [
+        "GuzapeHills",
+        "Gilmore",
+        "Federal Housing"
+      ],
+      "Gwagwalada": [
+        "Giri",
+        "Kutunku",
+        "Uniabuja"
+      ],
+      "Gwarinpa": [
+        "Dawaki",
+        "3rd Avenue",
+        "69 Road",
+        "Efab Queens Estate",
+        "Efab Verizon Estate",
+        "Federal Housing",
+        "Goshen City",
+        "Gwarinpa Estate",
+        "Hillside Estate",
+        "Mab Global Estate",
+        "Works and Housing Estate"
+      ],
+      "Idu Industrial": [
+        "Broadview Estate",
+        "Idu Train Station",
+        "Larix Estate",
+        "T. Pumpy Estate"
+      ],
+      "Institution and Research": [
+        "Institution and Research"
+      ],
+      "Jabi": [
+        "Jabi Lake Mall", 
+        "Kingscourt Estate", 
+        "Lakeview Estate", 
+        "PP Estate"
+      ],
+      "Jahi": [
+        "Jahi"
+      ],
+      "Jaite": [
+        "Jaite"
+      ],
+      "Jikwoyi": [
+        "Phase 1",
+        "Phase 2",
+        "Phase 3",
+        "Phase 4",
+        "Phase 5"
+      ],
+      "kaba": [
+        "kaba"
+      ],
+      "Kabusa": [
+        "Kabusa Gardens Estate"
+      ],
+      "Kado": [
+        "Bua Estate",
+        "Kado Estate"
+      ],
+      "Kafe": [
+        "Chessville Corte Estate",
+        "Godab",
+        "Lifecamp",
+        "Manreng Estate"
+      ],
+      "Kagini": [
+        "Kagini"
+      ],
+      "Karmo": [
+        "Custom Quarters",
+        "Karmo-Idu District",
+        "Agbarho Estate"
+      ],
+      "Karsana": [
+        "Karsana East",
+        "Karsana North",
+        "Karsana South",
+        "Karsana West",
+        "Aso Garden Estate",
+        "Belham Estate"
+      ],
+      "Karshi": [
+        "Al Madina Estate",
+        "Navy Estate"
+      ],
+      "Karu": [
+        "Works and Housing Estate",
+        "Karu Site",
+        "Fha"
+      ],
+      "Katampe": [
+        "Katampe Extension",
+        "Katampe (Main)",
+        "Festrut Estate",
+        "Gishiri Village"
+      ],
+      "Kaura": [
+        "Games Village",
+        "Olympia Estate"
+      ],
+      "Kubwa": [
+        "FO1 Layout",
+        "Arab Road",
+        "Army Estate",
+        "Brick City Estate",
+        "Dantata Estate",
+        "Kubwa Train Station"
+      ],
+      "Kuje": [
+        "Centenary City",
+        "Cloud 9 Estate",
+        "Queen's Garden Estate",
+        "Woodhill Estate"
+      ],
+      "Kukwaba": [
+        "Royal Anchor Estate"
+      ],
+      "Kurudu": [
+        "Army Estate",
+        "Police Housing Estate"
+      ],
+      "Kwali": [
         "Kwali"
+      ],
+      "Kyami": [
+        "Centenary City",
+        "Belle Vista Estate",
+        "Aviation Village",
+        "Nigeria Immigration Estate",
+        "Nis Estate"
+      ],
+      "Life Camp": [
+        "Aco Estate",
+        "Favour Land Estate",
+        "Imperial Vista Estate",
+        "Paradise Estate"
+      ],
+      "Lokogoma District": [
+        "Basic Estate",
+        "Emerald Estate",
+        "Micheville Estate",
+        "Nzube Estate",
+        "Peculiar Estate",
+        "Pentville Estate",
+        "Promenade Estate",
+        "Sahara Estate",
+        "Sunnyvale Homes"
+      ],
+      "Lugbe District": [
+        "FHA (F.H.A)",
+        "Goza",
+        "Kiami",
+        "Pyakasa",
+        "Sabon Lugbe",
+        "Aco Amac Estate",
+        "A & G Estate",
+        "Airport Road",
+        "Boulevard Estate",
+        "CBS Estate",
+        "CRD Estate",
+        "Diamond Estate",
+        "Federal Housing",
+        "Gold City Estate",
+        "KYC Estate",
+        "Leisure Court Estate",
+        "Millennium Shelter Estate",
+        "River Park Estate"
+      ],
+      "Mabushi": [
+        "Mabushi"
+      ],
+      "Maitama District": [
+        "Maitama 2"
+      ],
+      "Mararaba": [
+        "Mararaba"
+      ],
+      "Mbora (Nbora)": [
+        "Efab Estate",
+        "Ochacho Estate",
+        "Mikuch Estate",
+        "Citec Estate"
+      ],
+      "Mpape": [
+        "Maitama Extension"
+      ],
+      "Nyanya": [
+        "Rainbow Estate Pyakasa",
+        "Abacha nyanya Road",
+        "Adron Manhattan Park and Gardens Phase 1",
+        "Mami Market Road",
+        "Karu"
+      ],
+      "Orozo": [
+        "Orozo"
+      ],
+      "Sabo Gida": [
+        "Sabo Gida"
+      ],
+      "Sheretti": [
+        "Sheretti"
+      ],
+      "Utako": [
+        "Utako"
+      ],
+      "Wumba": [
+        "Apo",
+        "Choos Estate",
+        "Aquamarine Estate"
+      ],
+      "Wuse": [
+        "Zone 1",
+        "Zone 2",
+        "Zone 3",
+        "Zone 4",
+        "Zone 5",
+        "Zone 6",
+        "Zone 7",
+        "Zone 8"
+      ],
+      "Wuse 2": [
+        "Aminu Kano Crescent"
+      ],
+      "Wuye": [
+        "Cosgrove Estate",
+        "Wetland Estate"
+
+      ],
+      "Zuba": [
+        "Zuba"
       ]
     },
     {
@@ -487,9 +1150,9 @@
         "Gombe",
         "Kaltungo",
         "Kwami",
-        "Nafada\/Bajoga",
+        "Nafada-Bajoga",
         "Shomgom",
-        "Yamaltu\/Deba"
+        "Yamaltu-Deba"
       ]
     },
     {
@@ -509,7 +1172,7 @@
         "Ideato",
         "Ideato-North",
         "Ideato-South",
-        "Ihitte\/Uboma",
+        "Ihitte-Uboma",
         "Ikeduru",
         "Isiala-Mbano",
         "Isu",
@@ -536,14 +1199,67 @@
         "Ugiri-Ikedikeduru",
         "Unbano",
         "Zinihitte"
+      ],
+      "Mbaitoli": [
+        "Ogbaku"
+      ],
+      "Ngor-Okpala": [
+        "Obodo Oma",
+        "Aviance Pakland",
+        "Aviance Delta town",
+        "Fortune Gardens",
+        "Egbelu Obike",
+        "Native Land",
+        "Crown City",
+        "Amala", 
+        "Elelem Community"
+      ],
+      "Ohaji-Egbema": [
+        "Umuapa"
+      ],
+      "Okigwe": [
+        "Ogii-Okpara Road"
+      ],
+      "Orlu": [
+        "Fortune Gardens"
+      ],
+      "Oru-West": [
+        "Diamond Treasure Estate"
+      ],
+      "Owerri-Municipal": [
+        "Aladinma",
+        "Alvan",
+        "Amakioha",
+        "Ihiagwa",
+        "Ikenegbu",
+        "Industrial Layout",
+        "Mbieri",
+        "Nekede",
+        "New Owerri",
+        "Obinze",
+        "Orji",
+        "Umuguma",
+        "Wetheral",
+        "Works Layout",
+        "World Bank"
+      ],
+      "Owerri-North": [
+        "Naze",
+        "Ulakwo",
+        "Uratta"
+      ],
+      "Owerri-West": [
+        "Avu",
+        "Irete",
+        "Oforola"
       ]
     },
     {
       "state": "Jigawa",
       "senatorial_districts": [
-        "Jigawa North - West",
-        "Jigawa North – East",
-        "Jigawa South – West"
+        "Jigawa North-West",
+        "Jigawa North-East",
+        "Jigawa South-West"
       ],
       "lgas": [
         "Auyo",
@@ -573,6 +1289,9 @@
         "Sule-Tankarkar",
         "Taura",
         "Yankwashi"
+      ],
+      "Dutse": [
+        "Dutse"
       ]
     },
     {
@@ -625,11 +1344,12 @@
         "Jema'A",
         "Kachia",
         "Kaduna-North",
+        "Kaduna South",
         "Kagarko",
         "Kajuru",
         "Kaura",
         "Kauru",
-        "Koka\/Kawo",
+        "Koka-Kawo",
         "Kubah",
         "Kudan",
         "Lere",
@@ -637,8 +1357,33 @@
         "Sabon-Gari",
         "Sanga",
         "Soba",
-        "Tudun-Wada\/Makera",
+        "Tudun-Wada-Makera",
         "Zango-Kataf",
+        "Zaria"
+      ],
+      "Chikun": [
+        "Barnawa",
+        "Nnpc Quarters Sabo"
+      ],
+      "Kaduna-North": [
+        "Yahaya Road",
+        "Legislative Quarters",
+        "Millennium City",
+        "Marafa",
+        "Dala Road",
+        "Unguwar Rimi",
+        "Malali GRA"
+      ],
+      "Kaduna South": [
+        "Kaduna South"
+      ],
+      "Kagarko": [
+        "Kagarko"
+      ],
+      "Soba": [
+        "Soba"
+      ],
+      "Zaria": [
         "Zaria"
       ]
     },
@@ -669,6 +1414,7 @@
         "Gezawa",
         "Gwale",
         "Gwarzo",
+        "Kano",
         "Kano-Municipal",
         "Karaye",
         "Kibiya",
@@ -693,6 +1439,31 @@
         "Ungogo",
         "Warawa",
         "Wudil"
+      ],
+      "Gwale": [
+        "Gwale"
+      ],
+      "Kano": [
+        "Hotoro Central",
+        "Newtown Estate"
+      ],
+      "Kano-Municipal": [
+        "Civic Centre Road",
+        "Railway Quarters",
+        "Maimalari Road",
+        "Bompai",
+        "Tokarawa"
+      ],
+      "Nasarawa": [
+        "Tamandu Court", 
+        "Hodejia Road",
+        "Danladi Na Sidi",
+        "G.R.A",
+        "Commissioner Road",
+        "Adb Road"
+      ],
+      "Wudil": [
+        "Wudil"
       ]
     },
     {
@@ -712,13 +1483,13 @@
         "Igalamela",
         "Ijumu",
         "Ikoyi-Ijumu",
-        "Kabba\/Bunu",
+        "Kabba-Bunu",
         "Kogi",
         "Lokoja",
         "Mopa-Muro-Mopi",
         "Obaji",
         "Ofu",
-        "Ogori\/Magongo",
+        "Ogori-Magongo",
         "Okehi",
         "Okene",
         "Olamaboro",
@@ -726,7 +1497,28 @@
         "Oru",
         "Oyi",
         "Yagba-East",
-        "Yagba-West"
+        "Yagba-West",
+        "Musawa",
+        "Jega"
+      ],
+      "Musawa": [
+        "Musawa"
+      ],
+      "Jega": [
+        "Jega"
+      ],
+      "Ibaji": [
+        "Parkview Estate"
+      ],
+      "Lokoja": [
+        "Lokoja GRA",
+        "Murtala Mohammed Way"
+      ],
+      "Okene": [
+        "Okene Road"
+      ],
+      "Yagba": [
+        "Ifeolukotun"
       ]
     },
     {
@@ -786,9 +1578,9 @@
         "Edu",
         "Ekiti",
         "Ifelodun",
-        "Ilorin south",
-        "Ilorin west",
-        "Ilorin east",
+        "Ilorin South",
+        "Ilorin West",
+        "Ilorin East",
         "Irepodun",
         "Isin",
         "Kaiama",
@@ -797,6 +1589,35 @@
         "Oke ero",
         "Oyun",
         "Pategi"
+      ],
+      "Ifelodun": [
+        "Amoyo"
+      ],
+      "Ilorin East": [
+        "Tank F Division",
+        "Oke Oyi",
+        "Sunshine Estate",
+        "Afon town"
+      ],
+      "Ilorin South": [
+        "Abayawo",
+        "Peken",
+        "GRA",
+        "Fate Road",
+        "Eyenkorin",
+        "Oke Fomo",
+        "Ita Alamu Road"
+      ],
+      "Ilorin West": [
+        "Reality Estate",
+        "Flamingo Street",
+        "Stadium Road",
+        "Tanke Area",
+        "Irewolede Area"
+      ],
+      "Offa": [
+        "Aremo Soji Olagunjus treet",
+        "Lamodi"
       ]
     },
     {
@@ -811,106 +1632,755 @@
         "Alimosho",
         "Amuwo Odofin",
         "Apapa",
+        "Abule Egba",
+        "Agege",
+        "Ajah",
+        "Ayobo",
         "Badagry",
+        "Eko Atlantic City",
         "Epe",
         "Eti-Osa",
         "Ibeju-Lekki",
+        "Ibeju",
+        "Idimu",
         "Ifako-Ijaiye",
+        "Iganmu",
+        "Ijaiye",
+        "Ijede",
+        "Ijesha",
         "Ikeja",
         "Ikorodu",
-        "Kosofe",
-        "Lagos Island",
-        "Lagos-Mainland",
         "Mushin",
         "Ojo",
         "Shomolu",
         "Somolu",
         "Surulere", 
+        "Tarkwa Bay Island",
         "Bariga", 
-        "Egbe/ldimu", 
+        "Egbe", 
         "Ejigbo", 
         "Gbagada", 
-        "Ikotun/lgando", 
+        "Ikotun", 
         "Ikoyi", 
+        "Ilashe",
         "Ilupeju", 
         "Ipaja", 
+        "Isheri North",
+        "Isheri",
         "Isolo",
+        "Itire",
         "Ketu", 
-        "Kosofe/Ikosi", 
+        "Kosofe", 
+        "Lagos Island",
         "Lekki", 
         "Maryland", 
+        "Magodo",
         "Ogba", 
         "Ogudu", 
         "Ojodu", 
         "Ojota", 
+        "Oke-Odo",
         "Okota", 
         "Orile", 
         "Oshodi", 
         "Sangotedo", 
         "Victoria Island", 
-        "Yaba", 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
-
-        "Abule Egba", 
-        "Abule Egba, Abule Egba", 
-        "Alagbado, Abule Egba", 
-        "New oko oba, Abule Egba", 
-        "Ojokoro, Abule Egba", 
-
-
-        "Agege", 
-        "Agbotikuyo, Agege", 
-        "Capitol, Agege", 
-        "Cement, Agege", 
-        "Dopemu, Agege", 
-        "Fagba, Agege", 
-        "Idi Oro, Agege", 
-        "Ifako, Agege", 
-        "lju-Ishaga, Agege", 
-        "LSDPC estate, Agege", 
-        "Mulero, Agege", 
-        "Oke-Odo, Agege", 
-        "Oko oba, Agege", 
-        "Oko oba road, Agege", 
-        "Onitiri, Agege", 
-        "orile agege, Agege", 
-        "Pen cinema, Agege", 
-
-        
-        "Ajah", 
-        "Abijo, Ajah", 
-        "Abraham adesanya estate, Ajah", 
-        "Ado, Ajah", 
-        "Ajiran, Ajah", 
-        "Ajiwe, Ajah", 
-        "Akodo, Ajah", 
-        "Awoyaya, Ajah", 
-        "Badore, Ajah", 
-        "Canaan Estate, Ajah", 
-        "Crown Estate, Ajah", 
-        "Eden garden Estate, Ajah", 
-        "Graceland Estate, Ajah", 
-        "Haje, Ajah", 
-        "Lakowe, Ajah", 
-        "Lekki Gardens estate, Ajah", 
-        "Lekki Scheme 2, Ajah", 
-        "Off Lekki-Epe Expressway, Ajah"
-
+        "Yaba"
+      ],
+      "Ajah": [
+        "Abraham Adesanya Estate",
+        "Addo Road",
+        "Ado Road",
+        "Ajah Motor Park",
+        "Ajayi Apata Estate",
+        "Alabula Estate",
+        "Aptech Estate",
+        "Atican Beachview Estate",
+        "Atlantic Nominees Estate",
+        "Badore Road",
+        "Bashorun Estate",
+        "Blenco Supermarket",
+        "Blenco Supermarket",
+        "Budo Estate",
+        "Canaan Estate",
+        "Citadel Views Estate",
+        "Crown Estate",
+        "Diamond Estate",
+        "Eden Garden Estate",
+        "Emperor Estate",
+        "Estates",
+        "Farmville Estate",
+        "Fortune Bay Estate",
+        "Fountain Springville Estate",
+        "Genesis Court Estate",
+        "Glorious Estate",
+        "Golden Park Estate",
+        "Good Homes Estate",
+        "Goodnews Estate",
+        "Graceland Estate",
+        "Green Brooks Estate",
+        "Greenland Estate",
+        "Greenville Estate",
+        "Happy Land Estate",
+        "Harmony Estate",
+        "Hopeville Estate",
+        "Infinity Estate",
+        "Lagos Business School",
+        "Lekki Gardens Estate",
+        "Lekki Palm City Estate",
+        "Majek Estate",
+        "Marina Estate",
+        "Marshy Hill Estate",
+        "Mayfair Estate",
+        "Metrobay Estate",
+        "Mobile Road",
+        "Mobil Road",
+        "Monastery Road",
+        "Novojo Estate",
+        "Oakland Estate",
+        "Ocean Palm Estate",
+        "Ogombo Road",
+        "Olive Park Estate",
+        "Palm City Estate",
+        "Peace Estate",
+        "Peace Garden City Estate",
+        "Pearl Garden Estate",
+        "Peninsula Garden Estate",
+        "Royal Garden Estate",
+        "Royal Palm Estate",
+        "Royal Palmwill Estate",
+        "Salvation Estate",
+        "Seaside Estate",
+        "Shoprite",
+        "Silverland Estate",
+        "Silver Point Estate",
+        "Sunshine Estate",
+        "Sunview Estate",
+        "Thera Annex Estate",
+        "Thera Peace Zone Estate",
+        "Thomas Estate",
+        "United Estate",
+        "Unity Estate",
+        "University View Estate",
+        "Urban Prime Estate",
+        "Value County Estate",
+        "Victory Estate",
+        "Westwood Park Estate"
+      ],
+      "Agege": [
+        "Abule Egba",
+        "Dopemu",
+        "Fagba",
+        "Ifako",
+        "Iju-Ishaga",
+        "Meiran",
+        "Mulero",
+        "New Oko-Oba",
+        "Oko-oba",
+        "Abimbola Awoliyi Estate",
+        "Cement",
+        "County Estate",
+        "Estates",
+        "Jibowu Estate",
+        "Labak Estate",
+        "Pen Cinema"
+      ],
+      "Alimosho": [
+        "Akesan",
+        "Akowonjo",
+        "Egbeda",
+        "Igando",
+        "Isheri Olofin",
+        "Orisunbare",
+        "Shasha",
+        "Akowonjo Road",
+        "Coker Estate",
+        "Diamond Estate",
+        "Estates",
+        "Federal Housing Estate",
+        "Gemade Estate",
+        "Gowon Estate",
+        "Santos Estate",
+        "Unity Estate",
+        "Valley View Estate"
+      ],
+      "Amuwo Odofin": [
+        "Abule-Ado",
+        "Festac",
+        "Snake Island"
+      ],
+      "Apapa": [
+        "Ajegunle",
+        "Apapa Wharf",
+        "GRA",
+        "Ijora",
+        "Kirikiri",
+        "Olodi",
+        "Tin Can"
+      ],
+      "Ayobo": [
+        "Mercyland Estates",
+        "Gold Estate"
+      ],
+      "Badagry": [
+        "Age Mowo",
+        "Ajido",
+        "Aradagun",
+        "Ilogbo Eremi",
+        "Magbon",
+        "Oko Afo"
+      ],
+      "Eko Atlantic City": [
+        "Eko pearl Towers"
+      ],
+      "Epe": [
+        "Chrystland Estate",
+        "Evergreen Estate",
+        "Lagoon Front Estate"
+      ],
+      "Gbagada": [
+        "Gbagada Phase 1",
+        "Gbagada Phase 2",
+        "Ifako",
+        "Medina",
+        "Pedro",
+        "Soluyi",
+        "Atunrase Estate",
+        "Glory Estate",
+        "Harmony Estate",
+        "Medina Estate",
+        "Millennium Estate",
+        "Peace Estate",
+        "Adeba",
+        "Aiyeteju Town"
+      ],
+      "Ibeju-Lekki": [
+        "Akodo Ise",
+        "Alatise",
+        "Apakin",
+        "Arapagi Oloko",
+        "Asegun",
+        "Awoyaya",
+        "Baba Adisa",
+        "Badore",
+        "Bogije",
+        "Ebute-Lekki",
+        "Eleko",
+        "Eleranigbe",
+        "Eluju",
+        "Eputu",
+        "Folu Ise",
+        "Iberekodo",
+        "Idasho",
+        "Igando Orudu",
+        "Ikegun",
+        "Ilamija",
+        "Imalete Alafia",
+        "Itamarun",
+        "Lakowe",
+        "Lapekun",
+        "Mafogunde",
+        "Mosere Ikoga",
+        "Ode Omi",
+        "Ogogoro",
+        "Okun Imedu",
+        "Okun Imosan",
+        "Okun-Ise",
+        "Okunraiye",
+        "Onosa",
+        "Oribanwa",
+        "Origanrigan",
+        "Orimedu",
+        "Osoroko",
+        "Owode Ise",
+        "Shapati",
+        "Siriwon Town"
+      ],
+      "Ibeju": [
+        "Agbado"
+      ],
+      "Idimu": [
+        "Alagbado"
+      ],
+      "Ifako-Ijaiye": [
+        "Alakuko",
+        "Ojokoro"
+      ],
+      "Iganmu": [
+        "Ilupeju Estate"
+      ],
+      "Ijaiye": [
+        "Palmgrove Estate"
+      ],
+      "Ijede": [
+        "Adeniyi Jones"
+      ],
+      "Ijesha": [
+        "Agidingbi"
+      ],
+      "Ikeja": [
+        "Alausa",
+        "Allen",
+        "Iju",
+        "Ikeja GRA",
+        "Mangoro",
+        "Oba Akran",
+        "Ogba",
+        "Omole Phase 1",
+        "Omole Phase 2",
+        "Onigbonbo",
+        "Opebi",
+        "Oregun",
+        "ABC Estate",
+        "Adekoya Estate",
+        "Adeyeri Estate",
+        "Agbalajobi Estate",
+        "Ajayi Road",
+        "Akora Estate",
+        "Alafia Estate",
+        "Alfred Garden Estate",
+        "Allen Avenue",
+        "Allen Avenue",
+        "Anthony Enahoro Estate",
+        "Adamo",
+        "Agbowa"
+      ],
+      "Ikorodu": [
+        "Agric",
+        "Apeka",
+        "Ebute",
+        "Erunwen",
+        "Gberigbe",
+        "Ibeshe",
+        "Igbogbo",
+        "Imota",
+        "Ipakodo",
+        "Isawo",
+        "Isiu",
+        "Ita Oluwo",
+        "Jumofak",
+        "Maya",
+        "Odogunyan",
+        "Oke Eletu",
+        "Alogba Estate",
+        "Elepe Royal Estate",
+        "Estates",
+        "Ikorodu Garage",
+        "Kingsway Estate",
+        "Laspotech",
+        "Town park and Garden Estate",
+        "Igando",
+        "Ijegun"
+      ],
+      "Ikotun": [
+        "Fagbile Estate",
+        "Governor Road",
+        "Banana Island",
+        "Falomo"
+      ],
+      "Ikoyi": [
+        "Old Ikoyi",
+        "Osborne",
+        "Parkview",
+        "2nd Avenue Estate",
+        "3rd Avenue",
+        "Abacha Estate",
+        "Abdullahi Adamu Estate",
+        "Awolowo Road",
+        "Banana Island",
+        "Bourdillon Road",
+        "Cooper Road",
+        "Dolphin Estate",
+        "Estates",
+        "Gerrard Road",
+        "Grenadines Skyvilla",
+        "Mojisola Onikoyi Estate",
+        "Osborne Foreshore Estate",
+        "Osborne Phase 1",
+        "Osborne Phase 2",
+        "Queen's Drive",
+        "Shoreline Estate",
+        "Abesan"
+      ],
+      "Ilashe": [
+        "Baruwa"
+      ],
+      "Ipaja": [
+        "Boys Town",
+        "Iyana Ipaja",
+        "Abesan Estate",
+        "Abiola Estate",
+        "Diamond Estate",
+        "Federal Housing Estate",
+        "Ipaja Road",
+        "Jakande Estate",
+        "Peace Estate",
+        "GRA",
+        "Opic"
+      ],
+      "Isheri North": [
+        "Oshorun Heritage Estate",
+        "Queens Garden Annex II",
+        "Ago Palace"
+      ],
+      "Isheri": [
+        "Cele"
+      ],
+      "Isolo": [
+        "Ire Akari",
+        "Mile 2",
+        "Oke Afa",
+        "Okota",
+        "Ajao Estate",
+        "Bucknor Estate",
+        "Canal Estate",
+        "Ire Akari Estate",
+        "Jakande Estate",
+        "Okota Road",
+        "Olive Estate",
+        "Startimes Estate",
+        "Alapere"
+      ],
+      "Itire": [
+        "Ikosi"
+      ],
+      "Ketu": [
+        "Agboyi Estate",
+        "Alapere Estate",
+        "Apollo Estate",
+        "Olorunda Estate",
+        "Irawo",
+        "Mile 12"
+      ],
+      "Kosofe": [
+        "Oworonshoki",
+        "Apongbon",
+        "C.M.S"
+      ],
+      "Lagos Island": [
+        "Idumota",
+        "Marina",
+        "Obalende",
+        "Onikan",
+        "Broad Street",
+        "GRA",
+        "Ori-oke"
+      ],
+      "Ogudu": [
+        "Lagoon Estate",
+        "Ogudu Road",
+        "Challenge",
+        "Ilasamaja"
+      ],
+      "Mushin": [
+        "Ladipo",
+        "Papa Ajao",
+        "GRA Phase 1",
+        "GRA Phase 2"
+      ],
+      "Magodo": [
+        "Olowora",
+        "Berry Court",
+        "Brooks Estate",
+        "CMD Road",
+        "Gateway Estate",
+        "Gateway Zone Estate",
+        "Unilag Estate",
+        "Ajagbandi",
+        "Alaba"
+      ],
+      "Ojo": [
+        "Iba",
+        "Okokomaiko",
+        "Satellite Town",
+        "Alaba International Market",
+        "Lasu",
+        "Trade Fair Complex",
+        "Akiode",
+        "Ojodu Berger"
+      ],
+      "Ojodu": [
+        "Adeoni Estate",
+        "Bemil Estate",
+        "Berger Bus Stop",
+        "Dankaro Estate",
+        "Journalist Estate",
+        "Madonna Estate",
+        "Morgan Estate",
+        "Peace Estate",
+        "River Valley Estate",
+        "Unity Estate",
+        "Kujore Street",
+        "Emmanuel Street"
+      ],
+      "Ojota": [
+        "Richfield Estate",
+        "Dove Estate"
+      ],
+      "Oke-Odo": [
+        "Hilltop Estate",
+        "Iganmu",
+        "Mafoluku"
+      ],
+      "Orile": [
+        "Matori"
+      ],
+      "Oshodi": [
+        "Shogunle",
+        "Bariga",
+        "Fadeyi"
+      ],
+      "Shomolu": [
+        "Obanikoro",
+        "Onipanu",
+        "Oworonshoki",
+        "Palmgrove",
+        "Obanikoro Estate",
+        "Adelabu",
+        "Adeniran Ogunsanya"
+      ],
+      "Surulere": [
+        "Aguda",
+        "Alaka",
+        "Animashaun",
+        "Barracks",
+        "Bode Thomas",
+        "Coker",
+        "Eric Moore",
+        "Idi Araba",
+        "Ijesha",
+        "Ijeshatedo",
+        "Iponri",
+        "Itire-Ikate",
+        "Kilo",
+        "Lawanson",
+        "Masha",
+        "Ogunlana",
+        "Ojuelegba",
+        "Orile Iganmu",
+        "Papa Ajao",
+        "Adeniran Ogunsanya Street",
+        "Alaka Estate",
+        "Babs Animashaun",
+        "Bode Thomas Street",
+        "Colindale Park Estate",
+        "Ishaga Road",
+        "Mutual Alpha Court Estate",
+        "Peace Estate",
+        "Royal Estate",
+        "Tarkwa Bay Beach",
+        "Oniru"
+      ],
+      "Tarkwa Bay Island": [
+        "Victoria Island Extension"
+      ],
+      "Victoria Island": [
+        "1004 Estate",
+        "Adeola Odeku Street",
+        "Adetokunbo Ademola Street",
+        "Ahmadu Bello Way",
+        "Ajose Adeogun Street",
+        "Akin Adesola Street",
+        "Bishop Oluwole Street",
+        "Covenant Estate",
+        "Dideolu Estate",
+        "Eko Hotel",
+        "Kofo Abayomi Street",
+        "Landmark Beach",
+        "Millennium Estate",
+        "Oniru Estate",
+        "Oyin Jolayemi Street",
+        "Ozumba Mbadiwe Road",
+        "Palace Road",
+        "Saka Tinubu Street",
+        "Abule Ijesha",
+        "Abule Oja"
+      ],
+      "Yaba": [
+        "Adekunle",
+        "Akoka",
+        "Alagomeji",
+        "Costain",
+        "Ebute Metta East",
+        "Ebute Metta West",
+        "Fola Agoro",
+        "Iwaya",
+        "Jibowu",
+        "Makoko",
+        "Onike",
+        "Oyingbo",
+        "Sabo",
+        "Saint Agnes",
+        "Tejuosho",
+        "Alcove Estate",
+        "Jacob Mews Estate",
+        "Oyadiran Estate",
+        "Tajudeen Olanrewaju Estate",
+        "Unilag",
+        "Unilag Road",
+        "Abijo",
+        "Agungi"
+      ],
+      "Lekki": [
+        "Idado",
+        "Igbo Efon",
+        "Ikate",
+        "Ikate Elegushi",
+        "Ikota",
+        "Ilasan",
+        "Jakande",
+        "Lafiaji",
+        "Lekki Expressway",
+        "Lekki Free Trade Zone",
+        "Lekki Phase 1",
+        "Lekki Phase 2",
+        "Nicon Town",
+        "Ologolo",
+        "Orange Island",
+        "Osapa",
+        "VGC",
+        "1st Roundabout",
+        "2nd Roundabout",
+        "2nd Toll Gate",
+        "Admiralty Homes Estate",
+        "Admiralty Road",
+        "Ajiran Road",
+        "Alma Beach Estate",
+        "Alperton Estate",
+        "Alpha Beach",
+        "Alpha Beach Estate",
+        "Alpha Beach Road",
+        "Arcadia Grove Estate",
+        "Atlantic Estate",
+        "Atlantic View Estate",
+        "Bakare Estate",
+        "Bayview Estate",
+        "Bera Estate",
+        "Bourdillon Court",
+        "Bridge Gate Estate",
+        "Brookhill Park Estate",
+        "Brownstone Estate",
+        "Buena Vista Estate",
+        "Cadogan Estate",
+        "Cadogan Place Estate",
+        "Canal West Estate",
+        "Cardogan Estate",
+        "Carlton Gate Estate",
+        "Chevron Alternative Route",
+        "Chevron Drive",
+        "Chevron Toll Gate",
+        "Chevy View Estate",
+        "Chois Gardens Estate",
+        "Cooplag Gardens Estate",
+        "Cowrie Creek Estate",
+        "Cromwell Court Estate",
+        "Cyberville Estate",
+        "Eastland Golf Estate",
+        "Eleganza Estate",
+        "Elf Estate",
+        "Fara Park Estate",
+        "Femi Okunnu Estate",
+        "Flourish Gate Garden",
+        "Freedom Way",
+        "Friends Colony Estate",
+        "Frisco Court",
+        "Goshen Estate",
+        "GRA",
+        "Green Park Estate",
+        "Hampton Bay Estate",
+        "Heirs Park Estate",
+        "Horizon II Estate",
+        "House on the Rock",
+        "HRC Estate",
+        "Idado Estate",
+        "Ikota County Estate",
+        "Ikota Villa Estate",
+        "Inoyo Havens Estate",
+        "Itedo Estate",
+        "Ivy Luxuria Estate",
+        "Jakande First Gate",
+        "Jordan Brooke Estates",
+        "Kusenla Road",
+        "Lakeview Estate",
+        "Lekki Conservation Centre",
+        "Lekki County Estate",
+        "Lekki Gardens Horizon 1",
+        "Lekki Pearl Garden",
+        "Lekki Scheme 2",
+        "Lekki Scheme I",
+        "LSDPC Estate",
+        "Maiyegun Beach Estate",
+        "Manor Gardens Estate",
+        "Marwa",
+        "Megamound Estate",
+        "Melrose Park Estate",
+        "Milverton Estate",
+        "Mobil Estate",
+        "Mobolaji Johnson Estate",
+        "Napier Gardens Estate",
+        "New Horizon Estate",
+        "New Road",
+        "Nicon Town",
+        "Northern Foreshore Estate",
+        "Oba Oyekan Estate",
+        "Ocean Bay Estate",
+        "Ocean Breeze Estate",
+        "Oluwanishola Estate",
+        "Oral Estate",
+        "Orchid Estate",
+        "Orchid Road",
+        "Paradise Estate",
+        "Parkview Estate",
+        "Peach Palms",
+        "Pearly Gate Estate",
+        "Periwinkle Lifestyle Estate",
+        "Pinnock Beach Estate",
+        "Prime Water View Estate",
+        "Providence Street",
+        "Richmond Gate Estate",
+        "Romay Gardens Estate",
+        "Royal County Estate",
+        "Royal Haven Estate",
+        "Royal Pine Estate",
+        "Safe Court Apartments",
+        "Seagate Estate",
+        "Silicon Valley Estate",
+        "Southern View Estate",
+        "South Pointe Estate",
+        "SPG Road",
+        "Spring Bay Estate",
+        "Spring Garden Estate",
+        "Stillwaters Garden Estate",
+        "The Grandeur Estate",
+        "TPDC Estate",
+        "Treasure Garden Estate",
+        "Tulip Heaven Estate",
+        "Twin Lake Estate",
+        "U3 Estate",
+        "UPDC Estate",
+        "Valley Stream Estate",
+        "Van Daniel Estate",
+        "Victoria Bay Estate",
+        "Victoria Crest Estate",
+        "Victoria Park Estate",
+        "Victory Park Estate",
+        "Vintage Park Estate",
+        "Westend Estate",
+        "Western Foreshore Estate",
+        "White Oak Estate",
+        "Willow Greens Estate",
+        "Woodland Estate",
+        "Zion Court Estate",
+        "Anthony",
+        "Mende"
+      ],
+      "Maryland": [
+        "Onigbongbo",
+        "Arowojobe Estate",
+        "Cappa Estate",
+        "Maryland Mall",
+        "Mende Villa Estate",
+        "Shonibare Estate"
       ]
     },
     {
@@ -933,6 +2403,31 @@
         "Nassawara Eggon",
         "Obi",
         "Wambu"
+      ],
+      "Karshi": [
+        "Navy Estate",
+        "karo",
+        "Rafin Kwara",
+        "Fidelity Estate"
+      ],
+      "Karu": [
+        "Masaku",
+        "Ado",
+        "Keffi Road",
+        "Gora"
+      ],
+      "Keffi": [
+        "Laminga",
+        "Yanya Gwandara"
+      ],
+      "Lafia": [
+        "Lafia"
+      ],
+      "Nassarawa": [
+        "Becky 2 Estate"
+      ],
+      "Obi": [
+        "Cadestrial Road"
       ]
     },
     {
@@ -968,6 +2463,14 @@
         "Suleja",
         "Tafa",
         "Wushishi"
+      ],
+      "Paikoro": [
+        "Eyita"
+      ],
+      "Suleja": [
+        "Tsauni City",
+        "Karfe",
+        "Old Bwari Road"
       ]
     },
     {
@@ -978,26 +2481,234 @@
         "Ogun West"
       ],
       "lgas": [
-        "Abeokuta-North",
-        "Abeokuta-South",
-        "Ado-Odo\/Ota",
+        "Abeokuta North",
+        "Abeokuta South",
+        "Ado-Odo/Ota",
+        "Berger, Arepo",
         "Ewekoro",
+        "Ibafo",
         "Ifo",
         "Ijebu-East",
         "Ijebu-North",
         "Ijebu-North-East",
         "Ijebu-Ode",
+        "Ijoko",
         "Ikenne",
         "Imeko-Afon",
+        "Isheri North",
+        "KM 46",
+        "Magboro",
+        "Mowe Ofada",
+        "Mowe Town",
         "Ipokia",
         "Obafemi-Owode",
         "Odeda",
         "Odogbolu",
+        "Ogijo", 
         "Ogun-Waterside",
+        "Oke-Aro", 
         "Remo-North",
         "Sagamu",
+        "Sango Ota",
+        "Simawa",
         "Yewa North",
         "Yewa South"
+      ],
+      "Abeokuta North": [
+        "Sweet Estate",
+        "Alabata",
+        "Lush Garden",
+        "Funaab",
+        "Kobape",
+        "Isaga Orile",
+        "Zylus Greenland",
+        "Ado Awaye"
+      ],
+      "Abeokuta South": [
+        "Obada Oko",
+        "Laderin Estate",
+        "Pelican Valley Estate",
+        "Rockview Estate",
+        "Praise Court Estate",
+        "Paradiso Farms",
+        "Imeko Afon",
+        "Oke Mosan"
+      ],
+      "Ado-Odo/Ota": [
+        "Agbara",
+        "Atan Ota",
+        "Onipanu",
+        "Otta",
+        "Agbara Estate",
+        "Cloud Estate",
+        "Itele",
+        "Opic Estate",
+        "Citynest"
+      ],
+      "Berger, Arepo": [
+        "Cityview estate",
+        "Journalist Estate",
+        "T. A. Gardens Estate",
+        "Unity Estate",
+        "Beachland Estate", 
+        "Voera Estate",
+        "Fortnight Estate",
+        "Naples Estate",
+        "Urban Groove Estate",
+        "Karameh City",
+        "Journalist Estate"
+      ],
+      "Ewekoro": [
+        "Ibogun", 
+        "Iyana Egbado",
+        "Ibese Ewekoro",
+        "Papa Lanto Junction",
+        "Palmrich Estate Phase 8",
+        "Aso Ilobi Road",
+        "Iloti"
+      ],
+      "Ibafo": [
+        "Asese",
+        "Kara",
+        "Magada",
+        "Orimerunmu",
+        "Shimawa"
+      ],
+      "Ifo": [
+        "Agbado",
+        "Ajuwon",
+        "Akute",
+        "Alagbole",
+        "Olambe",
+        "Martins Estate",
+        "Threeco Estate",
+        "Osaro", 
+        "Abekoko"
+      ],
+      "Ijebu-East": [
+        "Farm Niche",
+        "Goodlife Gardens & Resorts Estate",
+        "City Nest Phase 6",
+        "Wonderland Gardens",
+        "Greenleaf Estate",
+        "Greenwealth City Resort",
+        "Oke Sapen",
+        "Ayepe",
+        "Ishiwo"
+      ],
+      "Ijebu-North": [
+        "Ijebu Igbo"
+      ],
+      "Ijebu-North-East": [
+        "Omu Ijebu",
+        "Odogbolu",
+        "Odolewu Town"
+      ],
+      "Ijebu-Ode": [
+        "Ijebu-Ode"
+      ],
+      "Ijoko": [
+        "Ijoko"
+      ],
+      "Ikenne": [
+        "Ogere",
+        "Adron Winter Parks and Gardens",
+        "Arcview Farm Estate",
+        "Maba",
+        "Treasureland Phase 2"
+      ],
+      "Imeko-Afon": [
+        "Imeko-Afon"
+      ],
+      "Isheri North": [
+        "Opic",
+        "Riverview Estate",
+        "River  Bank Estate", 
+        "Sparklight Estate",
+        "Longbridge",
+        "Citiview Estate"
+      ],
+      "KM 46": [
+        "KM 46"
+      ],
+      "Magboro": [
+        "Makogi Road",
+        "Ivory Garden Estate"
+      ],
+      "Mowe Ofada": [
+        "Coca Cola Estate",
+        "Golden Heritage Estate",
+        "Mainland Park Estate",
+        "Pentagon Estate",
+        "Queens Park Estate",
+        "Treasure Island Estate"
+      ],
+      "Mowe Town": [
+        "Mowe Town"
+      ],
+      "Obafemi-Owode": [
+        "Owode",
+        "Peace Farm And Resorts",
+        "Cocoa Farm City",
+        "Success Park",
+        "Milebrook Farm City"
+      ],
+      "Odeda": [
+        "Obantoko",
+        "Itoko"
+      ],
+      "Odogbolu": [
+        "Ikise Omu",
+        "Aiyepe Town"
+      ],
+      "Ogijo": [
+        "Ogijo"
+      ],
+      "Ogun-Waterside": [
+        "Ode Omi"
+      ],
+      "Oke-Aro": [
+        "Matogun",
+        "Iju-Ishaga",
+        "Giwa",
+        "Blue View Garden Estate"
+      ],
+      "Remo-North": [
+        "Shapade"
+      ],
+      "Sagamu": [
+        "G.R.A Quarters",
+        "Ode Lemo",
+        "Ogijo",
+        "Sotubo",
+        "Imperial Park and Garden"
+      ],
+      "Sango Ota": [
+        "Toll Gate",
+        "Veepee Road",
+        "Oyero Road",
+        "The Iconia 2",
+        "Obasanjo Farm",
+        "Atan",
+        "Oju Ore",
+        "Central City",
+        "Joju",
+        "Dalemo"
+      ],
+      "Simawa": [
+        "Cape Town Estate",
+        "Adron Treasure Parks And Gardens",
+        "Emerald Garden City"
+      ],
+      "Yewa North": [
+        "Wealth Creation Estate", 
+        "Aiyetoro",
+        "Aroko Farm And Resort",
+        "Igbogila"
+      ],
+      "Yewa South": [
+        "Eredo", 
+        "Ilaro"
       ]
     },
     {
@@ -1034,6 +2745,25 @@
         "Ondo-East",
         "Ose",
         "Owo"
+      ],
+      "Akure": [
+        "Alagbaka GRA",
+        "Ijapo Estate",
+        "Oba-Ile Housing Estate",
+        "Bethel Estate",
+        "Odoo Estate",
+        "Sunshine Estate",
+        "Rock View Estate"
+      ],
+      "Idanre": [
+        "Idanre"
+      ],
+      "Ondo West": [
+        "Elewuro",
+        "Faagun Estate"
+      ],
+      "Owo": [
+        "GRA"
       ]
     },
     {
@@ -1052,6 +2782,7 @@
         "Boripe",
         "Ede",
         "Ede North",
+        "Ede South",
         "Egbedore",
         "Ejigbo",
         "Ife",
@@ -1076,6 +2807,31 @@
         "Ori-Ade",
         "Orolu",
         "Osogbo"
+      ],
+      "Ede South": [
+        "Ede South"
+      ],
+      "Egbedore": [
+        "Egbedore"
+      ],
+      "Ife-Central": [
+        "Fasina",
+        "Ikoyi",
+        "Anjorin"
+      ],
+      "Ilesa-West": [
+        "Ilesa-West"
+      ],
+      "Iwo": [
+        "Igbalode Lagelu"
+      ],
+      "Osogbo": [
+        "Dada Estate",
+        "GRA Osogbo",
+        "Ring Road",
+        "Ayekale",
+        "Akede",
+        "Halleluyah Estate"
       ]
     },
     {
@@ -1091,7 +2847,9 @@
         "Atiba",
         "Atisbo",
         "Egbeda",
+        "Ibadan",
         "Ibadan-Central",
+        "Ibadan-North",
         "Ibadan-North-East",
         "Ibadan-North-West",
         "Ibadan-South-East",
@@ -1119,6 +2877,138 @@
         "Saki-East",
         "Saki-West",
         "Surulere"
+      ],
+      "Afijio": [
+        "Jobele"
+      ],
+      "Akinyele": [
+        "Ibadan Green City",
+        "Ajibode Estate",
+        "Moniya"
+      ],
+      "Atiba": [
+        "Offa Meta"
+      ],
+      "Atisbo": [
+        "Tede Okeogun"
+      ],
+      "Egbeda": [
+        "Masopa",
+        "Gowon Estate",
+        "Araba",
+        "Obokun Farm",
+        "Adron Estate",
+        "Oluwo"
+      ],
+      "Ibadan": [
+        "Agbowo",
+        "Agodi",
+        "Ajibode",
+        "Akobo",
+        "Alakia",
+        "Alalubosa",
+        "Apata",
+        "Asejire",
+        "Challenge",
+        "Eleyele",
+        "Iyaganku",
+        "Jericho",
+        "Moniya",
+        "New Bodija",
+        "Ojoo",
+        "Oke Ado",
+        "Oke Bola",
+        "Old Bodija",
+        "Ologuneru",
+        "Orogun",
+        "Samonda",
+        "Wakajaye",
+        "Aerodrome Estate",
+        "Airport Estate",
+        "Akala Estate",
+        "Akala Express Way",
+        "Akobo Estate",
+        "Bodija Estate",
+        "Heritage Estate",
+        "Ire Akari Estate",
+        "Iwo Road",
+        "Kolapo Ishola Estate",
+        "Legacy Estate",
+        "New Bodija Estate",
+        "Ologede Estate",
+        "Owode Estate",
+        "Ring Road",
+        "University of Ibadan",
+        "West Park & Gardens",
+        "Omi Adio"
+      ],
+      "Ibadan-North": [
+        "Ashi Bodija",
+        "Orogun",
+        "Carlton Gate Estate",
+        "Akobo",
+        "Idi Ape"
+      ],
+      "Ibadan-North-East": [
+        "Onigari"
+      ],
+      "Ibadan-North-West": [
+        "Dugbe",
+        "Golf View Estate",
+        "Onireke",
+        "S&T Estate",
+        "Nihort Jericho",
+        "Mokola"
+      ],
+      "Ibadan-South-West": [
+        "Oluyole Estate"
+      ],
+      "Ibarapa-Central": [
+        "Carlton Gate Estate",
+        "Emmanuel Estate Jericho",
+        "Igbo Ora"
+      ],
+      "Ido": [
+        "Agoro Smart Estate",
+        "Novaro Hills",
+        "Harmony Estate",
+        "Coral City"
+      ],
+      "Iseyin": [
+        "Idunu Oyo Farms And Resorts",
+        "Ogun Dam",
+        "Palm City Farm",
+        "Iseyin-Okeogun"
+      ],
+      "Lagelu": [
+        "Iremide Resortas And Farm",
+        "Agugu",
+        "Adeyele Area",
+        "Eniola Villa",
+        "Aafin Oba"
+      ],
+      "Ogbomosho-North": [
+        "Aaje Ologo",
+        "Ikuye",
+        "Ogbomoso"
+      ],
+      "Karshi": [
+        "Ajimututu",
+        "Igbeti Okeogun",
+        "Olounde",
+        "Oremeji",
+        "Ayegun Quarters"
+      ],
+      "Oluyole": [
+        "Niyi Isola Estate",
+        "Elebu",
+        "Oluyole Estate",
+        "Industrial Estate",
+        "Idi Ayunre"
+      ],
+      "Ona-Ara": [
+        "Akanran",
+        "Odeyale"
       ]
     },
     {
@@ -1146,6 +3036,14 @@
         "Riyom",
         "Shendam",
         "Wase"
+      ],
+      "Jos-North": [
+        "Agingi ",
+        "Rukuba Barracks Road"
+      ],
+      "Jos-South": [
+        "Rayfield",
+        "Sabon Bariki"
       ]
     },
     {
@@ -1156,7 +3054,7 @@
         "Rivers West"
       ],
       "lgas": [
-        "Aboa\/Odual",
+        "Aboa-Odual",
         "Ahoada-East",
         "Ahoada-West",
         "Akukutoru",
@@ -1172,16 +3070,131 @@
         "Gokana",
         "Ikwerre",
         "Khana",
-        "Obia\/Akpor",
+        "Obia Akpor",
         "Ogba-Egbema-Ndoni",
-        "Ogba\/Egbema\/Ndoni",
-        "Ogu\/Bolo",
+        "Ogba-Egbema-Ndoni",
+        "Ogu-Bolo",
         "Okirika",
         "Omuma",
-        "Opobo\/Nkoro",
+        "Opobo-Nkoro",
         "Oyigbo",
-        "Port-Harcourt",
+        "Port Harcourt",
         "Tai"
+      ],
+      "Eleme": [
+        "Ogale",
+        "Aleto",
+        "AgbOnchia"
+      ],
+      "Etche": [
+        "Igbodo",
+        "Emerald Gardens Phase 2",
+        "Abara"
+      ],
+      "Ikwerre": [
+        "Igwurita Chokocho Road",
+        "Isiokpo",
+        "Sapphire Garden Estate"
+      ],
+      "Obia Akpor": [
+        "Nvuigwe Woji",
+        "Obirikwere Road",
+        "The East West Road"
+      ],
+      "Oyigbo": [
+        "The Link Road",
+        "The Bridge Estate",
+        "Obigbo"
+      ],
+      "Port Harcourt": [
+        "Abuloma",
+        "Amadi-Ama",
+        "Boibu-Oromerizemgbu",
+        "Choba",
+        "D-line",
+        "Elekahia",
+        "Elelenwo",
+        "Elimbu",
+        "Eliozu",
+        "Eneka",
+        "GRA Phase 1",
+        "GRA Phase 2",
+        "GRA Phase 3",
+        "Okuru",
+        "Old GRA",
+        "Olu Obasanjo",
+        "Omagwa",
+        "Orada Diobu",
+        "Orazi",
+        "Orogbum",
+        "Oroworukwo",
+        "Ozuoba",
+        "Rainbow Town",
+        "Rukpakulusi",
+        "Rukpokwu",
+        "Rumolumeni",
+        "Rumuadaolu",
+        "Rumuahalu",
+        "Rumuduru",
+        "Rumuekini",
+        "Rumuekwe",
+        "Rumueme",
+        "Rumuepirieli",
+        "Rumueprikom",
+        "Rumuibekwe",
+        "Rumuigbo",
+        "Rumukalagbo",
+        "Rumuobiakani",
+        "Rumuodara",
+        "Rumuodomaya",
+        "Rumuogba",
+        "Rumuoji",
+        "Rumuokoro",
+        "Rumuokro",
+        "Rumuokwachi",
+        "Rumuokwuota",
+        "Rumuokwurusi",
+        "Rumuola",
+        "Rumuolukwu",
+        "Rumuomasi",
+        "Rumuomoi",
+        "Rumuoparali",
+        "Rumuosi",
+        "Rumuoto",
+        "Rumurolu",
+        "Rumusara",
+        "Rumuwaji",
+        "Rumuwegwu",
+        "Trans Amadi",
+        "Uzuoba",
+        "Waterlines",
+        "Woji",
+        "Abacha Road",
+        "Agip Estate",
+        "Airport Road",
+        "Cocaine Estate",
+        "Golf Estate",
+        "Harmony Estate",
+        "Housing Estate",
+        "Lakeview Estate",
+        "Lekki Gardens",
+        "NTA Road",
+        "Old GRA",
+        "Parkland Estate",
+        "Peter Odili Road",
+        "Rainbow Town Estate",
+        "Reef Court Estate",
+        "Rivtaf Golf Estate",
+        "Royal Palm Estate",
+        "Shell Cooperative Estate",
+        "Stadium Road",
+        "Sunrise Estate",
+        "Sunshine Estate",
+        "Trans-Amadi Industrial Layout",
+        "Uniport",
+        "Unity Estate",
+        "Valley View Estate",
+        "Woji Estate"
       ]
     },
     {
@@ -1241,6 +3254,9 @@
         "Wukari",
         "Yorro",
         "Zing"
+      ],
+      "Donga": [
+        "Badore Road"
       ]
     },
     {
@@ -1286,7 +3302,7 @@
         "Gumi",
         "Gusau",
         "Isa",
-        "Kaura-Namoda",
+        "Kaura Namoda",
         "Kiyawa",
         "Maradun",
         "Maru",
@@ -1294,6 +3310,9 @@
         "Talata-Mafara",
         "Tsafe",
         "Zurmi"
+      ],
+      "Kaura Namoda": [
+        "Kaura Namoda"
       ]
     }
   ]
