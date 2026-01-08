@@ -33,6 +33,7 @@ const routeTitleMap: Record<string, string> = {
   '/pending-approvals': 'Pending Approvals',
   '/getting-started': 'Getting Started',
   '/blogs': 'Blog Posts',
+  '/favorites': 'My Favorites',
   '/blogs/create': 'Create Blog Post',
   '/notifications': 'Notifications',
 };
@@ -159,10 +160,12 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
                     {user?.firstname} {user?.lastname}
                   </p>
                   <p className="text-muted-foreground truncate text-xs leading-none">{user?.email_address}</p>
+                  <p className="text-muted-foreground text-xs leading-none capitalize">
+                    {user?.user_role?.replace('_', ' ')}
+                  </p>
                   {getOnboardingStatus(user?.onboarding_status) && (
                     <p className="text-warning-foreground text-xs leading-none font-semibold">
-                      {getOnboardingStatus(user?.onboarding_status)} |{' '}
-                      <span className="capitalize">{user?.user_role?.replace('_', ' ')}</span>
+                      {getOnboardingStatus(user?.onboarding_status)}
                     </p>
                   )}
                 </div>

@@ -32,7 +32,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn, formatPrice } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate, useParams } from '@tanstack/react-router';
 import { PageMetaTags } from './page-meta-data';
 import {
@@ -42,13 +42,17 @@ import {
   useGetPropertyDetails,
   useGetRelatedProperties,
   useRevokeUserVerification,
+  useAddToFavorites,
+  useRemoveFromFavorites,
 } from '@/lib/services';
+import { toast } from 'sonner';
 import { ListingDetailSkeleton } from './listing-detail-skeleton';
 
 import { ContactOwnerDialog } from './dialogs/contact-owner-dialog';
 import DeletePropertyModal from './dialogs/delete-property';
 import assets from '@/assets';
 import { PropertyListingCardSkeleton } from './property-listing-card-skeleton';
+import Map from './google-map';
 
 const ListingDetail = () => {
   const location = useLocation();
@@ -86,11 +90,58 @@ const ListingDetail = () => {
   const { mutate: deleteProperty, isPending: isDeleting } = useDeleteProperty();
   const { mutate: blacklistUser, isPending: isBlacklisting } = useBlacklistUser();
   const { mutate: revokeVerification, isPending: isRevoking } = useRevokeUserVerification();
+  const { mutate: addToFavorites, isPending: isAddingToFavorites } = useAddToFavorites();
+  const { mutate: removeFromFavorites, isPending: isRemovingFromFavorites } = useRemoveFromFavorites([
+    'property',
+    slug,
+  ]);
 
-  const { data: propertyDetailsResponse, isLoading: isLoadingDetails } = useGetPropertyDetails(slug, isDashboard);
-  const { data: relatedPropertiesResponse, isLoading: isLoadingRelated } = useGetRelatedProperties(slug);
+  const { data: propertyDetailsResponse, isPending: isLoadingDetails } = useGetPropertyDetails(slug, isDashboard);
+  const { data: relatedPropertiesResponse, isPending: isLoadingRelated } = useGetRelatedProperties(slug);
 
   const property = propertyDetailsResponse?.data.data;
+
+  console.log('property', property);
+
+  const [isFavorited, setIsFavorited] = useState(property?.is_favourited || false);
+
+  useEffect(() => {
+    if (property) {
+      setIsFavorited(property.is_favourited);
+    }
+  }, [property]);
+
+  const handleFavoriteToggle = () => {
+    if (!property) return;
+    if (isFavorited) {
+      removeFromFavorites(property.id, {
+        onSuccess: () => {
+          setIsFavorited(false);
+        },
+      });
+    } else {
+      addToFavorites(property.id, {
+        onSuccess: () => {
+          setIsFavorited(true);
+        },
+      });
+    }
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: document.title,
+          url: window.location.href,
+        })
+        .catch((error) => console.error('Error sharing:', error));
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        toast.success('Link copied to clipboard!');
+      });
+    }
+  };
 
   const displayTitle = property
     ? `${property.property_type} ${
@@ -251,12 +302,21 @@ const ListingDetail = () => {
             <div className="flex w-full items-center justify-between gap-2 self-stretch lg:justify-start">
               {!isAdminListing && (
                 <>
-                  <Button variant="ghost" className="text-[14px] leading-[21px] font-semibold text-[#1A2258]">
-                    <Heart className="mr-2 size-4" />
-                    Save to Favourites
+                  <Button
+                    variant="ghost"
+                    className="text-[14px] leading-[21px] font-semibold text-[#1A2258]"
+                    onClick={handleFavoriteToggle}
+                    disabled={isAddingToFavorites || isRemovingFromFavorites}
+                  >
+                    <Heart className={cn('mr-2 size-4', isFavorited && 'fill-red-500 text-red-500')} />
+                    {isFavorited ? 'Saved' : 'Save to Favourites'}
                   </Button>
 
-                  <Button variant="ghost" className="text-[14px] leading-[21px] font-semibold text-[#1A2258]">
+                  <Button
+                    variant="ghost"
+                    className="text-[14px] leading-[21px] font-semibold text-[#1A2258]"
+                    onClick={handleShare}
+                  >
                     <Share2 className="mr-2 size-4" />
                     Share
                   </Button>
@@ -451,12 +511,11 @@ const ListingDetail = () => {
                 </div>
 
                 <div className="relative h-[385.37px] w-full overflow-hidden rounded-lg bg-gray-100">
-                  <img
-                    height={385.37}
-                    width={894}
-                    src={assets.interactiveneigbhoormap}
-                    alt="Neighborhood Map"
-                    className="h-full w-full object-cover"
+                  <Map
+                    address={property.address}
+                    city={property.city}
+                    state={property.state}
+                    country={property.country}
                   />
 
                   {/* Expand Map Button */}

@@ -39,6 +39,7 @@ import { Route as DashboardManagersIndexRouteImport } from './routes/_dashboard/
 import { Route as DashboardListingIndexRouteImport } from './routes/_dashboard/listing/index'
 import { Route as DashboardInsightsIndexRouteImport } from './routes/_dashboard/insights/index'
 import { Route as DashboardGettingStartedIndexRouteImport } from './routes/_dashboard/getting-started/index'
+import { Route as DashboardFavoritesIndexRouteImport } from './routes/_dashboard/favorites/index'
 import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard/dashboard/index'
 import { Route as DashboardBlogsIndexRouteImport } from './routes/_dashboard/blogs/index'
 import { Route as DashboardAdminListingIndexRouteImport } from './routes/_dashboard/admin-listing/index'
@@ -205,6 +206,11 @@ const DashboardGettingStartedIndexRoute =
     path: '/getting-started/',
     getParentRoute: () => DashboardRoute,
   } as any)
+const DashboardFavoritesIndexRoute = DashboardFavoritesIndexRouteImport.update({
+  id: '/favorites/',
+  path: '/favorites/',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardDashboardIndexRoute = DashboardDashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
@@ -297,6 +303,7 @@ export interface FileRoutesByFullPath {
   '/admin-listing': typeof DashboardAdminListingIndexRoute
   '/blogs': typeof DashboardBlogsIndexRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
+  '/favorites': typeof DashboardFavoritesIndexRoute
   '/getting-started': typeof DashboardGettingStartedIndexRoute
   '/insights': typeof DashboardInsightsIndexRoute
   '/listing': typeof DashboardListingIndexRoute
@@ -339,6 +346,7 @@ export interface FileRoutesByTo {
   '/admin-listing': typeof DashboardAdminListingIndexRoute
   '/blogs': typeof DashboardBlogsIndexRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
+  '/favorites': typeof DashboardFavoritesIndexRoute
   '/getting-started': typeof DashboardGettingStartedIndexRoute
   '/insights': typeof DashboardInsightsIndexRoute
   '/listing': typeof DashboardListingIndexRoute
@@ -385,6 +393,7 @@ export interface FileRoutesById {
   '/_dashboard/admin-listing/': typeof DashboardAdminListingIndexRoute
   '/_dashboard/blogs/': typeof DashboardBlogsIndexRoute
   '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
+  '/_dashboard/favorites/': typeof DashboardFavoritesIndexRoute
   '/_dashboard/getting-started/': typeof DashboardGettingStartedIndexRoute
   '/_dashboard/insights/': typeof DashboardInsightsIndexRoute
   '/_dashboard/listing/': typeof DashboardListingIndexRoute
@@ -429,6 +438,7 @@ export interface FileRouteTypes {
     | '/admin-listing'
     | '/blogs'
     | '/dashboard'
+    | '/favorites'
     | '/getting-started'
     | '/insights'
     | '/listing'
@@ -471,6 +481,7 @@ export interface FileRouteTypes {
     | '/admin-listing'
     | '/blogs'
     | '/dashboard'
+    | '/favorites'
     | '/getting-started'
     | '/insights'
     | '/listing'
@@ -516,6 +527,7 @@ export interface FileRouteTypes {
     | '/_dashboard/admin-listing/'
     | '/_dashboard/blogs/'
     | '/_dashboard/dashboard/'
+    | '/_dashboard/favorites/'
     | '/_dashboard/getting-started/'
     | '/_dashboard/insights/'
     | '/_dashboard/listing/'
@@ -754,6 +766,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardGettingStartedIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/favorites/': {
+      id: '/_dashboard/favorites/'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof DashboardFavoritesIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/_dashboard/dashboard/': {
       id: '/_dashboard/dashboard/'
       path: '/dashboard'
@@ -882,6 +901,7 @@ interface DashboardRouteChildren {
   DashboardAdminListingIndexRoute: typeof DashboardAdminListingIndexRoute
   DashboardBlogsIndexRoute: typeof DashboardBlogsIndexRoute
   DashboardDashboardIndexRoute: typeof DashboardDashboardIndexRoute
+  DashboardFavoritesIndexRoute: typeof DashboardFavoritesIndexRoute
   DashboardGettingStartedIndexRoute: typeof DashboardGettingStartedIndexRoute
   DashboardInsightsIndexRoute: typeof DashboardInsightsIndexRoute
   DashboardListingIndexRoute: typeof DashboardListingIndexRoute
@@ -905,6 +925,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAdminListingIndexRoute: DashboardAdminListingIndexRoute,
   DashboardBlogsIndexRoute: DashboardBlogsIndexRoute,
   DashboardDashboardIndexRoute: DashboardDashboardIndexRoute,
+  DashboardFavoritesIndexRoute: DashboardFavoritesIndexRoute,
   DashboardGettingStartedIndexRoute: DashboardGettingStartedIndexRoute,
   DashboardInsightsIndexRoute: DashboardInsightsIndexRoute,
   DashboardListingIndexRoute: DashboardListingIndexRoute,

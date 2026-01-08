@@ -38,6 +38,7 @@ import { useArchiveProperty, useDeleteProperty, useGetProperties } from '@/lib/s
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import FilterPopover, { FilterValues } from './filter-popover';
+import Map from '@/components/google-map';
 
 // TypeScript interfaces
 interface PropertyImage {
@@ -96,6 +97,23 @@ const PropertiesPage: React.FC = () => {
   const { data: propertiesData, isLoading, isError } = useGetProperties({ status: statusFilter, ...filters }, true);
   const { mutate: archiveProperty, isPending: isArchiving } = useArchiveProperty();
   const { mutate: deleteProperty, isPending: isDeleting } = useDeleteProperty();
+
+  const handleShare = () => {
+    if (!selectedProperty) return;
+    const shareUrl = `${window.location.origin}/listing/${selectedProperty.slug}`;
+    if (navigator.share) {
+      navigator
+        .share({
+          title: selectedProperty.title,
+          url: shareUrl,
+        })
+        .catch((error) => console.error('Error sharing:', error));
+    } else {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        toast.success('Link copied to clipboard!');
+      });
+    }
+  };
 
   const properties = useMemo(() => propertiesData?.data?.data?.data || [], [propertiesData]);
 
@@ -429,11 +447,11 @@ const PropertiesPage: React.FC = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem className="flex items-center space-x-3">
+                        <DropdownMenuItem onClick={handleShare} className="flex items-center space-x-3">
                           <Crown className="h-4 w-4 text-gray-600" />
                           <span>Promote </span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center space-x-3">
+                        <DropdownMenuItem onClick={handleShare} className="flex items-center space-x-3">
                           <Share2 className="h-4 w-4" />
                           <span>Share</span>
                         </DropdownMenuItem>
@@ -581,7 +599,14 @@ const PropertiesPage: React.FC = () => {
           </div>
         </div>
 
-        <img src={assets.citymap} alt="" width={224} height={358} />
+        <div className="h-[358px] w-full">
+            <Map
+              address={selectedProperty.address}
+              city={selectedProperty.city}
+              state={selectedProperty.state}
+              country={selectedProperty.country}
+            />
+        </div>
       </div>
     );
   };

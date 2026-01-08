@@ -10,6 +10,7 @@ import {
   Users,
   Users2,
   ChartCandlestick,
+  Star,
 } from 'lucide-react';
 
 import { LucideIcon } from 'lucide-react';
@@ -30,22 +31,26 @@ export const adminNavigation: NavigationItem[] = [
 ];
 export const contentManagerNavigation: NavigationItem[] = [
   { name: 'Blogs', href: '/blogs', icon: Newspaper },
+  { name: 'Favorites', href: '/favorites', icon: Star },
   { name: 'Insights', href: '/insights', icon: CandlestickChart },
 ];
 export const accountOfficerNavigation: NavigationItem[] = [
   { name: 'Listing', href: '/listing', icon: Home },
+  { name: 'Favorites', href: '/favorites', icon: Star },
   { name: 'Pending Approvals', href: '/pending-approvals', icon: CircleCheck },
   { name: 'Messages', href: '/messages', icon: MessageSquare },
   { name: 'Users', href: '/users', icon: Users },
 ];
 export const agentClientNavigation: NavigationItem[] = [
   { name: 'Listing', href: '/listing', icon: Home },
+  { name: 'Favorites', href: '/favorites', icon: Star },
   { name: 'Messages', href: '/messages', icon: MessageSquare },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 export const propertyOwnerNavigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Properties', href: '/properties', icon: Home },
+  { name: 'Favorites', href: '/favorites', icon: Star },
   { name: 'Performance', href: '/performance', icon: BarChart3 },
   { name: 'Messages', href: '/messages', icon: MessageSquare },
   { name: 'Settings', href: '/settings', icon: Settings },

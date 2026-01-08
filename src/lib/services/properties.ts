@@ -166,3 +166,29 @@ export const useDeleteProperty = () => {
     },
   });
 };
+
+export const useAddToFavorites = () => {
+  return useMutation({
+    mutationFn: (propertyId: string) => api.post(`/dashboard/favorite/property/${propertyId}`),
+    onSuccess: (data) => {
+      toast.success(data.data.message || 'Property added to favorites!');
+      queryClient.invalidateQueries({ queryKey: ['property'] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to add to favorites.');
+    },
+  });
+};
+
+export const useRemoveFromFavorites = (queryKeyToInvalidate: string[] = ['property']) => {
+  return useMutation({
+    mutationFn: (propertyId: string) => api.post(`/dashboard/favorite/property-removal/${propertyId}`),
+    onSuccess: (data) => {
+      toast.success(data.data.message || 'Property removed from favorites!');
+      queryClient.invalidateQueries({ queryKey: queryKeyToInvalidate });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to remove from favorites.');
+    },
+  });
+};

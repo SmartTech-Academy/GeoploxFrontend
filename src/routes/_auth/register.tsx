@@ -4,7 +4,7 @@ import * as z from 'zod/v4';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
+// import { toast } from 'sonner';
 
 import assets from '@/assets';
 import { NIGERIAN_PHONE_REGEX } from '@/lib/utils';
@@ -56,13 +56,13 @@ function RouteComponent() {
     });
   };
 
-  const handleGoogleSignIn = () => {
-    toast('Coming soon');
-  };
+  //   const handleGoogleSignIn = () => {
+  //     toast('Coming soon');
+  //   };
 
-  const handleFacebookSignIn = () => {
-    toast('Coming soon');
-  };
+  //   const handleFacebookSignIn = () => {
+  //     toast('Coming soon');
+  //   };
 
   return (
     <div className="flex h-full w-full bg-white">
@@ -219,8 +219,8 @@ function RouteComponent() {
                     {form.formState.isSubmitting ? 'Loading...' : 'Get Started'}
                   </Button>
 
-                  <div className="flex w-full flex-col items-start gap-7">
-                    {/* Divider */}
+                  {/* <div className="flex w-full flex-col items-start gap-7">
+
                     <div className="relative w-full">
                       <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t border-gray-200" />
@@ -230,7 +230,7 @@ function RouteComponent() {
                       </div>
                     </div>
 
-                    {/* Social Login Buttons */}
+
                     <div className="flex w-full items-center justify-center gap-3 self-stretch lg:px-6">
                       <Button
                         type="button"
@@ -252,7 +252,7 @@ function RouteComponent() {
                         Continue with Facebook
                       </Button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </form>
             </Form>

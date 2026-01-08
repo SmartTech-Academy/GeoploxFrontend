@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "020fb0a3-193c-424a-8830-d174d2715e21",
+		"_postman_id": "b7ab2ceb-30fa-41e4-84ea-71af6b1b91c1",
 		"name": "GEOPLOX",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24637606"
+		"_exporter_id": "50596300",
+		"_collection_link": "https://bold-meadow-509712.postman.co/workspace/75e84125-cc05-4953-8dda-b70870417188/collection/50596300-b7ab2ceb-30fa-41e4-84ea-71af6b1b91c1?action=share&source=collection_link&creator=50596300"
 	},
 	"item": [
 		{
@@ -340,7 +341,7 @@
 									"formdata": [
 										{
 											"key": "email_or_username",
-											"value": "chimix@gmail.com",
+											"value": "ifycool.io.io@gmail.com",
 											"description": "ifycool.io.io@gmail.com    chimix@gmail.com",
 											"type": "text"
 										},
@@ -353,9 +354,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{geoplox-auth-baseurl2}}/login",
+									"raw": "{{geoplox-auth-baseurl}}/login",
 									"host": [
-										"{{geoplox-auth-baseurl2}}"
+										"{{geoplox-auth-baseurl}}"
 									],
 									"path": [
 										"login"
@@ -7578,9 +7579,9 @@
 									}
 								],
 								"url": {
-									"raw": "{{geoplox-dashboard-baseurl2}}/performance?period=last_6_months&filter=all",
+									"raw": "{{geoplox-dashboard-baseurl}}/performance?period=last_6_months&filter=all",
 									"host": [
-										"{{geoplox-dashboard-baseurl2}}"
+										"{{geoplox-dashboard-baseurl}}"
 									],
 									"path": [
 										"performance"
@@ -14544,6 +14545,462 @@
 			]
 		},
 		{
+			"name": "FAVOURITES",
+			"item": [
+				{
+					"name": "FAVOURITE PROPERTIES",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{geoplox-access-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/4.0 (compatible; MSIE 9.11; Windows NT 10.0; Open Live Writer 1.0)",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{geoplox-dashboard-baseurl2}}/user/favourites?page=1&per_page=15",
+							"host": [
+								"{{geoplox-dashboard-baseurl2}}"
+							],
+							"path": [
+								"user",
+								"favourites"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "number: enter the id of property main category  to filter properties by categorie IDs. You can only use one category id at once, no commas. Below are all category names and there respective IDs:\n\n1, 'For Rent' \n2, 'For Sale' \n3, 'Short Let'"
+								},
+								{
+									"key": "per_page",
+									"value": "15",
+									"description": "String: the LGA of where the property is located. enter multiple city within a state and separate with comma i.e epe, gbagada, oshodi"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "FAVOURITE PROPERTIES",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "User-Agent",
+										"value": "Mozilla/4.0 (compatible; MSIE 9.11; Windows NT 10.0; Open Live Writer 1.0)",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{geoplox-dashboard-baseurl}}/user/favourites?page=1&per_page=15",
+									"host": [
+										"{{geoplox-dashboard-baseurl}}"
+									],
+									"path": [
+										"user",
+										"favourites"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "number: enter the id of property main category  to filter properties by categorie IDs. You can only use one category id at once, no commas. Below are all category names and there respective IDs:\n\n1, 'For Rent' \n2, 'For Sale' \n3, 'Short Let'"
+										},
+										{
+											"key": "per_page",
+											"value": "15",
+											"description": "String: the LGA of where the property is located. enter multiple city within a state and separate with comma i.e epe, gbagada, oshodi"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 06 Jan 2026 13:39:47 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Favourite properties loaded successfully\",\n    \"data\": {\n        \"meta\": {\n            \"total\": 2,\n            \"per_page\": 15,\n            \"current_page\": 1,\n            \"last_page\": 1\n        },\n        \"data\": [\n            {\n                \"id\": \"5\",\n                \"slug\": \"lekki-duplex-vi\",\n                \"title\": \"Lekki Conservation - Victoria Island\",\n                \"desc\": \"2-bedroom duplex perfect for professionals.\",\n                \"price\": 180000000,\n                \"currency\": \"NGN\",\n                \"property_type\": \"duplex\",\n                \"status\": \"published\",\n                \"is_verified\": false,\n                \"address\": \"12 Victoria Road\",\n                \"city\": \"Lagos\",\n                \"state\": \"Lagos\",\n                \"country\": \"Nigeria\",\n                \"bedrooms\": 2,\n                \"bathrooms\": 2,\n                \"area_sqft\": 1200,\n                \"features\": [\n                    \"parking\"\n                ],\n                \"property_document\": \"http://localhost:8000/public/uploads/FILES/cac.webp\",\n                \"proof_of_address\": \"http://localhost:8000/public/uploads/FILES/id_card.jpg\",\n                \"images\": [\n                    {\n                        \"url\": \"http://localhost:8000/public/uploads/PROPERTIES/property_img_5.png\",\n                        \"is_cover\": true,\n                        \"position\": 1\n                    },\n                    {\n                        \"url\": \"http://localhost:8000/public/uploads/PROPERTIES/sub_property_img_3.png\",\n                        \"is_cover\": false,\n                        \"position\": 2\n                    },\n                    {\n                        \"url\": \"http://localhost:8000/public/uploads/PROPERTIES/sub_property_img_2.png\",\n                        \"is_cover\": false,\n                        \"position\": 3\n                    },\n                    {\n                        \"url\": \"http://localhost:8000/public/uploads/PROPERTIES/sub_property_img_1.png\",\n                        \"is_cover\": false,\n                        \"position\": 4\n                    }\n                ],\n                \"owner\": {\n                    \"id\": \"eyJpdiI6IjZqUi9BUGI0ajNFNkhvTjBWVjY5cFE9PSIsInZhbHVlIjoicldnWW82QWZ0ZkRqUHErdVZyZy9ZUT09IiwibWFjIjoiZTIwZjE5ZGRiZmExYWU4ZWVlNzE4YTExODlmMjJjYjU0ZjJiMDIyMTMzNzVhY2M4NTgyOGE0ZTBmNjEzYjZiNSIsInRhZyI6IiJ9\",\n                    \"name\": \"Olivia Owner\",\n                    \"phone_number\": \"08098765432\",\n                    \"email_address\": \"owner@example.com\",\n                    \"image_url\": \"http://localhost:8000/public/uploads/DP/avatar.webp\",\n                    \"role\": \"developer\"\n                },\n                \"tags\": [\n                    \"newly-built\",\n                    \"gym\"\n                ],\n                \"category\": \"For Sale\",\n                \"views\": 45,\n                \"power_ratio\": 45000000,\n                \"approval_type\": \"Function available only to admin users\",\n                \"approval_request_date\": \"Function available only to admin users\",\n                \"created_at\": \"2025-09-09T20:41:24+00:00\",\n                \"updated_at\": \"2025-09-09T20:41:24+00:00\"\n            },\n            {\n                \"id\": \"3\",\n                \"slug\": \"luxury-villa-sea-view\",\n                \"title\": \"Luxury Villa with Sea View\",\n                \"desc\": \"6-bedroom villa with private pool and sea view.\",\n                \"price\": 2500000000,\n                \"currency\": \"NGN\",\n                \"property_type\": \"house\",\n                \"status\": \"published\",\n                \"is_verified\": true,\n                \"address\": \"Ocean Drive\",\n                \"city\": \"Epe\",\n                \"state\": \"Lagos\",\n                \"country\": \"Nigeria\",\n                \"bedrooms\": 6,\n                \"bathrooms\": 6,\n                \"area_sqft\": 9000,\n                \"features\": [\n                    \"pool\",\n                    \"garage\",\n                    \"sea_view\"\n                ],\n                \"property_document\": \"http://localhost:8000/public/uploads/FILES/cac.webp\",\n                \"proof_of_address\": \"http://localhost:8000/public/uploads/FILES/id_card.jpg\",\n                \"images\": [\n                    {\n                        \"url\": \"http://localhost:8000/public/uploads/PROPERTIES/property_img_3.png\",\n                        \"is_cover\": true,\n                        \"position\": 1\n                    },\n                    {\n                        \"url\": \"http://localhost:8000/public/uploads/PROPERTIES/sub_property_img_3.png\",\n                        \"is_cover\": false,\n                        \"position\": 2\n                    },\n                    {\n                        \"url\": \"http://localhost:8000/public/uploads/PROPERTIES/sub_property_img_1.png\",\n                        \"is_cover\": false,\n                        \"position\": 3\n                    },\n                    {\n                        \"url\": \"http://localhost:8000/public/uploads/PROPERTIES/sub_property_img_1.png\",\n                        \"is_cover\": false,\n                        \"position\": 4\n                    }\n                ],\n                \"owner\": {\n                    \"id\": \"eyJpdiI6IllyOU0xaUtHVzh6YTZaV28yL3YxWXc9PSIsInZhbHVlIjoiTktmUy9YRjgrWWYzRE8vM3dLWEc2Zz09IiwibWFjIjoiZTM3MTNhMjFlMjg3YTFhNjMwNTg1ZGRmODlmOTQxY2IwMzcxODAwNjAzNzA2MDExN2M0Y2IyMDNmM2Y5ZDgxMyIsInRhZyI6IiJ9\",\n                    \"name\": \"Ifeanyi Okeakwalam\",\n                    \"phone_number\": \"08034436977\",\n                    \"email_address\": \"ifycool.io.io@gmail.com\",\n                    \"image_url\": \"http://localhost:8000/public/uploads/DP/DP_1_1760995394_68f6a8429e719.jpg\",\n                    \"role\": \"developer\"\n                },\n                \"tags\": [\n                    \"distress sale\",\n                    \"gated estate\"\n                ],\n                \"category\": \"For Sale\",\n                \"views\": 90,\n                \"power_ratio\": 90000000,\n                \"approval_type\": \"Function available only to admin users\",\n                \"approval_request_date\": \"Function available only to admin users\",\n                \"created_at\": \"2025-09-09T21:41:24+00:00\",\n                \"updated_at\": \"2025-10-27T15:07:19+00:00\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "ADD TO FAVOURITE",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{geoplox-access-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/4.0 (compatible; MSIE 9.11; Windows NT 10.0; Open Live Writer 1.0)",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "property_document",
+									"type": "file",
+									"src": "/Users/mac/Downloads/MARKING SCHEME.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{geoplox-dashboard-baseurl}}/favorite/property/eyJpdiI6ImNpSm5OQ0xiN2srZERNbFIyOUJrVFE9PSIsInZhbHVlIjoiS0xnVjFLME01c2QwSGtWV0RHNUJXdz09IiwibWFjIjoiOTFmZmM4YmJmZDU2NTliYWY2NGU5M2M3Nzc0ZjU4MTU0ODA2OTQ1Y2MzYjA0ZjIxNjRmMDgwOWNiYjQ4Yzc2NCIsInRhZyI6IiJ9",
+							"host": [
+								"{{geoplox-dashboard-baseurl}}"
+							],
+							"path": [
+								"favorite",
+								"property",
+								"eyJpdiI6ImNpSm5OQ0xiN2srZERNbFIyOUJrVFE9PSIsInZhbHVlIjoiS0xnVjFLME01c2QwSGtWV0RHNUJXdz09IiwibWFjIjoiOTFmZmM4YmJmZDU2NTliYWY2NGU5M2M3Nzc0ZjU4MTU0ODA2OTQ1Y2MzYjA0ZjIxNjRmMDgwOWNiYjQ4Yzc2NCIsInRhZyI6IiJ9"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "ADD TO FAVOURITE 1",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "User-Agent",
+										"value": "Mozilla/4.0 (compatible; MSIE 9.11; Windows NT 10.0; Open Live Writer 1.0)",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "property_document",
+											"type": "file",
+											"src": "/Users/mac/Downloads/MARKING SCHEME.pdf"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{geoplox-dashboard-baseurl}}/favorite/property/eyJpdiI6ImNpSm5OQ0xiN2srZERNbFIyOUJrVFE9PSIsInZhbHVlIjoiS0xnVjFLME01c2QwSGtWV0RHNUJXdz09IiwibWFjIjoiOTFmZmM4YmJmZDU2NTliYWY2NGU5M2M3Nzc0ZjU4MTU0ODA2OTQ1Y2MzYjA0ZjIxNjRmMDgwOWNiYjQ4Yzc2NCIsInRhZyI6IiJ9",
+									"host": [
+										"{{geoplox-dashboard-baseurl}}"
+									],
+									"path": [
+										"favorite",
+										"property",
+										"eyJpdiI6ImNpSm5OQ0xiN2srZERNbFIyOUJrVFE9PSIsInZhbHVlIjoiS0xnVjFLME01c2QwSGtWV0RHNUJXdz09IiwibWFjIjoiOTFmZmM4YmJmZDU2NTliYWY2NGU5M2M3Nzc0ZjU4MTU0ODA2OTQ1Y2MzYjA0ZjIxNjRmMDgwOWNiYjQ4Yzc2NCIsInRhZyI6IiJ9"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 06 Jan 2026 13:06:27 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Property added to favourites\",\n    \"data\": {\n        \"save_codec\": \"eyJpdiI6Im5YcjF6RUt2ay9wbmtaeUlQdmE3VXc9PSIsInZhbHVlIjoiTzh5RmxLNlB3UnFoelFuTzZFZW5YUT09IiwibWFjIjoiMzE2MTBhODMyOGZlMWM4MzZmNzE3ODdjY2ExMDAyZDc1NDU1N2NlMGNlYmZiNGRjNDE2ZmVjNmRhNTUzNWEwNCIsInRhZyI6IiJ9\",\n        \"property_codec\": \"eyJpdiI6IlJYaGJneTU5RE1FKzRjMTZVNDRFVlE9PSIsInZhbHVlIjoiKzl5blJLRmRaMmJmUWh5NkZENllQdz09IiwibWFjIjoiNTc4MWZjYmNhYzgwYWQzMDNjNGMyNDRkNjM3OTRlZjc5OWUzMGM3ZDZjNGVkMmJmNjBjZjgwNjM0NjEyYzkwMyIsInRhZyI6IiJ9\",\n        \"created_at\": \"2026-01-06T13:06:27.000000Z\"\n    }\n}"
+						},
+						{
+							"name": "ADD TO FAVOURITE 2",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "User-Agent",
+										"value": "Mozilla/4.0 (compatible; MSIE 9.11; Windows NT 10.0; Open Live Writer 1.0)",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "property_document",
+											"type": "file",
+											"src": "/Users/mac/Downloads/MARKING SCHEME.pdf"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{geoplox-dashboard-baseurl}}/favorite/property/eyJpdiI6ImNpSm5OQ0xiN2srZERNbFIyOUJrVFE9PSIsInZhbHVlIjoiS0xnVjFLME01c2QwSGtWV0RHNUJXdz09IiwibWFjIjoiOTFmZmM4YmJmZDU2NTliYWY2NGU5M2M3Nzc0ZjU4MTU0ODA2OTQ1Y2MzYjA0ZjIxNjRmMDgwOWNiYjQ4Yzc2NCIsInRhZyI6IiJ9",
+									"host": [
+										"{{geoplox-dashboard-baseurl}}"
+									],
+									"path": [
+										"favorite",
+										"property",
+										"eyJpdiI6ImNpSm5OQ0xiN2srZERNbFIyOUJrVFE9PSIsInZhbHVlIjoiS0xnVjFLME01c2QwSGtWV0RHNUJXdz09IiwibWFjIjoiOTFmZmM4YmJmZDU2NTliYWY2NGU5M2M3Nzc0ZjU4MTU0ODA2OTQ1Y2MzYjA0ZjIxNjRmMDgwOWNiYjQ4Yzc2NCIsInRhZyI6IiJ9"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 06 Jan 2026 13:06:49 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Property already in favourites.\",\n    \"data\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "REMOVE FROM FAVOURITE",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{geoplox-access-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/4.0 (compatible; MSIE 9.11; Windows NT 10.0; Open Live Writer 1.0)",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "property_document",
+									"type": "file",
+									"src": "/Users/mac/Downloads/MARKING SCHEME.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{geoplox-dashboard-baseurl}}/favorite/property-removal/eyJpdiI6ImNpSm5OQ0xiN2srZERNbFIyOUJrVFE9PSIsInZhbHVlIjoiS0xnVjFLME01c2QwSGtWV0RHNUJXdz09IiwibWFjIjoiOTFmZmM4YmJmZDU2NTliYWY2NGU5M2M3Nzc0ZjU4MTU0ODA2OTQ1Y2MzYjA0ZjIxNjRmMDgwOWNiYjQ4Yzc2NCIsInRhZyI6IiJ9",
+							"host": [
+								"{{geoplox-dashboard-baseurl}}"
+							],
+							"path": [
+								"favorite",
+								"property-removal",
+								"eyJpdiI6ImNpSm5OQ0xiN2srZERNbFIyOUJrVFE9PSIsInZhbHVlIjoiS0xnVjFLME01c2QwSGtWV0RHNUJXdz09IiwibWFjIjoiOTFmZmM4YmJmZDU2NTliYWY2NGU5M2M3Nzc0ZjU4MTU0ODA2OTQ1Y2MzYjA0ZjIxNjRmMDgwOWNiYjQ4Yzc2NCIsInRhZyI6IiJ9"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "REMOVE FROM FAVOURITE",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "User-Agent",
+										"value": "Mozilla/4.0 (compatible; MSIE 9.11; Windows NT 10.0; Open Live Writer 1.0)",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "property_document",
+											"type": "file",
+											"src": "/Users/mac/Downloads/MARKING SCHEME.pdf"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{geoplox-dashboard-baseurl}}/favorite/property-removal/eyJpdiI6ImNpSm5OQ0xiN2srZERNbFIyOUJrVFE9PSIsInZhbHVlIjoiS0xnVjFLME01c2QwSGtWV0RHNUJXdz09IiwibWFjIjoiOTFmZmM4YmJmZDU2NTliYWY2NGU5M2M3Nzc0ZjU4MTU0ODA2OTQ1Y2MzYjA0ZjIxNjRmMDgwOWNiYjQ4Yzc2NCIsInRhZyI6IiJ9",
+									"host": [
+										"{{geoplox-dashboard-baseurl}}"
+									],
+									"path": [
+										"favorite",
+										"property-removal",
+										"eyJpdiI6ImNpSm5OQ0xiN2srZERNbFIyOUJrVFE9PSIsInZhbHVlIjoiS0xnVjFLME01c2QwSGtWV0RHNUJXdz09IiwibWFjIjoiOTFmZmM4YmJmZDU2NTliYWY2NGU5M2M3Nzc0ZjU4MTU0ODA2OTQ1Y2MzYjA0ZjIxNjRmMDgwOWNiYjQ4Yzc2NCIsInRhZyI6IiJ9"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 06 Jan 2026 13:16:30 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Property removed from favourites successfully\",\n    \"data\": []\n}"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "HOMEPAGE PROPERTIES SECTION",
 			"request": {
 				"method": "GET",
@@ -14560,9 +15017,9 @@
 					}
 				],
 				"url": {
-					"raw": "{{geoplox-baseurl2}}/homepage/properties",
+					"raw": "{{geoplox-baseurl}}/homepage/properties",
 					"host": [
-						"{{geoplox-baseurl2}}"
+						"{{geoplox-baseurl}}"
 					],
 					"path": [
 						"homepage",

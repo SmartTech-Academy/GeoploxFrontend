@@ -58,13 +58,13 @@ function RouteComponent() {
     });
   };
 
-  const handleGoogleSignIn = () => {
-    toast('Coming soon');
-  };
+  //   const handleGoogleSignIn = () => {
+  //     toast('Coming soon');
+  //   };
 
-  const handleFacebookSignIn = () => {
-    toast('Coming soon');
-  };
+  //   const handleFacebookSignIn = () => {
+  //     toast('Coming soon');
+  //   };
 
   return (
     <div className="flex h-full w-full bg-white">
@@ -174,8 +174,8 @@ function RouteComponent() {
                     {isPending ? 'Signing In...' : 'Login'}
                   </Button>
 
-                  <div className="flex w-full flex-col items-start gap-7">
-                    {/* Divider */}
+                  {/* <div className="flex w-full flex-col items-start gap-7">
+
                     <div className="relative w-full">
                       <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t border-gray-200" />
@@ -185,7 +185,7 @@ function RouteComponent() {
                       </div>
                     </div>
 
-                    {/* Social Login Buttons */}
+
                     <div className="flex w-full items-center justify-center gap-3 self-stretch lg:px-6">
                       <Button
                         type="button"
@@ -207,7 +207,7 @@ function RouteComponent() {
                         Login with Facebook
                       </Button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </form>
             </Form>

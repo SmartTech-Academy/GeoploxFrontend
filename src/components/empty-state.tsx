@@ -1,7 +1,7 @@
 import assets from '@/assets';
 
 interface EmptyStateProps {
-  type: 'user' | 'list' | 'chart';
+  type: 'user' | 'list' | 'chart' | 'favorite';
   message?: string;
 }
 
@@ -32,6 +32,25 @@ export const EmptyState = ({ type, message }: EmptyStateProps) => {
   if (type === 'chart') {
     return (
       <div className="flex h-full w-full items-center justify-center text-center text-sm text-gray-500">{message}</div>
+    );
+  }
+
+  if (type === 'favorite') {
+    return (
+      <div className="flex w-full flex-col items-center justify-center gap-8 self-stretch py-14">
+        <img
+          src={assets.chatloading || '/placeholder.svg'}
+          className="h-28 w-[211px] animate-pulse"
+          width={211}
+          height={112}
+        />
+        <div className="flex flex-col items-center justify-center gap-3">
+          <h5 className="text-[20px] leading-7 font-semibold text-[#1F2130]">No Favorites Yet</h5>
+          <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
+            You haven&apos;t added any properties to your favorites.
+          </p>
+        </div>
+      </div>
     );
   }
 

@@ -1,9 +1,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BedDouble, ShowerHead, Square } from 'lucide-react';
+import { BedDouble, ShowerHead, Square, Trash2 } from 'lucide-react';
 import { Link, useLocation } from '@tanstack/react-router';
 import { formatPrice } from '@/lib/utils';
+import { useRemoveFromFavorites } from '@/lib/services';
 
 export interface Property {
   id: string;
@@ -34,6 +35,9 @@ interface PropertyListingCardProps {
 export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ property, isDashboard, identifier }) => {
   const location = useLocation();
   const isAdminListing = location.pathname.includes('/admin-listing');
+  const isFavoritesPage = location.pathname.includes('/favorites');
+  const { mutate: removeFromFavorites, isPending } = useRemoveFromFavorites(['favorites']);
+
   const detailPath = isDashboard
     ? isAdminListing
       ? `/admin-listing/${identifier}`
@@ -121,18 +125,30 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
           >
             <Link to={detailPath}>View Details</Link>
           </Button>
-
-          <Button
-            style={{
-              background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-              boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
-            }}
-            className="h-8 w-1/2 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
-          >
-            Contact
-          </Button>
+          {isFavoritesPage ? (
+            <Button
+              variant="destructive"
+              className="h-8 w-1/2 rounded-[40px] p-4 text-[14px] leading-[17px] font-semibold"
+              onClick={() => removeFromFavorites(property.id)}
+              disabled={isPending}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Remove
+            </Button>
+          ) : (
+            <Button
+              style={{
+                background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
+                boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+              }}
+              className="h-8 w-1/2 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+            >
+              Contact
+            </Button>
+          )}
         </div>
       </div>
     </div>
   );
 };
+
