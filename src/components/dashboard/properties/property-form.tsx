@@ -401,7 +401,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       Listing Title
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="456 Market Avenue" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="Luxury Beachfront Apartment"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -506,11 +510,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Address</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="e.g. No 14, Liverpool Street"
-                        className="h-10 rounded-lg border-[#D5D5DD]"
-                        {...field}
-                      />
+                      <Input placeholder="45, Market Avenue" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
