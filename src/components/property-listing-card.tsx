@@ -44,17 +44,17 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
       : `/listing/${identifier}`
     : location.pathname.includes('/buy')
       ? `/buy/${identifier}`
-      : location.pathname.includes('/rent')
-        ? `/rent/${identifier}`
-        : `/sell/${identifier}`;
+      : location.pathname.includes('/for-rent')
+        ? `/for-rent/${identifier}`
+        : `/for-sale/${identifier}`;
 
   const displayTitle = `${property.bedrooms ? `${property.bedrooms} Bedroom ` : ''}${property.property_type} ${
     property.category.toLowerCase().startsWith('for') ? property.category : `for ${property.category}`
   } in ${property.location.city} ${property.location.state} | Nigeria Property Centre`;
 
   return (
-    <div className="flex w-full items-center justify-between gap-[89px] self-stretch border-b border-[#F1F1F4] pb-10">
-      <div className="grid h-[266px] w-[463px] grid-cols-2 gap-2">
+    <div className="flex w-full flex-col items-center justify-between gap-4 self-stretch border-b border-[#F1F1F4] pb-10 lg:flex-row lg:gap-[89px]">
+      <div className="grid h-[266px] shrink-0 grid-cols-2 gap-2 lg:w-[463px]">
         {/* Large Image - spans 2 rows */}
         <div className="row-span-2">
           <img src={property.cover_image} alt={property.title} className="h-full w-full object-cover" />
@@ -151,4 +151,3 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
     </div>
   );
 };
-

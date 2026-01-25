@@ -3,18 +3,48 @@ import api from '../api';
 import { queryClient } from '../queryClient';
 import { toast } from 'sonner';
 
+const categoryMap: Record<string, number> = {
+  'for-rent': 1,
+  'for-sale': 2,
+  'buy': 3,        // buy = for sale
+  'short-let': 3,
+  'joint-venture': 4,
+};
+
+
 export const useGetProperties = (params?: any, isDashboard?: boolean, isAdminListing?: boolean) => {
   const endpoint = isAdminListing
     ? '/dashboard/admin/properties'
     : isDashboard
       ? '/dashboard/properties'
       : '/user/properties';
+
+  // Determine category_id: use params.category_id if it exists, otherwise use pageType from URL
+  const processedParams = { ...params };
+
+  // Only apply category mapping logic for non-dashboard calls
+  if (!isDashboard && !isAdminListing) {
+    // Extract pageType from params or determine from URL path
+    const pageType = params?.pageType ||
+      (typeof window !== 'undefined' && window.location.pathname.includes('/buy')
+        ? 'buy'
+        : window.location.pathname.includes('/for-rent')
+          ? 'for-rent'
+          : window.location.pathname.includes('/for-sale')
+            ? 'for-sale'
+            : 'all');
+
+    // If category_id is not provided in params, but we have a valid pageType, set it
+    if (!params?.category_id && pageType !== 'all' && categoryMap[pageType]) {
+      processedParams.category_id = categoryMap[pageType];
+    }
+  }
+
   return useQuery({
-    queryKey: ['properties', params, isDashboard, isAdminListing, endpoint],
-    queryFn: () => api.get(endpoint, { params }),
+    queryKey: ['properties', processedParams, isDashboard, isAdminListing, endpoint],
+    queryFn: () => api.get(endpoint, { params: processedParams }),
   });
 };
-
 
 export const useGetPropertyDetails = (identifier: string, isDashboard?: boolean) => {
   const endpoint = isDashboard
@@ -25,6 +55,13 @@ export const useGetPropertyDetails = (identifier: string, isDashboard?: boolean)
   return useQuery({
     queryKey: ['property', identifier, isDashboard, endpoint],
     queryFn: () => api.get(endpoint), // Pass identifier to queryFn
+  });
+};
+
+export const useContactPropertyOwner = () => {
+  return useMutation({
+    mutationFn: ({ propertyId, data }: { propertyId: string; data: any }) =>
+      api.post(`/dashboard/contact/property-owner/${propertyId}`, data),
   });
 };
 
@@ -57,12 +94,6 @@ export const useGetPropertyTags = () => {
   });
 };
 
-export const useContactPropertyOwner = () => {
-  return useMutation({
-    mutationFn: ({ propertyId, data }: { propertyId: string; data: any }) =>
-      api.post(`/dashboard/contact/property-owner/${propertyId}`, data),
-  });
-};
 
 export const useUploadPropertyImage = () => {
   return useMutation({

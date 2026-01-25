@@ -3,8 +3,8 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 const BASE_URL = 'https://geoplox.ribiax.com/api/v1';
 const publicPages = [
   '/buy',
-  '/rent',
-  '/sell',
+  '/for-rent',
+  '/for-sale',
   '/blog',
   '/pricing',
   '/login',

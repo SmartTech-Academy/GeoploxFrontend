@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -9,6 +9,9 @@ import { cn } from '@/lib/utils';
 import { useGetPropertyCategories, useGetPropertyTags } from '@/lib/services';
 import statesAndLocalGov from '@/data/statesAndLocalGov.json';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { propertyFeatures, propertyStatus, propertyTypes, sortOptions } from '@/data/reuseable';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 type CollapsibleSectionProps = {
   title: React.ReactNode;
@@ -46,56 +49,36 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, isOpen, 
 };
 
 interface PropertyFilterSidebarProps {
+  filters: Record<string, any>;
   onFiltersChange: (newFilters: Record<string, any>) => void;
   onClear: () => void;
 }
 
-export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ onFiltersChange, onClear }) => {
-  const [priceRange, setPriceRange] = useState([10000000, 99000000]);
-  const [landAreaMin, setLandAreaMin] = useState(3000);
-  const [landAreaMax, setLandAreaMax] = useState(5000);
+export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ filters, onFiltersChange, onClear }) => {
+  const [draftFilters, setDraftFilters] = useState(filters);
 
-  // Collapsible states
-  const [isLocationOpen, setIsLocationOpen] = useState(true);
-  const [isCategoryOpen, setIsCategoryOpen] = useState(true);
-  const [isPropertyTypeOpen, setIsPropertyTypeOpen] = useState(true);
-  const [isLandTypeOpen, setIsLandTypeOpen] = useState(true);
+  useEffect(() => {
+    setDraftFilters(filters);
+  }, [filters]);
+
+  const handleDraftChange = (key: string, value: any) => {
+    setDraftFilters((prev) => ({ ...prev, [key]: value }));
+  };
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isPropertyTypeOpen, setIsPropertyTypeOpen] = useState(false);
+  const [isPropertyStatusOpen, setIsPropertyStatusOpen] = useState(false);
+  const [isPropertyFeaturesOpen, setIsPropertyFeaturesOpen] = useState(false);
   const [isKeywordOpen, setIsKeywordOpen] = useState(false);
   const [isPriceRangeOpen, setIsPriceRangeOpen] = useState(false);
   const [isLandAreaOpen, setIsLandAreaOpen] = useState(false);
+
   const [isBedroomBathroomOpen, setIsBedroomBathroomOpen] = useState(false);
   const [isDeveloperOwnerOpen, setIsDeveloperOwnerOpen] = useState(false);
+  const [isPropertyIdOpen, setIsPropertyIdOpen] = useState(false);
   const [isTagsOpen, setIsTagsOpen] = useState(false);
-  const [isVerifiedListingOpen, setIsVerifiedListingOpen] = useState(true);
-
-  // Selection states
-  const [selectedBedrooms, setSelectedBedrooms] = useState<any>([2]);
-  const [selectedBathrooms, setSelectedBathrooms] = useState<any>([3]);
-
-  const [selectedState, setSelectedState] = useState<string>('');
-  const [selectedLga, setSelectedLga] = useState<string>('');
-  const [selectedArea, setSelectedArea] = useState<string>('');
-
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-  const [propertyType, setPropertyType] = useState({
-    flat: false,
-    apartment: true,
-    house: true,
-    land: false,
-    commercial: true,
-  });
-  const [landType, setLandType] = useState({
-    residential: false,
-    commercialLand: true,
-    industrial: true,
-    mixedUse: false,
-    others: true,
-    allLands: true,
-  });
-  const [keyword, setKeyword] = useState<string>('');
-  const [developerOwner, setDeveloperOwner] = useState<string>('');
-  const [verifiedListing, setVerifiedListing] = useState({ allListings: false, verifiedOnly: true });
-  const [selectedTags, setSelectedTags] = useState<number[]>([]);
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const [isVerifiedOpen, setIsVerifiedOpen] = useState(false);
 
   const { data: categoriesResponse } = useGetPropertyCategories();
   const { data: tagsResponse } = useGetPropertyTags();
@@ -103,94 +86,69 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
   const categories = categoriesResponse?.data.data ?? [];
   const tags = tagsResponse?.data.data ?? [];
 
-  const lgas = selectedState ? statesAndLocalGov.find((s) => s.state === selectedState)?.lgas || [] : [];
+  const lgas = draftFilters.state ? statesAndLocalGov.find((s) => s.state === draftFilters.state)?.lgas || [] : [];
   const areas =
-    selectedState && selectedLga
-      ? (statesAndLocalGov.find((s) => s.state === selectedState) as any)?.[selectedLga] || []
+    draftFilters.state && draftFilters.city
+      ? (statesAndLocalGov.find((s) => s.state === draftFilters.state) as any)?.[draftFilters.city] || []
       : [];
 
-  const handleApplyFilters = useCallback(() => {
-    const property_type = Object.entries(propertyType)
-      .filter(([, value]) => value)
-      .map(([key]) => key)
-      .join(',');
+  const handleApplyFilters = () => {
+    const newFilters = { ...draftFilters };
 
-    const bedrooms = selectedBedrooms.filter((b: any) => typeof b === 'number').join(',');
-    const bathrooms = selectedBathrooms.filter((b: any) => typeof b === 'number').join(',');
-
-    const tagsQuery = selectedTags.join(',');
-
-    const newFilters: Record<string, any> = {
-      category_id: selectedCategories.length > 0 ? selectedCategories[0] : undefined, // API expects a single integer
-      property_type: property_type || undefined,
-      state: selectedState || undefined,
-      city: selectedLga || undefined,
-      area: selectedArea || undefined,
-      q: keyword || undefined,
-      min_price: priceRange[0],
-      max_price: priceRange[1],
-      min_area: landAreaMin,
-      max_area: landAreaMax,
-      bedrooms: bedrooms || undefined,
-      bathrooms: bathrooms || undefined,
-      developer_or_owners_name: developerOwner || undefined,
-      verified: verifiedListing.verifiedOnly ? 1 : 0,
-      tags: tagsQuery || undefined,
-    };
+    // Clean up '5+' bedrooms/bathrooms
+    if (newFilters.bedrooms) {
+      newFilters.bedrooms = String(newFilters.bedrooms)
+        .split(',')
+        .map((b) => (b === '5+' ? 5 : b))
+        .join(',');
+    }
+    if (newFilters.bathrooms) {
+      newFilters.bathrooms = String(newFilters.bathrooms)
+        .split(',')
+        .map((b) => (b === '5+' ? 5 : b))
+        .join(',');
+    }
 
     Object.keys(newFilters).forEach(
       (key) =>
-        newFilters[key as keyof typeof newFilters] === undefined && delete newFilters[key as keyof typeof newFilters]
+        (newFilters[key as keyof typeof newFilters] === undefined ||
+          newFilters[key as keyof typeof newFilters] === null ||
+          newFilters[key as keyof typeof newFilters] === '') &&
+        delete newFilters[key as keyof typeof newFilters]
     );
 
     onFiltersChange(newFilters);
-  }, [
-    selectedCategories,
-    propertyType,
-    selectedState,
-    selectedLga,
-    selectedArea,
-    keyword,
-    priceRange,
-    landAreaMin,
-    landAreaMax,
-    selectedBedrooms,
-    selectedBathrooms,
-    developerOwner,
-    verifiedListing,
-    selectedTags,
-    onFiltersChange,
-  ]);
+  };
 
-  const handleClearFilters = useCallback(() => {
-    setPriceRange([10000000, 99000000]);
-    setLandAreaMin(3000);
-    setLandAreaMax(5000);
-    setSelectedBedrooms([2]);
-    setSelectedBathrooms([3]);
-    setSelectedState('');
-    setSelectedLga('');
-    setSelectedArea('');
-    setSelectedCategories([]);
-    setPropertyType({ flat: false, apartment: true, house: true, land: false, commercial: true });
-    setLandType({
-      residential: false,
-      commercialLand: true,
-      industrial: true,
-      mixedUse: false,
-      others: true,
-      allLands: true,
-    });
-    setKeyword('');
-    setDeveloperOwner('');
-    setVerifiedListing({ allListings: false, verifiedOnly: true });
-    setSelectedTags([]);
+  const handleClearFilters = () => {
     onClear();
-  }, [onClear]);
+  };
+
+  const selectedBedrooms = String(draftFilters.bedrooms || '')
+    .split(',')
+    .filter(Boolean);
+  const selectedBathrooms = String(draftFilters.bathrooms || '')
+    .split(',')
+    .filter(Boolean);
 
   return (
-    <div className="flex h-dvh w-[334px] shrink-0 flex-col items-start gap-[17px] overflow-y-auto border-r border-[#F1F1F4] pr-8">
+    <div className="flex h-[calc(100vh-100px)] w-full shrink-0 flex-col items-start gap-[17px] overflow-y-auto border-r border-[#F1F1F4] pr-8 lg:w-[334px]">
       <div className="flex w-full flex-col gap-8">
+        {/* Sort */}
+        <CollapsibleSection title="Sort By" isOpen={isSortOpen} onToggle={() => setIsSortOpen(!isSortOpen)}>
+          <Select value={draftFilters.sort || 'newest'} onValueChange={(val) => handleDraftChange('sort', val)}>
+            <SelectTrigger className="h-8 w-full text-sm">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </CollapsibleSection>
         {/* Location */}
         <CollapsibleSection
           title="Location"
@@ -199,11 +157,9 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
         >
           <div className="flex flex-col gap-3">
             <Select
-              value={selectedState}
+              value={draftFilters.state || ''}
               onValueChange={(val) => {
-                setSelectedState(val);
-                setSelectedLga('');
-                setSelectedArea('');
+                setDraftFilters((prev) => ({ ...prev, state: val, city: undefined, area: undefined }));
               }}
             >
               <SelectTrigger className="h-8 w-full text-sm">
@@ -218,12 +174,11 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
               </SelectContent>
             </Select>
 
-            {selectedState && (
+            {draftFilters.state && (
               <Select
-                value={selectedLga}
+                value={draftFilters.city || ''}
                 onValueChange={(val) => {
-                  setSelectedLga(val);
-                  setSelectedArea('');
+                  setDraftFilters((prev) => ({ ...prev, city: val, area: undefined }));
                 }}
               >
                 <SelectTrigger className="h-8 w-full text-sm">
@@ -239,8 +194,8 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
               </Select>
             )}
 
-            {selectedLga && areas.length > 0 && (
-              <Select value={selectedArea} onValueChange={setSelectedArea}>
+            {draftFilters.city && areas.length > 0 && (
+              <Select value={draftFilters.area || ''} onValueChange={(val) => handleDraftChange('area', val)}>
                 <SelectTrigger className="h-8 w-full text-sm">
                   <SelectValue placeholder="Select Area" />
                 </SelectTrigger>
@@ -262,153 +217,143 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
           isOpen={isCategoryOpen}
           onToggle={() => setIsCategoryOpen(!isCategoryOpen)}
         >
+          <Select
+            value={String(draftFilters.category_id || '')}
+            onValueChange={(val) => handleDraftChange('category_id', Number(val))}
+          >
+            <SelectTrigger className="h-8 w-full text-sm">
+              <SelectValue placeholder="Select Category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category: { id: number; title: string }) => (
+                <SelectItem key={category.id} value={String(category.id)}>
+                  {category.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </CollapsibleSection>
+
+        {/* Property Type */}
+        <CollapsibleSection
+          title="Property Type & Sub Type"
+          isOpen={isPropertyTypeOpen}
+          onToggle={() => setIsPropertyTypeOpen(!isPropertyTypeOpen)}
+        >
           <div className="flex w-full flex-col gap-4">
-            {categories.map((category: { id: number; title: string }) => (
-              <div key={category.id} className="flex items-center gap-3">
+            {propertyTypes.map((type) => {
+              const isChecked = String(draftFilters.property_type || '')
+                .split(',')
+                .includes(type.types);
+              return (
+                <div key={type.types} className="flex flex-col gap-3">
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      id={type.types}
+                      checked={isChecked}
+                      onCheckedChange={(checked) => {
+                        const currentTypes = String(draftFilters.property_type || '')
+                          .split(',')
+                          .filter(Boolean);
+                        const newTypes = checked
+                          ? [...currentTypes, type.types]
+                          : currentTypes.filter((t) => t !== type.types);
+                        handleDraftChange('property_type', newTypes.join(','));
+                      }}
+                    />
+                    <label htmlFor={type.types} className="text-[14px] leading-4 text-[#41415A]">
+                      {type.types}
+                    </label>
+                  </div>
+                  {isChecked && (
+                    <div className="ml-6 flex flex-col gap-2">
+                      {type.sub_types.map((sub) => (
+                        <div key={sub} className="flex items-center gap-3">
+                          <Checkbox
+                            id={sub}
+                            checked={String(draftFilters.filter_property_sub_type || '')
+                              .split(',')
+                              .includes(sub)}
+                            onCheckedChange={(checked) => {
+                              const currentSubs = String(draftFilters.filter_property_sub_type || '')
+                                .split(',')
+                                .filter(Boolean);
+                              const newSubs = checked ? [...currentSubs, sub] : currentSubs.filter((s) => s !== sub);
+                              handleDraftChange('filter_property_sub_type', newSubs.join(','));
+                            }}
+                          />
+                          <label htmlFor={sub} className="text-[13px] leading-4 text-[#6B7280]">
+                            {sub}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </CollapsibleSection>
+
+        {/* Property Status */}
+        <CollapsibleSection
+          title="Property Status"
+          isOpen={isPropertyStatusOpen}
+          onToggle={() => setIsPropertyStatusOpen(!isPropertyStatusOpen)}
+        >
+          <div className="flex w-full flex-col gap-4">
+            {propertyStatus.map((status) => (
+              <div key={status} className="flex items-center gap-3">
                 <Checkbox
-                  id={`cat-${category.id}`}
-                  checked={selectedCategories.includes(category.id)}
+                  id={status}
+                  checked={String(draftFilters.property_status || '')
+                    .split(',')
+                    .includes(status)}
                   onCheckedChange={(checked) => {
-                    setSelectedCategories((prev) =>
-                      checked ? [...prev, category.id] : prev.filter((id) => id !== category.id)
-                    );
+                    const currentStatus = String(draftFilters.property_status || '')
+                      .split(',')
+                      .filter(Boolean);
+                    const newStatus = checked ? [...currentStatus, status] : currentStatus.filter((s) => s !== status);
+                    handleDraftChange('property_status', newStatus.join(','));
                   }}
                 />
-                <label htmlFor={`cat-${category.id}`} className="text-[14px] leading-4 text-[#41415A]">
-                  {category.title}
+                <label htmlFor={status} className="text-[14px] leading-4 text-[#41415A]">
+                  {status}
                 </label>
               </div>
             ))}
           </div>
         </CollapsibleSection>
 
-        {/* Property Type */}
+        {/* Property Features */}
         <CollapsibleSection
-          title="Property Type"
-          isOpen={isPropertyTypeOpen}
-          onToggle={() => setIsPropertyTypeOpen(!isPropertyTypeOpen)}
+          title="Property Features"
+          isOpen={isPropertyFeaturesOpen}
+          onToggle={() => setIsPropertyFeaturesOpen(!isPropertyFeaturesOpen)}
         >
-          <div className="flex w-full flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="flat"
-                checked={propertyType.flat}
-                onCheckedChange={(checked) => setPropertyType((prev) => ({ ...prev, flat: !!checked }))}
-              />
-              <label htmlFor="flat" className="text-[14px] leading-4 text-[#41415A]">
-                Flat
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="apartment"
-                checked={propertyType.apartment}
-                onCheckedChange={(checked) => setPropertyType((prev) => ({ ...prev, apartment: !!checked }))}
-              />
-              <label htmlFor="apartment" className="text-[14px] leading-4 text-[#41415A]">
-                Apartment
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="house"
-                checked={propertyType.house}
-                onCheckedChange={(checked) => setPropertyType((prev) => ({ ...prev, house: !!checked }))}
-              />
-              <label htmlFor="house" className="text-[14px] leading-4 text-[#41415A]">
-                House
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="land"
-                checked={propertyType.land}
-                onCheckedChange={(checked) => setPropertyType((prev) => ({ ...prev, land: !!checked }))}
-              />
-              <label htmlFor="land" className="text-[14px] leading-4 text-[#41415A]">
-                Land
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="commercial"
-                checked={propertyType.commercial}
-                onCheckedChange={(checked) => setPropertyType((prev) => ({ ...prev, commercial: !!checked }))}
-              />
-              <label htmlFor="commercial" className="text-[14px] leading-4 text-[#41415A]">
-                Commercial Property
-              </label>
-            </div>
-          </div>
-        </CollapsibleSection>
-
-        {/* Land Type */}
-        <CollapsibleSection
-          title="Land Type"
-          isOpen={isLandTypeOpen}
-          onToggle={() => setIsLandTypeOpen(!isLandTypeOpen)}
-        >
-          <div className="flex w-full flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="residential"
-                checked={landType.residential}
-                onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, residential: !!checked }))}
-              />
-              <label htmlFor="residential" className="text-[14px] leading-4 text-[#41415A]">
-                Residential
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="commercial-land"
-                checked={landType.commercialLand}
-                onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, commercialLand: !!checked }))}
-              />
-              <label htmlFor="commercial-land" className="text-[14px] leading-4 text-[#41415A]">
-                Commercial
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="industrial"
-                checked={landType.industrial}
-                onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, industrial: !!checked }))}
-              />
-              <label htmlFor="industrial" className="text-[14px] leading-4 text-[#41415A]">
-                Industrial
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="mixed-use"
-                checked={landType.mixedUse}
-                onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, mixedUse: !!checked }))}
-              />
-              <label htmlFor="mixed-use" className="text-[14px] leading-4 text-[#41415A]">
-                Mixed-use
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="others"
-                checked={landType.others}
-                onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, others: !!checked }))}
-              />
-              <label htmlFor="others" className="text-[14px] leading-4 text-[#41415A]">
-                Others
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="all-lands"
-                checked={landType.allLands}
-                onCheckedChange={(checked) => setLandType((prev) => ({ ...prev, allLands: !!checked }))}
-              />
-              <label htmlFor="all-lands" className="text-[14px] leading-4 text-[#41415A]">
-                All Lands
-              </label>
-            </div>
+          <div className="flex h-40 w-full flex-col gap-4 overflow-y-scroll">
+            {propertyFeatures.map((feature) => (
+              <div key={feature} className="flex items-center gap-3">
+                <Checkbox
+                  id={feature}
+                  checked={String(draftFilters.property_features || '')
+                    .split(',')
+                    .includes(feature)}
+                  onCheckedChange={(checked) => {
+                    const currentFeatures = String(draftFilters.property_features || '')
+                      .split(',')
+                      .filter(Boolean);
+                    const newFeatures = checked
+                      ? [...currentFeatures, feature]
+                      : currentFeatures.filter((f) => f !== feature);
+                    handleDraftChange('property_features', newFeatures.join(','));
+                  }}
+                />
+                <label htmlFor={feature} className="text-[14px] leading-4 text-[#41415A]">
+                  {feature}
+                </label>
+              </div>
+            ))}
           </div>
         </CollapsibleSection>
 
@@ -417,8 +362,8 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
           <Input
             placeholder="Enter keyword"
             className="h-8 w-full rounded-xl border border-[#D5D5DD] px-3"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
+            value={draftFilters.q || ''}
+            onChange={(e) => handleDraftChange('q', e.target.value)}
           />
         </CollapsibleSection>
 
@@ -430,8 +375,11 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
         >
           <div className="flex flex-col gap-6 pt-12">
             <Slider
-              value={priceRange}
-              onValueChange={(value) => setPriceRange(value)}
+              value={[draftFilters.min_price || 1000000, draftFilters.max_price || 200000000]}
+              onValueChange={(value) => {
+                handleDraftChange('min_price', value[0]);
+                handleDraftChange('max_price', value[1]);
+              }}
               max={200000000}
               min={1000000}
               step={1000000}
@@ -439,7 +387,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
             />
             <div className="flex items-center gap-2">
               <Input
-                value={`₦${priceRange[0].toLocaleString()}`}
+                value={`₦${(draftFilters.min_price || 1000000).toLocaleString()}`}
                 className="border-primary h-8 bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,175,54,0.5)]"
                 readOnly
               />
@@ -447,7 +395,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                 <rect y="0.5" width="20" height="1" fill="#D9D9D9" />
               </svg>
               <Input
-                value={`₦${priceRange[1].toLocaleString()}`}
+                value={`₦${(draftFilters.max_price || 200000000).toLocaleString()}`}
                 className="h-8 border-[#D5D5DD] bg-white px-3 text-sm"
                 readOnly
               />
@@ -467,11 +415,11 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
               <div className="relative">
                 <Input
                   type="number"
-                  value={landAreaMin}
-                  onChange={(e) => setLandAreaMin(Number(e.target.value))}
+                  value={draftFilters.min_area ?? ''}
+                  onChange={(e) => handleDraftChange('min_area', e.target.value === '' ? null : Number(e.target.value))}
                   className="h-8 border-[#D5D5DD] bg-white px-3 pr-8 text-sm"
                 />
-                <span className="absolute top-2 right-2 text-xs text-gray-400">sq ft</span>
+                <span className="absolute top-2 right-2 text-xs text-gray-400">sq m</span>
               </div>
             </div>
             <div className="flex flex-col gap-2">
@@ -479,11 +427,11 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
               <div className="relative">
                 <Input
                   type="number"
-                  value={landAreaMax}
-                  onChange={(e) => setLandAreaMax(Number(e.target.value))}
+                  value={draftFilters.max_area ?? ''}
+                  onChange={(e) => handleDraftChange('max_area', e.target.value === '' ? null : Number(e.target.value))}
                   className="h-8 border-[#D5D5DD] bg-white px-3 pr-8 text-sm"
                 />
-                <span className="absolute top-2 right-2 text-xs text-gray-400">sq ft</span>
+                <span className="absolute top-2 right-2 text-xs text-gray-400">sq m</span>
               </div>
             </div>
           </div>
@@ -505,14 +453,15 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                     variant={'outline'}
                     size="sm"
                     className={`h-8 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
-                      selectedBedrooms.includes(num) ? 'border-primary hover:border-primary' : 'border-[#D5D5DD]'
+                      selectedBedrooms.includes(String(num))
+                        ? 'border-primary hover:border-primary'
+                        : 'border-[#D5D5DD]'
                     }`}
                     onClick={() => {
-                      if (selectedBedrooms.includes(num)) {
-                        setSelectedBedrooms(selectedBedrooms.filter((b: any) => b !== num));
-                      } else {
-                        setSelectedBedrooms([...selectedBedrooms, num]);
-                      }
+                      const newBedrooms = selectedBedrooms.includes(String(num))
+                        ? selectedBedrooms.filter((b) => b !== String(num))
+                        : [...selectedBedrooms, String(num)];
+                      handleDraftChange('bedrooms', newBedrooms.join(','));
                     }}
                   >
                     {num}
@@ -529,14 +478,15 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
                     variant={'outline'}
                     size="sm"
                     className={`h-8 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
-                      selectedBathrooms.includes(num) ? 'border-primary hover:border-primary' : 'border-[#D5D5DD]'
+                      selectedBathrooms.includes(String(num))
+                        ? 'border-primary hover:border-primary'
+                        : 'border-[#D5D5DD]'
                     }`}
                     onClick={() => {
-                      if (selectedBathrooms.includes(num)) {
-                        setSelectedBathrooms(selectedBathrooms.filter((b: any) => b !== num));
-                      } else {
-                        setSelectedBathrooms([...selectedBathrooms, num]);
-                      }
+                      const newBathrooms = selectedBathrooms.includes(String(num))
+                        ? selectedBathrooms.filter((b) => b !== String(num))
+                        : [...selectedBathrooms, String(num)];
+                      handleDraftChange('bathrooms', newBathrooms.join(','));
                     }}
                   >
                     {num}
@@ -549,17 +499,58 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
 
         {/* Developer/Owner */}
         <CollapsibleSection
-          title="Developer / Owner"
+          title="Developer or Owner's Name"
           isOpen={isDeveloperOwnerOpen}
           onToggle={() => setIsDeveloperOwnerOpen(!isDeveloperOwnerOpen)}
         >
           <div className="flex w-full flex-col gap-2">
-            <label className="text-[14px] leading-4 text-[#41415A]">Name</label>
             <Input
-              placeholder="e.g Royalty Properties"
+              placeholder="e.g. Olivia"
               className="h-8 w-full border-[#D5D5DD] bg-white px-3 text-sm"
-              value={developerOwner}
-              onChange={(e) => setDeveloperOwner(e.target.value)}
+              value={draftFilters.developer_or_owners_name || ''}
+              onChange={(e) => handleDraftChange('developer_or_owners_name', e.target.value)}
+            />
+          </div>
+        </CollapsibleSection>
+
+        {/* Verified Listing */}
+        <CollapsibleSection
+          title="Verification Status"
+          isOpen={isVerifiedOpen}
+          onToggle={() => setIsVerifiedOpen(!isVerifiedOpen)}
+        >
+          <RadioGroup
+            value={String(draftFilters.verified ?? 'all')}
+            onValueChange={(val) => handleDraftChange('verified', val === 'all' ? undefined : val)}
+            className="flex flex-col gap-3"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="all" id="v-all" />
+              <Label htmlFor="v-all">All Listings</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="1" id="v-verified" />
+              <Label htmlFor="v-verified">Verified Only</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="0" id="v-unverified" />
+              <Label htmlFor="v-unverified">Unverified Only</Label>
+            </div>
+          </RadioGroup>
+        </CollapsibleSection>
+
+        {/* Property ID */}
+        <CollapsibleSection
+          title="Property ID"
+          isOpen={isPropertyIdOpen}
+          onToggle={() => setIsPropertyIdOpen(!isPropertyIdOpen)}
+        >
+          <div className="flex w-full flex-col gap-2">
+            <Input
+              placeholder="Search Properties by ID"
+              className="h-8 w-full border-[#D5D5DD] bg-white px-3 text-sm"
+              value={draftFilters.property_id || ''}
+              onChange={(e) => handleDraftChange('property_id', e.target.value)}
             />
           </div>
         </CollapsibleSection>
@@ -567,54 +558,27 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ on
         {/* Tags */}
         <CollapsibleSection title="Tags" isOpen={isTagsOpen} onToggle={() => setIsTagsOpen(!isTagsOpen)}>
           <div className="flex w-full flex-col gap-4">
-            {tags.map((tag: { id: number; name: string }) => (
-              <div key={tag.id} className="flex items-center gap-3">
-                <Checkbox
-                  id={`tag-${tag.id}`}
-                  checked={selectedTags.includes(tag.id)}
-                  onCheckedChange={(checked) => {
-                    setSelectedTags((prev) => (checked ? [...prev, tag.id] : prev.filter((id) => id !== tag.id)));
-                  }}
-                />
-                <label htmlFor={`tag-${tag.id}`} className="text-[14px] leading-4 text-[#41415A] capitalize">
-                  {tag.name}
-                </label>
-              </div>
-            ))}
-          </div>
-        </CollapsibleSection>
-
-        {/* Verified Listing */}
-        <CollapsibleSection
-          title="Verified Listing"
-          isOpen={isVerifiedListingOpen}
-          onToggle={() => setIsVerifiedListingOpen(!isVerifiedListingOpen)}
-        >
-          <div className="flex w-full flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="all-listings"
-                checked={verifiedListing.allListings}
-                onCheckedChange={(checked) =>
-                  setVerifiedListing((prev) => ({ ...prev, allListings: !!checked, verifiedOnly: !checked }))
-                }
-              />
-              <label htmlFor="all-listings" className="text-[14px] leading-4 text-[#41415A]">
-                All Listings
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="verified-only"
-                checked={verifiedListing.verifiedOnly}
-                onCheckedChange={(checked) =>
-                  setVerifiedListing((prev) => ({ ...prev, verifiedOnly: !!checked, allListings: !checked }))
-                }
-              />
-              <label htmlFor="verified-only" className="text-[14px] leading-4 text-[#41415A]">
-                Verified Listings Only
-              </label>
-            </div>
+            {tags.map((tag: { id: number; name: string }) => {
+              const selectedTags = String(draftFilters.tags || '')
+                .split(',')
+                .filter(Boolean)
+                .map(Number);
+              return (
+                <div key={tag.id} className="flex items-center gap-3">
+                  <Checkbox
+                    id={`tag-${tag.id}`}
+                    checked={selectedTags.includes(tag.id)}
+                    onCheckedChange={(checked) => {
+                      const newTags = checked ? [...selectedTags, tag.id] : selectedTags.filter((id) => id !== tag.id);
+                      handleDraftChange('tags', newTags.join(','));
+                    }}
+                  />
+                  <label htmlFor={`tag-${tag.id}`} className="text-[14px] leading-4 text-[#41415A] capitalize">
+                    {tag.name}
+                  </label>
+                </div>
+              );
+            })}
           </div>
         </CollapsibleSection>
 

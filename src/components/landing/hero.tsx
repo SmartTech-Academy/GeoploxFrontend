@@ -69,7 +69,7 @@ export function Hero() {
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="buy">Buy</SelectItem>
+                    <SelectItem value="buy">Short Let</SelectItem>
                     <SelectItem value="for-rent">Rent</SelectItem>
                     <SelectItem value="for-sale">Sell</SelectItem>
                   </SelectContent>

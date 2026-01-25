@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
-
 import { useLocation } from '@tanstack/react-router';
+import { useDebounce } from 'use-debounce';
 import { PropertyFilterSidebar } from '@/components/property-filter-sidebar';
 import { MobilePropertyFilters } from '@/components/mobile-property-filters';
 import { Property, PropertyListingCard } from './property-listing-card';
@@ -9,30 +9,34 @@ import { useGetProperties } from '@/lib/services';
 import { PropertyListingCardSkeleton } from './property-listing-card-skeleton';
 import { cn } from '@/lib/utils';
 import statesAndLocalGov from '@/data/statesAndLocalGov.json';
+import { propertyTypes, sortOptions } from '@/data/reuseable';
 
 const ListingProperties = () => {
   const location = useLocation();
   const isListingPage = location.pathname.includes('/listing');
   const isAdminListingPage = location.pathname.includes('/admin-listing');
-  const [page, setPage] = useState(1);
-  const [propertyType, setPropertyType] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState('newest');
-  const [selectedState, setSelectedState] = useState<string | null>(null);
-  const [selectedLga, setSelectedLga] = useState<string | null>(null);
-  const [filters, setFilters] = useState<any>({
+
+  const pageType = location.pathname.includes('/buy')
+    ? `buy`
+    : location.pathname.includes('/for-rent')
+      ? `for-rent`
+      : location.pathname.includes('/for-sale')
+        ? `for-sale`
+        : 'all';
+
+  const [filters, setFilters] = useState<Record<string, any>>({
     per_page: 5,
     page: 1,
-    property_type: propertyType,
-    sort: sortBy,
+    sort: 'newest',
   });
 
+  const [debouncedFilters] = useDebounce(filters, 300);
   const { data: propertiesResponse, isPending: isLoadingProperties } = useGetProperties(
-    filters,
+    { ...debouncedFilters, pageType },
     isListingPage || isAdminListingPage,
     isAdminListingPage
   );
 
-  // The API response structure is different for dashboard/admin and public endpoints.
   const responseData = propertiesResponse?.data?.data;
   const rawProperties = responseData?.data ?? [];
 
@@ -40,102 +44,92 @@ const ListingProperties = () => {
     isListingPage || isAdminListingPage
       ? rawProperties.map((p: any) => ({
           ...p,
-          id: String(p.id), // Ensure id is a string
-          // Admin/dashboard endpoints have flat location properties
+          id: String(p.id),
           location: {
             city: p.city,
             state: p.state,
           },
-          // Admin/dashboard endpoints might be missing some fields, so we add defaults
           category: p.category || 'N/A',
           cover_image: p.cover_image || p.images?.find((img: any) => img.is_cover)?.url || '/placeholder.png',
           excerpt: p.excerpt || p.desc,
         }))
       : rawProperties;
   const totalResults = responseData?.meta?.total ?? 0;
+  const lastPage = responseData?.meta?.last_page ?? 1;
 
-  const propertyTypes = ['flat', 'apartment', 'house', 'land', 'commercial', 'villa', 'duplex'];
-
-  const sortOptions = [
-    { label: 'Newest', value: 'newest' },
-    { label: 'Price (Lowest-Highest)', value: 'price_asc' },
-    { label: 'Most viewed', value: 'most_viewed' },
-  ];
-  const verificationStatus = ['Verified', 'Unverified'];
-
-  const handleNextPage = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    setFilters((prev: any) => ({ ...prev, page: nextPage }));
+  const handlePageChange = (newPage: number) => {
+    setFilters((prev) => ({ ...prev, page: newPage }));
   };
 
-  const handlePreviousPage = () => {
-    const prevPage = Math.max(1, page - 1);
-    setPage(prevPage);
-    setFilters((prev: any) => ({ ...prev, page: prevPage }));
-  };
-
-  const handlePropertyTypeChange = (newPropertyType: string | null) => {
-    setPropertyType(newPropertyType);
-    setFilters((prev: any) => ({ ...prev, property_type: newPropertyType, page: 1 }));
-  };
   const handleSortChange = (newSortBy: string) => {
-    setSortBy(newSortBy);
-    setFilters((prev: any) => ({ ...prev, sort: newSortBy, page: 1 }));
+    setFilters((prev) => ({ ...prev, sort: newSortBy, page: 1 }));
   };
 
-  const handleFilterChange = (newFilters: any) => {
-    setFilters((prev: any) => ({ ...prev, ...newFilters, page: 1 }));
+  const handleFilterChange = (newFilters: Record<string, any>) => {
+    setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }));
   };
 
   const handleClearFilters = () => {
-    setPropertyType(null);
-    setSortBy('newest');
-    setSelectedState(null);
-    setSelectedLga(null);
-    setFilters({ per_page: 5, page: 1, property_type: null, sort: 'newest' });
+    setFilters({
+      per_page: 5,
+      page: 1,
+      sort: 'newest',
+    });
+  };
+
+  const handlePropertyTypeChange = (type: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      property_type: type,
+      filter_property_sub_type: undefined, // Reset sub-type when main type changes
+      page: 1,
+    }));
+  };
+
+  const handleSubTypeChange = (subType: string) => {
+    setFilters((prev) => ({ ...prev, filter_property_sub_type: subType, page: 1 }));
   };
 
   const handleStateClick = (state: string) => {
-    setSelectedState(state);
-    setSelectedLga(null);
-    setFilters((prev: any) => ({ ...prev, state: state, city: undefined, area: undefined, page: 1 }));
+    setFilters((prev) => ({ ...prev, state: state, city: undefined, area: undefined, page: 1 }));
   };
 
   const handleLgaClick = (lga: string) => {
-    setSelectedLga(lga);
-    setFilters((prev: any) => ({ ...prev, city: lga, area: undefined, page: 1 }));
+    setFilters((prev) => ({ ...prev, city: lga, area: undefined, page: 1 }));
   };
 
   const handleAreaClick = (area: string) => {
-    setFilters((prev: any) => ({ ...prev, area: area, page: 1 }));
+    setFilters((prev) => ({ ...prev, area: area, page: 1 }));
   };
 
   const handleBackToStates = () => {
-    setSelectedState(null);
-    setSelectedLga(null);
-    setFilters((prev: any) => {
+    setFilters((prev) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { state, city, area, ...rest } = prev;
       return { ...rest, page: 1 };
     });
   };
 
   const handleBackToLgas = () => {
-    setSelectedLga(null);
-    setFilters((prev: any) => {
+    setFilters((prev) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { city, area, ...rest } = prev;
       return { ...rest, page: 1 };
     });
   };
 
   let displayedLocations: string[] = [];
-  if (selectedState && selectedLga) {
-    displayedLocations = (statesAndLocalGov.find((s) => s.state === selectedState) as any)?.[selectedLga] || [];
-  } else if (selectedState) {
-    displayedLocations = statesAndLocalGov.find((s) => s.state === selectedState)?.lgas || [];
+  if (filters.state && filters.city) {
+    displayedLocations = (statesAndLocalGov.find((s) => s.state === filters.state) as any)?.[filters.city] || [];
+  } else if (filters.state) {
+    displayedLocations = statesAndLocalGov.find((s) => s.state === filters.state)?.lgas || [];
   } else {
     displayedLocations = statesAndLocalGov.map((s) => s.state);
   }
+
+  const selectedTypeObject = useMemo(() => {
+    return propertyTypes.find((p) => p.types === filters.property_type);
+  }, [filters.property_type]);
 
   return (
     <div className="min-h-screen w-full bg-white py-(--landing-header-height)">
@@ -149,11 +143,19 @@ const ListingProperties = () => {
                 : isListingPage
                   ? 'My Listings'
                   : `${
-                      location.pathname.includes('/buy') ? 'Buy' : location.pathname.includes('/rent') ? 'Rent' : 'Sell'
+                      location.pathname.includes('/buy')
+                        ? 'Buy'
+                        : location.pathname.includes('/for-rent')
+                          ? 'Rent'
+                          : 'Sell'
                     } Property`}
             </h2>
 
-            <PropertyFilterSidebar onFiltersChange={handleFilterChange} onClear={handleClearFilters} />
+            <PropertyFilterSidebar
+              filters={filters}
+              onFiltersChange={handleFilterChange}
+              onClear={handleClearFilters}
+            />
           </div>
 
           {/* Right Content - Property Listings */}
@@ -169,7 +171,7 @@ const ListingProperties = () => {
                     onClick={() => handleSortChange(option.value)}
                     className={cn(
                       'h-8 rounded-none border-x-0 border-t-0 border-b-0 py-4 text-[16px] leading-6 font-normal text-[#71748C]',
-                      sortBy === option.value && 'text-primary border-primary border-b font-semibold'
+                      filters.sort === option.value && 'text-primary border-primary border-b font-semibold'
                     )}
                   >
                     {option.label}
@@ -180,18 +182,6 @@ const ListingProperties = () => {
 
             <div className="flex w-full flex-col items-start gap-10 self-stretch">
               <div className="flex w-full flex-col items-start gap-4 self-stretch">
-                <div className="flex w-full flex-col justify-center gap-3 self-stretch bg-[#F8F8F8] p-3">
-                  <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">Average Price</h3>
-
-                  <p className="text-[12px] leading-[17px] text-[#41415A]">
-                    The average price of 2 bedroom flats for sale in Lekki, Lagos is ₦160,000,000. The prices vary by
-                    location, size and features and range from ₦25,000,000 to ₦320,000,000. There are 3,376 available 2
-                    bedroom flats for sale in Lekki, Lagos, Nigeria. The flats have been listed by estate agents who can
-                    be contacted using the contact information provided for each flat / apartment listing. The list can
-                    be filtered by price, furnishing and recency.
-                  </p>
-                </div>
-
                 <div className="flex w-full flex-col gap-4 bg-[#F8F8F8] p-4 text-[#41415A]">
                   {/* Header */}
                   <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">Quick Filter</h3>
@@ -199,24 +189,43 @@ const ListingProperties = () => {
                   {/* Property Types Row */}
                   <div className="flex flex-wrap items-center gap-1">
                     {propertyTypes.map((type, index) => (
-                      <React.Fragment key={type}>
+                      <React.Fragment key={type.types}>
                         <span
-                          onClick={() => handlePropertyTypeChange(type)}
+                          onClick={() => handlePropertyTypeChange(type.types)}
                           className={cn(
                             'hover:text-primary cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:underline',
-                            propertyType === type && 'text-primary font-semibold'
+                            filters.property_type === type.types && 'text-primary font-semibold'
                           )}
                         >
-                          {type.replace('_', ' ')}
+                          {type.types.replace('_', ' ')}
                         </span>
                         {index < propertyTypes.length - 1 && <span className="mx-2 text-gray-300">|</span>}
                       </React.Fragment>
                     ))}
                   </div>
 
+                  {selectedTypeObject?.sub_types && selectedTypeObject?.sub_types?.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {selectedTypeObject?.sub_types.map((subType) => (
+                        <span
+                          key={subType}
+                          onClick={() => handleSubTypeChange(subType)}
+                          className={cn(
+                            'cursor-pointer rounded-full border px-3 py-1 text-[12px] transition-colors',
+                            filters.filter_property_sub_type === subType
+                              ? 'border-primary bg-primary text-white'
+                              : 'hover:border-primary hover:text-primary border-gray-300 text-gray-600'
+                          )}
+                        >
+                          {subType}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
                   {/* Locations Row */}
                   <div className="flex flex-col gap-2">
-                    {selectedState && (
+                    {filters.state && (
                       <div className="flex items-center gap-2">
                         <Button
                           variant="link"
@@ -225,8 +234,8 @@ const ListingProperties = () => {
                         >
                           ← Back to States
                         </Button>
-                        <span className="text-[12px] font-semibold text-[#1F2130]">{selectedState}</span>
-                        {selectedLga && (
+                        <span className="text-[12px] font-semibold text-[#1F2130]">{filters.state}</span>
+                        {filters.city && (
                           <>
                             <span className="text-[12px] text-[#1F2130]">{'>'}</span>
                             <Button
@@ -234,7 +243,7 @@ const ListingProperties = () => {
                               onClick={handleBackToLgas}
                               className="h-auto p-0 text-[12px] font-semibold text-[#1F2130]"
                             >
-                              {selectedLga}
+                              {filters.city}
                             </Button>
                           </>
                         )}
@@ -245,15 +254,15 @@ const ListingProperties = () => {
                         <React.Fragment key={location}>
                           <span
                             onClick={() =>
-                              selectedState
-                                ? selectedLga
+                              filters.state
+                                ? filters.city
                                   ? handleAreaClick(location)
                                   : handleLgaClick(location)
                                 : handleStateClick(location)
                             }
                             className={cn(
                               'hover:text-primary cursor-pointer text-[12px] leading-[17px] transition-colors hover:underline',
-                              !selectedState && 'font-medium'
+                              !filters.state && 'font-medium'
                             )}
                           >
                             {location}
@@ -262,18 +271,6 @@ const ListingProperties = () => {
                         </React.Fragment>
                       ))}
                     </div>
-                  </div>
-
-                  {/* Verification Status Row */}
-                  <div className="flex items-center gap-1">
-                    {verificationStatus.map((status, index) => (
-                      <React.Fragment key={status}>
-                        <span className="hover:text-primary cursor-pointer text-[12px] leading-[17px] transition-colors hover:underline">
-                          {status}
-                        </span>
-                        {index < verificationStatus.length - 1 && <span className="mx-2 text-gray-300">|</span>}
-                      </React.Fragment>
-                    ))}
                   </div>
                 </div>
               </div>
@@ -297,15 +294,18 @@ const ListingProperties = () => {
 
               {/* Pagination Controls */}
               <div className="flex w-full items-center justify-center gap-4 pt-6">
-                <Button onClick={handlePreviousPage} disabled={page <= 1 || isLoadingProperties}>
+                <Button
+                  onClick={() => handlePageChange(filters.page - 1)}
+                  disabled={filters.page <= 1 || isLoadingProperties}
+                >
                   Previous
                 </Button>
                 <span className="text-sm">
-                  Page {page} of {responseData?.meta?.last_page ?? 1}
+                  Page {filters.page} of {lastPage}
                 </span>
                 <Button
-                  onClick={handleNextPage}
-                  disabled={page >= (responseData?.meta?.last_page ?? 1) || isLoadingProperties}
+                  onClick={() => handlePageChange(filters.page + 1)}
+                  disabled={filters.page >= lastPage || isLoadingProperties}
                 >
                   Next
                 </Button>
@@ -317,23 +317,11 @@ const ListingProperties = () => {
         {/* Mobile Layout */}
         <div className="flex w-full flex-col pt-4 lg:hidden">
           {/* Mobile Filters */}
-          <MobilePropertyFilters onFiltersChange={handleFilterChange} onClear={handleClearFilters} />
+          <MobilePropertyFilters filters={filters} onFiltersChange={handleFilterChange} onClear={handleClearFilters} />
 
           {/* Mobile Results Header */}
           <div className="mb-4 px-4">
             <h1 className="mb-4 text-[16px] leading-6 font-medium text-[#535364]">{totalResults} Results</h1>
-          </div>
-
-          {/* Mobile Average Price */}
-          <div className="mx-4 mb-6">
-            <div className="flex w-full flex-col justify-center gap-3 rounded-xl bg-[#F8F8F8] p-4">
-              <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">Average Price</h3>
-              <p className="text-[12px] leading-[17px] text-[#41415A]">
-                The average price of 2 bedroom flats for sale in Lekki, Lagos is ₦160,000,000. The prices vary by
-                location, size and features and range from ₦25,000,000 to ₦320,000,000. There are 3,376 available 2
-                bedroom flats for sale in Lekki, Lagos, Nigeria.
-              </p>
-            </div>
           </div>
 
           {/* Mobile Quick Filter */}
@@ -341,23 +329,43 @@ const ListingProperties = () => {
             <div className="flex w-full flex-col gap-4 rounded-xl bg-[#F8F8F8] p-4 text-[#41415A]">
               <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]"> Quick Filter</h3>
               <div className="flex flex-wrap items-center gap-1">
-                {propertyTypes.map((type, index) => (
-                  <React.Fragment key={type}>
+                {propertyTypes.map((item, index) => (
+                  <React.Fragment key={item.types}>
                     <span
-                      onClick={() => handlePropertyTypeChange(type)}
+                      onClick={() => handlePropertyTypeChange(item.types)}
                       className={cn(
-                        'cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:text-[#D4AF36] hover:underline',
-                        propertyType === type && 'text-primary font-semibold'
+                        'hover:text-primary cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:underline',
+                        filters.property_type === item.types && 'text-primary font-semibold'
                       )}
                     >
-                      {type.replace('_', ' ')}
+                      {item.types}
                     </span>
+
                     {index < propertyTypes.length - 1 && <span className="mx-2 text-gray-300">|</span>}
                   </React.Fragment>
                 ))}
+
+                {selectedTypeObject?.sub_types && selectedTypeObject?.sub_types?.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {selectedTypeObject?.sub_types.map((subType) => (
+                      <span
+                        key={subType}
+                        onClick={() => handleSubTypeChange(subType)}
+                        className={cn(
+                          'cursor-pointer rounded-full border px-3 py-1 text-[12px] transition-colors',
+                          filters.filter_property_sub_type === subType
+                            ? 'border-primary bg-primary text-white'
+                            : 'hover:border-primary hover:text-primary border-gray-300 text-gray-600'
+                        )}
+                      >
+                        {subType}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="flex flex-col gap-2">
-                {selectedState && (
+                {filters.state && (
                   <div className="flex items-center gap-2">
                     <Button
                       variant="link"
@@ -366,8 +374,8 @@ const ListingProperties = () => {
                     >
                       ← Back to States
                     </Button>
-                    <span className="text-[12px] font-semibold text-[#1F2130]">{selectedState}</span>
-                    {selectedLga && (
+                    <span className="text-[12px] font-semibold text-[#1F2130]">{filters.state}</span>
+                    {filters.city && (
                       <>
                         <span className="text-[12px] text-[#1F2130]">{'>'}</span>
                         <Button
@@ -375,53 +383,34 @@ const ListingProperties = () => {
                           onClick={handleBackToLgas}
                           className="h-auto p-0 text-[12px] font-semibold text-[#1F2130]"
                         >
-                          {selectedLga}
+                          {filters.city}
                         </Button>
                       </>
                     )}
                   </div>
                 )}
                 <div className="flex flex-wrap items-center gap-1">
-                  {displayedLocations.slice(0, selectedState ? undefined : 6).map((location, index) => (
+                  {displayedLocations.map((location, index) => (
                     <React.Fragment key={location}>
                       <span
                         onClick={() =>
-                          selectedState
-                            ? selectedLga
+                          filters.state
+                            ? filters.city
                               ? handleAreaClick(location)
                               : handleLgaClick(location)
                             : handleStateClick(location)
                         }
                         className={cn(
                           'cursor-pointer text-[12px] leading-[17px] transition-colors hover:text-[#D4AF36] hover:underline',
-                          !selectedState && 'font-medium'
+                          !filters.state && 'font-medium'
                         )}
                       >
                         {location}
                       </span>
-                      {index < (selectedState ? displayedLocations.length : 5) && (
-                        <span className="mx-2 text-gray-300">|</span>
-                      )}
+                      {index < displayedLocations.length && <span className="mx-2 text-gray-300">|</span>}
                     </React.Fragment>
                   ))}
                 </div>
-              </div>
-              {!selectedState && (
-                <div className="flex">
-                  <span className="cursor-pointer text-[12px] leading-[17px] text-[#D4AF36] transition-colors hover:underline">
-                    Show more
-                  </span>
-                </div>
-              )}
-              <div className="flex items-center gap-1">
-                {verificationStatus.map((status, index) => (
-                  <React.Fragment key={status}>
-                    <span className="cursor-pointer text-[12px] leading-[17px] transition-colors hover:text-[#D4AF36] hover:underline">
-                      {status}
-                    </span>
-                    {index < verificationStatus.length - 1 && <span className="mx-2 text-gray-300">|</span>}
-                  </React.Fragment>
-                ))}
               </div>
             </div>
           </div>
@@ -445,15 +434,19 @@ const ListingProperties = () => {
 
             {/* Mobile Pagination Controls */}
             <div className="flex w-full items-center justify-center gap-4 pt-6">
-              <Button onClick={handlePreviousPage} disabled={page <= 1 || isLoadingProperties} size="sm">
+              <Button
+                onClick={() => handlePageChange(filters.page - 1)}
+                disabled={filters.page <= 1 || isLoadingProperties}
+                size="sm"
+              >
                 Previous
               </Button>
               <span className="text-sm">
-                Page {page} of {responseData?.meta?.last_page ?? 1}
+                Page {filters.page} of {lastPage}
               </span>
               <Button
-                onClick={handleNextPage}
-                disabled={page >= (responseData?.meta?.last_page ?? 1) || isLoadingProperties}
+                onClick={() => handlePageChange(filters.page + 1)}
+                disabled={filters.page >= lastPage || isLoadingProperties}
                 size="sm"
               >
                 Next

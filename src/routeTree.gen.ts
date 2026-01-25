@@ -281,6 +281,7 @@ const DashboardAdminListingIdRoute = DashboardAdminListingIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof LandingIndexRoute
   '/account-ready': typeof AuthAccountReadyRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
@@ -289,7 +290,6 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof AuthResetPasswordRoute
   '/set-password': typeof AuthSetPasswordRoute
   '/verify-otp': typeof AuthVerifyOtpRoute
-  '/': typeof LandingIndexRoute
   '/admin-listing/$id': typeof DashboardAdminListingIdRoute
   '/blogs/create': typeof DashboardBlogsCreateRoute
   '/listing/$id': typeof DashboardListingIdRoute
@@ -299,31 +299,32 @@ export interface FileRoutesByFullPath {
   '/buy/$id': typeof LandingBuyIdRoute
   '/for-rent/$id': typeof LandingForRentIdRoute
   '/for-sale/$id': typeof LandingForSaleIdRoute
-  '/admin-insights': typeof DashboardAdminInsightsIndexRoute
-  '/admin-listing': typeof DashboardAdminListingIndexRoute
-  '/blogs': typeof DashboardBlogsIndexRoute
-  '/dashboard': typeof DashboardDashboardIndexRoute
-  '/favorites': typeof DashboardFavoritesIndexRoute
-  '/getting-started': typeof DashboardGettingStartedIndexRoute
-  '/insights': typeof DashboardInsightsIndexRoute
-  '/listing': typeof DashboardListingIndexRoute
-  '/managers': typeof DashboardManagersIndexRoute
-  '/messages': typeof DashboardMessagesIndexRoute
-  '/notifications': typeof DashboardNotificationsIndexRoute
-  '/pending-approvals': typeof DashboardPendingApprovalsIndexRoute
-  '/performance': typeof DashboardPerformanceIndexRoute
-  '/properties': typeof DashboardPropertiesIndexRoute
-  '/settings': typeof DashboardSettingsIndexRoute
-  '/users': typeof DashboardUsersIndexRoute
-  '/about': typeof LandingAboutIndexRoute
-  '/blog': typeof LandingBlogIndexRoute
-  '/buy': typeof LandingBuyIndexRoute
-  '/contact': typeof LandingContactIndexRoute
-  '/for-rent': typeof LandingForRentIndexRoute
-  '/for-sale': typeof LandingForSaleIndexRoute
-  '/pricing': typeof LandingPricingIndexRoute
+  '/admin-insights/': typeof DashboardAdminInsightsIndexRoute
+  '/admin-listing/': typeof DashboardAdminListingIndexRoute
+  '/blogs/': typeof DashboardBlogsIndexRoute
+  '/dashboard/': typeof DashboardDashboardIndexRoute
+  '/favorites/': typeof DashboardFavoritesIndexRoute
+  '/getting-started/': typeof DashboardGettingStartedIndexRoute
+  '/insights/': typeof DashboardInsightsIndexRoute
+  '/listing/': typeof DashboardListingIndexRoute
+  '/managers/': typeof DashboardManagersIndexRoute
+  '/messages/': typeof DashboardMessagesIndexRoute
+  '/notifications/': typeof DashboardNotificationsIndexRoute
+  '/pending-approvals/': typeof DashboardPendingApprovalsIndexRoute
+  '/performance/': typeof DashboardPerformanceIndexRoute
+  '/properties/': typeof DashboardPropertiesIndexRoute
+  '/settings/': typeof DashboardSettingsIndexRoute
+  '/users/': typeof DashboardUsersIndexRoute
+  '/about/': typeof LandingAboutIndexRoute
+  '/blog/': typeof LandingBlogIndexRoute
+  '/buy/': typeof LandingBuyIndexRoute
+  '/contact/': typeof LandingContactIndexRoute
+  '/for-rent/': typeof LandingForRentIndexRoute
+  '/for-sale/': typeof LandingForSaleIndexRoute
+  '/pricing/': typeof LandingPricingIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof LandingIndexRoute
   '/account-ready': typeof AuthAccountReadyRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
@@ -332,7 +333,6 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/set-password': typeof AuthSetPasswordRoute
   '/verify-otp': typeof AuthVerifyOtpRoute
-  '/': typeof LandingIndexRoute
   '/admin-listing/$id': typeof DashboardAdminListingIdRoute
   '/blogs/create': typeof DashboardBlogsCreateRoute
   '/listing/$id': typeof DashboardListingIdRoute
@@ -416,6 +416,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/account-ready'
     | '/forgot-password'
     | '/login'
@@ -424,7 +425,6 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/set-password'
     | '/verify-otp'
-    | '/'
     | '/admin-listing/$id'
     | '/blogs/create'
     | '/listing/$id'
@@ -434,31 +434,32 @@ export interface FileRouteTypes {
     | '/buy/$id'
     | '/for-rent/$id'
     | '/for-sale/$id'
-    | '/admin-insights'
-    | '/admin-listing'
-    | '/blogs'
-    | '/dashboard'
-    | '/favorites'
-    | '/getting-started'
-    | '/insights'
-    | '/listing'
-    | '/managers'
-    | '/messages'
-    | '/notifications'
-    | '/pending-approvals'
-    | '/performance'
-    | '/properties'
-    | '/settings'
-    | '/users'
-    | '/about'
-    | '/blog'
-    | '/buy'
-    | '/contact'
-    | '/for-rent'
-    | '/for-sale'
-    | '/pricing'
+    | '/admin-insights/'
+    | '/admin-listing/'
+    | '/blogs/'
+    | '/dashboard/'
+    | '/favorites/'
+    | '/getting-started/'
+    | '/insights/'
+    | '/listing/'
+    | '/managers/'
+    | '/messages/'
+    | '/notifications/'
+    | '/pending-approvals/'
+    | '/performance/'
+    | '/properties/'
+    | '/settings/'
+    | '/users/'
+    | '/about/'
+    | '/blog/'
+    | '/buy/'
+    | '/contact/'
+    | '/for-rent/'
+    | '/for-sale/'
+    | '/pricing/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/account-ready'
     | '/forgot-password'
     | '/login'
@@ -467,7 +468,6 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/set-password'
     | '/verify-otp'
-    | '/'
     | '/admin-listing/$id'
     | '/blogs/create'
     | '/listing/$id'
@@ -559,21 +559,21 @@ declare module '@tanstack/react-router' {
     '/_landing': {
       id: '/_landing'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof LandingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_dashboard': {
       id: '/_dashboard'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
       id: '/_auth'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -643,161 +643,161 @@ declare module '@tanstack/react-router' {
     '/_landing/pricing/': {
       id: '/_landing/pricing/'
       path: '/pricing'
-      fullPath: '/pricing'
+      fullPath: '/pricing/'
       preLoaderRoute: typeof LandingPricingIndexRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_landing/for-sale/': {
       id: '/_landing/for-sale/'
       path: '/for-sale'
-      fullPath: '/for-sale'
+      fullPath: '/for-sale/'
       preLoaderRoute: typeof LandingForSaleIndexRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_landing/for-rent/': {
       id: '/_landing/for-rent/'
       path: '/for-rent'
-      fullPath: '/for-rent'
+      fullPath: '/for-rent/'
       preLoaderRoute: typeof LandingForRentIndexRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_landing/contact/': {
       id: '/_landing/contact/'
       path: '/contact'
-      fullPath: '/contact'
+      fullPath: '/contact/'
       preLoaderRoute: typeof LandingContactIndexRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_landing/buy/': {
       id: '/_landing/buy/'
       path: '/buy'
-      fullPath: '/buy'
+      fullPath: '/buy/'
       preLoaderRoute: typeof LandingBuyIndexRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_landing/blog/': {
       id: '/_landing/blog/'
       path: '/blog'
-      fullPath: '/blog'
+      fullPath: '/blog/'
       preLoaderRoute: typeof LandingBlogIndexRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_landing/about/': {
       id: '/_landing/about/'
       path: '/about'
-      fullPath: '/about'
+      fullPath: '/about/'
       preLoaderRoute: typeof LandingAboutIndexRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_dashboard/users/': {
       id: '/_dashboard/users/'
       path: '/users'
-      fullPath: '/users'
+      fullPath: '/users/'
       preLoaderRoute: typeof DashboardUsersIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/settings/': {
       id: '/_dashboard/settings/'
       path: '/settings'
-      fullPath: '/settings'
+      fullPath: '/settings/'
       preLoaderRoute: typeof DashboardSettingsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/properties/': {
       id: '/_dashboard/properties/'
       path: '/properties'
-      fullPath: '/properties'
+      fullPath: '/properties/'
       preLoaderRoute: typeof DashboardPropertiesIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/performance/': {
       id: '/_dashboard/performance/'
       path: '/performance'
-      fullPath: '/performance'
+      fullPath: '/performance/'
       preLoaderRoute: typeof DashboardPerformanceIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/pending-approvals/': {
       id: '/_dashboard/pending-approvals/'
       path: '/pending-approvals'
-      fullPath: '/pending-approvals'
+      fullPath: '/pending-approvals/'
       preLoaderRoute: typeof DashboardPendingApprovalsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/notifications/': {
       id: '/_dashboard/notifications/'
       path: '/notifications'
-      fullPath: '/notifications'
+      fullPath: '/notifications/'
       preLoaderRoute: typeof DashboardNotificationsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/messages/': {
       id: '/_dashboard/messages/'
       path: '/messages'
-      fullPath: '/messages'
+      fullPath: '/messages/'
       preLoaderRoute: typeof DashboardMessagesIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/managers/': {
       id: '/_dashboard/managers/'
       path: '/managers'
-      fullPath: '/managers'
+      fullPath: '/managers/'
       preLoaderRoute: typeof DashboardManagersIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/listing/': {
       id: '/_dashboard/listing/'
       path: '/listing'
-      fullPath: '/listing'
+      fullPath: '/listing/'
       preLoaderRoute: typeof DashboardListingIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/insights/': {
       id: '/_dashboard/insights/'
       path: '/insights'
-      fullPath: '/insights'
+      fullPath: '/insights/'
       preLoaderRoute: typeof DashboardInsightsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/getting-started/': {
       id: '/_dashboard/getting-started/'
       path: '/getting-started'
-      fullPath: '/getting-started'
+      fullPath: '/getting-started/'
       preLoaderRoute: typeof DashboardGettingStartedIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/favorites/': {
       id: '/_dashboard/favorites/'
       path: '/favorites'
-      fullPath: '/favorites'
+      fullPath: '/favorites/'
       preLoaderRoute: typeof DashboardFavoritesIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/dashboard/': {
       id: '/_dashboard/dashboard/'
       path: '/dashboard'
-      fullPath: '/dashboard'
+      fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardDashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/blogs/': {
       id: '/_dashboard/blogs/'
       path: '/blogs'
-      fullPath: '/blogs'
+      fullPath: '/blogs/'
       preLoaderRoute: typeof DashboardBlogsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/admin-listing/': {
       id: '/_dashboard/admin-listing/'
       path: '/admin-listing'
-      fullPath: '/admin-listing'
+      fullPath: '/admin-listing/'
       preLoaderRoute: typeof DashboardAdminListingIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/admin-insights/': {
       id: '/_dashboard/admin-insights/'
       path: '/admin-insights'
-      fullPath: '/admin-insights'
+      fullPath: '/admin-insights/'
       preLoaderRoute: typeof DashboardAdminInsightsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
