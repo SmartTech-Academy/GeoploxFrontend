@@ -563,6 +563,11 @@ const ListingDetail = () => {
                       Verified {property.owner.role}
                     </span>
                   </div>
+                  {/* Property ID */}
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="text-[12px] leading-[18px] font-medium text-[#535364]">Property ID:</span>
+                    <span className="text-[12px] leading-[18px] font-semibold text-[#1F2130]">{property.id}</span>
+                  </div>
                 </div>
               </div>
 
