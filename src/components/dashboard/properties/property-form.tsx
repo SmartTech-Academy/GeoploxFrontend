@@ -32,33 +32,34 @@ import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 import statesAndLgasData from '@/data/statesAndLocalGov.json';
 import { useGetProfileData } from '@/lib/services/profile';
+import { listingTypes, propertyFeatures, propertyStatus, propertyTypes } from '@/data/reuseable';
 
 // Zod Schema
 const PropertyFormSchema = z.object({
   id: z.string().optional(),
-  listingTitle: z.string().min(1, 'Listing title is required'),
-  listingType: z.enum(['For Sale', 'Rent', 'Short Let'], {
+  title: z.string().min(1, 'Listing title is required'),
+  category_slug: z.enum(['For Rent', 'For Sale', 'Short Let', 'Joint Venture'], {
     error: 'Please select a listing type',
   }),
-  propertyType: z.string().min(1, 'Property type is required'),
-  landType: z.string().min(1, 'Land type is required'),
-  houseNumber: z.string().min(1, 'House/Apartment number is required'),
-  streetName: z.string().min(1, 'Street name is required'),
-  //   city: z.string().min(1, 'City is required'),
-  //   postalCode: z.string().min(1, 'Postal code is required'),
+  property_type: z.string().min(1, 'Property type is required'),
+  sub_type: z.string().min(1, 'Property sub type is required'),
+  address: z.string().min(1, 'House/Apartment number is required'),
+  country: z.string().min(1, 'Country is required'),
   state: z.string().min(1, 'State is required'),
-  localGovernment: z.string().min(1, 'Locality/Area is required'),
-  propertyDescription: z.string().min(10, 'Property description must be at least 10 characters'),
+  lga_or_city: z.string().min(1, 'Locality is required'),
+  area: z.string().optional(),
+  description: z.string().min(10, 'Property description must be at least 10 characters'),
   bedrooms: z.coerce.number().int().min(1, 'Number of bedrooms is required'),
   bathrooms: z.coerce.number().int().min(1, 'Number of bathrooms is required'),
-  totalArea: z.coerce.number().int().min(1, 'Total area is required'),
-  propertyPrice: z.coerce.number().min(1, 'Property price is required'),
+  area_sqft: z.coerce.number().int().min(1, 'Total area is required'),
+  price: z.coerce.number().min(1, 'Property price is required'),
   currency: z.string().min(1, 'Currency is required'),
-  propertyImages: z.array(z.string()).min(1, 'At least one property image is required'),
+  images: z.array(z.string()).min(1, 'At least one property image is required'),
   documentType: z.string().optional(),
   propertyDocument: z.string().optional(),
   proofOfAddress: z.string().optional(),
-  nearbyAmenities: z.array(z.string()).default([]),
+  features: z.array(z.string()).default([]),
+  status: z.array(z.string()).default([]),
 });
 
 export type PropertyFormValues = z.infer<typeof PropertyFormSchema>;
@@ -80,20 +81,6 @@ interface DocumentState extends FileState {
   type?: string;
 }
 
-const propertyTypes = [
-  'Duplex',
-  'Bungalow',
-  'Apartment',
-  'Flat',
-  'Mansion',
-  'Townhouse',
-  'Villa',
-  'Studio',
-  'Penthouse',
-];
-
-const landTypes = ['Residential', 'Commercial', 'Industrial', 'Agricultural', 'Mixed Use'];
-
 const currencies = [
   { value: 'NGN', label: '₦ Nigerian Naira' },
   { value: 'USD', label: '$ US Dollar' },
@@ -101,43 +88,13 @@ const currencies = [
   { value: 'GBP', label: '£ British Pound' },
 ];
 
-const documentTypes = [
-  'C of O',
-  'Deed of Assignment',
-  'Tenancy Agreement',
-  //   'Photo of the Contact Banner',
-  'Power of Attorney',
-  'Others',
-];
-
-const amenities = [
-  'Swimming Pool',
-  'Security Gate',
-  'Solar Power',
-  'Borehole/Water Supply',
-  'Generator',
-  'Smart Home Features',
-  'Balcony',
-  'Gated Community',
-  'Elevator',
-  'Gym',
-  'Jacuzzi',
-  'CCTV Cameras',
-  'Free WiFi',
-  'Ocean View',
-  'Parking Space',
-  'Restaurants Nearby',
-  'Mosques Nearby',
-  'Church Nearby',
-  'Supermarket Nearby',
-  'School Nearby',
-];
+const documentTypes = ['C of O', 'Deed of Assignment', 'Tenancy Agreement', 'Power of Attorney', 'Others'];
 
 const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData }) => {
   const router = useRouter();
   const { data: user } = useGetProfileData();
   const [propertyImages, setPropertyImages] = useState<FileState[]>(
-    initialData?.propertyImages?.map((url) => ({ file: new File([], ''), preview: url, status: 'success', url })) || []
+    initialData?.images?.map((url) => ({ file: new File([], ''), preview: url, status: 'success', url })) || []
   );
   const [propertyDocument, setPropertyDocument] = useState<DocumentState | null>(null);
   const [proofOfAddress, setProofOfAddress] = useState<DocumentState | null>(null);
@@ -146,7 +103,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const imageInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
   const proofOfAddressInputRef = useRef<HTMLInputElement>(null);
-  const [selectedState, setSelectedState] = useState('');
+  const [selectedState, setSelectedState] = useState(initialData?.state || '');
+  const [selectedLga, setSelectedLga] = useState(initialData?.lga_or_city || '');
+
   const { mutateAsync: createProperty, isPending: isCreating } = useCreateProperty();
   const { mutateAsync: updateProperty, isPending: isUpdating } = useUpdateProperty(initialData?.id || '');
   const { mutateAsync: uploadImage } = useUploadPropertyImage();
@@ -162,35 +121,55 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
     const stateData = statesAndLgasData.find((s) => s.state === selectedState);
     return stateData ? stateData.lgas : [];
   }, [selectedState]);
+
+  const areas = useMemo(() => {
+    if (!selectedLga) {
+      return [];
+    }
+    const stateData = statesAndLgasData.find((s) => s.state === selectedState);
+
+    return stateData && selectedLga in stateData ? (stateData[selectedLga as keyof typeof stateData] as string[]) : [];
+  }, [selectedLga, selectedState]);
+
   const form = useForm<PropertyFormValues>({
     resolver: customResolver(PropertyFormSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       id: initialData?.id,
-      listingTitle: initialData?.listingTitle ?? '',
-      listingType: initialData?.listingType ?? 'Rent',
-      propertyType: initialData?.propertyType ?? '',
-      landType: initialData?.landType ?? '',
-      houseNumber: initialData?.houseNumber ?? '',
-      streetName: initialData?.streetName ?? '',
-      //   city: initialData?.city ?? '',
-      //   postalCode: initialData?.postalCode ?? '',
+      title: initialData?.title ?? '',
+      category_slug: initialData?.category_slug ?? 'For Rent',
+      property_type: initialData?.property_type ?? '',
+      sub_type: initialData?.sub_type ?? '',
+      address: initialData?.address ?? '',
+      country: initialData?.country ?? 'Nigeria',
       state: initialData?.state ?? '',
-      localGovernment: initialData?.localGovernment ?? '',
-      propertyDescription: initialData?.propertyDescription ?? '',
+      lga_or_city: initialData?.lga_or_city ?? '',
+      area: initialData?.area ?? '',
+      description: initialData?.description ?? '',
       bedrooms: initialData?.bedrooms ?? 0,
       bathrooms: initialData?.bathrooms ?? 0,
-      totalArea: initialData?.totalArea ?? 0,
-      propertyPrice: initialData?.propertyPrice ?? 0,
+      area_sqft: initialData?.area_sqft ?? 0,
+      price: initialData?.price ?? 0,
       currency: initialData?.currency ?? 'NGN',
-      propertyImages: initialData?.propertyImages ?? [],
+      images: initialData?.images ?? [],
       documentType: initialData?.documentType ?? '',
       propertyDocument: initialData?.propertyDocument ?? '',
       proofOfAddress: initialData?.proofOfAddress ?? '',
-      nearbyAmenities: initialData?.nearbyAmenities ?? [],
+      features: initialData?.features ?? [],
+      status: initialData?.status ?? [],
     },
   });
+
+  const propertyType = form.watch('property_type');
+
+  const subTypes = useMemo(() => {
+    if (!propertyType) {
+      return [];
+    }
+    const selectedType = propertyTypes.find((p) => p.types === propertyType);
+    return selectedType ? selectedType.sub_types : [];
+  }, [propertyType]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -201,29 +180,38 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
         status: 'uploading',
       }));
 
-      const currentImages = [...propertyImages, ...newImageStates];
-      setPropertyImages(currentImages);
+      setPropertyImages((prev) => [...prev, ...newImageStates]);
 
-      newImageStates.forEach((imageState, index) => {
+      const uploadPromises = newImageStates.map((imageState, index) => {
         const formData = new FormData();
         formData.append('property_images_data', imageState.file);
         formData.append('image_number', String(propertyImages.length + index + 1));
-
-        uploadImage(formData)
-          .then((response) => {
-            setPropertyImages((prev) =>
-              prev.map((img) =>
-                img === imageState ? { ...img, status: 'success', url: response.data.data.image_url } : img
-              )
-            );
-          })
-          .catch(() => {
-            setPropertyImages((prev) =>
-              prev.map((img) => (img === imageState ? { ...img, status: 'error', error: 'Upload failed' } : img))
-            );
-            toast.error(`Failed to upload ${imageState.file.name}`);
-          });
+        return uploadImage(formData).then((response) => ({
+          ...imageState,
+          status: 'success' as const,
+          url: response.data.data.image_url,
+        }));
       });
+
+      Promise.all(uploadPromises)
+        .then((results) => {
+          setPropertyImages((prev) =>
+            prev.map((img) => {
+              const successUpload = results.find((r) => r.preview === img.preview);
+              return successUpload || img;
+            })
+          );
+        })
+        .catch(() => {
+          toast.error('Some images failed to upload.');
+          setPropertyImages((prev) =>
+            prev.map((img) =>
+              newImageStates.some((s) => s.preview === img.preview)
+                ? { ...img, status: 'error', error: 'Upload failed' }
+                : img
+            )
+          );
+        });
     }
   };
 
@@ -283,7 +271,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
     const uploadedImageUrls = propertyImages
       .filter((img) => img.status === 'success' && img.url)
       .map((img) => img.url!);
-    form.setValue('propertyImages', uploadedImageUrls);
+    form.setValue('images', uploadedImageUrls);
   }, [propertyImages, form]);
 
   useEffect(() => {
@@ -327,86 +315,17 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   };
 
   const onSubmit = async (data: PropertyFormValues) => {
-    const categorySlugMap: Record<PropertyFormValues['listingType'], string> = {
-      'For Sale': 'for-sale',
-      Rent: 'for-for-rent',
-      'Short Let': 'short-let',
-    };
-
-    const propertyTypeMap: Record<string, string> = {
-      duplex: 'duplex',
-      bungalow: 'house',
-      apartment: 'apartment',
-      flat: 'apartment',
-      mansion: 'house',
-      townhouse: 'house',
-      villa: 'villa',
-      studio: 'apartment',
-      penthouse: 'apartment',
-    };
-    // const formData = new FormData();
-
     const payload = {
-      title: data.listingTitle,
-      category_slug: categorySlugMap[data.listingType],
-      description: data.propertyDescription,
-      price: Number(data.propertyPrice),
-      currency: data.currency,
-      property_type: propertyTypeMap[data.propertyType.toLowerCase()] || 'other',
-      address: `${data.houseNumber} ${data.streetName}`,
-      lga_or_city: data.localGovernment,
-      state: data.state,
-      country: 'Nigeria', // Assuming this is constant for now
-      bedrooms: data.bedrooms,
-      bathrooms: data.bathrooms,
-      area_sqft: data.totalArea,
-      features: data.nearbyAmenities,
-      images: data.propertyImages,
+      ...data,
+      price: Number(data.price),
     };
-    // formData.append('title', data.listingTitle);
-    // formData.append('category_slug', categorySlugMap[data.listingType]);
-    // formData.append('description', data.propertyDescription);
-    // formData.append('price', String(data.propertyPrice));
-    // formData.append('currency', data.currency);
-    // formData.append('property_type', data.propertyType.toLowerCase());
-    // formData.append('address', `${data.houseNumber} ${data.streetName}`);
-    // formData.append('lga_or_city', data.localGovernment);
-    // formData.append('state', data.state);
-    // formData.append('country', 'Nigeria');
-    // formData.append('bedrooms', String(data.bedrooms));
-    // formData.append('bathrooms', String(data.bathrooms));
-    // formData.append('area_sqft', String(data.totalArea));
-
-    // Append array fields correctly for FormData
-    // if (data.nearbyAmenities && data.nearbyAmenities.length > 0) {
-    //   data.nearbyAmenities.forEach((amenity) => {
-    //     formData.append('features[]', amenity);
-    //   });
-    // } else {
-    //   formData.append('features', '');
-    // }
-
-    // if (data.propertyImages && data.propertyImages.length > 0) {
-    //   data.propertyImages.forEach((image) => {
-    //     formData.append('images[]', image);
-    //   });
-    // } else {
-    //   formData.append('images', '');
-    // }
-
-    // // For PUT requests spoofing with _method
-    // if (isEdit) {
-    //   formData.append('_method', 'PUT');
-    // }
 
     try {
       if (isEdit) {
         await updateProperty(payload);
-        // await updateProperty(formData);
         toast.success('Property updated successfully!');
       } else {
         await createProperty(payload);
-        // await createProperty(formData);
         toast.success('Property created successfully!');
       }
       router.navigate({ to: '/properties' });
@@ -435,7 +354,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 </BreadcrumbSeparator>
                 <BreadcrumbItem>
                   <BreadcrumbPage className="max-w-[200px] truncate text-sm sm:max-w-none">
-                    {initialData?.listingTitle || '456 Market Avenue, Ikeja, Lagos'}
+                    {initialData?.title || '456 Market Avenue, Ikeja, Lagos'}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -475,7 +394,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
             <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
               <FormField
                 control={form.control}
-                name="listingTitle"
+                name="title"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
@@ -491,7 +410,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
               <FormField
                 control={form.control}
-                name="listingType"
+                name="category_slug"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
@@ -504,9 +423,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="For Sale">For Sale</SelectItem>
-                        <SelectItem value="Rent">Rent</SelectItem>
-                        <SelectItem value="Short Let">Short Let</SelectItem>
+                        {listingTypes.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -519,22 +440,28 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
             <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               <FormField
                 control={form.control}
-                name="propertyType"
+                name="property_type"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                       Property Type
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        form.setValue('sub_type', '');
+                      }}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
-                          <SelectValue placeholder="Duplex" />
+                          <SelectValue placeholder="Select Property Type" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {propertyTypes.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
+                          <SelectItem key={type.types} value={type.types}>
+                            {type.types}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -546,18 +473,20 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
               <FormField
                 control={form.control}
-                name="landType"
+                name="sub_type"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Land Type</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Property Sub-Type
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value} disabled={subTypes.length === 0}>
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
-                          <SelectValue placeholder="Residential" />
+                          <SelectValue placeholder="Select Property Sub-Type" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {landTypes.map((type) => (
+                        {subTypes.map((type) => (
                           <SelectItem key={type} value={type}>
                             {type}
                           </SelectItem>
@@ -572,28 +501,16 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
               {/* Address */}
               <FormField
                 control={form.control}
-                name="houseNumber"
+                name="address"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                      House / Apartment No.
-                    </FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="456 Market Avenue" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="streetName"
-                render={({ field }) => (
-                  <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Street Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="456 Market Avenue" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="e.g. No 14, Liverpool Street"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -601,35 +518,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
               />
             </div>
 
-            <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
-              {/* <FormField
-                control={form.control}
-                name="city"
-                render={({ field }) => (
-                  <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">City</FormLabel>
-                    <FormControl>
-                      <Input placeholder="456 Market Avenue" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="postalCode"
-                render={({ field }) => (
-                  <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Postal Code</FormLabel>
-                    <FormControl>
-                      <Input placeholder="456 Market Avenue" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-
+            <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               <FormField
                 control={form.control}
                 name="state"
@@ -640,13 +529,14 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       onValueChange={(value) => {
                         field.onChange(value);
                         setSelectedState(value);
-                        form.setValue('localGovernment', ''); // Reset LGA on state change
+                        form.setValue('lga_or_city', '');
+                        form.setValue('area', '');
                       }}
                       value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
-                          <SelectValue placeholder="Lagos" />
+                          <SelectValue placeholder="Select State" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -664,20 +554,22 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
               <FormField
                 control={form.control}
-                name="localGovernment"
+                name="lga_or_city"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                      Locality/Area
-                    </FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Locality</FormLabel>
                     <Select
                       disabled={!selectedState || lgas.length === 0}
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setSelectedLga(value);
+                        form.setValue('area', '');
+                      }}
                       value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
-                          <SelectValue placeholder="Ikeja" />
+                          <SelectValue placeholder="Select Locality" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -692,13 +584,41 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="area"
+                render={({ field }) => (
+                  <FormItem className="w-full gap-1.5">
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Area</FormLabel>
+                    <Select
+                      disabled={!selectedLga || areas.length === 0}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
+                          <SelectValue placeholder="Select Area" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {areas.map((area, index) => (
+                          <SelectItem key={`${area}${index}`} value={area}>
+                            {area}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             {/* Property Description */}
             <div className="w-full">
               <FormField
                 control={form.control}
-                name="propertyDescription"
+                name="description"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
@@ -769,7 +689,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
               <FormField
                 control={form.control}
-                name="totalArea"
+                name="area_sqft"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Total Area</FormLabel>
@@ -795,7 +715,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
               <FormField
                 control={form.control}
-                name="propertyPrice"
+                name="price"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
@@ -1113,37 +1033,81 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
               </>
             )}
 
-            {/* Nearby Amenities */}
+            <Separator className="h-px w-full bg-[#EEEEF1]" />
+
+            {/* Status */}
             <FormField
               control={form.control}
-              name="nearbyAmenities"
+              name="status"
+              render={() => (
+                <FormItem className="w-full gap-1.5">
+                  <FormLabel className="text-[14px] leading-[17px] font-semibold tracking-[0.01em] text-[#41415A] capitalize">
+                    Status
+                  </FormLabel>
+                  <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {propertyStatus.map((status) => (
+                      <FormField
+                        key={status}
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => {
+                          const value = field.value ?? [];
+                          return (
+                            <FormItem key={status} className="flex flex-row items-start space-y-0 space-x-3">
+                              <FormControl>
+                                <Checkbox
+                                  checked={value.includes(status)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...value, status])
+                                      : field.onChange(value.filter((v) => v !== status));
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="text-sm leading-5 font-normal">{status}</FormLabel>
+                            </FormItem>
+                          );
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Separator className="h-px w-full bg-[#EEEEF1]" />
+
+            {/* Features */}
+            <FormField
+              control={form.control}
+              name="features"
               render={() => (
                 <FormItem className="w-full gap-1.5">
                   <FormLabel className="text-[14px] leading-[17px] font-semibold tracking-[0.01em] text-[#41415A] capitalize">
                     Features
                   </FormLabel>
                   <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {amenities.map((amenity) => (
+                    {propertyFeatures.map((feature) => (
                       <FormField
-                        key={amenity}
+                        key={feature}
                         control={form.control}
-                        name="nearbyAmenities"
+                        name="features"
                         render={({ field }) => {
-                          const value = field.value ?? []; // 👈 ensure array
-
+                          const value = field.value ?? [];
                           return (
-                            <FormItem key={amenity} className="flex flex-row items-start space-y-0 space-x-3">
+                            <FormItem key={feature} className="flex flex-row items-start space-y-0 space-x-3">
                               <FormControl>
                                 <Checkbox
-                                  checked={value.includes(amenity)}
+                                  checked={value.includes(feature)}
                                   onCheckedChange={(checked) => {
                                     return checked
-                                      ? field.onChange([...value, amenity])
-                                      : field.onChange(value.filter((v) => v !== amenity));
+                                      ? field.onChange([...value, feature])
+                                      : field.onChange(value.filter((v) => v !== feature));
                                   }}
                                 />
                               </FormControl>
-                              <FormLabel className="text-sm leading-5 font-normal">{amenity}</FormLabel>
+                              <FormLabel className="text-sm leading-5 font-normal">{feature}</FormLabel>
                             </FormItem>
                           );
                         }}

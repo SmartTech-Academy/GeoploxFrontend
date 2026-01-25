@@ -43,7 +43,19 @@ export const sortOptions = [
   { label: 'Most viewed', value: 'most_viewed' },
 ];
 
-export const propertyStatus = ['New', 'Old', 'Distress', 'Serviced', 'Non-Serviced', 'Off-Plan', 'Completed'];
+export const propertyStatus = [
+  'New',
+  'Old',
+  'Distress',
+  'Serviced',
+  'Non-Serviced',
+  'Off-Plan',
+  'Completed',
+  'On-Going Completion',
+  'Furnished',
+];
+
+export const listingTypes = ['For Rent', 'For Sale', 'Short Let', 'Joint Venture'];
 
 export const propertyFeatures = [
   'Swimming Pool',

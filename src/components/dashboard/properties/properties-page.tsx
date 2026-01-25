@@ -28,7 +28,16 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import assets from '@/assets';
 import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
@@ -600,12 +609,12 @@ const PropertiesPage: React.FC = () => {
         </div>
 
         <div className="h-[358px] w-full">
-            <Map
-              address={selectedProperty.address}
-              city={selectedProperty.city}
-              state={selectedProperty.state}
-              country={selectedProperty.country}
-            />
+          <Map
+            address={selectedProperty.address}
+            city={selectedProperty.city}
+            state={selectedProperty.state}
+            country={selectedProperty.country}
+          />
         </div>
       </div>
     );
