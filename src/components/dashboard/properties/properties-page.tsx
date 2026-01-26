@@ -22,22 +22,14 @@ import {
   ShowerHead,
   BadgeCheck,
   HousePlus,
+  Filter,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import assets from '@/assets';
 import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
@@ -46,7 +38,7 @@ import { PageMetaTags } from '@/components/page-meta-data';
 import { useArchiveProperty, useDeleteProperty, useGetProperties } from '@/lib/services/properties';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import FilterPopover, { FilterValues } from './filter-popover';
+import { PropertyFilterSidebar } from '@/components/property-filter-sidebar';
 import Map from '@/components/google-map';
 
 // TypeScript interfaces
@@ -101,7 +93,8 @@ const PropertiesPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<StatusFilterType>('published');
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-  const [filters, setFilters] = useState<FilterValues>({});
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState<boolean>(false);
 
   const { data: propertiesData, isLoading, isError } = useGetProperties({ status: statusFilter, ...filters }, true);
   const { mutate: archiveProperty, isPending: isArchiving } = useArchiveProperty();
@@ -189,7 +182,26 @@ const PropertiesPage: React.FC = () => {
     <div className="flex h-full flex-col gap-4 bg-white lg:px-6">
       <div className="flex items-center justify-between border-b border-[#E8E8E8] pb-4">
         <h1 className="text-[24px] font-semibold text-[#1F2130]">Properties</h1>
-        <FilterPopover onApply={setFilters} />
+        <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="sm" className="p-2">
+              <Filter className="size-4 text-gray-600" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-full max-w-sm p-0">
+            <PropertyFilterSidebar
+              filters={filters}
+              onFiltersChange={(newFilters) => {
+                setFilters(newFilters);
+                setIsFilterSheetOpen(false);
+              }}
+              onClear={() => {
+                setFilters({});
+                setIsFilterSheetOpen(false);
+              }}
+            />
+          </SheetContent>
+        </Sheet>
       </div>
       <div className="flex w-full flex-col gap-6 border-b border-[#E8E8E8] pb-4">
         <div className="relative pt-0.5">
