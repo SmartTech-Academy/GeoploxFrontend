@@ -15,7 +15,7 @@ const PropertiesDetails = () => {
     return (
       <div className="p-8">
         <Skeleton className="mb-4 h-8 w-1/4" />
-        <Skeleton className="h-[400px] w-full" />
+        <Skeleton className="h-100 w-full" />
       </div>
     );
   }
@@ -35,25 +35,23 @@ const PropertiesDetails = () => {
   const initialData: Partial<PropertyFormValues> = property
     ? {
         id: property.id,
-        listingTitle: property.title,
-        listingType: property.category, // 'For Sale', 'Rent', 'Short Let'
-        propertyType: toTitleCase(property.property_type),
-        // landType: property.land_type, // Not in API response
-        // Splitting address into houseNumber and streetName
-        houseNumber: property.address?.split(' ')[0] || '',
-        streetName: property.address?.split(' ').slice(1).join(' ') || '',
-        // city: property.city, // API provides LGA as city
-        // postalCode: '', // Not in API response
+        title: property.title,
+        category_slug: property.category as 'For Rent' | 'For Sale' | 'Short Let' | 'Joint Venture',
+        property_type: toTitleCase(property.property_type),
+        sub_type: property.sub_type || '',
+        address: property.address || '',
+        country: property.country || '',
         state: property.state,
-        localGovernment: property.city, // API provides LGA in the 'city' field
-        propertyDescription: property.desc,
+        lga_or_city: property.city, // API provides LGA in the 'city' field
+        area: property.area || '',
+        description: property.desc,
         bedrooms: property.bedrooms,
         bathrooms: property.bathrooms,
-        totalArea: property.area_sqft,
-        propertyPrice: property.price,
+        area_sqft: property.area_sqft,
+        price: property.price,
         currency: property.currency,
-        propertyImages: property.images?.map((img: { url: string }) => img.url) || [],
-        nearbyAmenities: property.features || [],
+        images: property.images?.map((img: { url: string }) => img.url) || [],
+        features: property.features || [],
       }
     : {};
 
