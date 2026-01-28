@@ -22,7 +22,9 @@ const ListingProperties = () => {
       ? `for-rent`
       : location.pathname.includes('/for-sale')
         ? `for-sale`
-        : 'all';
+        : location.pathname.includes('/joint-venture')
+          ? `joint-venture`
+          : 'all';
 
   const [filters, setFilters] = useState<Record<string, any>>({
     per_page: 5,

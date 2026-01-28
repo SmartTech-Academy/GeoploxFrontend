@@ -14,6 +14,7 @@ const publicPages = [
   '/verify-email',
   '/about',
   '/contact',
+  '/joint-venture'
 ];
 
 const api = axios.create({

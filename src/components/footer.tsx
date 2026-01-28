@@ -45,16 +45,6 @@ const Footer = () => {
                 >
                   FAQ
                 </Link>
-
-                <Link
-                  to="/privacy"
-                  className="text-[16px] leading-[19px] font-semibold text-white [&.active]:font-semibold [&.active]:text-[#D4AF36]"
-                  activeProps={{
-                    className: 'text-[14px] leading-[13px] font-semibold text-[#D4AF36]',
-                  }}
-                >
-                  Privacy Policy
-                </Link>
               </div>
             </div>
 
@@ -67,9 +57,9 @@ const Footer = () => {
                   <span>08132950172</span>
                 </div>
 
-                <p className="mt-2 text-[16px] leading-relaxed">
+                {/* <p className="mt-2 text-[16px] leading-relaxed">
                   Plot 8, Block A9, Wole Olateju Crescent, Off Admiralty Way Eti-Osa, Lekki Phase 1
-                </p>
+                </p> */}
               </div>
 
               {/* Email and Social */}
@@ -118,7 +108,27 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <a href="https://www.facebook.com/geoplox" target="_blank" rel="noopener noreferrer">
+              <Link
+                to="/privacy"
+                className="text-[16px] leading-[19px] font-semibold text-white [&.active]:font-semibold [&.active]:text-[#D4AF36]"
+                activeProps={{
+                  className: 'text-[14px] leading-[13px] font-semibold text-[#D4AF36]',
+                }}
+              >
+                Privacy Policy
+              </Link>
+
+              <Link
+                to="/blog"
+                className="text-[16px] leading-[19px] font-semibold text-white [&.active]:font-semibold [&.active]:text-[#D4AF36]"
+                activeProps={{
+                  className: 'text-[14px] leading-[13px] font-semibold text-[#D4AF36]',
+                }}
+              >
+                Blog
+              </Link>
+
+              {/* <a href="https://www.facebook.com/geoplox" target="_blank" rel="noopener noreferrer">
                 <Facebook className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36]" />
               </a>
               <a href="https://www.x.com/estateinformant" target="_blank" rel="noopener noreferrer">
@@ -129,7 +139,7 @@ const Footer = () => {
               </a>
               <a href="https://www.instagram.com/geoplox" target="_blank" rel="noopener noreferrer">
                 <Instagram className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36]" />
-              </a>
+              </a> */}
             </div>
           </div>
         </div>

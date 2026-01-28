@@ -67,6 +67,9 @@ const ListingDetail = () => {
     if (location.pathname.startsWith('/for-sale/')) {
       return '/_landing/for-sale/$id';
     }
+    if (location.pathname.startsWith('/joint-venture/')) {
+      return '/_landing/joint-venture/$id';
+    }
     if (location.pathname.startsWith('/admin-listing/')) {
       return '/_dashboard/admin-listing/$id';
     }
@@ -547,63 +550,65 @@ const ListingDetail = () => {
           </div>
 
           {/* Agent Contact Card */}
-          <div className="flex flex-col items-end">
-            <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
-              <div className="flex w-full items-center gap-4 border-b border-[#F1F1F4] pb-5">
-                <Avatar className="size-[68px] rounded-[5px]">
-                  <AvatarImage src={property?.owner?.image_url} alt={property.owner.name} />
-                  <AvatarFallback>{property.owner.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+          {(isDashboard || isAdminListing) && (
+            <div className="flex flex-col items-end">
+              <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
+                <div className="flex w-full items-center gap-4 border-b border-[#F1F1F4] pb-5">
+                  <Avatar className="size-[68px] rounded-[5px]">
+                    <AvatarImage src={property?.owner?.image_url} alt={property.owner.name} />
+                    <AvatarFallback>{property.owner.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
 
-                <div className="flex flex-col items-start gap-2 self-stretch">
-                  <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">{property.owner.name}</h4>
-                  <div className="flex items-center gap-2">
-                    {property.is_verified && <BadgeCheck className="text-primary size-4" />}
-                    <span className="text-primary text-[12px] leading-[18px] font-semibold capitalize">
-                      Verified {property.owner.role}
-                    </span>
-                  </div>
-                  {/* Property ID */}
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="text-[12px] leading-[18px] font-medium text-[#535364]">Property ID:</span>
-                    <span className="text-[12px] leading-[18px] font-semibold text-[#1F2130]">{property.id}</span>
+                  <div className="flex flex-col items-start gap-2 self-stretch">
+                    <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">{property.owner.name}</h4>
+                    <div className="flex items-center gap-2">
+                      {property.is_verified && <BadgeCheck className="text-primary size-4" />}
+                      <span className="text-primary text-[12px] leading-[18px] font-semibold capitalize">
+                        Verified {property.owner.role}
+                      </span>
+                    </div>
+                    {/* Property ID */}
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-[12px] leading-[18px] font-medium text-[#535364]">Property ID:</span>
+                      <span className="text-[12px] leading-[18px] font-semibold text-[#1F2130]">{property.id}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex flex-col gap-3 self-stretch">
-                <Button
-                  onClick={() => setContactDialogOpen(true)}
-                  style={{
-                    background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                    boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
-                  }}
-                  className="h-8 self-stretch rounded-[40px] border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
-                >
-                  Contact <Lock className="size-3" />
-                </Button>
+                <div className="flex flex-col gap-3 self-stretch">
+                  <Button
+                    onClick={() => setContactDialogOpen(true)}
+                    style={{
+                      background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
+                      boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                    }}
+                    className="h-8 self-stretch rounded-[40px] border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                  >
+                    Contact <Lock className="size-3" />
+                  </Button>
 
-                <Button
-                  asChild
-                  variant="outline"
-                  className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
-                >
-                  <a href={`mailto:${property.owner.email_address}`}>
-                    Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
-                  </a>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
-                >
-                  <a href={`https://wa.me/${property.owner.phone_number}`} target="_blank" rel="noopener noreferrer">
-                    Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
-                  </a>
-                </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
+                  >
+                    <a href={`mailto:${property.owner.email_address}`}>
+                      Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
+                  >
+                    <a href={`https://wa.me/${property.owner.phone_number}`} target="_blank" rel="noopener noreferrer">
+                      Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
+                    </a>
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
         {!(isDashboard || isAdminListing) && relatedProperties.length > 0 && (
           <div className="flex flex-col items-start gap-10">

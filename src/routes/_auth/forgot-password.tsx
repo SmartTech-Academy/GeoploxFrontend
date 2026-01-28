@@ -134,7 +134,9 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-5 text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
+          <p className="text-[14px] leading-5 text-[#41415A]">
+            © {new Date().getFullYear()} — Geoplox, All Right Reserved.
+          </p>
         </div>
       </div>
     </div>

@@ -1,14 +1,81 @@
 import assets from '@/assets';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from '@tanstack/react-router';
-import { Search, Home } from 'lucide-react';
-import { useState } from 'react';
+import { Search, Home, ChevronsUpDown, Check } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import statesAndLocalGov from '@/data/statesAndLocalGov.json';
+import { cn } from '@/lib/utils';
+
+interface Location {
+  label: string;
+  value: {
+    state?: string;
+    city?: string;
+    area?: string;
+  };
+}
 
 export function Hero() {
   const navigate = useNavigate();
   const [listingType, setListingType] = useState('buy');
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  const locations = useMemo(() => {
+    const allLocations: Location[] = [];
+    statesAndLocalGov.forEach((stateData: any) => {
+      allLocations.push({
+        label: stateData.state,
+        value: { state: stateData.state },
+      });
+
+      if (stateData.lgas) {
+        stateData.lgas.forEach((lga: string) => {
+          const lgaLabel = `${lga}, ${stateData.state}`;
+          if (!allLocations.some((l) => l.label === lgaLabel)) {
+            allLocations.push({
+              label: lgaLabel,
+              value: { state: stateData.state, city: lga },
+            });
+          }
+
+          if (stateData[lga]) {
+            stateData[lga].forEach((area: string) => {
+              const areaLabel = `${area}, ${lga}, ${stateData.state}`;
+              if (!allLocations.some((l) => l.label === areaLabel)) {
+                allLocations.push({
+                  label: areaLabel,
+                  value: { state: stateData.state, city: lga, area: area },
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+    return allLocations;
+  }, []);
+
+  const handleFindProperty = () => {
+    const searchParams: Record<string, string> = {};
+    if (selectedLocation?.value.state) {
+      searchParams.state = selectedLocation.value.state;
+    }
+    if (selectedLocation?.value.city) {
+      searchParams.city = selectedLocation.value.city;
+    }
+    if (selectedLocation?.value.area) {
+      searchParams.area = selectedLocation.value.area;
+    }
+
+    navigate({
+      to: `/${listingType}`,
+      search: searchParams,
+    });
+  };
 
   return (
     <section className="relative flex min-h-[700px] items-center justify-start">
@@ -50,11 +117,51 @@ export function Hero() {
           {/* Search Interface */}
           <div className="flex w-full flex-col items-center gap-3 rounded-4xl bg-[oklch(1_0_0_/_50%)] p-4 backdrop-blur-[12px] lg:max-w-[817px] lg:flex-row">
             <div className="relative flex w-full flex-1 items-center gap-2">
-              <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-[#D4AF36]" />
-              <Input
-                placeholder="Search location"
-                className="h-10 rounded-[85px] border border-[#D5D5DD] bg-white py-[14px] pl-10 text-base text-gray-900 placeholder:text-gray-500 focus-visible:ring-0"
-              />
+              <Search className="absolute top-4 left-3 size-4 -translate-y-1/2 transform text-[#D4AF36]" />
+              <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={isPopoverOpen}
+                    className="h-10 w-full justify-start rounded-[85px] border border-[#D5D5DD] bg-white py-[14px] pl-10 text-base text-gray-900 placeholder:text-gray-500 focus-visible:ring-0"
+                  >
+                    <span className="truncate pl-5">
+                      {selectedLocation ? selectedLocation.label : 'Search location'}
+                    </span>
+                    <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="max-h-60 w-[--radix-popover-trigger-width] overflow-y-auto p-0">
+                  <Command>
+                    <CommandInput placeholder="Search location..." />
+                    <CommandEmpty>No location found.</CommandEmpty>
+                    <CommandGroup>
+                      {locations.map((location) => (
+                        <CommandItem
+                          key={location.label}
+                          value={location.label}
+                          onSelect={(currentValue) => {
+                            const newSelectedLocation = locations.find(
+                              (loc) => loc.label.toLowerCase() === currentValue.toLowerCase()
+                            );
+                            setSelectedLocation(newSelectedLocation || null);
+                            setIsPopoverOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              'mr-2 h-4 w-4',
+                              selectedLocation?.label === location.label ? 'opacity-100' : 'opacity-0'
+                            )}
+                          />
+                          {location.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="h-px w-full bg-[oklch(0.9158_0_0_/_53.33%)] lg:h-[28px] lg:w-px" />
@@ -72,6 +179,7 @@ export function Hero() {
                     <SelectItem value="buy">Short Let</SelectItem>
                     <SelectItem value="for-rent">Rent</SelectItem>
                     <SelectItem value="for-sale">Sell</SelectItem>
+                    <SelectItem value="joint-venture">Joint Venture</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -84,7 +192,7 @@ export function Hero() {
                   border: '1px solid rgba(30, 30, 30, 0.5)',
                   boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                 }}
-                onClick={() => navigate({ to: `/${listingType}` })}
+                onClick={handleFindProperty}
                 className="flex h-10 items-center justify-center rounded-[40px] p-4 text-[14px] leading-[17px] font-semibold text-white"
               >
                 Find Property

@@ -28,7 +28,8 @@ const Topnav = () => {
     { to: '/for-rent', label: 'For Rent' },
     { to: '/for-sale', label: 'For Sale' },
     { to: '/buy', label: 'Short Let' },
-    { to: '/blog', label: 'Blog' },
+    { to: '/joint-venture', label: 'Joint Venture' },
+    // { to: '/blog', label: 'Blog' },
     { to: '/pricing', label: 'Pricing' },
   ];
 
@@ -84,7 +85,7 @@ const Topnav = () => {
         <ul className="hidden md:flex md:items-center">
           {navigationLinks.map((link, index) => (
             <React.Fragment key={link.to}>
-              <li key={link.to} className="isolate flex h-12 w-[80px] items-center justify-center">
+              <li key={link.to} className="isolate flex h-12 items-center justify-center px-4">
                 <NavLink to={link.to} label={link.label} />
               </li>
               {index < navigationLinks.length - 1 && <li key={`divider-${index}`} className="h-3 w-0.5 bg-[#B1B9C7]" />}

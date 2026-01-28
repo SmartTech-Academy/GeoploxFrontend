@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Eye, EyeOff, Check, X } from 'lucide-react';
+import { Eye, EyeOff, Check, X, ChevronLeft } from 'lucide-react';
 
 import { useRegister } from '@/lib/services';
 import assets from '@/assets';
@@ -133,6 +133,24 @@ function RouteComponent() {
         </div>
 
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
+          <button
+            onClick={() => {
+              navigate({
+                to: '/register',
+                search: {
+                  firstName: searchParams.firstName,
+                  lastName: searchParams.lastName,
+                  username: searchParams.username,
+                  phoneNumber: searchParams.phoneNumber,
+                  email: searchParams.email,
+                },
+              });
+            }}
+            className="flex w-full items-center gap-2 text-[#D4AF36] transition-colors hover:text-[#B69118]"
+          >
+            <ChevronLeft className="h-5 w-5" />
+            <span className="text-[14px] leading-[21px] font-medium">Back</span>
+          </button>
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Create Password</h1>
             <p className="text-[14px] leading-5 text-[#71748C]">Complete your onboarding in 10 minutes.</p>
@@ -199,7 +217,9 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-5 text-[#41415A]">© 2025 — Geoplox, All Right Reserved.</p>
+          <p className="text-[14px] leading-5 text-[#41415A]">
+            © {new Date().getFullYear()} — Geoplox, All Right Reserved.
+          </p>
         </div>
       </div>
     </div>

@@ -86,6 +86,7 @@ function generateMetaInfo(options: MetaInfoOptions = {}) {
         buy: 'Discover your dream home with our extensive collection of properties for sale.',
         rent: 'Find the perfect rental property that suits your lifestyle and budget.',
         sell: 'List your property and connect directly with potential buyers.',
+        'joint-venture': ' Explore properties with joint venture opportunities to maximize your investment.',
       };
       dynamicDesc = `${actions[options.listingType]} ${defaults.baseDescription}`;
     }
@@ -167,7 +168,7 @@ interface PageMetaTagsProps {
   price?: string;
   location?: string;
   propertyType?: string;
-  listingType?: 'buy' | 'rent' | 'sell';
+  listingType?: 'buy' | 'rent' | 'sell' | 'joint-venture';
 }
 
 export function PageMetaTags({

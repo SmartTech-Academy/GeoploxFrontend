@@ -143,7 +143,7 @@ function RouteComponent() {
               </div>
             </div>
 
-            <div className="flex flex-col items-start gap-4 self-stretch">
+            {/* <div className="flex flex-col items-start gap-4 self-stretch">
               <h2 className="text-[24px] leading-[29px] font-semibold tracking-[-0.02em] text-[#1F2130]">
                 Our Address
               </h2>
@@ -151,7 +151,7 @@ function RouteComponent() {
               <p className="text-[20px] leading-7 text-[#4D5462]">
                 Plot 8, Block A9, Wole Olateju Crescent, Off Admiralty Way Eti-Osa, Lekki Phase 1
               </p>
-            </div>
+            </div> */}
 
             <div className="flex flex-col items-start gap-4 self-stretch">
               <h2 className="text-[24px] leading-[29px] font-semibold tracking-[-0.02em] text-[#1F2130]">Contact</h2>
