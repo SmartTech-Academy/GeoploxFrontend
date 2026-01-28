@@ -29,7 +29,7 @@ interface MetaInfoOptions {
   price?: string;
   location?: string;
   propertyType?: string;
-  listingType?: 'buy' | 'rent' | 'sell';
+  listingType?: 'buy' | 'rent' | 'sell' | 'joint-venture';
 }
 
 function generateMetaInfo(options: MetaInfoOptions = {}) {
@@ -117,6 +117,7 @@ function generateMetaInfo(options: MetaInfoOptions = {}) {
         buy: 'homes for sale, buy property, purchase real estate, property investment',
         rent: 'rental properties, apartments for for-rent, house rental, lease property',
         sell: 'for-sale property, list property, property listing, real estate agent',
+        'joint-venture': 'joint venture properties, investment partnership, property collaboration',
       };
       keywords.push(typeKeywords[options.listingType]);
     }
