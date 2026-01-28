@@ -21,6 +21,7 @@ import { Route as AuthPasswordResetSentRouteImport } from './routes/_auth/passwo
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthAccountReadyRouteImport } from './routes/_auth/account-ready'
+import { Route as LandingPrivacyIndexRouteImport } from './routes/_landing/privacy/index'
 import { Route as LandingPricingIndexRouteImport } from './routes/_landing/pricing/index'
 import { Route as LandingForSaleIndexRouteImport } from './routes/_landing/for-sale/index'
 import { Route as LandingForRentIndexRouteImport } from './routes/_landing/for-rent/index'
@@ -110,6 +111,11 @@ const AuthAccountReadyRoute = AuthAccountReadyRouteImport.update({
   id: '/account-ready',
   path: '/account-ready',
   getParentRoute: () => AuthRoute,
+} as any)
+const LandingPrivacyIndexRoute = LandingPrivacyIndexRouteImport.update({
+  id: '/privacy/',
+  path: '/privacy/',
+  getParentRoute: () => LandingRoute,
 } as any)
 const LandingPricingIndexRoute = LandingPricingIndexRouteImport.update({
   id: '/pricing/',
@@ -322,6 +328,7 @@ export interface FileRoutesByFullPath {
   '/for-rent/': typeof LandingForRentIndexRoute
   '/for-sale/': typeof LandingForSaleIndexRoute
   '/pricing/': typeof LandingPricingIndexRoute
+  '/privacy/': typeof LandingPrivacyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof LandingIndexRoute
@@ -365,6 +372,7 @@ export interface FileRoutesByTo {
   '/for-rent': typeof LandingForRentIndexRoute
   '/for-sale': typeof LandingForSaleIndexRoute
   '/pricing': typeof LandingPricingIndexRoute
+  '/privacy': typeof LandingPrivacyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -412,6 +420,7 @@ export interface FileRoutesById {
   '/_landing/for-rent/': typeof LandingForRentIndexRoute
   '/_landing/for-sale/': typeof LandingForSaleIndexRoute
   '/_landing/pricing/': typeof LandingPricingIndexRoute
+  '/_landing/privacy/': typeof LandingPrivacyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -457,6 +466,7 @@ export interface FileRouteTypes {
     | '/for-rent/'
     | '/for-sale/'
     | '/pricing/'
+    | '/privacy/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -500,6 +510,7 @@ export interface FileRouteTypes {
     | '/for-rent'
     | '/for-sale'
     | '/pricing'
+    | '/privacy'
   id:
     | '__root__'
     | '/_auth'
@@ -546,6 +557,7 @@ export interface FileRouteTypes {
     | '/_landing/for-rent/'
     | '/_landing/for-sale/'
     | '/_landing/pricing/'
+    | '/_landing/privacy/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -639,6 +651,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/account-ready'
       preLoaderRoute: typeof AuthAccountReadyRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/_landing/privacy/': {
+      id: '/_landing/privacy/'
+      path: '/privacy'
+      fullPath: '/privacy/'
+      preLoaderRoute: typeof LandingPrivacyIndexRouteImport
+      parentRoute: typeof LandingRoute
     }
     '/_landing/pricing/': {
       id: '/_landing/pricing/'
@@ -956,6 +975,7 @@ interface LandingRouteChildren {
   LandingForRentIndexRoute: typeof LandingForRentIndexRoute
   LandingForSaleIndexRoute: typeof LandingForSaleIndexRoute
   LandingPricingIndexRoute: typeof LandingPricingIndexRoute
+  LandingPrivacyIndexRoute: typeof LandingPrivacyIndexRoute
 }
 
 const LandingRouteChildren: LandingRouteChildren = {
@@ -971,6 +991,7 @@ const LandingRouteChildren: LandingRouteChildren = {
   LandingForRentIndexRoute: LandingForRentIndexRoute,
   LandingForSaleIndexRoute: LandingForSaleIndexRoute,
   LandingPricingIndexRoute: LandingPricingIndexRoute,
+  LandingPrivacyIndexRoute: LandingPrivacyIndexRoute,
 }
 
 const LandingRouteWithChildren =

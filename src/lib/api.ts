@@ -13,7 +13,7 @@ const publicPages = [
   '/reset-password',
   '/verify-email',
   '/about',
-  '/contact-us',
+  '/contact',
 ];
 
 const api = axios.create({

@@ -55,29 +55,54 @@ function RouteComponent() {
 
   const faqData = [
     {
-      question: 'Is Geoplox an Estate Agent?',
+      question: 'What type of company is Geoplox?',
       answer:
-        "Nigeria Property Centre is not itself an Estate Agent. We only display the properties provided to us. We recommend that you contact the estate agent or developer who is marketing the property if you require further information. The agent's contact details are on the property details page.",
+        'Geoplox is a real estate intelligence and ecosystem infrastructure platform. We provide structured data, transparency, and coordination tools that connect participants across the real estate value chain. We do not act as brokers, agents, or advisors.',
     },
     {
-      question: "I asked for details on a property but haven't heard anything yet. What should I do?",
+      question: 'Does Geoplox buy, sell, list, or source properties?',
       answer:
-        "If you haven't received a response within 24-48 hours, please try contacting the property agent directly using the contact information provided on the property listing. You can also reach out to our support team for assistance in connecting with the right agent.",
+        'No. Geoplox does not buy, sell, list, market, or source properties. All transactions and negotiations are conducted directly between the relevant parties. Geoplox remains neutral and independent.',
     },
     {
-      question: 'What should I do if I want more information about one of the properties?',
+      question: 'Who is Geoplox built for?',
       answer:
-        "To get more information about a property, click on the property listing to view full details including photos, specifications, and pricing. You'll find the agent's contact information on the property page to request additional details or schedule a viewing.",
+        'Geoplox serves developers, property owners, investors, real estate professionals, service providers, and institutions who require better visibility, credible information, and structured coordination within the real estate ecosystem.',
     },
     {
-      question: "Why don't all the properties have full details and photos?",
+      question: 'How does Geoplox add value if it does not advise or transact?',
       answer:
-        'Property details and photos are provided by the listing agents and developers. Some agents may still be updating their listings or may have different levels of detail available. We encourage all our partners to provide comprehensive information, but the completeness depends on what each agent submits.',
+        'Geoplox adds value by organizing information, improving transparency, and enabling efficient collaboration. By reducing information gaps and coordination friction, we help stakeholders operate with greater clarity and confidence.',
     },
     {
-      question: 'Is there any limit to the number of properties I can list?',
+      question: 'Is Geoplox a replacement for brokers, lawyers, or consultants?',
       answer:
-        'There are different listing packages available depending on your needs. Basic accounts may have limitations, while premium accounts offer expanded listing capabilities. Contact our sales team to discuss the best package for your property portfolio and business requirements.',
+        'No. Geoplox is designed to complement existing roles, not replace them. Brokers, lawyers, consultants, and other professionals continue to perform their specialized functions while Geoplox provides the infrastructure that supports their work.',
+    },
+    {
+      question: 'How does Geoplox support trust between stakeholders?',
+      answer:
+        'Geoplox introduces structured data standards, documentation, and verification frameworks that improve credibility and reduce ambiguity, enabling stakeholders to engage with greater confidence.',
+    },
+    {
+      question: 'Does Geoplox participate in negotiations or decision-making?',
+      answer:
+        'No. Geoplox does not participate in negotiations or influence decisions. All commercial terms, agreements, and outcomes are determined solely by the involved parties.',
+    },
+    {
+      question: 'Is Geoplox suitable for both individuals and institutions?',
+      answer:
+        'Yes. Geoplox is designed to scale across individual professionals, small teams, and large institutions seeking consistent processes and reliable real estate intelligence.',
+    },
+    {
+      question: 'How does Geoplox handle data confidentiality and privacy?',
+      answer:
+        'Data confidentiality is central to our platform design. Access controls, role-based visibility, and secure information handling ensure that stakeholders only see information relevant to their participation.',
+    },
+    {
+      question: 'How do I contact Geoplox or request onboarding support?',
+      answer:
+        'You can reach us through the contact form or official communication channels on this page. Our team will guide you through onboarding and explain how Geoplox fits within your role in the ecosystem.',
     },
   ];
 
@@ -103,10 +128,18 @@ function RouteComponent() {
             <div className="flex flex-col items-start gap-[22px]">
               <h2 className="text-[24px] leading-[29px] font-semibold tracking-[-0.02em] text-[#1F2130]">Follow us</h2>
               <div className="flex items-center gap-6">
-                <Facebook className="fill-primary text-primary size-6" />
-                <Twitter className="fill-primary text-primary size-6" />
-                <Linkedin className="fill-primary text-primary size-6" />
-                <Instagram className="text-primary size-6" />
+                <a href="https://www.facebook.com/geoplox" target="_blank" rel="noopener noreferrer">
+                  <Facebook className="fill-primary text-primary size-6" />
+                </a>
+                <a href="https://www.x.com/estateinformant" target="_blank" rel="noopener noreferrer">
+                  <Twitter className="fill-primary text-primary size-6" />
+                </a>
+                <a href="https://www.LinkedIn.com/geoplox" target="_blank" rel="noopener noreferrer">
+                  <Linkedin className="fill-primary text-primary size-6" />
+                </a>
+                <a href="https://www.instagram.com/geoplox" target="_blank" rel="noopener noreferrer">
+                  <Instagram className="text-primary size-6" />
+                </a>
               </div>
             </div>
 
@@ -118,6 +151,15 @@ function RouteComponent() {
               <p className="text-[20px] leading-7 text-[#4D5462]">
                 Plot 8, Block A9, Wole Olateju Crescent, Off Admiralty Way Eti-Osa, Lekki Phase 1
               </p>
+            </div>
+
+            <div className="flex flex-col items-start gap-4 self-stretch">
+              <h2 className="text-[24px] leading-[29px] font-semibold tracking-[-0.02em] text-[#1F2130]">Contact</h2>
+              <div className="text-[20px] leading-7 text-[#4D5462]">
+                <p>support@geoplox.com</p>
+                <p>info@geoplox.com</p>
+                <p>08132950172</p>
+              </div>
             </div>
           </div>
 
@@ -235,14 +277,14 @@ function RouteComponent() {
       </section>
 
       {/* FAQ Section */}
-      <section className="flex w-full items-center bg-white py-16">
-        <div className="landing-container">
-          <div className="flex w-full flex-col gap-[67px]">
+      <section id="faq" className="flex w-full bg-white py-16">
+        <div className="landing-container w-full">
+          <div className="mx-auto flex w-full max-w-2xl flex-col items-center justify-center gap-[67px]">
             <h2 className="text-[38px] leading-[60px] font-semibold tracking-[-0.02em] text-[#1F2130] lg:text-[50px]">
               Frequently Asked Questions
             </h2>
 
-            <Accordion type="single" collapsible defaultValue="item-0" className="w-full gap-6 self-stretch">
+            <Accordion type="single" collapsible defaultValue="item-0" className="w-full gap-6">
               {faqData.map((faq, index) => (
                 <AccordionItem
                   key={index}

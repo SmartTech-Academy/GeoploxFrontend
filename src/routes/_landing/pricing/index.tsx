@@ -122,6 +122,13 @@ function RouteComponent() {
               const cardStyle = getCardStyle(plan.is_recommended);
               const buttonStyle = getButtonStyle(plan.name);
 
+              let planFeatures = plan.features;
+              if (plan.name === 'Premium') {
+                planFeatures = plan.features
+                  .filter((feature: string) => !feature.toLowerCase().includes('priority'))
+                  .concat(['Email Support', 'Downloadable watermarked property images']);
+              }
+
               return (
                 <div key={plan.id} style={cardStyle.style} className={cardStyle.className}>
                   {/* Recommended Badge */}
@@ -148,7 +155,7 @@ function RouteComponent() {
                     )}
 
                     <div className="flex flex-1 flex-col gap-4">
-                      {plan.features.map((feature: string) => (
+                      {planFeatures.map((feature: string) => (
                         <div key={feature} className="flex items-center gap-4">
                           <Check className="size-4 shrink-0 text-[#D4AF36]" />
                           <span className="text-[14px] leading-5 text-[#71748C]">{feature}</span>

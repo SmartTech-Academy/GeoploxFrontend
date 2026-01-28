@@ -34,6 +34,27 @@ const Footer = () => {
                 >
                   Contact Us
                 </Link>
+
+                <Link
+                  to="/contact"
+                  hash="faq"
+                  className="text-[16px] leading-[19px] font-semibold text-white [&.active]:font-semibold [&.active]:text-[#D4AF36]"
+                  activeProps={{
+                    className: 'text-[14px] leading-[13px] font-semibold text-[#D4AF36]',
+                  }}
+                >
+                  FAQ
+                </Link>
+
+                <Link
+                  to="/privacy"
+                  className="text-[16px] leading-[19px] font-semibold text-white [&.active]:font-semibold [&.active]:text-[#D4AF36]"
+                  activeProps={{
+                    className: 'text-[14px] leading-[13px] font-semibold text-[#D4AF36]',
+                  }}
+                >
+                  Privacy Policy
+                </Link>
               </div>
             </div>
 
@@ -43,8 +64,7 @@ const Footer = () => {
               <div className="flex flex-col gap-4 text-white md:col-span-2 md:gap-3">
                 <h6 className="text-[12px] text-gray-300 uppercase">PHONE</h6>
                 <div className="flex flex-col text-[16px] leading-relaxed">
-                  <span>+234 907 004 5555</span>
-                  <span>+234 907 004 2222</span>
+                  <span>08132950172</span>
                 </div>
 
                 <p className="mt-2 text-[16px] leading-relaxed">
@@ -56,14 +76,23 @@ const Footer = () => {
               <div className="flex flex-col gap-4 text-white md:col-span-2 md:gap-3">
                 <h6 className="text-[12px] text-gray-300 uppercase">EMAIL</h6>
                 <div className="flex flex-col text-[16px] leading-relaxed">
-                  <span className="font-semibold">support@nigeriapropertyhub.com</span>
+                  <span className="font-semibold">support@geoplox.com</span>
+                  <span className="font-semibold">info@geoplox.com</span>
                 </div>
 
                 <div className="mt-6 flex items-center gap-4 md:mt-8">
-                  <Facebook className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36] md:size-4" />
-                  <Twitter className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36] md:size-4" />
-                  <Linkedin className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36] md:size-4" />
-                  <Instagram className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36] md:size-4" />
+                  <a href="https://www.facebook.com/geoplox" target="_blank" rel="noopener noreferrer">
+                    <Facebook className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36] md:size-4" />
+                  </a>
+                  <a href="https://www.x.com/estateinformant" target="_blank" rel="noopener noreferrer">
+                    <Twitter className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36] md:size-4" />
+                  </a>
+                  <a href="https://www.LinkedIn.com/geoplox" target="_blank" rel="noopener noreferrer">
+                    <Linkedin className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36] md:size-4" />
+                  </a>
+                  <a href="https://www.instagram.com/geoplox" target="_blank" rel="noopener noreferrer">
+                    <Instagram className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36] md:size-4" />
+                  </a>
                 </div>
               </div>
             </div>
@@ -84,15 +113,23 @@ const Footer = () => {
                 className="h-8 w-auto md:h-10 md:w-[126px]"
               />
               <span className="mt-4 text-[14px] leading-5 text-[#DDDDDF] md:mt-0">
-                © 2025 — Geoplox, All Right Reserved.
+                © {new Date().getFullYear()} — Geoplox, All Right Reserved.
               </span>
             </div>
 
             <div className="flex items-center gap-4">
-              <Facebook className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36]" />
-              <Twitter className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36]" />
-              <Linkedin className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36]" />
-              <Instagram className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36]" />
+              <a href="https://www.facebook.com/geoplox" target="_blank" rel="noopener noreferrer">
+                <Facebook className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36]" />
+              </a>
+              <a href="https://www.x.com/estateinformant" target="_blank" rel="noopener noreferrer">
+                <Twitter className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36]" />
+              </a>
+              <a href="https://www.LinkedIn.com/geoplox" target="_blank" rel="noopener noreferrer">
+                <Linkedin className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36]" />
+              </a>
+              <a href="https://www.instagram.com/geoplox" target="_blank" rel="noopener noreferrer">
+                <Instagram className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36]" />
+              </a>
             </div>
           </div>
         </div>
