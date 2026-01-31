@@ -10,8 +10,8 @@ import { useGetPropertyCategories, useGetPropertyTags } from '@/lib/services';
 import statesAndLocalGov from '@/data/statesAndLocalGov.json';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { propertyFeatures, propertyStatus, propertyTypes, sortOptions } from '@/data/reuseable';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
+// import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+// import { Label } from '@/components/ui/label';
 
 type CollapsibleSectionProps = {
   title: React.ReactNode;
@@ -74,11 +74,11 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
   const [isLandAreaOpen, setIsLandAreaOpen] = useState(false);
 
   const [isBedroomBathroomOpen, setIsBedroomBathroomOpen] = useState(false);
-  const [isDeveloperOwnerOpen, setIsDeveloperOwnerOpen] = useState(false);
+  //   const [isDeveloperOwnerOpen, setIsDeveloperOwnerOpen] = useState(false);
   const [isPropertyIdOpen, setIsPropertyIdOpen] = useState(false);
   const [isTagsOpen, setIsTagsOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [isVerifiedOpen, setIsVerifiedOpen] = useState(false);
+  //   const [isVerifiedOpen, setIsVerifiedOpen] = useState(false);
 
   const { data: categoriesResponse } = useGetPropertyCategories();
   const { data: tagsResponse } = useGetPropertyTags();
@@ -498,7 +498,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
         </CollapsibleSection>
 
         {/* Developer/Owner */}
-        <CollapsibleSection
+        {/* <CollapsibleSection
           title="Developer or Owner's Name"
           isOpen={isDeveloperOwnerOpen}
           onToggle={() => setIsDeveloperOwnerOpen(!isDeveloperOwnerOpen)}
@@ -511,10 +511,10 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
               onChange={(e) => handleDraftChange('developer_or_owners_name', e.target.value)}
             />
           </div>
-        </CollapsibleSection>
+        </CollapsibleSection> */}
 
         {/* Verified Listing */}
-        <CollapsibleSection
+        {/* <CollapsibleSection
           title="Verification Status"
           isOpen={isVerifiedOpen}
           onToggle={() => setIsVerifiedOpen(!isVerifiedOpen)}
@@ -537,7 +537,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
               <Label htmlFor="v-unverified">Unverified Only</Label>
             </div>
           </RadioGroup>
-        </CollapsibleSection>
+        </CollapsibleSection> */}
 
         {/* Property ID */}
         <CollapsibleSection

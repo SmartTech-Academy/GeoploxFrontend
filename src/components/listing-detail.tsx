@@ -439,6 +439,10 @@ const ListingDetail = () => {
                   <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
                     {property.property_type}
                   </Badge>
+
+                  <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
+                    ID: {property.id}
+                  </Badge>
                 </div>
 
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
@@ -542,7 +546,7 @@ const ListingDetail = () => {
                     maintained by (e.g., Efficacy Construction). Users are strongly advised to conduct independent due
                     diligence before making any transaction. Geoplox has no personal interest in the properties listed
                     and does not act as a broker or intermediary. Geoplox shall not in any way be held liable for the
-                    actions of any property owner and developers on or off this website */
+                    actions of any property owner and developers on or off this website
                   </p>
                 </div>
               </div>
