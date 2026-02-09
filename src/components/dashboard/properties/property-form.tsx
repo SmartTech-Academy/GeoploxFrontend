@@ -354,38 +354,16 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 </BreadcrumbSeparator>
                 <BreadcrumbItem>
                   <BreadcrumbPage className="max-w-[200px] truncate text-sm sm:max-w-none">
-                    {initialData?.title || '456 Market Avenue, Ikeja, Lagos'}
+                    {initialData?.title ?? ''}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
 
-            <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex w-full flex-col gap-4">
               <h1 className="text-lg font-semibold text-black sm:text-xl">
                 {isEdit ? 'Edit Property Details' : 'New Property'}
               </h1>
-
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => router.history.back()}
-                  className="h-10 w-full rounded-4xl bg-[#F1F1F4] px-8 py-[15px] text-[14px] font-semibold text-[#1F2130] sm:w-auto"
-                >
-                  Cancel
-                </Button>
-
-                <Button
-                  style={{
-                    background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                    boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
-                  }}
-                  type="submit"
-                  className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] px-8 py-4 text-[14px] font-semibold text-white sm:w-auto"
-                >
-                  {isPending ? (isEdit ? 'Updating...' : 'Submitting...') : isEdit ? 'Update' : 'Submit'}
-                </Button>
-              </div>
             </div>
           </div>
 
@@ -1118,6 +1096,29 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 </FormItem>
               )}
             />
+
+            {/* Action Buttons - moved to bottom */}
+            <div className="flex w-full flex-col gap-4 pt-6 sm:flex-row sm:items-center">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => router.history.back()}
+                className="h-12 w-full rounded-4xl bg-[#F1F1F4] px-6 py-3 text-[14px] font-semibold text-[#1F2130] sm:w-auto sm:flex-1"
+              >
+                Cancel
+              </Button>
+
+              <Button
+                style={{
+                  background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
+                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                }}
+                type="submit"
+                className="h-12 w-full rounded-[40px] px-6 py-3 text-[14px] font-semibold text-white sm:w-auto sm:flex-1"
+              >
+                {isPending ? (isEdit ? 'Updating...' : 'Submitting...') : isEdit ? 'Update' : 'Submit'}
+              </Button>
+            </div>
           </div>
         </div>
       </form>

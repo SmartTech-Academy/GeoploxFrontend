@@ -11,12 +11,21 @@ interface CompleteOnboardingProps {
   goToPreviousStep: () => void;
 }
 
-const CompleteOnboarding: React.FC<CompleteOnboardingProps> = ({ goToPreviousStep }) => {
+const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
   const { data: profileData } = useGetProfileData();
   const isCompleted = useMemo(() => profileData?.onboarding_status === 'completed', [profileData]);
 
   const { data: summaryData, isPending } = useGetOnboardingSummary({ enabled: !isCompleted });
   const summary = summaryData?.data?.data;
+
+  const hasDocuments = useMemo(() => {
+    if (!summary) return false;
+    const cac = summary.business?.cac;
+    const govId = summary.government_id_doc_url;
+    const hasCac = typeof cac === 'string' && cac.trim() !== '';
+    const hasGovId = typeof govId === 'string' && govId.trim() !== '';
+    return hasCac || hasGovId;
+  }, [summary]);
 
   if (isPending) {
     return <LoadingFallback />;
@@ -127,7 +136,7 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = ({ goToPreviousSte
         )}
 
         {/* Documents Section (if applicable) */}
-        {(summary.business?.cac || summary.government_id_doc_url) && (
+        {summary.user_role !== 'client' && hasDocuments && (
           <div className="space-y-4 border-t border-[#F1F1F4] pt-6">
             <h3 className="text-[16px] font-semibold text-[#1F2130]">Uploaded Documents</h3>
             {summary.business?.cac && (
@@ -153,22 +162,14 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = ({ goToPreviousSte
       </div>
 
       {/* Submit Button */}
-      <div className="flex gap-4 pt-6">
-        <Button
-          type="button"
-          variant="outline"
-          className="h-12 flex-1 rounded-full border-[#E3E3E8] bg-transparent"
-          onClick={goToPreviousStep}
-        >
-          Back
-        </Button>
+      <div className="pt-6">
         <Button
           style={{
             background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
             boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
           }}
           type="submit"
-          className="h-12 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] font-semibold text-white"
+          className="h-12 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] font-semibold text-white"
         >
           Submit
         </Button>
