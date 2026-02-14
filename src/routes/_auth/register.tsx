@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 // import { toast } from 'sonner';
 
 import assets from '@/assets';
-import { NIGERIAN_PHONE_REGEX } from '@/lib/utils';
 import { customResolver } from '@/lib/customZodResolver';
 import { PageMetaTags } from '@/components/page-meta-data';
 
@@ -16,13 +15,7 @@ const registerSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   username: z.string().min(3, 'Username must be at least 3 characters'),
-  phoneNumber: z
-    .string()
-    .min(11, { error: 'Phone number must be 11 digits' })
-    .max(11, { error: 'Phone number must be 11 digits' })
-    .regex(NIGERIAN_PHONE_REGEX, {
-      error: 'Please enter a valid Nigerian phone number starting with 070, 080, 081, or 090',
-    }),
+  phoneNumber: z.string().min(1, 'Phone number is required'),
   email: z.email('Please enter a valid email address'),
 });
 

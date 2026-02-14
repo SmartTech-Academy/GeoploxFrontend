@@ -59,6 +59,13 @@ export function Hero() {
     return allLocations;
   }, []);
 
+  const [query, setQuery] = useState('');
+  const filteredLocations = useMemo(() => {
+    if (!query) return locations;
+    const q = query.toLowerCase();
+    return locations.filter((l) => l.label.toLowerCase().includes(q));
+  }, [locations, query]);
+
   const handleFindProperty = () => {
     const searchParams: Record<string, string> = {};
     if (selectedLocation?.value.state) {
@@ -134,10 +141,10 @@ export function Hero() {
                 </PopoverTrigger>
                 <PopoverContent className="max-h-60 w-[--radix-popover-trigger-width] overflow-y-auto p-0">
                   <Command>
-                    <CommandInput placeholder="Search location..." />
+                    <CommandInput placeholder="Search location..." value={query} onValueChange={setQuery} />
                     <CommandEmpty>No location found.</CommandEmpty>
                     <CommandGroup>
-                      {locations.map((location) => (
+                      {filteredLocations.map((location) => (
                         <CommandItem
                           key={location.label}
                           value={location.label}

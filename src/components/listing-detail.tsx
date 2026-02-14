@@ -53,6 +53,7 @@ import DeletePropertyModal from './dialogs/delete-property';
 import assets from '@/assets';
 import { PropertyListingCardSkeleton } from './property-listing-card-skeleton';
 import Map from './google-map';
+import { useGetProfileData } from '@/lib/services/profile';
 
 const ListingDetail = () => {
   const location = useLocation();
@@ -85,7 +86,6 @@ const ListingDetail = () => {
   const isDashboard = location.pathname.includes('/listing/');
   const isAdminListing = location.pathname.includes('/admin-listing/');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [showFullDescription, setShowFullDescription] = useState(false);
   const [isContactDialogOpen, setContactDialogOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
@@ -101,6 +101,8 @@ const ListingDetail = () => {
 
   const { data: propertyDetailsResponse, isPending: isLoadingDetails } = useGetPropertyDetails(slug, isDashboard);
   const { data: relatedPropertiesResponse, isPending: isLoadingRelated } = useGetRelatedProperties(slug);
+
+  const { data: user } = useGetProfileData();
 
   const property = propertyDetailsResponse?.data.data;
 
@@ -187,6 +189,16 @@ const ListingDetail = () => {
 
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href = images[currentImageIndex];
+    const imageName = images[currentImageIndex].split('/').pop();
+    link.download = imageName || `property-image-${currentImageIndex + 1}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (isLoadingDetails) {
@@ -390,6 +402,7 @@ const ListingDetail = () => {
                   <Button
                     size="sm"
                     variant="secondary"
+                    onClick={handleDownload}
                     className="h-[31px] rounded-[100px] bg-white p-[15px] py-1 text-[14px] leading-[21px] font-normal text-[#1A2258]"
                   >
                     <Download className="size-4" />
@@ -478,29 +491,17 @@ const ListingDetail = () => {
                   <p className="">{property.desc}</p>
 
                   <p>Price: {formatPrice(property.price, property.currency)}</p>
-                  <div className={cn('flex flex-col gap-2', !showFullDescription && 'bg-white mask-b-from-1')}>
+                  <div className={cn('flex flex-col gap-2', 'bg-white')}>
                     {property.features && property.features.length > 0 && (
                       <>
                         <p className="font-semibold">Features include:</p>
                         <ul className="list-disc space-y-1 pl-5 transition-all duration-300 ease-in-out">
-                          {property.features
-                            .slice(0, showFullDescription ? property.features.length : 2)
-                            .map((feature: string) => (
-                              <li key={feature}>{feature}</li>
-                            ))}
+                          {property.features.map((feature: string) => (
+                            <li key={feature}>{feature}</li>
+                          ))}
                         </ul>
                       </>
                     )}
-                  </div>
-
-                  <div className="flex items-center justify-center">
-                    <Button
-                      variant="secondary"
-                      onClick={() => setShowFullDescription(!showFullDescription)}
-                      className="h-10 rounded-[40px] bg-[#F1F1F4] p-4 text-[14px] leading-[17px] font-semibold text-[#41415A]"
-                    >
-                      {showFullDescription ? 'Show Less' : 'Show More'}
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -542,11 +543,11 @@ const ListingDetail = () => {
                   <h5 className="text-[12px] leading-[17px] font-semibold text-[#D20832]">Disclaimer</h5>
 
                   <p className="text-[12px] leading-[17px] text-[#41415A]">
-                    Geoplox works to verify all property listings on our platform; this listing is provided and
-                    maintained by (e.g., Efficacy Construction). Users are strongly advised to conduct independent due
-                    diligence before making any transaction. Geoplox has no personal interest in the properties listed
-                    and does not act as a broker or intermediary. Geoplox shall not in any way be held liable for the
-                    actions of any property owner and developers on or off this website
+                    The property listed above is provided and maintained by the property owner and/or property
+                    developer. While Geoplox may conduct basic verification of listings, users are strongly advised to
+                    carry out their own independent due diligence before making any transaction. Geoplox does not act as
+                    a broker or intermediary and assumes no liability for the actions, representations, or omissions of
+                    any property owner or developer.
                   </p>
                 </div>
               </div>
@@ -554,7 +555,7 @@ const ListingDetail = () => {
           </div>
 
           {/* Agent Contact Card */}
-          {(isDashboard || isAdminListing) && (
+          {isDashboard || isAdminListing ? (
             <div className="flex flex-col items-end">
               <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
                 <div className="flex w-full items-center gap-4 border-b border-[#F1F1F4] pb-5">
@@ -608,6 +609,82 @@ const ListingDetail = () => {
                     <a href={`https://wa.me/${property.owner.phone_number}`} target="_blank" rel="noopener noreferrer">
                       Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
                     </a>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : user ? (
+            <div className="flex flex-col items-end">
+              <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
+                <div className="flex w-full items-center gap-4 border-b border-[#F1F1F4] pb-5">
+                  <Avatar className="size-[68px] rounded-[5px]">
+                    <AvatarImage src={property?.owner?.image_url} alt={property.owner.name} />
+                    <AvatarFallback>{property.owner.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+
+                  <div className="flex flex-col items-start gap-2 self-stretch">
+                    <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">{property.owner.name}</h4>
+                    <div className="flex items-center gap-2">
+                      {property.is_verified && <BadgeCheck className="text-primary size-4" />}
+                      <span className="text-primary text-[12px] leading-[18px] font-semibold capitalize">
+                        Verified {property.owner.role}
+                      </span>
+                    </div>
+                    {/* Property ID */}
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-[12px] leading-[18px] font-medium text-[#535364]">Property ID:</span>
+                      <span className="text-[12px] leading-[18px] font-semibold text-[#1F2130]">{property.id}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3 self-stretch">
+                  <Button
+                    onClick={() => setContactDialogOpen(true)}
+                    style={{
+                      background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
+                      boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                    }}
+                    className="h-8 self-stretch rounded-[40px] border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                  >
+                    Contact <Lock className="size-3" />
+                  </Button>
+
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
+                  >
+                    <a href={`mailto:${property.owner.email_address}`}>
+                      Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
+                  >
+                    <a href={`https://wa.me/${property.owner.phone_number}`} target="_blank" rel="noopener noreferrer">
+                      Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
+                    </a>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-end">
+              <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
+                <div className="flex flex-col gap-3 self-stretch">
+                  <p className="text-center font-semibold text-gray-700">Want to connect with the owner?</p>
+                  <Button
+                    onClick={() => navigate({ to: '/login' })}
+                    style={{
+                      background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
+                      boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                    }}
+                    className="h-10 self-stretch rounded-[40px] p-4 text-[14px] leading-[17px] font-semibold text-white"
+                  >
+                    Sign In To See Contact Details
                   </Button>
                 </div>
               </div>

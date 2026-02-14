@@ -54,15 +54,19 @@ const onResponseError = (error: AxiosError): Promise<AxiosError | Error> => {
       }
 
       localStorage.removeItem('token');
-      const isPublicPage = publicPages.includes(window.location.pathname);
-      const isHomePage = window.location.pathname === '/';
+      const currentLocation = window.location.pathname;
+
+     const isPublicPage = publicPages.some((route) =>
+  currentLocation === route || currentLocation.startsWith(`${route}/`)
+);
+      const isHomePage = currentLocation === '/';
 
       // Redirect only if it's NOT a public page AND NOT the home page
       if (!isPublicPage && !isHomePage) {
-        window.location.href = '/login';
+        window.location.href = '/unauthorized';
       }
 
-      return Promise.reject(new Error('Your session has expired. Please log in again.'));
+      return Promise.reject(new Error('Unauthenticated. Please log in again.'));
     }
 
     if (status === 403) {

@@ -14,6 +14,7 @@ import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as LandingIndexRouteImport } from './routes/_landing/index'
 import { Route as AuthVerifyOtpRouteImport } from './routes/_auth/verify-otp'
+import { Route as AuthUnauthorizedRouteImport } from './routes/_auth/unauthorized'
 import { Route as AuthSetPasswordRouteImport } from './routes/_auth/set-password'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
@@ -77,6 +78,11 @@ const LandingIndexRoute = LandingIndexRouteImport.update({
 const AuthVerifyOtpRoute = AuthVerifyOtpRouteImport.update({
   id: '/verify-otp',
   path: '/verify-otp',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthUnauthorizedRoute = AuthUnauthorizedRouteImport.update({
+  id: '/unauthorized',
+  path: '/unauthorized',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthSetPasswordRoute = AuthSetPasswordRouteImport.update({
@@ -308,6 +314,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/set-password': typeof AuthSetPasswordRoute
+  '/unauthorized': typeof AuthUnauthorizedRoute
   '/verify-otp': typeof AuthVerifyOtpRoute
   '/admin-listing/$id': typeof DashboardAdminListingIdRoute
   '/blogs/create': typeof DashboardBlogsCreateRoute
@@ -354,6 +361,7 @@ export interface FileRoutesByTo {
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/set-password': typeof AuthSetPasswordRoute
+  '/unauthorized': typeof AuthUnauthorizedRoute
   '/verify-otp': typeof AuthVerifyOtpRoute
   '/admin-listing/$id': typeof DashboardAdminListingIdRoute
   '/blogs/create': typeof DashboardBlogsCreateRoute
@@ -403,6 +411,7 @@ export interface FileRoutesById {
   '/_auth/register': typeof AuthRegisterRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/set-password': typeof AuthSetPasswordRoute
+  '/_auth/unauthorized': typeof AuthUnauthorizedRoute
   '/_auth/verify-otp': typeof AuthVerifyOtpRoute
   '/_landing/': typeof LandingIndexRoute
   '/_dashboard/admin-listing/$id': typeof DashboardAdminListingIdRoute
@@ -452,6 +461,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/set-password'
+    | '/unauthorized'
     | '/verify-otp'
     | '/admin-listing/$id'
     | '/blogs/create'
@@ -498,6 +508,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/set-password'
+    | '/unauthorized'
     | '/verify-otp'
     | '/admin-listing/$id'
     | '/blogs/create'
@@ -546,6 +557,7 @@ export interface FileRouteTypes {
     | '/_auth/register'
     | '/_auth/reset-password'
     | '/_auth/set-password'
+    | '/_auth/unauthorized'
     | '/_auth/verify-otp'
     | '/_landing/'
     | '/_dashboard/admin-listing/$id'
@@ -626,6 +638,13 @@ declare module '@tanstack/react-router' {
       path: '/verify-otp'
       fullPath: '/verify-otp'
       preLoaderRoute: typeof AuthVerifyOtpRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/unauthorized': {
+      id: '/_auth/unauthorized'
+      path: '/unauthorized'
+      fullPath: '/unauthorized'
+      preLoaderRoute: typeof AuthUnauthorizedRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/set-password': {
@@ -933,6 +952,7 @@ interface AuthRouteChildren {
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
+  AuthUnauthorizedRoute: typeof AuthUnauthorizedRoute
   AuthVerifyOtpRoute: typeof AuthVerifyOtpRoute
 }
 
@@ -944,6 +964,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthRegisterRoute: AuthRegisterRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSetPasswordRoute: AuthSetPasswordRoute,
+  AuthUnauthorizedRoute: AuthUnauthorizedRoute,
   AuthVerifyOtpRoute: AuthVerifyOtpRoute,
 }
 

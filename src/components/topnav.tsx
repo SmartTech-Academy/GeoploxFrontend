@@ -29,7 +29,7 @@ const Topnav = () => {
     { to: '/for-sale', label: 'For Sale' },
     { to: '/buy', label: 'Short Let' },
     { to: '/joint-venture', label: 'Joint Venture' },
-    // { to: '/blog', label: 'Blog' },
+    { to: '/blog', label: 'Blog' },
     { to: '/pricing', label: 'Pricing' },
   ];
 

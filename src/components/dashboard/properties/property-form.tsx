@@ -173,6 +173,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
+    if (propertyImages.length + files.length > 15) {
+      toast.error('You can upload a maximum of 15 images.');
+      return;
+    }
     if (files.length > 0) {
       const newImageStates: FileState[] = files.map((file) => ({
         file,
@@ -819,17 +823,19 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     </div>
                   ))}
 
-                  <div
-                    className="cursor-pointer rounded-[2px] border border-dashed border-[#D5D5DD] px-3 py-8 text-center transition-colors hover:border-[#D4AF36] sm:py-6"
-                    onClick={() => imageInputRef.current?.click()}
-                  >
-                    <div className="flex flex-col items-center gap-3">
-                      <p className="text-[14px] leading-[17px] text-[#71748C]">
-                        <span className="cursor-pointer font-semibold text-[#B69118]">Click </span> to upload
-                      </p>
-                      <p className="text-[10px] leading-3 text-[#71748C]">Supports JPEG, or PNG files.</p>
+                  {propertyImages.length < 15 && (
+                    <div
+                      className="cursor-pointer rounded-[2px] border border-dashed border-[#D5D5DD] px-3 py-8 text-center transition-colors hover:border-[#D4AF36] sm:py-6"
+                      onClick={() => imageInputRef.current?.click()}
+                    >
+                      <div className="flex flex-col items-center gap-3">
+                        <p className="text-[14px] leading-[17px] text-[#71748C]">
+                          <span className="cursor-pointer font-semibold text-[#B69118]">Click </span> to upload
+                        </p>
+                        <p className="text-[10px] leading-3 text-[#71748C]">Supports JPEG, or PNG files.</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
 

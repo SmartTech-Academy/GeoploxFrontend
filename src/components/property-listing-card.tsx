@@ -50,7 +50,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
 
   const displayTitle = `${property.bedrooms ? `${property.bedrooms} Bedroom ` : ''}${property.property_type} ${
     property.category.toLowerCase().startsWith('for') ? property.category : `for ${property.category}`
-  } in ${property.location.city} ${property.location.state} | Nigeria Property Centre`;
+  } in ${property.location.city} ${property.location.state}`;
 
   return (
     <div className="flex w-full flex-col items-center justify-between gap-4 self-stretch border-b border-[#F1F1F4] pb-10 lg:flex-row lg:gap-[89px]">
