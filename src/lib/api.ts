@@ -1,8 +1,8 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-const BASE_URL = 'https://geoplox.ribiax.com/api/v1';
+const BASE_URL = 'https://api.geoplox.com/api/v1';
 const publicPages = [
-  '/buy',
+  '/short-let',
   '/for-rent',
   '/for-sale',
   '/blog',
@@ -81,9 +81,9 @@ const onResponseError = (error: AxiosError): Promise<AxiosError | Error> => {
       return Promise.reject(new Error('Request timed out. Please try again or check your connection.'));
     }
 
-    if (status >= 500) {
-      return Promise.reject(new Error('Sorry, a server error occurred. Please try again later.'));
-    }
+    // if (status >= 500) {
+    //   return Promise.reject(new Error('Sorry, a server error occurred. Please try again later.'));
+    // }
   } else if (error.request) {
     // The request was made but no response was received
     return Promise.reject(new Error('No response from server. Please check your network connection.'));

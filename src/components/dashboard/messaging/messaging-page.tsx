@@ -75,9 +75,9 @@ const MessagingPage = () => {
       />
 
       {/* Mobile View */}
-      <div className="w-full lg:hidden">
+      <div className="h-[calc(100svh-150px)] w-full overflow-y-auto lg:hidden">
         {!selectedChat ? (
-          <div className="px-4">
+          <div className="w-full bg-red-500">
             <ChatList
               conversations={allConversations}
               selectedChat={selectedChat}

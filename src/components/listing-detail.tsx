@@ -57,32 +57,12 @@ import { useGetProfileData } from '@/lib/services/profile';
 
 const ListingDetail = () => {
   const location = useLocation();
-
-  const getRoutePath = () => {
-    if (location.pathname.startsWith('/buy/')) {
-      return '/_landing/buy/$id';
-    }
-    if (location.pathname.startsWith('/for-rent/')) {
-      return '/_landing/for-rent/$id';
-    }
-    if (location.pathname.startsWith('/for-sale/')) {
-      return '/_landing/for-sale/$id';
-    }
-    if (location.pathname.startsWith('/joint-venture/')) {
-      return '/_landing/joint-venture/$id';
-    }
-    if (location.pathname.startsWith('/admin-listing/')) {
-      return '/_dashboard/admin-listing/$id';
-    }
-    if (location.pathname.startsWith('/listing/')) {
-      return '/_dashboard/listing/$id';
-    }
-    // Add other paths like /for-sale if they exist
-    return '/_landing/buy/$id'; // Fallback
-  };
-
-  const { id: slug } = useParams({ from: getRoutePath() });
   const navigate = useNavigate();
+
+  // Simplified route detection - use the existing route context
+  const params = useParams({ strict: false });
+  const { id: slug } = params as any;
+
   const isDashboard = location.pathname.includes('/listing/');
   const isAdminListing = location.pathname.includes('/admin-listing/');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -106,8 +86,6 @@ const ListingDetail = () => {
 
   const property = propertyDetailsResponse?.data.data;
 
-  console.log('property', property);
-
   const [isFavorited, setIsFavorited] = useState(property?.is_favourited || false);
 
   useEffect(() => {
@@ -117,6 +95,10 @@ const ListingDetail = () => {
   }, [property]);
 
   const handleFavoriteToggle = () => {
+    if (!user?.firstname) {
+      toast.error('Please log in to add to favorite');
+      navigate({ to: '/login' });
+    }
     if (!property) return;
     if (isFavorited) {
       removeFromFavorites(property.id, {
@@ -284,14 +266,14 @@ const ListingDetail = () => {
                       <BreadcrumbLink asChild>
                         <Link
                           to={
-                            location.pathname.includes('/buy')
-                              ? '/buy'
-                              : location.pathname.includes('/rent')
+                            location.pathname.includes('/short-let')
+                              ? '/short-let'
+                              : location.pathname.includes('/for-rent')
                                 ? '/for-rent'
                                 : '/for-sale'
                           }
                         >
-                          {location.pathname.includes('/buy')
+                          {location.pathname.includes('/short-let')
                             ? 'Buy'
                             : location.pathname.includes('/for-rent')
                               ? 'Rent'
@@ -702,7 +684,7 @@ const ListingDetail = () => {
                 ? Array.from({ length: 3 }).map((_, index) => <PropertyListingCardSkeleton key={index} />)
                 : relatedProperties.slice(0, 3).map((property: any) => (
                     <Link
-                      to={`/buy/$id`}
+                      to={`/short-let`}
                       params={{ id: property.slug }}
                       key={property.id}
                       className="flex flex-col items-start gap-6 overflow-hidden"

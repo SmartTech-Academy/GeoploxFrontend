@@ -72,7 +72,7 @@ const Dashboard = () => {
         keywords="property dashboard, real estate management"
       />
 
-      <header className="flex w-full items-center justify-between gap-2 self-stretch">
+      <header className="flex w-full flex-wrap items-center justify-between gap-2 self-stretch">
         <div className="flex flex-col items-baseline gap-2">
           <h1 className="flex items-center gap-2 text-[18px] leading-[18px] font-semibold text-[#1F2130]">
             <span>Good Afternoon,</span>

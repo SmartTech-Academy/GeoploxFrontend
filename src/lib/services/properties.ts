@@ -26,7 +26,7 @@ export const useGetProperties = (params?: any, isDashboard?: boolean, isAdminLis
   if (!isDashboard && !isAdminListing) {
     // Extract pageType from params or determine from URL path
     const pageType = params?.pageType ||
-      (typeof window !== 'undefined' && window.location.pathname.includes('/buy')
+      (typeof window !== 'undefined' && window.location.pathname.includes('/short-let')
         ? 'buy'
         : window.location.pathname.includes('/for-rent')
           ? 'for-rent'
@@ -213,7 +213,7 @@ export const useAddToFavorites = () => {
 
 export const useRemoveFromFavorites = (queryKeyToInvalidate: string[] = ['property']) => {
   return useMutation({
-    mutationFn: (propertyId: string) => api.post(`/dashboard/favorite/property-removal/${propertyId}`),
+    mutationFn: (propertyId: string | undefined) => api.post(`/dashboard/favorite/property-removal/${propertyId}`),
     onSuccess: (data) => {
       toast.success(data.data.message || 'Property removed from favorites!');
       queryClient.invalidateQueries({ queryKey: queryKeyToInvalidate });
@@ -221,5 +221,6 @@ export const useRemoveFromFavorites = (queryKeyToInvalidate: string[] = ['proper
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to remove from favorites.');
     },
+
   });
 };

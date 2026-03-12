@@ -150,7 +150,11 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
             )}
             {summary.government_id_doc_url && (
               <div className="space-y-1">
-                <label className="text-[14px] font-medium text-[#41415A]">Government Issued ID</label>
+                <label className="text-[14px] font-medium text-[#41415A]">
+                  {summary.user_role === 'developer' || summary.user_role === 'owner'
+                    ? 'Proof of address'
+                    : 'Government Issued ID'}
+                </label>
                 <div className="flex items-center gap-2">
                   <FileText className="size-4 text-gray-500" />
                   <p className="text-[14px] text-[#1F2130]">{summary.government_id_doc_url.split('/').pop()}</p>

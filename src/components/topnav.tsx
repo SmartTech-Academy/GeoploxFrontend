@@ -27,10 +27,10 @@ const Topnav = () => {
   const navigationLinks = [
     { to: '/for-rent', label: 'For Rent' },
     { to: '/for-sale', label: 'For Sale' },
-    { to: '/buy', label: 'Short Let' },
+    { to: '/short-let', label: 'Short Let' },
     { to: '/joint-venture', label: 'Joint Venture' },
     { to: '/blog', label: 'Blog' },
-    { to: '/pricing', label: 'Pricing' },
+    // { to: '/pricing', label: 'Pricing' },
   ];
 
   const getInitials = (firstName?: string, lastName?: string) => {

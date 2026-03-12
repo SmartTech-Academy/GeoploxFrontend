@@ -171,7 +171,7 @@ export function DiscoverSection() {
                 <div className="grid w-full grid-cols-1 gap-x-5 gap-y-10 self-stretch md:grid-cols-2 lg:grid-cols-3">
                   {currentProperties?.map((property: Property) => (
                     <Link
-                      to={`/buy/$id`}
+                      to={`/short-let/$id`}
                       params={{ id: property.slug }}
                       key={property.id}
                       className="flex flex-col items-start gap-6 overflow-hidden transition-shadow hover:shadow-lg"
@@ -239,7 +239,7 @@ export function DiscoverSection() {
                   asChild
                   className="min-w-[181px]] bg-secondary-foreground h-12 rounded-[40px] px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800"
                 >
-                  <Link to="/buy">
+                  <Link to="/short-let">
                     Explore Listing <ChevronRight className="size-4 fill-white" />
                   </Link>
                 </Button>

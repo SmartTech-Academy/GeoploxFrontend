@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BedDouble, ShowerHead, Square, Trash2 } from 'lucide-react';
 import { Link, useLocation } from '@tanstack/react-router';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, slugify } from '@/lib/utils';
 import { useRemoveFromFavorites } from '@/lib/services';
 
 export interface Property {
@@ -34,19 +34,41 @@ interface PropertyListingCardProps {
 
 export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ property, isDashboard, identifier }) => {
   const location = useLocation();
-  const isAdminListing = location.pathname.includes('/admin-listing');
-  const isFavoritesPage = location.pathname.includes('/favorites');
+
+  // Add null checks for location.pathname
+  const pathname = location?.pathname || '';
+  const isAdminListing = pathname.includes('/admin-listing');
+  const isFavoritesPage = pathname.includes('/favorites');
+
   const { mutate: removeFromFavorites, isPending } = useRemoveFromFavorites(['favorites']);
 
-  const detailPath = isDashboard
-    ? isAdminListing
-      ? `/admin-listing/${identifier}`
-      : `/listing/${identifier}`
-    : location.pathname.includes('/buy')
-      ? `/buy/${identifier}`
-      : location.pathname.includes('/for-rent')
-        ? `/for-rent/${identifier}`
-        : `/for-sale/${identifier}`;
+  const detailPath = (() => {
+    if (isDashboard) {
+      return isAdminListing ? `/admin-listing/${identifier}` : `/listing/${identifier}`;
+    }
+
+    const { property_type, category, location } = property;
+    const { state, city } = location;
+
+    const slugifiedParams = {
+      propertyType: slugify(property_type),
+      propertySubType: slugify(category),
+      state: slugify(state),
+      lga: slugify(city),
+    };
+
+    let basePath = '/for-sale'; // Default
+    if (pathname.includes('/short-let')) {
+      basePath = '/short-let';
+    } else if (pathname.includes('/for-rent')) {
+      basePath = '/for-rent';
+    } else if (pathname.includes('/joint-venture')) {
+      basePath = '/joint-venture';
+    }
+    // ${slugifiedParams.propertySubType}
+    // assuming the basePath is the propertySubType
+    return `${basePath}/${slugifiedParams.propertyType}/${slugifiedParams.state}/${slugifiedParams.lga}/${identifier}`;
+  })();
 
   const displayTitle = `${property.bedrooms ? `${property.bedrooms} Bedroom ` : ''}${property.property_type} ${
     property.category.toLowerCase().startsWith('for') ? property.category : `for ${property.category}`

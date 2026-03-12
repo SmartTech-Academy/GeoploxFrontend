@@ -145,8 +145,8 @@ export const ChatList: React.FC<ChatListProps> = ({
                       <h3 className="truncate text-[14px] leading-[17px] font-semibold text-[#41415A]">
                         {`${otherParticipant.firstname} ${otherParticipant.lastname}`}
                       </h3>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-[12px] leading-3.5 text-[#71748C]">
+                      <div className="flex max-w-10 flex-col items-end lg:flex-row lg:space-x-2">
+                        <span className="line-clamp-1 text-[12px] leading-3.5 text-[#71748C]">
                           {chat.last_message ? formatTime(chat.last_message.created_at) : ''}
                         </span>
                         {chat.unread_count > 0 && (

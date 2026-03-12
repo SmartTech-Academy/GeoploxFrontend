@@ -16,7 +16,7 @@ const ListingProperties = () => {
   const isListingPage = location.pathname.includes('/listing');
   const isAdminListingPage = location.pathname.includes('/admin-listing');
 
-  const pageType = location.pathname.includes('/buy')
+  const pageType = location.pathname.includes('/short-let')
     ? `buy`
     : location.pathname.includes('/for-rent')
       ? `for-rent`
@@ -145,7 +145,7 @@ const ListingProperties = () => {
                 : isListingPage
                   ? 'My Listings'
                   : `${
-                      location.pathname.includes('/buy')
+                      location.pathname.includes('/short-let')
                         ? 'Buy'
                         : location.pathname.includes('/for-rent')
                           ? 'Rent'
