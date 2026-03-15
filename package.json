@@ -72,6 +72,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10",
+    "@rolldown/plugin-babel": "^0.2.0",
     "@tanstack/eslint-plugin-query": "^5.91.4",
     "@tanstack/router-plugin": "^1.166.7",
     "@types/node": "^25.5.0",

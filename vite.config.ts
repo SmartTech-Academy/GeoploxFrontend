@@ -1,28 +1,25 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import babel from 'vite-plugin-babel';
+import babel from "@rolldown/plugin-babel"
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import react, { reactCompilerPreset } from "@vitejs/plugin-react"
 
-const ReactCompilerConfig = {
-  target: '19', // '17' | '18' | '19'
-};
 
+const ReactCompilerConfig = {}
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     // Please make sure that '@tanstack/router-plugin' is passed before '@vitejs/plugin-react'
     tanstackRouter({
       target: 'react',
-      autoCodeSplitting: true,
+    //   autoCodeSplitting: true,
     }),
-    tailwindcss(),
+       tailwindcss(),
     react(),
+     // @ts-expect-error version mismatch
     babel({
-      babelConfig: {
-        plugins: [['babel-plugin-react-compiler', ReactCompilerConfig]],
-      },
+      presets: [reactCompilerPreset(ReactCompilerConfig)],
     }),
   ],
   resolve: {
