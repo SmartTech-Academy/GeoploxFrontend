@@ -33,9 +33,11 @@ export function AppSidebar() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     // Invalidate all queries to clear cached data
-    queryClient.invalidateQueries();
+    queryClient.cancelQueries();
+    queryClient.clear(); // start fresh
     // Redirect to login, which will happen automatically from DashboardLayout's effect
     setOpenMobile(false);
+    window.location.href = '/login';
   };
 
   return (

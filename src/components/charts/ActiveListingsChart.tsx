@@ -25,6 +25,7 @@ interface ActiveListingsChartProps {
 }
 
 export function ActiveListingsChart({ data, period, onPeriodChange }: ActiveListingsChartProps) {
+
   return (
     <div className="flex items-start gap-12 self-stretch rounded-xl border border-[#E3E3E8] bg-white p-6">
       <div className="flex w-full grow flex-col items-start gap-6">

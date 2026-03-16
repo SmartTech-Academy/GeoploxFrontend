@@ -1,14 +1,14 @@
 import ChangePassword from '@/components/dialogs/change-password';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+// import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
 
 const SecurityNotificationsSection = () => {
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState({
-    emailNotifications: false,
-    inAppNotifications: true,
-  });
+//   const [notifications, setNotifications] = useState({
+//     emailNotifications: false,
+//     inAppNotifications: true,
+//   });
 
   return (
     <div className="flex w-full flex-col gap-10">
@@ -37,7 +37,7 @@ const SecurityNotificationsSection = () => {
           </div>
 
           {/* Two-step Authentication Section */}
-          <div className="box-border flex items-start justify-between gap-4 self-stretch rounded-[10px] border border-[#E3E3E8] bg-white px-5 py-6">
+          {/* <div className="box-border flex items-start justify-between gap-4 self-stretch rounded-[10px] border border-[#E3E3E8] bg-white px-5 py-6">
             <div className="flex grow flex-col items-start gap-2">
               <h3 className="text-[16px] leading-4 tracking-[-0.02em] text-[#282828]">Two-step authentication</h3>
 
@@ -52,11 +52,11 @@ const SecurityNotificationsSection = () => {
             >
               Disable
             </Button>
-          </div>
+          </div> */}
         </div>
 
         {/* Notifications Section */}
-        <div className="flex flex-col items-start justify-between gap-7 self-stretch rounded-[10px] border border-[#E3E3E8] bg-white px-5 py-6">
+        {/* <div className="flex flex-col items-start justify-between gap-7 self-stretch rounded-[10px] border border-[#E3E3E8] bg-white px-5 py-6">
           <div className="flex w-full grow flex-col items-start gap-5">
             <h3 className="text-[16px] leading-4 font-normal tracking-[-0.02em] text-[#282828]">Notifications</h3>
 
@@ -78,7 +78,7 @@ const SecurityNotificationsSection = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <ChangePassword onOpenChange={setOpen} open={open} />

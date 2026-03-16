@@ -39,21 +39,20 @@ const Dashboard = () => {
   }, [profileData]);
 
   const overviewCards = [
-    { title: 'Total Listings', value: dashboardData?.data.cards?.totalListings ?? 0 },
-    { title: 'Active Listing', value: dashboardData?.data.cards?.activeListings ?? 0 },
-    { title: 'Archived Listing', value: dashboardData?.data.cards?.archivedListings ?? 0 },
+    { title: 'Total Listings', value: dashboardData?.data.data?.cards?.totalListings ?? 0 },
+    { title: 'Active Listing', value: dashboardData?.data.data?.cards?.activeListings ?? 0 },
+    { title: 'Archived Listing', value: dashboardData?.data.data?.cards?.archivedListings ?? 0 },
   ];
 
   const totalsCards = [
-    { title: 'Total Clicks', value: dashboardData?.data.cards?.totalClicks ?? 0 },
-    { title: 'Total Leads', value: dashboardData?.data.cards?.totalLeads ?? 0 },
-    { title: 'Total Views', value: dashboardData?.data.cards?.totalViews ?? 0 },
-    { title: 'Total Saves & shares', value: dashboardData?.data.cards?.totalSavesShares ?? 0 },
+    { title: 'Total Clicks', value: dashboardData?.data.data?.cards?.totalClicks ?? 0 },
+    { title: 'Total Leads', value: dashboardData?.data.data?.cards?.totalLeads ?? 0 },
+    { title: 'Total Views', value: dashboardData?.data.data?.cards?.totalViews ?? 0 },
+    { title: 'Total Saves & shares', value: dashboardData?.data.data?.cards?.totalSavesShares ?? 0 },
   ];
 
-  const recentMessages = dashboardData?.data.recentMessages ?? [];
-  const listingActivities = dashboardData?.data.data.listingActivities ?? [];
-
+  const recentMessages = dashboardData?.data?.data?.recentMessages ?? [];
+  const listingActivities = dashboardData?.data.data?.data?.listingActivities ?? [];
   const formatTime = (dateString: string) => {
     try {
       return formatDistanceToNow(parseISO(dateString), { addSuffix: true });
@@ -126,9 +125,12 @@ const Dashboard = () => {
             <header className="flex w-full items-center justify-between gap-6">
               <h3 className="text-[12px] leading-3.5 tracking-[0.02em] text-[#7F7F7F] uppercase">Recent Messages</h3>
 
-              <Button variant="link" className="text-primary text-[12px] leading-3.5 font-semibold">
-                View All
+              <Button asChild variant="link" className="text-primary text-[12px] leading-3.5 font-semibold">
+              <Link to="/messages" >
+              View All
                 <ChevronRight className="size-4 fill-[#D4AF36]" />
+              </Link>
+
               </Button>
             </header>
 

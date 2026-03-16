@@ -61,7 +61,7 @@ const SettingsSidebar = ({ user, activeTab, handleTabChange }: any) => (
       )}
       <SidebarItem
         id="security"
-        label="Security & Notifications"
+        label="Security"
         isActive={activeTab === 'security'}
         onClick={() => handleTabChange('security')}
       />
