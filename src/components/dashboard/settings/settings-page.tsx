@@ -139,8 +139,8 @@ const SettingsPage = () => {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden h-full w-full lg:flex">
-        <ResizablePanelGroup direction="horizontal" className="h-full w-full">
+      <div className="hidden size-full  lg:flex">
+        <ResizablePanelGroup direction="horizontal" className="size-full ">
           {/* Sidebar Panel */}
           <ResizablePanel defaultSize={35} minSize={25} maxSize={50} className="border-r border-[#F1F1F4]">
             <SettingsSidebar user={user} activeTab={activeTab} handleTabChange={handleTabChange} />

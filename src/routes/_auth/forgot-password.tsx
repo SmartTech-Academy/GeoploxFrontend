@@ -46,13 +46,13 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex h-full w-full bg-white">
+    <div className="flex size-full  bg-white">
       <PageMetaTags
         title="Reset Your Password"
         description="Forgot your password? Reset it securely to regain access to your Geoplox account."
         keywords="password reset, account recovery"
       />
-      <div className="flex h-full min-h-screen w-full flex-col justify-between self-stretch py-10">
+      <div className="flex size-full min-h-screen  flex-col justify-between self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <Link to="/">
@@ -70,7 +70,7 @@ function RouteComponent() {
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Forgot Password</h1>
-            <p className="text-center text-[14px] leading-5 text-[#71748C]">
+            <p className="text-center text-[14px]/5  text-[#71748C]">
               Provide the email on your account and we&apos;ll send details to reset your password
             </p>
           </div>
@@ -109,7 +109,7 @@ function RouteComponent() {
                       type="button"
                       variant="outline"
                       onClick={() => navigate({ to: '/login' })}
-                      className="h-10 flex-1 rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130] hover:bg-gray-50"
+                      className="h-10 flex-1 rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4  font-normal text-[#1F2130] hover:bg-gray-50"
                     >
                       Back to Login
                     </Button>
@@ -134,7 +134,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-5 text-[#41415A]">
+          <p className="text-[14px]/5  text-[#41415A]">
             © {new Date().getFullYear()} — Geoplox, All Right Reserved.
           </p>
         </div>

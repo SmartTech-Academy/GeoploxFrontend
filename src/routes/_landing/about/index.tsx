@@ -112,7 +112,7 @@ function RouteComponent() {
             <p className="text-[18px] leading-[25px] text-[#4D5462]">
               We believe real estate markets perform best when:
             </p>
-            <ul className="list-disc list-inside text-[18px] leading-[25px] text-[#4D5462]">
+            <ul className="list-inside list-disc text-[18px] leading-[25px] text-[#4D5462]">
               <li>Information is structured and accessible</li>
               <li>Trust is built on transparency, not personal networks alone</li>
               <li>Participants retain control while benefiting from shared infrastructure</li>

@@ -31,7 +31,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ form }) => {
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
         <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Subscription</h2>
-        <p className="text-[14px] leading-5 text-[#71748C]">Flexible pricing tailored for you.</p>
+        <p className="text-[14px]/5  text-[#71748C]">Flexible pricing tailored for you.</p>
       </div>
 
       {/* Billing cycle removed — fixed to 1 month by default */}
@@ -69,8 +69,8 @@ const Subscription: React.FC<SubscriptionProps> = ({ form }) => {
                       >
                         {form.getValues().plan === String(plan.id) && (
                           <div className="absolute -top-4 -right-2">
-                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#D4AF36]">
-                              <Check className="h-4 w-4 text-white" />
+                            <div className="flex size-6  items-center justify-center rounded-full bg-[#D4AF36]">
+                              <Check className="size-4  text-white" />
                             </div>
                           </div>
                         )}
@@ -87,10 +87,10 @@ const Subscription: React.FC<SubscriptionProps> = ({ form }) => {
                           <div className="mb-4 flex items-start justify-between">
                             <div className="flex flex-col gap-2">
                               <div className="flex items-center gap-1">
-                                <h3 className="text-[20px] leading-7 font-semibold text-[#1F2130]">{plan.name}</h3>
+                                <h3 className="text-[20px]/7  font-semibold text-[#1F2130]">{plan.name}</h3>
                               </div>
 
-                              <p className="text-[14px] leading-5 text-[#71748C]">{featureToShow}</p>
+                              <p className="text-[14px]/5  text-[#71748C]">{featureToShow}</p>
                             </div>
                             <div className="text-right">
                               <span className="text-[28px] leading-[40px] font-semibold text-[#1F2130]">

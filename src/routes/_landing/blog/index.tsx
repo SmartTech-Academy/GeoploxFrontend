@@ -3,19 +3,11 @@ import { PageMetaTags } from '@/components/page-meta-data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useState } from 'react';
+// import { useState } from 'react';
 
 export const Route = createFileRoute('/_landing/blog/')({
   component: RouteComponent,
 });
-
-const tabs = [
-  { name: 'All Posts', icon: '' },
-  { name: 'Market Trends', icon: '' },
-  { name: 'Developer News', icon: '' },
-  { name: 'Buying Guides', icon: '' },
-  { name: 'Avg. Property Price', icon: '' },
-];
 
 const BLOGS = [
   {
@@ -51,7 +43,6 @@ const BLOGS = [
 ];
 
 function RouteComponent() {
-  const [activeTab, setActiveTab] = useState('All Posts');
   return (
     <div className="w-full">
       <PageMetaTags
@@ -71,7 +62,7 @@ function RouteComponent() {
         </div>
 
         {/* Content */}
-        <div className="landing-container relative z-10 w-full py-(--landing-header-height)">
+        <div className="relative z-10 landing-container w-full py-(--landing-header-height)">
           <div className="flex w-full flex-col items-start gap-[42px]">
             <div className="flex max-w-[639px] flex-col items-start gap-[17px]">
               <div className="flex flex-col items-start gap-[9px]">
@@ -82,14 +73,14 @@ function RouteComponent() {
               </div>
 
               {/* Subheading */}
-              <p className="text-primary-foreground text-[20px] leading-7">
+              <p className="text-[20px] leading-7 text-primary-foreground">
                 Updates about current market trends and news
               </p>
             </div>
 
             <div className="flex w-full max-w-[817px] grow flex-col gap-3">
               {/* Search Interface */}
-              <div className="flex w-full max-w-[817px] items-center gap-3 rounded-4xl bg-[oklch(1_0_0_/_50%)] p-4 backdrop-blur-[12px]">
+              <div className="flex w-full max-w-[817px] items-center gap-3 rounded-4xl bg-[oklch(1_0_0/50%)] p-4 backdrop-blur-md">
                 <div className="relative flex flex-1 items-center gap-2">
                   <Input
                     type="email"
@@ -110,7 +101,7 @@ function RouteComponent() {
                 </Button>
               </div>
 
-              <p className="text-[14px] leading-5 text-white">
+              <p className="text-[14px]/5  text-white">
                 Subscribe to our monthly newsletter. You can unsubscribe anytime.
               </p>
             </div>
@@ -119,32 +110,6 @@ function RouteComponent() {
       </section>
 
       <section className="flex w-full flex-col gap-[64px] bg-white py-16">
-        <div className="mx-auto flex w-full max-w-[719px] flex-col items-center text-center">
-          <div className="w-full overflow-hidden rounded-xl border border-[#F1F1F4] bg-white p-1.5">
-            <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto">
-              {tabs.map((tab) => (
-                <Button
-                  key={tab.name}
-                  style={{
-                    boxShadow:
-                      activeTab === tab.name
-                        ? '0px 0px 10px rgba(31, 33, 48, 0.06), 0px 1px 1px rgba(31, 33, 48, 0.25), inset 0px 2px 1px rgba(255, 255, 255, 0.7)'
-                        : 'none',
-                  }}
-                  variant={activeTab === tab.name ? 'default' : 'outline'}
-                  className={`h-[33px] rounded-[6px] px-3 py-[11px] text-[18px] leading-[21px] text-[#41415A] transition-all duration-300 ease-in-out ${
-                    activeTab === tab.name
-                      ? 'border border-[#D5D5DD] bg-white font-semibold hover:bg-gray-100'
-                      : 'border-none bg-[#F9F9FB] font-normal hover:bg-white hover:text-black'
-                  }`}
-                  onClick={() => setActiveTab(tab.name)}
-                >
-                  {tab.name} {tab.icon}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
         <div className="landing-container flex w-full flex-col gap-[64px]">
           {BLOGS.map((blog, index) => (
             <Link
@@ -156,8 +121,8 @@ function RouteComponent() {
               <div className="flex flex-col items-start lg:w-1/2">
                 <div className="flex flex-col gap-6 self-stretch">
                   <div className="flex items-center gap-3">
-                    <span className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">Market Trends</span>
-                    <span className="text-[15px] leading-5 tracking-[-0.12px] text-[#7B828E]">{blog.date}</span>
+                    <span className="text-[15px]/5  tracking-[-0.12px] text-[#060809]">Market Trends</span>
+                    <span className="text-[15px]/5  tracking-[-0.12px] text-[#7B828E]">{blog.date}</span>
                   </div>
 
                   <div className="flex flex-col gap-8 self-stretch pb-8">
@@ -165,7 +130,7 @@ function RouteComponent() {
                       {blog.title}
                     </h4>
 
-                    <p className="line-clamp-2 text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">{blog.text}</p>
+                    <p className="line-clamp-2 text-[15px]/5  tracking-[-0.12px] text-[#060809]">{blog.text}</p>
                   </div>
                 </div>
               </div>

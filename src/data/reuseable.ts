@@ -55,7 +55,12 @@ export const propertyStatus = [
   'Furnished',
 ];
 
-export const listingTypes = ['For Rent', 'For Sale', 'Short Let', 'Joint Venture'];
+export const listingTypes = [
+  { label: 'For Rent', value: 'for-rent' },
+  { label: 'For Sale', value: 'for-sale' },
+  { label: 'Short Let', value: 'short-let' },
+  { label: 'Joint Venture', value: 'joint-venture' },
+];
 
 export const propertyFeatures = [
   'Swimming Pool',

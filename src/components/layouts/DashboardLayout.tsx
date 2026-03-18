@@ -66,7 +66,7 @@ const DashboardLayout = () => {
           <main className="min-h-dvh w-full flex-1 overflow-auto border-[#E1E1E6] bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.08)]">
             <div
               className={cn(
-                'animate-in fade-in-0 slide-in-from-bottom-4 mx-auto w-full transition-all duration-300 ease-linear',
+                'mx-auto w-full animate-in transition-all duration-300 ease-linear fade-in-0 slide-in-from-bottom-4',
                 useMaxWidth ? 'max-w-[1216px] px-8' : 'max-w-full px-8'
               )}
             >

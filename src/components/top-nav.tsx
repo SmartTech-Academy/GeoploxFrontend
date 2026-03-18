@@ -1,4 +1,4 @@
-import { CheckCircle2, Home, Loader2, LogOut, RulerDimensionLine, Settings, Star } from 'lucide-react';
+import {  Home, LogOut, RulerDimensionLine, Settings, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -13,10 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { useAdminVerifyUser, useGetProfileData } from '@/lib/services/profile';
+import {  useGetProfileData } from '@/lib/services/profile';
 import { NotificationPopover } from '@/components/notification-popover';
 import { queryClient } from '@/lib/queryClient';
-import { toast } from 'sonner';
+
 
 // Route title mapping for dashboard pages
 const routeTitleMap: Record<string, string> = {
@@ -60,7 +60,7 @@ interface TopNavProps {
 export function TopNav({ setUseMaxWith }: TopNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { mutateAsync: adminVerifyUser, isPending: isVerifying } = useAdminVerifyUser();
+//   const { mutateAsync: adminVerifyUser, isPending: isVerifying } = useAdminVerifyUser();
 
   const pageTitle = getPageTitle(location.pathname);
   const { data: user } = useGetProfileData();
@@ -99,13 +99,13 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
     navigate({ to: '/login' });
   };
 
-  const handleAdminVerify = async () => {
-    if (user?.codec) {
-      await adminVerifyUser(user.codec);
-      queryClient.invalidateQueries();
-      toast.success('User verified successfully!');
-    }
-  };
+//   const handleAdminVerify = async () => {
+//     if (user?.codec) {
+//       await adminVerifyUser(user.codec);
+//       queryClient.invalidateQueries();
+//       toast.success('User verified successfully!');
+//     }
+//   };
 
   return (
     <header className="h-[74px] border-b border-gray-200 bg-white px-6 py-4">
@@ -130,7 +130,7 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Button variant="ghost" className="relative size-8  rounded-full">
                 <Avatar className="size-8">
                   <AvatarImage src={user?.display_picture_url} alt={user?.username} />
                   <AvatarFallback className="bg-[#D4AF36] text-sm font-medium text-white">
@@ -142,14 +142,14 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               {user?.onboarding_status === 'newly_registered' && (
                 <>
-                  <DropdownMenuItem onClick={handleAdminVerify} className="cursor-pointer" disabled={isVerifying}>
+                  {/* <DropdownMenuItem onClick={handleAdminVerify} className="cursor-pointer" disabled={isVerifying}>
                     {isVerifying ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     ) : (
                       <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
                     )}
                     <span>{isVerifying ? 'Verifying...' : 'Verify User'}</span>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuSeparator />
                 </>
               )}
@@ -159,8 +159,8 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
                   <p className="text-sm leading-none font-medium">
                     {user?.firstname} {user?.lastname}
                   </p>
-                  <p className="text-muted-foreground truncate text-xs leading-none">{user?.email_address}</p>
-                  <p className="text-muted-foreground text-xs leading-none capitalize">
+                  <p className="truncate text-xs leading-none text-muted-foreground">{user?.email_address}</p>
+                  <p className="text-xs leading-none text-muted-foreground capitalize">
                     {user?.user_role?.replace('_', ' ')}
                   </p>
                   {getOnboardingStatus(user?.onboarding_status) && (
@@ -174,28 +174,28 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                   <Link to="/">
-                    <Home className="mr-2 h-4 w-4" />
+                    <Home className="mr-2 size-4 " />
                     <span>Homepage</span>
                   </Link>
                 </DropdownMenuItem>
                 {user?.plan && (
                   <DropdownMenuItem asChild>
                     <Link to="/settings" search={{ tab: 'subscriptions' }}>
-                      <Star className="mr-2 h-4 w-4" />
+                      <Star className="mr-2 size-4 " />
                       <span>{user.plan.plan.name} Plan</span>
                     </Link>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem asChild>
                   <Link to="/settings">
-                    <Settings className="mr-2 h-4 w-4" />
+                    <Settings className="mr-2 size-4 " />
                     <span>Settings</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="mr-2 size-4 " />
                 <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>

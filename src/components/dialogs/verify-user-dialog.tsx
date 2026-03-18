@@ -35,7 +35,7 @@ export const VerifyUserDialog: React.FC<VerifyUserDialogProps> = ({ open, onOpen
             </Button>
           </DialogClose>
           <Button onClick={onConfirm} disabled={isPending} className="bg-green-600 hover:bg-green-700">
-            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isPending && <Loader2 className="mr-2 size-4  animate-spin" />}
             Yes, Verify
           </Button>
         </DialogFooter>

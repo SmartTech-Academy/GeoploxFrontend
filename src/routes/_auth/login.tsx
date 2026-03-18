@@ -67,14 +67,14 @@ function RouteComponent() {
   //   };
 
   return (
-    <div className="flex h-full w-full bg-white">
+    <div className="flex size-full  bg-white">
       <PageMetaTags
         title="Login to Your Account"
         description="Access your Geoplox account to manage properties, view saved listings, and connect with buyers or sellers."
         keywords="geoplox login, property account access"
       />
 
-      <div className="flex h-full min-h-screen w-full flex-col justify-between self-stretch py-10">
+      <div className="flex size-full min-h-screen  flex-col justify-between self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <Link to="/">
@@ -92,7 +92,7 @@ function RouteComponent() {
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Welcome Back</h1>
-            <p className="text-[14px] leading-5 text-[#71748C]">Enter your details below to login</p>
+            <p className="text-[14px]/5  text-[#71748C]">Enter your details below to login</p>
           </div>
 
           <div className="flex w-full flex-col gap-10">
@@ -143,7 +143,7 @@ function RouteComponent() {
                               onClick={() => setShowPassword(!showPassword)}
                               className="absolute top-1/2 right-3 -translate-y-1/2 transform text-[#D4AF36] hover:text-[#B69118]"
                             >
-                              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              {showPassword ? <EyeOff className="size-4 " /> : <Eye className="size-4 " />}
                             </button>
                           </div>
                         </FormControl>
@@ -154,7 +154,7 @@ function RouteComponent() {
 
                   {/* Forgot Password Link */}
                   <div className="flex justify-end">
-                    <Link to="/forgot-password" className="text-[14px] leading-5 text-[#D4AF36] hover:underline">
+                    <Link to="/forgot-password" className="text-[14px]/5  text-[#D4AF36] hover:underline">
                       Forgot Password?
                     </Link>
                   </div>
@@ -216,7 +216,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-5 text-[#41415A]">
+          <p className="text-[14px]/5  text-[#41415A]">
             © {new Date().getFullYear()} — Geoplox, All Right Reserved.
           </p>
         </div>

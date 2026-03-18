@@ -115,13 +115,13 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex h-full w-full bg-white">
+    <div className="flex size-full  bg-white">
       <PageMetaTags
         title="Verify Your Account"
         description="Enter the verification code sent to your phone to complete account verification."
         keywords="account verification, OTP verification"
       />
-      <div className="flex h-full min-h-screen w-full flex-col justify-between self-stretch py-10">
+      <div className="flex size-full min-h-screen  flex-col justify-between self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <Link to="/">
@@ -139,7 +139,7 @@ function RouteComponent() {
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
           <div className="flex w-full flex-col items-center gap-4 self-stretch px-4">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Verify your Account</h1>
-            <p className="text-center text-[14px] leading-5 text-[#71748C]">
+            <p className="text-center text-[14px]/5  text-[#71748C]">
               Enter the 6-digit code sent to your phone number ending with{' '}
               <span className="font-medium">{formatPhoneForDisplay(phone)}</span>
             </p>
@@ -194,12 +194,12 @@ function RouteComponent() {
 
                 {/* Resend Code */}
                 <div className="text-center">
-                  <p className="text-[14px] leading-5 text-[#41415A]">
+                  <p className="text-[14px]/5  text-[#41415A]">
                     Didn&apos;t receive?{' '}
                     <button
                       type="button"
                       onClick={handleResendCode}
-                      className="text-primary font-semibold hover:underline disabled:cursor-not-allowed disabled:text-gray-400 disabled:no-underline"
+                      className="font-semibold text-primary hover:underline disabled:cursor-not-allowed disabled:text-gray-400 disabled:no-underline"
                       disabled={countdown > 0 || isResending}
                     >
                       {isResending ? 'Sending...' : countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code'}
@@ -213,7 +213,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-5 text-[#41415A]">
+          <p className="text-[14px]/5  text-[#41415A]">
             © {new Date().getFullYear()} — Geoplox, All Right Reserved.
           </p>
         </div>

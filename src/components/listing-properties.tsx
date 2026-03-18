@@ -164,7 +164,7 @@ const ListingProperties = () => {
           <div className="flex grow flex-col items-start gap-4 pt-11">
             {/* Header */}
             <div className="flex w-full justify-between gap-6 self-stretch">
-              <h1 className="text-[16px] leading-6 text-[#535364]">{totalResults} Results</h1>
+              <h1 className="text-[16px]/6  text-[#535364]">{totalResults} Results</h1>
               <div className="flex items-center justify-center gap-6">
                 {sortOptions.map((option) => (
                   <Button
@@ -172,8 +172,8 @@ const ListingProperties = () => {
                     variant="ghost"
                     onClick={() => handleSortChange(option.value)}
                     className={cn(
-                      'h-8 rounded-none border-x-0 border-t-0 border-b-0 py-4 text-[16px] leading-6 font-normal text-[#71748C]',
-                      filters.sort === option.value && 'text-primary border-primary border-b font-semibold'
+                      'h-8 rounded-none border-x-0 border-y-0  py-4 text-[16px]/6  font-normal text-[#71748C]',
+                      filters.sort === option.value && 'border-b border-primary font-semibold text-primary'
                     )}
                   >
                     {option.label}
@@ -195,8 +195,8 @@ const ListingProperties = () => {
                         <span
                           onClick={() => handlePropertyTypeChange(type.types)}
                           className={cn(
-                            'hover:text-primary cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:underline',
-                            filters.property_type === type.types && 'text-primary font-semibold'
+                            'cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:text-primary hover:underline',
+                            filters.property_type === type.types && 'font-semibold text-primary'
                           )}
                         >
                           {type.types.replace('_', ' ')}
@@ -216,7 +216,7 @@ const ListingProperties = () => {
                             'cursor-pointer rounded-full border px-3 py-1 text-[12px] transition-colors',
                             filters.filter_property_sub_type === subType
                               ? 'border-primary bg-primary text-white'
-                              : 'hover:border-primary hover:text-primary border-gray-300 text-gray-600'
+                              : 'border-gray-300 text-gray-600 hover:border-primary hover:text-primary'
                           )}
                         >
                           {subType}
@@ -263,7 +263,7 @@ const ListingProperties = () => {
                                 : handleStateClick(location)
                             }
                             className={cn(
-                              'hover:text-primary cursor-pointer text-[12px] leading-[17px] transition-colors hover:underline',
+                              'cursor-pointer text-[12px] leading-[17px] transition-colors hover:text-primary hover:underline',
                               !filters.state && 'font-medium'
                             )}
                           >
@@ -323,7 +323,7 @@ const ListingProperties = () => {
 
           {/* Mobile Results Header */}
           <div className="mb-4 px-4">
-            <h1 className="mb-4 text-[16px] leading-6 font-medium text-[#535364]">{totalResults} Results</h1>
+            <h1 className="mb-4 text-[16px]/6  font-medium text-[#535364]">{totalResults} Results</h1>
           </div>
 
           {/* Mobile Quick Filter */}
@@ -336,8 +336,8 @@ const ListingProperties = () => {
                     <span
                       onClick={() => handlePropertyTypeChange(item.types)}
                       className={cn(
-                        'hover:text-primary cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:underline',
-                        filters.property_type === item.types && 'text-primary font-semibold'
+                        'cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:text-primary hover:underline',
+                        filters.property_type === item.types && 'font-semibold text-primary'
                       )}
                     >
                       {item.types}
@@ -357,7 +357,7 @@ const ListingProperties = () => {
                           'cursor-pointer rounded-full border px-3 py-1 text-[12px] transition-colors',
                           filters.filter_property_sub_type === subType
                             ? 'border-primary bg-primary text-white'
-                            : 'hover:border-primary hover:text-primary border-gray-300 text-gray-600'
+                            : 'border-gray-300 text-gray-600 hover:border-primary hover:text-primary'
                         )}
                       >
                         {subType}

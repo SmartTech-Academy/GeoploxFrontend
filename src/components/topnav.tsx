@@ -74,7 +74,7 @@ const Topnav = () => {
   );
 
   return (
-    <nav className="fixed top-0 right-0 left-0 z-20 h-(--landing-header-height) w-full bg-[rgba(255,_255,_255,_0.8)] shadow-[0px_4px_16px_rgba(0,_0,_0,_0.08)] backdrop-blur-sm">
+    <nav className="fixed top-0 inset-x-0  z-20 h-(--landing-header-height) w-full bg-[rgba(255,255,255,0.8)] shadow-[0px_4px_16px_rgba(0,0,0,0.08)] backdrop-blur-sm">
       <div className="landing-container flex h-(--landing-header-height) w-full items-center justify-between py-2.5">
         {/* Logo */}
         <Link to="/">
@@ -100,7 +100,7 @@ const Topnav = () => {
             <div className="h-8 w-px bg-[#E2E2E2]" />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button variant="ghost" className="relative size-8  rounded-full">
                   <Avatar className="size-8">
                     <AvatarImage src={user?.display_picture_url} alt={user?.username} />
                     <AvatarFallback className="bg-[#D4AF36] text-sm font-medium text-white">
@@ -115,7 +115,7 @@ const Topnav = () => {
                     <p className="text-sm leading-none font-medium">
                       {user?.firstname} {user?.lastname}
                     </p>
-                    <p className="text-muted-foreground truncate text-xs leading-none">{user?.email_address}</p>
+                    <p className="truncate text-xs leading-none text-muted-foreground">{user?.email_address}</p>
                     {getOnboardingStatus(user?.onboarding_status) && (
                       <p className="text-warning-foreground text-xs leading-none font-semibold">
                         {getOnboardingStatus(user?.onboarding_status)} |{' '}
@@ -128,28 +128,28 @@ const Topnav = () => {
                 <DropdownMenuGroup>
                   <DropdownMenuItem asChild>
                     <Link to={getLoginRedirectPath(user)}>
-                      <Home className="mr-2 h-4 w-4" />
+                      <Home className="mr-2 size-4 " />
                       <span>Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
                   {user?.plan && (
                     <DropdownMenuItem asChild>
                       <Link to="/settings" search={{ tab: 'subscriptions' }}>
-                        <Star className="mr-2 h-4 w-4" />
+                        <Star className="mr-2 size-4 " />
                         <span>{user.plan.plan.name} Plan</span>
                       </Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem asChild>
                     <Link to="/settings">
-                      <Settings className="mr-2 h-4 w-4" />
+                      <Settings className="mr-2 size-4 " />
                       <span>Settings</span>
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
+                  <LogOut className="mr-2 size-4 " />
                   <span>Log out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -219,7 +219,7 @@ const Topnav = () => {
                         <p className="font-semibold">
                           {user?.firstname} {user?.lastname}
                         </p>
-                        <p className="text-muted-foreground text-sm">{user?.email_address}</p>
+                        <p className="text-sm text-muted-foreground">{user?.email_address}</p>
                         <p className="text-warning-foreground text-xs font-semibold capitalize">
                           {user?.user_role?.replace('_', ' ')}
                         </p>
@@ -228,18 +228,18 @@ const Topnav = () => {
                     <div className="mt-4 flex flex-col gap-2">
                       <Button asChild variant="ghost" className="justify-start">
                         <Link to={getLoginRedirectPath(user)} onClick={() => setIsOpen(false)}>
-                          <Home className="mr-2 h-4 w-4" />
+                          <Home className="mr-2 size-4 " />
                           Dashboard
                         </Link>
                       </Button>
                       <Button asChild variant="ghost" className="justify-start">
                         <Link to="/settings" onClick={() => setIsOpen(false)}>
-                          <Settings className="mr-2 h-4 w-4" />
+                          <Settings className="mr-2 size-4 " />
                           Settings
                         </Link>
                       </Button>
                       <Button variant="ghost" className="justify-start" onClick={handleLogout}>
-                        <LogOut className="mr-2 h-4 w-4" />
+                        <LogOut className="mr-2 size-4 " />
                         Log out
                       </Button>
                     </div>

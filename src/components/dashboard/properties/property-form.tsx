@@ -38,7 +38,7 @@ import { listingTypes, propertyFeatures, propertyStatus, propertyTypes } from '@
 const PropertyFormSchema = z.object({
   id: z.string().optional(),
   title: z.string().min(1, 'Listing title is required'),
-  category_slug: z.enum(['For Rent', 'For Sale', 'Short Let', 'Joint Venture'], {
+  category_slug: z.enum(['for-rent', 'for-sale', 'short-let', 'joint-venture'], {
     error: 'Please select a listing type',
   }),
   property_type: z.string().min(1, 'Property type is required'),
@@ -138,7 +138,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
     defaultValues: {
       id: initialData?.id,
       title: initialData?.title ?? '',
-      category_slug: initialData?.category_slug ?? 'For Rent',
+      category_slug: initialData?.category_slug ?? 'for-rent',
       property_type: initialData?.property_type ?? '',
       sub_type: initialData?.sub_type ?? '',
       address: initialData?.address ?? '',
@@ -162,6 +162,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   });
 
   const propertyType = form.watch('property_type');
+
+
 
   const subTypes = useMemo(() => {
     if (!propertyType) {
@@ -354,7 +356,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator>
-                  <Slash className="h-3 w-3" />
+                  <Slash className="size-3 " />
                 </BreadcrumbSeparator>
                 <BreadcrumbItem>
                   <BreadcrumbPage className="max-w-[200px] truncate text-sm sm:max-w-none">
@@ -410,8 +412,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       </FormControl>
                       <SelectContent>
                         {listingTypes.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -764,7 +766,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       <p className="text-[14px] leading-[17px] text-[#71748C]">
                         <span className="cursor-pointer font-semibold text-[#B69118]">Click </span> to upload
                       </p>
-                      <p className="text-[10px] leading-3 text-[#71748C]">Supports JPEG, or PNG files.</p>
+                      <p className="text-[10px]/3  text-[#71748C]">Supports JPEG, or PNG files.</p>
                     </div>
                   </div>
                 </div>
@@ -778,15 +780,15 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       onMouseLeave={() => setHoveredImage(null)}
                     >
                       <div className="relative h-[120px] w-full bg-transparent sm:h-[108px]">
-                        <img src={image.preview} alt={`Property ${index + 1}`} className="h-full w-full object-cover" />
+                        <img src={image.preview} alt={`Property ${index + 1}`} className="size-full  object-cover" />
                         {image.status === 'uploading' && (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                            <Loader2 className="h-6 w-6 animate-spin text-white" />
+                            <Loader2 className="size-6  animate-spin text-white" />
                           </div>
                         )}
                         {image.status === 'error' && (
                           <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-500/70 text-white">
-                            <X className="h-6 w-6" />
+                            <X className="size-6 " />
                             <span className="text-xs">Failed</span>
                           </div>
                         )}
@@ -794,7 +796,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
                       <div
                         className={cn(
-                          'absolute inset-0 z-10 flex h-full w-full items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
+                          'absolute inset-0 z-10 flex size-full  items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
                           hoveredImage === index ? 'opacity-100' : 'pointer-events-none opacity-0'
                         )}
                       >
@@ -803,7 +805,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px] leading-3.5 font-normal text-black sm:px-6"
+                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px]/3.5  font-normal text-black sm:px-6"
                             onClick={() => handleImageRemove(index)}
                           >
                             <Trash className="size-3.5 text-[#D20832]" />
@@ -813,7 +815,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px] leading-3.5 font-normal text-black sm:px-6"
+                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px]/3.5  font-normal text-black sm:px-6"
                             onClick={() => handleImageReplace(index)}
                           >
                             <RotateCcw className="size-3.5" />
@@ -832,7 +834,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                         <p className="text-[14px] leading-[17px] text-[#71748C]">
                           <span className="cursor-pointer font-semibold text-[#B69118]">Click </span> to upload
                         </p>
-                        <p className="text-[10px] leading-3 text-[#71748C]">Supports JPEG, or PNG files.</p>
+                        <p className="text-[10px]/3  text-[#71748C]">Supports JPEG, or PNG files.</p>
                       </div>
                     </div>
                   )}
@@ -894,7 +896,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
                       {propertyDocument?.status === 'uploading' ? (
                         <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
-                          <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+                          <Loader2 className="size-5  animate-spin text-gray-500" />
                         </div>
                       ) : !propertyDocument ? (
                         <Button
@@ -919,7 +921,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                               type="button"
                               size="sm"
                               variant="ghost"
-                              className="h-6 w-6 p-0"
+                              className="size-6  p-0"
                               onClick={handleDocumentReplace}
                             >
                               <RotateCcw className="size-3" />
@@ -928,7 +930,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                               type="button"
                               size="sm"
                               variant="ghost"
-                              className="h-6 w-6 p-0 text-red-600"
+                              className="size-6  p-0 text-red-600"
                               onClick={handleDocumentRemove}
                             >
                               <X className="size-3" />
@@ -962,7 +964,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
                     {proofOfAddress?.status === 'uploading' ? (
                       <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
-                        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+                        <Loader2 className="size-5  animate-spin text-gray-500" />
                       </div>
                     ) : !proofOfAddress ? (
                       <Button
@@ -987,7 +989,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                             type="button"
                             size="sm"
                             variant="ghost"
-                            className="h-6 w-6 p-0"
+                            className="size-6  p-0"
                             onClick={() => proofOfAddressInputRef.current?.click()}
                           >
                             <RotateCcw className="size-3" />
@@ -996,7 +998,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                             type="button"
                             size="sm"
                             variant="ghost"
-                            className="h-6 w-6 p-0 text-red-600"
+                            className="size-6  p-0 text-red-600"
                             onClick={handleProofOfAddressRemove}
                           >
                             <X className="size-3" />
@@ -1048,7 +1050,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                                   }}
                                 />
                               </FormControl>
-                              <FormLabel className="text-sm leading-5 font-normal">{status}</FormLabel>
+                              <FormLabel className="text-sm/5  font-normal">{status}</FormLabel>
                             </FormItem>
                           );
                         }}
@@ -1091,7 +1093,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                                   }}
                                 />
                               </FormControl>
-                              <FormLabel className="text-sm leading-5 font-normal">{feature}</FormLabel>
+                              <FormLabel className="text-sm/5  font-normal">{feature}</FormLabel>
                             </FormItem>
                           );
                         }}
@@ -1102,6 +1104,31 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 </FormItem>
               )}
             />
+
+            {/* Global Form Errors */}
+{Object.keys(form.formState.errors).length > 0 && (
+  <div className="w-full rounded-lg border border-red-300 bg-red-50 p-4">
+    <div className="flex items-start gap-2">
+      <div className="shrink-0">
+        <X className="size-5  text-red-600" />
+      </div>
+      <div className="flex-1">
+        <h4 className="text-sm font-medium text-red-800">
+          Please fix the following errors:
+        </h4>
+        <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-red-700">
+          {Object.entries(form.formState.errors).map(([field, error]) => (
+            <li key={field}>
+              <span className="font-medium">{field}:</span>{' '}
+              {error?.message as string}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+)}
+
 
             {/* Action Buttons - moved to bottom */}
             <div className="flex w-full flex-col gap-4 pt-6 sm:flex-row sm:items-center">

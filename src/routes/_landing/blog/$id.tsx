@@ -84,11 +84,11 @@ function RouteComponent() {
 
             <div className="flex flex-col gap-12">
               <div className="flex items-center gap-3">
-                <span className="text-[15px] leading-5 font-semibold tracking-[-0.12px] text-[#060809]">
+                <span className="text-[15px]/5  font-semibold tracking-[-0.12px] text-[#060809]">
                   Market Trends
                 </span>
 
-                <span className="text-[15px] leading-5 tracking-[-0.12px] text-[#7B828E]">
+                <span className="text-[15px]/5  tracking-[-0.12px] text-[#7B828E]">
                   Sunday, February 12, 2023
                 </span>
               </div>
@@ -98,7 +98,7 @@ function RouteComponent() {
                   How to position your team for success
                 </h1>
 
-                <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">
+                <p className="text-[15px]/5  tracking-[-0.12px] text-[#060809]">
                   In this week’s Business Spotlight, Awele talks us through her journey, some challenges she has faced,
                   and what she has found most rewarding through it all
                 </p>
@@ -107,25 +107,25 @@ function RouteComponent() {
               <img src={assets.blog1} alt="blog" className="h-auto w-full" width={1212} height={541} />
 
               <div className="flex flex-col items-start gap-6 px-5 lg:px-6">
-                <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">
+                <p className="text-[15px]/5  tracking-[-0.12px] text-[#060809]">
                   On a journey to de-stigmatise anxiety through a series of art therapy sessions across Nigeria, Awele
                   Ogwu has turned a personal experience into an opportunity to create an outlet for many others to
                   network, express themselves andffind relief in moments of anxiety. Founded in 2018, The Art Room NG is
                   a therapeutic arts space based in Lagos and Abuja.
                 </p>
-                <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">
+                <p className="text-[15px]/5  tracking-[-0.12px] text-[#060809]">
                   It was quite nerve-wracking to be honest. To see something that you once had as an idea become
                   something in realityfbut it was also quite exciting and rewarding. We had prepped for this session for
                   over a month just waiting to see how many people would show up. We put the word out and sold out in a
                   few days, which encouraged us to push through and put more into the session.
                 </p>
-                <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">
+                <p className="text-[15px]/5  tracking-[-0.12px] text-[#060809]">
                   It was quite nerve-wracking to be honest. To see something that you once had as an idea become
                   something in realityfbut it was also quite exciting and rewarding. We had prepped for this session for
                   over a month just waiting to see how many people would show up. We put the word out and sold out in a
                   few days, which encouraged us to push through and put more into the session.
                 </p>
-                <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">
+                <p className="text-[15px]/5  tracking-[-0.12px] text-[#060809]">
                   It was quite nerve-wracking to be honest. To see something that you once had as an idea become
                   something in realityfbut it was also quite exciting and rewarding. We had prepped for this session for
                   over a month just waiting to see how many people would show up. We put the word out and sold out in a
@@ -136,7 +136,7 @@ function RouteComponent() {
                   <div className="flex items-center gap-[25px]">
                     <img src={assets.blogwritter} alt="author" className="size-12" width={48} height={48} />
                     <div className="flex flex-col items-start gap-[7px]">
-                      <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">Skylar Vaccaro</p>
+                      <p className="text-[15px]/5  tracking-[-0.12px] text-[#060809]">Skylar Vaccaro</p>
                       <p className="text-[14px] leading-[21px] tracking-[-0.12px] text-[#393E46]">
                         Product Marketing and Communications
                       </p>
@@ -148,15 +148,15 @@ function RouteComponent() {
 
                     <div className="flex items-center gap-4">
                       <button className="flex size-8 items-center justify-center rounded-4xl bg-[#F9F9F9]">
-                        <Facebook className="text-primary fill-primary size-4" />
+                        <Facebook className="size-4 fill-primary text-primary" />
                       </button>
 
                       <button className="flex size-8 items-center justify-center rounded-4xl bg-[#F9F9F9]">
-                        <Twitter className="text-primary fill-primary size-4" />
+                        <Twitter className="size-4 fill-primary text-primary" />
                       </button>
 
                       <button className="flex size-8 items-center justify-center rounded-4xl bg-[#F9F9F9]">
-                        <Linkedin className="text-primary fill-primary size-4" />
+                        <Linkedin className="size-4 fill-primary text-primary" />
                       </button>
                     </div>
                   </div>
@@ -176,7 +176,7 @@ function RouteComponent() {
         >
           <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07/20%)]/20" />
         </div>
-        <div className="landing-container relative z-10 flex flex-col gap-5 lg:gap-[52px]">
+        <div className="relative z-10 landing-container flex flex-col gap-5 lg:gap-[52px]">
           <h4 className="text-[34px] leading-[41px] font-semibold text-black">More posts like this</h4>
 
           <div className="grid w-full gap-[31px] lg:grid-cols-2">
@@ -193,7 +193,7 @@ function RouteComponent() {
                     {blog.title}
                   </h5>
 
-                  <p className="line-clamp-1 text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">{blog.text}</p>
+                  <p className="line-clamp-1 text-[15px]/5  tracking-[-0.12px] text-[#060809]">{blog.text}</p>
                 </div>
               </Link>
             ))}

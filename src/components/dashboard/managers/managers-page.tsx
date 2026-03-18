@@ -353,10 +353,10 @@ const ManagersPage = () => {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden h-full w-full lg:flex">
-        <ResizablePanelGroup direction="horizontal" className="h-full w-full">
+      <div className="hidden size-full  lg:flex">
+        <ResizablePanelGroup direction="horizontal" className="size-full ">
           <ResizablePanel defaultSize={35} minSize={25} maxSize={50} className="border-r border-[#F1F1F4]">
-            <div className="h-full w-full">
+            <div className="size-full ">
               <ManagerList
                 managers={filteredManagers}
                 selectedManager={selectedManager}
@@ -393,7 +393,7 @@ const ManagersPage = () => {
 const EmptyState = ({ type }: { type: 'manager' | 'list' }) => {
   if (type === 'manager') {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-[#F9F9F9]">
+      <div className="flex size-full  flex-col items-center justify-center gap-4 bg-[#F9F9F9]">
         <div className="flex flex-col items-center justify-center gap-6">
           <img
             src={assets.messagingloading || '/placeholder.svg'}
@@ -403,8 +403,8 @@ const EmptyState = ({ type }: { type: 'manager' | 'list' }) => {
             height={84}
           />
           <div className="flex flex-col items-center justify-center gap-3">
-            <h5 className="text-[20px] leading-7 font-normal text-[#1F2130]">No manager selected</h5>
-            <p className="text-center text-[14px] leading-5 tracking-[-0.02em] text-[#71748C]">
+            <h5 className="text-[20px]/7  font-normal text-[#1F2130]">No manager selected</h5>
+            <p className="text-center text-[14px]/5  tracking-[-0.02em] text-[#71748C]">
               Select a manager from the list
               <br /> to view details and take action.
             </p>
@@ -423,7 +423,7 @@ const EmptyState = ({ type }: { type: 'manager' | 'list' }) => {
         height={112}
       />
       <div className="flex flex-col items-center justify-center gap-3">
-        <h5 className="text-[20px] leading-7 font-semibold text-[#1F2130]">No managers found</h5>
+        <h5 className="text-[20px]/7  font-semibold text-[#1F2130]">No managers found</h5>
         <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
           No managers match your current filter.
         </p>
@@ -463,7 +463,7 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
               onClick={() => setFilter('all')}
               className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
                 filter === 'all'
-                  ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
+                  ? 'border-[#EAEAEA] text-primary hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
             >
@@ -475,7 +475,7 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
               onClick={() => setFilter('account')}
               className={`h-8 min-w-20 rounded-full text-[12px] font-semibold ${
                 filter === 'account'
-                  ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
+                  ? 'border-[#EAEAEA] text-primary hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
             >
@@ -487,7 +487,7 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
               onClick={() => setFilter('content')}
               className={`h-8 min-w-[90px] rounded-full text-[12px] font-semibold ${
                 filter === 'content'
-                  ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
+                  ? 'border-[#EAEAEA] text-primary hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
             >
@@ -501,7 +501,7 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
               background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
-            className="h-8 w-fit rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-3 font-normal text-white"
+            className="h-8 w-fit rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3  font-normal text-white"
           >
             <UserPlus2 className="size-4" />
             Create
@@ -540,12 +540,12 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
 
                 <div className="flex min-w-0 flex-col items-start gap-2.5">
                   <h3 className="truncate text-[14px] leading-[17px] font-semibold text-[#41415A]">{manager.name}</h3>
-                  <p className="truncate text-[12px] leading-3.5 tracking-[0.01em] text-[#71748C]">{manager.email}</p>
+                  <p className="truncate text-[12px]/3.5  tracking-[0.01em] text-[#71748C]">{manager.email}</p>
                 </div>
               </div>
 
               <Badge
-                className={`items-center rounded border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
+                className={`items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
               >
                 <div
                   className={cn(
@@ -612,20 +612,20 @@ const ManagerView = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="icon" variant="secondary" className="size-10 rounded-[6px] bg-white text-[#41415A]">
-                <MoreVertical className="h-4 w-4" />
+                <MoreVertical className="size-4 " />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setOpenModal(true)} className="flex items-center gap-2">
-                <User className="h-4 w-4" />
+                <User className="size-4 " />
                 Assign Listing
               </DropdownMenuItem>
               <DropdownMenuItem className="flex items-center gap-2">
-                <Settings className="h-4 w-4" />
+                <Settings className="size-4 " />
                 Reset Password
               </DropdownMenuItem>
               <DropdownMenuItem className="flex items-center gap-2 text-red-600">
-                <Ban className="h-4 w-4" />
+                <Ban className="size-4 " />
                 Revoke Access
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -635,9 +635,9 @@ const ManagerView = ({
 
       <div className="mt-12 flex w-full flex-col items-start gap-4 border-b border-[#F1F1F4] px-4 pb-4 lg:flex-row lg:items-center lg:justify-between lg:px-6">
         <div className="flex items-center gap-4">
-          <h2 className="text-[20px] leading-7 font-semibold text-[#2E2E3E]">{selectedManager.name}</h2>
+          <h2 className="text-[20px]/7  font-semibold text-[#2E2E3E]">{selectedManager.name}</h2>
           <Badge
-            className={`items-center rounded border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
+            className={`items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
           >
             <div
               className={cn(
@@ -679,16 +679,16 @@ const ManagerView = ({
         {activeTab === 'profile' ? (
           <div className="flex w-full flex-col gap-4">
             <div className="flex items-center justify-between gap-10 self-stretch py-2">
-              <label className="text-[14px] leading-3.5 text-[#71748C]">Email Address</label>
-              <p className="text-[14px] leading-3.5 text-[#1F2130]">{selectedManager.email}</p>
+              <label className="text-[14px]/3.5  text-[#71748C]">Email Address</label>
+              <p className="text-[14px]/3.5  text-[#1F2130]">{selectedManager.email}</p>
             </div>
             <div className="flex items-center justify-between gap-10 self-stretch py-2">
-              <label className="text-[14px] leading-3.5 text-[#71748C]">Phone Number</label>
-              <p className="text-[14px] leading-3.5 text-[#1F2130]">{selectedManager.phoneNumber}</p>
+              <label className="text-[14px]/3.5  text-[#71748C]">Phone Number</label>
+              <p className="text-[14px]/3.5  text-[#1F2130]">{selectedManager.phoneNumber}</p>
             </div>
             <div className="flex items-center justify-between gap-10 self-stretch py-2">
-              <label className="text-[14px] leading-3.5 text-[#71748C]">Created on</label>
-              <p className="text-[14px] leading-3.5 text-[#1F2130]">{selectedManager.createdOn}</p>
+              <label className="text-[14px]/3.5  text-[#71748C]">Created on</label>
+              <p className="text-[14px]/3.5  text-[#1F2130]">{selectedManager.createdOn}</p>
             </div>
 
             <div className="">
@@ -698,7 +698,7 @@ const ManagerView = ({
                   onClick={() => setShowRegionActions(!showRegionActions)}
                   className="flex items-center gap-2 px-4 py-2 text-sm text-orange-600 hover:text-orange-700"
                 >
-                  <Settings className="h-4 w-4" />
+                  <Settings className="size-4 " />
                   {showRegionActions ? 'Hide Actions' : 'Manage'}
                 </button>
               </div>
@@ -719,7 +719,7 @@ const ManagerView = ({
                       </div>
                       {showRegionActions && (
                         <button className="ml-4 rounded-lg p-2 text-red-500 hover:bg-red-50 hover:text-red-700">
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="size-4 " />
                         </button>
                       )}
                     </div>
@@ -740,9 +740,9 @@ const ManagerView = ({
                   )}
                 >
                   {showDeveloperActions ? (
-                    <CircleCheck className="h-4 w-4 fill-[#008A00] text-white" />
+                    <CircleCheck className="size-4  fill-[#008A00] text-white" />
                   ) : (
-                    <Settings className="h-4 w-4" />
+                    <Settings className="size-4 " />
                   )}
 
                   {showDeveloperActions ? 'Save Changes' : 'Manage'}
@@ -784,7 +784,7 @@ const ManagerView = ({
                       </div>
                       {showDeveloperActions && (
                         <button className="ml-4 rounded-lg p-2 text-red-500 hover:bg-red-50 hover:text-red-700">
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="size-4 " />
                         </button>
                       )}
                     </div>
@@ -810,7 +810,7 @@ const ManagerView = ({
 
               <Button
                 variant="secondary"
-                className="h-8 rounded-[40px] bg-[#F9F9FB] p-4 text-[14px] leading-5 font-normal text-[#1F2130]"
+                className="h-8 rounded-[40px] bg-[#F9F9FB] p-4 text-[14px]/5  font-normal text-[#1F2130]"
               >
                 Export
                 <Download className="size-4" />
@@ -824,13 +824,13 @@ const ManagerView = ({
                   className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
                 >
                   <div className="box-border w-full border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-                    <h6 className="text-[12px] leading-3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">
+                    <h6 className="text-[12px]/3.5  tracking-[-0.02em] text-[#7F7F7F] uppercase">
                       {item.title}
                     </h6>
                   </div>
 
                   <div className="flex items-baseline gap-2 px-6 pb-6">
-                    <p className="text-[48px] leading-12 font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
+                    <p className="text-[48px]/12  font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
                     <span className="text-[16px] leading-[22px] text-[#1F2130]">Properties</span>
                   </div>
                 </div>
@@ -853,18 +853,18 @@ const ManagerView = ({
                   className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
                 >
                   <div className="box-border w-full border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-                    <h6 className="text-[12px] leading-3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">
+                    <h6 className="text-[12px]/3.5  tracking-[-0.02em] text-[#7F7F7F] uppercase">
                       {item.title}
                     </h6>
                   </div>
 
                   <div className="flex items-baseline gap-2 px-6 pb-6">
-                    <p className="text-[48px] leading-12 font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
+                    <p className="text-[48px]/12  font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
 
                     <div className="flex items-center gap-1.5">
                       <MoveUpRight className="size-3 text-[#008A00]" />
-                      <span className="text-[14px] leading-4 tracking-[-0.02em] text-[#008A00D2]">3.36</span>
-                      <span className="text-[14px] leading-4 tracking-[-0.02em] text-[#71748C]">Last mth.</span>
+                      <span className="text-[14px]/4  tracking-[-0.02em] text-[#008A00D2]">3.36</span>
+                      <span className="text-[14px]/4  tracking-[-0.02em] text-[#71748C]">Last mth.</span>
                     </div>
                   </div>
                 </div>

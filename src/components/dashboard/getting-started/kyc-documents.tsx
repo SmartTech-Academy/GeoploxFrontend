@@ -60,7 +60,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
 
   const renderFilePreview = (file: File) => {
     if (file.type.startsWith('image/')) {
-      return <img src={URL.createObjectURL(file)} alt={file.name} className="h-full w-full object-contain" />;
+      return <img src={URL.createObjectURL(file)} alt={file.name} className="size-full  object-contain" />;
     }
 
     if (file.type === 'application/pdf') {
@@ -79,7 +79,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
         <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">KYC Documents</h2>
-        <p className="text-[14px] leading-5 text-[#71748C]">Let us know more about your business</p>
+        <p className="text-[14px]/5  text-[#71748C]">Let us know more about your business</p>
       </div>
 
       <div className="flex w-full flex-col gap-7">
@@ -97,7 +97,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
                     Drag and drop here or{' '}
                     <span className="cursor-pointer font-semibold text-[#B69118]">click to upload</span>
                   </p>
-                  <p className="text-[10px] leading-3 text-[#71748C]">
+                  <p className="text-[10px]/3  text-[#71748C]">
                     Supports PDF, JPEG, or PNG files. Smaller than 1 MB
                   </p>
                 </div>
@@ -112,7 +112,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
 
                 <div
                   className={cn(
-                    'absolute inset-0 z-10 flex h-full w-full items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
+                    'absolute inset-0 z-10 flex size-full  items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
                     hoveredDocument === 'cac' ? 'opacity-100' : 'pointer-events-none opacity-0'
                   )}
                 >
@@ -121,7 +121,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
                       type="button"
                       size="sm"
                       variant="secondary"
-                      className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px] leading-3.5 font-normal text-black"
+                      className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px]/3.5  font-normal text-black"
                       onClick={handleCacRemove}
                     >
                       <Trash className="size-3.5 text-[#D20832]" />
@@ -132,7 +132,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
                       type="button"
                       size="sm"
                       variant="secondary"
-                      className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px] leading-3.5 font-normal text-black"
+                      className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px]/3.5  font-normal text-black"
                       onClick={handleCacReplace}
                     >
                       <RotateCcw className="size-3.5" />
@@ -166,7 +166,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
                   Drag and drop here or{' '}
                   <span className="cursor-pointer font-semibold text-[#B69118]">click to upload</span>
                 </p>
-                <p className="text-[10px] leading-3 text-[#71748C]">
+                <p className="text-[10px]/3  text-[#71748C]">
                   Supports PDF, JPEG, or PNG files. Smaller than 1 MB
                 </p>
               </div>
@@ -181,7 +181,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
 
               <div
                 className={cn(
-                  'absolute inset-0 z-10 flex h-full w-full items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
+                  'absolute inset-0 z-10 flex size-full  items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
                   hoveredDocument === 'govtId' ? 'opacity-100' : 'pointer-events-none opacity-0'
                 )}
               >
@@ -190,7 +190,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
                     type="button"
                     size="sm"
                     variant="secondary"
-                    className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px] leading-3.5 font-normal text-black"
+                    className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px]/3.5  font-normal text-black"
                     onClick={handleGovtIdRemove}
                   >
                     <Trash className="size-3.5 text-[#D20832]" />
@@ -201,7 +201,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
                     type="button"
                     size="sm"
                     variant="secondary"
-                    className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px] leading-3.5 font-normal text-black"
+                    className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px]/3.5  font-normal text-black"
                     onClick={handleGovtIdReplace}
                   >
                     <RotateCcw className="size-3.5" />

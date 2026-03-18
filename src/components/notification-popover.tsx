@@ -45,7 +45,7 @@ export function NotificationPopover() {
         <Button variant="ghost" size="icon" className="relative size-8 rounded-full border-[0.5px] border-[#D5D5DD]">
           <Bell className="size-4" />
           {unreadCount > 0 && (
-            <span className="absolute top-0 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+            <span className="absolute top-0 -right-1 flex size-4  items-center justify-center rounded-full bg-red-500 text-xs text-white">
               {unreadCount}
             </span>
           )}
@@ -96,7 +96,7 @@ export function NotificationPopover() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6"
+                    className="size-6 "
                     onClick={(e) => {
                       e.stopPropagation();
                       deleteNotification(notification.id);

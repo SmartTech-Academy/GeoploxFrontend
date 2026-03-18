@@ -217,7 +217,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange }) => {
             <DialogFooter>
               <DialogClose asChild>
                 <Button
-                  className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px] leading-3.5 font-semibold text-[#1F2130]"
+                  className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px]/3.5  font-semibold text-[#1F2130]"
                   variant="secondary"
                 >
                   Cancel
@@ -230,7 +230,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange }) => {
                   background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
                   boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                 }}
-                className="h-8 rounded-4xl border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-3.5 font-semibold text-white"
+                className="h-8 rounded-4xl border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3.5  font-semibold text-white"
               >
                 Assign
               </Button>

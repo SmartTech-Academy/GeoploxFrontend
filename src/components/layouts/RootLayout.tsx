@@ -26,7 +26,7 @@ function RouteLoader() {
 
 const RootLayout = () => {
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen bg-background">
       {/* Main content */}
       <div className="h-full">
         <RouteLoader />

@@ -70,7 +70,7 @@ const BlogsPage = () => {
               <div className="flex w-full flex-col items-start gap-3 md:w-auto md:flex-row md:items-center">
                 {/* Search Input */}
                 <div className="relative w-full md:w-auto">
-                  <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                  <Search className="absolute top-1/2 left-3 size-4  -translate-y-1/2 transform text-gray-400" />
                   <Input
                     placeholder="Search blog"
                     className="h-10 w-full rounded-xl border border-[#D5D5DD] pr-4 pl-10 md:w-[339px]"
@@ -110,7 +110,7 @@ const BlogsPage = () => {
               <h1 className="text-[24px] leading-[34px] font-semibold tracking-[-0.39px] text-black">All Blog Posts</h1>
               <div className="flex w-full flex-col gap-10 self-stretch">
                 {/* Featured Post */}
-                <div className="flex w-full flex-col items-center gap-4 self-stretch rounded border border-[#F1F1F1] md:flex-row md:gap-8">
+                <div className="flex w-full flex-col items-center gap-4 self-stretch rounded-sm border border-[#F1F1F1] md:flex-row md:gap-8">
                   <img
                     src={blogPosts[0].image}
                     alt="Featured post"
@@ -120,9 +120,9 @@ const BlogsPage = () => {
                   />
                   <div className="flex flex-col p-4 pr-3 md:p-0">
                     <div className="flex items-center gap-3">
-                      <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">{blogPosts[0].category}</p>
+                      <p className="text-[15px]/5  tracking-[-0.12px] text-[#060809]">{blogPosts[0].category}</p>
 
-                      <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#7B828E]">{blogPosts[0].date}</p>
+                      <p className="text-[15px]/5  tracking-[-0.12px] text-[#7B828E]">{blogPosts[0].date}</p>
                     </div>
 
                     <div className="flex flex-col gap-4 self-stretch">
@@ -151,9 +151,9 @@ const BlogsPage = () => {
                       <div className="flex flex-col gap-3 px-4 py-6">
                         <div className="flex items-center gap-3">
                           <div className="flex items-center gap-3">
-                            <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#060809]">{post.category}</p>
+                            <p className="text-[15px]/5  tracking-[-0.12px] text-[#060809]">{post.category}</p>
 
-                            <p className="text-[15px] leading-5 tracking-[-0.12px] text-[#7B828E]">{post.date}</p>
+                            <p className="text-[15px]/5  tracking-[-0.12px] text-[#7B828E]">{post.date}</p>
                           </div>
                         </div>
                         <h3 className="text-[18px] leading-[26px] font-semibold tracking-[-0.2px] text-[#060809]">
@@ -174,9 +174,9 @@ const BlogsPage = () => {
                     size="sm"
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="h-8 w-8 rounded-[4px] p-0"
+                    className="size-8  rounded-[4px] p-0"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="size-4 " />
                   </Button>
 
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -185,7 +185,7 @@ const BlogsPage = () => {
                       variant={currentPage === page ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => handlePageChange(page)}
-                      className={`h-8 w-8 rounded-[4px] p-0 text-[12px] ${
+                      className={`size-8  rounded-[4px] p-0 text-[12px] ${
                         currentPage === page
                           ? 'bg-[#1F2130] text-white hover:bg-[#1F2130]'
                           : 'text-[#71748C] hover:text-[#1F2130]'
@@ -202,9 +202,9 @@ const BlogsPage = () => {
                     size="sm"
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="h-8 w-8 rounded-[4px] p-0"
+                    className="size-8  rounded-[4px] p-0"
                   >
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="size-4 " />
                   </Button>
                 </div>
               </div>

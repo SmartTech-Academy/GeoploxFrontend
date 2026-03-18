@@ -89,7 +89,7 @@ const Dashboard = () => {
             background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
             boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
           }}
-          className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-3 font-normal text-white lg:w-fit"
+          className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3  font-normal text-white lg:w-fit"
         >
           <Link to="/properties/create">
             <HousePlus className="size-4" /> New Listing
@@ -106,11 +106,11 @@ const Dashboard = () => {
                 className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
               >
                 <div className="box-border w-full rounded-t-[10px] border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-                  <h6 className="text-[12px] leading-3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
+                  <h6 className="text-[12px]/3.5  tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
                 </div>
 
                 <div className="flex items-baseline gap-2 px-6 pb-6">
-                  <p className="text-[48px] leading-12 font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
+                  <p className="text-[48px]/12  font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
                   <span className="text-[16px] leading-[22px] text-[#1F2130]">Properties</span>
                 </div>
               </div>
@@ -123,9 +123,9 @@ const Dashboard = () => {
         <div className="flex w-full items-start gap-12 self-stretch rounded-xl border border-[#E3E3E8] bg-white p-6">
           <div className="flex w-full grow flex-col items-start gap-6">
             <header className="flex w-full items-center justify-between gap-6">
-              <h3 className="text-[12px] leading-3.5 tracking-[0.02em] text-[#7F7F7F] uppercase">Recent Messages</h3>
+              <h3 className="text-[12px]/3.5  tracking-[0.02em] text-[#7F7F7F] uppercase">Recent Messages</h3>
 
-              <Button asChild variant="link" className="text-primary text-[12px] leading-3.5 font-semibold">
+              <Button asChild variant="link" className="text-[12px] leading-3.5 font-semibold text-primary">
               <Link to="/messages" >
               View All
                 <ChevronRight className="size-4 fill-[#D4AF36]" />
@@ -159,14 +159,14 @@ const Dashboard = () => {
                             {item.last_message.sender.name}
                           </h5>
                           <div className="flex items-center justify-center gap-2.5">
-                            <p className="text-right text-[12px] leading-3.5 tracking-[0.01em] whitespace-nowrap text-[#71748C]">
+                            <p className="text-right text-[12px]/3.5  tracking-[0.01em] whitespace-nowrap text-[#71748C]">
                               {formatTime(item.last_message.created_at)}
                             </p>
                             {item.is_unread && <div className="size-2 rounded-full bg-[#D20832]" />}
                           </div>
                         </div>
 
-                        <p className="max-w-72 truncate text-[12px] leading-3.5 tracking-[0.01em] text-[#71748C]">
+                        <p className="max-w-72 truncate text-[12px]/3.5  tracking-[0.01em] text-[#71748C]">
                           {item.last_message.body}
                         </p>
                       </div>
@@ -190,10 +190,10 @@ const Dashboard = () => {
                 className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
               >
                 <div className="box-border w-full rounded-t-[10px] border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-                  <h6 className="text-[12px] leading-3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
+                  <h6 className="text-[12px]/3.5  tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
                 </div>
                 <div className="flex items-baseline gap-2 px-6 pb-6">
-                  <p className="text-[48px] leading-12 font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
+                  <p className="text-[48px]/12  font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
                 </div>
               </div>
             ))}

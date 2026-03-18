@@ -22,7 +22,7 @@ export const MobilePropertyFilters: React.FC<MobilePropertyFiltersProps> = ({
       <Button
         variant="link"
         onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-        className="text-primary text-[14px] leading-[17px] font-semibold tracking-[0.01em]"
+        className="text-[14px] leading-[17px] font-semibold tracking-[0.01em] text-primary"
       >
         {showAdvancedFilters ? 'Hide Filter' : 'Advance Filter'}
       </Button>

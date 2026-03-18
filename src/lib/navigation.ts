@@ -8,7 +8,7 @@ import {
   CandlestickChart,
   CircleCheck,
   Users,
-  Users2,
+//   Users2,
   ChartCandlestick,
   Star,
 } from 'lucide-react';
@@ -26,7 +26,7 @@ export const adminNavigation: NavigationItem[] = [
   { name: 'Listing', href: '/admin-listing', icon: Home },
   { name: 'Pending Approvals', href: '/pending-approvals', icon: CircleCheck },
   { name: 'Users', href: '/users', icon: Users },
-  { name: 'Managers', href: '/managers', icon: Users2 },
+//   { name: 'Managers', href: '/managers', icon: Users2 },
   { name: 'Admin Insights', href: '/admin-insights', icon: ChartCandlestick },
 ];
 export const contentManagerNavigation: NavigationItem[] = [

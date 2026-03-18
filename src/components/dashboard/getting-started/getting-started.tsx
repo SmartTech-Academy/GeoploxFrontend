@@ -375,7 +375,7 @@ const GettingStarted = () => {
           <TooltipTrigger asChild>{indicatorContent}</TooltipTrigger>
           <TooltipContent>
             <div className="flex items-center gap-2">
-              {status === 'completed' && <CheckCircle2 className="h-4 w-4 text-[#D4AF36]" />}
+              {status === 'completed' && <CheckCircle2 className="size-4  text-[#D4AF36]" />}
               <span className="text-sm font-medium">{stepTitle}</span>
             </div>
           </TooltipContent>
@@ -395,7 +395,7 @@ const GettingStarted = () => {
       )}
     >
       <span className="text-[16px] leading-[19px] font-semibold text-[#4E4E4E]">{getStepTitle(step)}</span>
-      {status === 'completed' && <CheckCircle2 className="fill-primary size-4 text-white" />}
+      {status === 'completed' && <CheckCircle2 className="size-4 fill-primary text-white" />}
     </div>
   );
 
@@ -480,7 +480,7 @@ const GettingStarted = () => {
           <div className="hidden w-full shrink-0 flex-col gap-8 border-r border-[#F1F1F4] px-5 py-8 lg:flex lg:w-[447px] lg:px-6">
             <div className="flex flex-col items-start gap-3">
               <h2 className="text-[24px] leading-[29px] font-semibold text-[#4E4E4E]">Hi, {userName}</h2>
-              <p className="text-[14px] leading-5 text-[#71748C]">
+              <p className="text-[14px]/5  text-[#71748C]">
                 Just a few steps left to finish setting up your account.
               </p>
             </div>

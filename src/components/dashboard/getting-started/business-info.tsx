@@ -86,7 +86,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
         <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Business Information</h2>
-        <p className="text-[14px] leading-5 text-[#71748C]">Let us know more about your business.</p>
+        <p className="text-[14px]/5  text-[#71748C]">Let us know more about your business.</p>
       </div>
 
       <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
@@ -96,7 +96,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             className="relative mx-auto flex size-16 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
           >
             {logoPreview ? (
-              <img src={logoPreview || '/placeholder.svg'} alt="Business Logo" className="h-full w-full object-cover" />
+              <img src={logoPreview || '/placeholder.svg'} alt="Business Logo" className="size-full  object-cover" />
             ) : (
               <Upload className="size-4 text-[#71748C]" />
             )}
@@ -110,8 +110,8 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
           </div>
 
           <div className="flex flex-col gap-1">
-            <p className="text-[14px] leading-6 text-[#1F2130]">Business Logo</p>
-            <p className="text-[14px] leading-6 text-[#71748C]">
+            <p className="text-[14px]/6  text-[#1F2130]">Business Logo</p>
+            <p className="text-[14px]/6  text-[#71748C]">
               Upload a profile picture. Only .JPG and .PNG supported.
             </p>
           </div>
@@ -193,7 +193,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
                 <FormControl>
                   <div className="relative">
                     <Input placeholder="0805-555-3323" className="h-10 rounded-lg border-[#D5D5DD] pr-10" {...field} />
-                    <Phone className="fill-[#71748C]] absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transform text-[#71748C]" />
+                    <Phone className="fill-[#71748C]] absolute top-1/2 right-3 size-4  -translate-y-1/2 transform text-[#71748C]" />
                   </div>
                 </FormControl>
                 <FormMessage />

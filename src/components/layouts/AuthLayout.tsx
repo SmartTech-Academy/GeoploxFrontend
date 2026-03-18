@@ -63,7 +63,7 @@ const AuthLayout = () => {
       </div>
 
       {/* Right side - image and info */}
-      <div className="hidden flex-col overflow-hidden bg-[oklch(0.7665_0.1393_91.15_/_10%)] lg:flex lg:w-[512px]">
+      <div className="hidden flex-col overflow-hidden bg-[oklch(0.7665_0.1393_91.15/10%)] lg:flex lg:w-[512px]">
         <div className="flex h-full flex-col items-start gap-10">
           {/* Image container with fade transition */}
           <div className="relative min-h-[599px] w-full overflow-hidden">

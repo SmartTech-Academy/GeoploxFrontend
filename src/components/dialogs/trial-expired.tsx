@@ -60,7 +60,7 @@ const TrialExpired: React.FC<Props> = ({ setOpen, open }) => {
         <DialogHeader>
           <DialogTitle>{currentPlanData.title}</DialogTitle>
           {currentPlanData.recommended && (
-            <span className="rounded bg-white px-2 py-1 text-xs font-medium text-[#6B7280]">Recommended</span>
+            <span className="rounded-sm bg-white px-2 py-1 text-xs font-medium text-[#6B7280]">Recommended</span>
           )}
 
           <DialogDescription>
@@ -72,7 +72,7 @@ const TrialExpired: React.FC<Props> = ({ setOpen, open }) => {
         <div className="w-full">
           <div
             key={currentPlan} // forces re-mount on switch
-            className="animate-in fade-in-50 slide-in-from-bottom-4 mb-4 rounded-lg bg-[#F8F6F0] p-4"
+            className="mb-4 animate-in rounded-lg bg-[#F8F6F0] p-4 fade-in-50 slide-in-from-bottom-4"
           >
             {/* Price */}
             <div className="mb-6">
@@ -84,8 +84,8 @@ const TrialExpired: React.FC<Props> = ({ setOpen, open }) => {
             <div className="space-y-3">
               {currentPlanData.features.map((feature, index) => (
                 <div key={index} className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-5 w-5 shrink-0 text-[#D4B04A]" />
-                  <span className="text-sm leading-5 text-[#6B7280]">{feature}</span>
+                  <Check className="mt-0.5 size-5  shrink-0 text-[#D4B04A]" />
+                  <span className="text-sm/5  text-[#6B7280]">{feature}</span>
                 </div>
               ))}
             </div>
@@ -95,13 +95,13 @@ const TrialExpired: React.FC<Props> = ({ setOpen, open }) => {
           <div className="mb-6 flex justify-center gap-2">
             <button
               onClick={() => setCurrentPlan(0)}
-              className={`h-2 w-2 rounded-full transition-all duration-200 ${
+              className={`size-2  rounded-full transition-all duration-200 ${
                 currentPlan === 0 ? 'scale-110 bg-[#1F2130]' : 'bg-[#D1D5DB]'
               }`}
             />
             <button
               onClick={() => setCurrentPlan(1)}
-              className={`h-2 w-2 rounded-full transition-all duration-200 ${
+              className={`size-2  rounded-full transition-all duration-200 ${
                 currentPlan === 1 ? 'scale-110 bg-[#1F2130]' : 'bg-[#D1D5DB]'
               }`}
             />

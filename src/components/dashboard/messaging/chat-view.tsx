@@ -112,15 +112,15 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={handleReport} className="flex items-center space-x-3">
-                <Flag className="h-4 w-4 text-gray-600" />
+                <Flag className="size-4  text-gray-600" />
                 <span>Report User</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleDelete} className="flex items-center space-x-3 text-red-600">
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="size-4 " />
                 <span>Delete Chat</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setSelectedChat(null)} className="flex items-center space-x-3">
-                <X className="h-4 w-4 text-gray-600" />
+                <X className="size-4  text-gray-600" />
                 <span>Close Chat</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -168,7 +168,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
                       className={cn(
                         'rounded-2xl px-4 py-3',
                         isMe
-                          ? 'rounded-br-md bg-[#D4AF36] text-white shadow-[0px_12px_16px_-4px_rgba(16,_24,_40,_0.04),_0px_4px_6px_-2px_rgba(16,_24,_40,_0.02)]'
+                          ? 'rounded-br-md bg-[#D4AF36] text-white shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.04),0px_4px_6px_-2px_rgba(16,24,40,0.02)]'
                           : 'rounded-bl-md border border-[#ECECEC] bg-white text-[#2E2E3E]'
                       )}
                     >
@@ -192,7 +192,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
       <div className="w-full rounded-b-[10px] border-t border-[#E8E8E8] bg-white p-4 lg:p-5">
         <form
           onSubmit={handleSendMessage}
-          className="ring-ring has-focus-within:border-ring flex items-center rounded-[5px] border border-gray-300 bg-[#F9F9F9] px-4 py-3 has-focus-visible:ring-2"
+          className="flex items-center rounded-[5px] border border-gray-300 bg-[#F9F9F9] px-4 py-3 ring-ring has-focus-within:border-ring has-focus-visible:ring-2"
         >
           <Input
             value={message}
@@ -230,7 +230,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
               className="h-8 rounded-[40px] border border-[oklch(0.235_0_0/50%)] bg-gray-800 p-3 text-white hover:bg-gray-700"
             >
               Send
-              <SendHorizonal className="h-4 w-4" />
+              <SendHorizonal className="size-4 " />
             </Button>
           </div>
         </form>

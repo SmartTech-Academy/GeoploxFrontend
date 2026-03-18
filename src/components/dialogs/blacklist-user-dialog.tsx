@@ -40,7 +40,7 @@ export const BlacklistUserDialog: React.FC<BlacklistUserDialogProps> = ({
             </Button>
           </DialogClose>
           <Button onClick={onConfirm} disabled={isPending} variant="destructive">
-            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isPending && <Loader2 className="mr-2 size-4  animate-spin" />}
             Yes, Blacklist
           </Button>
         </DialogFooter>

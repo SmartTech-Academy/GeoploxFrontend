@@ -34,14 +34,14 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, isOpen, 
           </h3>
           <div className="transition-transform duration-200 ease-in-out">
             {isOpen ? (
-              <ChevronUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+              <ChevronUp className="size-4  text-gray-500 group-hover:text-gray-700" />
             ) : (
-              <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+              <ChevronDown className="size-4  text-gray-500 group-hover:text-gray-700" />
             )}
           </div>
         </button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden transition-all duration-300 ease-linear">
+      <CollapsibleContent className="overflow-hidden transition-all duration-300 ease-linear data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
         {children}
       </CollapsibleContent>
     </Collapsible>
@@ -261,7 +261,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
                         handleDraftChange('property_type', newTypes.join(','));
                       }}
                     />
-                    <label htmlFor={type.types} className="text-[14px] leading-4 text-[#41415A]">
+                    <label htmlFor={type.types} className="text-[14px]/4  text-[#41415A]">
                       {type.types}
                     </label>
                   </div>
@@ -282,7 +282,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
                               handleDraftChange('filter_property_sub_type', newSubs.join(','));
                             }}
                           />
-                          <label htmlFor={sub} className="text-[13px] leading-4 text-[#6B7280]">
+                          <label htmlFor={sub} className="text-[13px]/4  text-[#6B7280]">
                             {sub}
                           </label>
                         </div>
@@ -317,7 +317,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
                     handleDraftChange('property_status', newStatus.join(','));
                   }}
                 />
-                <label htmlFor={status} className="text-[14px] leading-4 text-[#41415A]">
+                <label htmlFor={status} className="text-[14px]/4  text-[#41415A]">
                   {status}
                 </label>
               </div>
@@ -349,7 +349,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
                     handleDraftChange('property_features', newFeatures.join(','));
                   }}
                 />
-                <label htmlFor={feature} className="text-[14px] leading-4 text-[#41415A]">
+                <label htmlFor={feature} className="text-[14px]/4  text-[#41415A]">
                   {feature}
                 </label>
               </div>
@@ -388,7 +388,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
             <div className="flex items-center gap-2">
               <Input
                 value={`₦${(draftFilters.min_price || 1000000).toLocaleString()}`}
-                className="border-primary h-8 bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,175,54,0.5)]"
+                className="h-8 border-primary bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,175,54,0.5)]"
                 readOnly
               />
               <svg width="20" height="2" viewBox="0 0 20 2" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -411,7 +411,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
         >
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-4 text-[#41415A]">Min.</label>
+              <label className="text-[14px]/4  text-[#41415A]">Min.</label>
               <div className="relative">
                 <Input
                   type="number"
@@ -423,7 +423,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-4 text-[#41415A]">Max.</label>
+              <label className="text-[14px]/4  text-[#41415A]">Max.</label>
               <div className="relative">
                 <Input
                   type="number"
@@ -445,14 +445,14 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
         >
           <div className="flex w-full flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-4 text-[#41415A]">Bedroom</label>
+              <label className="text-[14px]/4  text-[#41415A]">Bedroom</label>
               <div className="grid grid-cols-5 gap-2">
                 {[1, 2, 3, 4, '5+'].map((num) => (
                   <Button
                     key={num}
                     variant={'outline'}
                     size="sm"
-                    className={`h-8 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
+                    className={`h-8 rounded-xl px-3 text-[14px]/4  text-[#41415A] ${
                       selectedBedrooms.includes(String(num))
                         ? 'border-primary hover:border-primary'
                         : 'border-[#D5D5DD]'
@@ -470,14 +470,14 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-4 text-[#41415A]">Bathroom</label>
+              <label className="text-[14px]/4  text-[#41415A]">Bathroom</label>
               <div className="grid grid-cols-5 gap-2">
                 {[1, 2, 3, 4, '5+'].map((num) => (
                   <Button
                     key={num}
                     variant={'outline'}
                     size="sm"
-                    className={`h-8 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
+                    className={`h-8 rounded-xl px-3 text-[14px]/4  text-[#41415A] ${
                       selectedBathrooms.includes(String(num))
                         ? 'border-primary hover:border-primary'
                         : 'border-[#D5D5DD]'
@@ -573,7 +573,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
                       handleDraftChange('tags', newTags.join(','));
                     }}
                   />
-                  <label htmlFor={`tag-${tag.id}`} className="text-[14px] leading-4 text-[#41415A] capitalize">
+                  <label htmlFor={`tag-${tag.id}`} className="text-[14px]/4  text-[#41415A] capitalize">
                     {tag.name}
                   </label>
                 </div>

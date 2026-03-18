@@ -292,7 +292,7 @@ const ListingDetail = () => {
               )}
             </div>
 
-            <h1 className="text-[26px] leading-10 font-semibold text-[#1A2258]">{displayTitle}</h1>
+            <h1 className="text-[26px]/10  font-semibold text-[#1A2258]">{displayTitle}</h1>
           </div>
 
           <div className="flex items-start justify-end self-stretch">
@@ -362,7 +362,7 @@ const ListingDetail = () => {
                 <img
                   src={images[currentImageIndex] || '/placeholder.svg'}
                   alt="Property image"
-                  className="h-full w-full object-cover"
+                  className="size-full  object-cover"
                 />
 
                 {/* Navigation Arrows */}
@@ -416,7 +416,7 @@ const ListingDetail = () => {
                       alt={`Thumbnail ${index + 1}`}
                       width={135.2}
                       height={135.2}
-                      className="h-full w-full object-cover"
+                      className="size-full  object-cover"
                     />
                   </button>
                 ))}
@@ -427,36 +427,36 @@ const ListingDetail = () => {
             <div className="flex w-full flex-col gap-11">
               <div className="flex flex-col items-start gap-3 self-stretch border-b border-[#EAEBF0] pb-[21px]">
                 <div className="flex items-center gap-3">
-                  <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
+                  <Badge className="h-[25px] rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
                     <div className="size-1.5 rounded-full bg-[#D20832]" /> {property.category}
                   </Badge>
 
-                  <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
+                  <Badge className="h-[25px] rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
                     {property.property_type}
                   </Badge>
 
-                  <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
+                  <Badge className="h-[25px] rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
                     ID: {property.id}
                   </Badge>
                 </div>
 
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
-                  <h3 className="font-dm_sans border-r border-[#F1F1F4] pr-5 text-[32px] leading-[42px] font-bold text-black">
+                  <h3 className="border-r border-[#F1F1F4] pr-5 font-dm_sans text-[32px] leading-[42px] font-bold text-black">
                     {formatPrice(property.price, property.currency)}
                   </h3>
 
                   {/* Property Icons */}
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2.5 text-[18px] leading-[21px]">
-                      <BedDouble className="text-primary size-6" />
+                      <BedDouble className="size-6 text-primary" />
                       <span className="text-black">{property.bedrooms} Beds</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-[18px] leading-[21px]">
-                      <ShowerHead className="text-primary size-6" />
+                      <ShowerHead className="size-6 text-primary" />
                       <span className="text-black">{property.bathrooms} Baths</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-[18px] leading-[21px]">
-                      <Square className="text-primary size-6" />
+                      <Square className="size-6 text-primary" />
                       <span className="text-black">{property.area_sqft.toLocaleString()} sq ft</span>
                     </div>
                   </div>
@@ -469,7 +469,7 @@ const ListingDetail = () => {
                   Property Details
                 </h2>
 
-                <div className="space-y-4 text-[16px] leading-7 text-[#4D5462]">
+                <div className="space-y-4 text-[16px]/7  text-[#4D5462]">
                   <p className="">{property.desc}</p>
 
                   <p>Price: {formatPrice(property.price, property.currency)}</p>
@@ -495,7 +495,7 @@ const ListingDetail = () => {
                   <h2 className="text-[28px] leading-[34px] font-semibold tracking-[-0.5px] text-[#15181E]">
                     Neighborhood
                   </h2>
-                  <p className="text-[20px] leading-7 tracking-[-0.5px] text-[#4D5462]">
+                  <p className="text-[20px]/7  tracking-[-0.5px] text-[#4D5462]">
                     Use interactive map to explore the neighborhood and see how it matches your interests.
                   </p>
                 </div>
@@ -509,8 +509,8 @@ const ListingDetail = () => {
                   />
 
                   {/* Expand Map Button */}
-                  <button className="absolute top-4 right-4 rounded bg-white p-2 shadow-md hover:bg-gray-50">
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <button className="absolute top-4 right-4 rounded-sm bg-white p-2 shadow-md hover:bg-gray-50">
+                    <svg className="size-4 " fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -521,7 +521,7 @@ const ListingDetail = () => {
                   </button>
                 </div>
 
-                <div className="bg-[ flex flex-col gap-3 self-stretch bg-[oklch(0.5477_0.2177_21.48_/_5%)] p-3">
+                <div className="bg-[ flex flex-col gap-3 self-stretch bg-[oklch(0.5477_0.2177_21.48/5%)] p-3">
                   <h5 className="text-[12px] leading-[17px] font-semibold text-[#D20832]">Disclaimer</h5>
 
                   <p className="text-[12px] leading-[17px] text-[#41415A]">
@@ -549,8 +549,8 @@ const ListingDetail = () => {
                   <div className="flex flex-col items-start gap-2 self-stretch">
                     <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">{property.owner.name}</h4>
                     <div className="flex items-center gap-2">
-                      {property.is_verified && <BadgeCheck className="text-primary size-4" />}
-                      <span className="text-primary text-[12px] leading-[18px] font-semibold capitalize">
+                      {property.is_verified && <BadgeCheck className="size-4 text-primary" />}
+                      <span className="text-[12px] leading-[18px] font-semibold text-primary capitalize">
                         Verified {property.owner.role}
                       </span>
                     </div>
@@ -577,7 +577,7 @@ const ListingDetail = () => {
                   <Button
                     asChild
                     variant="outline"
-                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
+                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4  font-normal text-[#1F2130]"
                   >
                     <a href={`mailto:${property.owner.email_address}`}>
                       Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
@@ -586,7 +586,7 @@ const ListingDetail = () => {
                   <Button
                     asChild
                     variant="outline"
-                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
+                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4  font-normal text-[#1F2130]"
                   >
                     <a href={`https://wa.me/${property.owner.phone_number}`} target="_blank" rel="noopener noreferrer">
                       Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
@@ -607,8 +607,8 @@ const ListingDetail = () => {
                   <div className="flex flex-col items-start gap-2 self-stretch">
                     <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">{property.owner.name}</h4>
                     <div className="flex items-center gap-2">
-                      {property.is_verified && <BadgeCheck className="text-primary size-4" />}
-                      <span className="text-primary text-[12px] leading-[18px] font-semibold capitalize">
+                      {property.is_verified && <BadgeCheck className="size-4 text-primary" />}
+                      <span className="text-[12px] leading-[18px] font-semibold text-primary capitalize">
                         Verified {property.owner.role}
                       </span>
                     </div>
@@ -635,7 +635,7 @@ const ListingDetail = () => {
                   <Button
                     asChild
                     variant="outline"
-                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
+                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4  font-normal text-[#1F2130]"
                   >
                     <a href={`mailto:${property.owner.email_address}`}>
                       Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
@@ -644,7 +644,7 @@ const ListingDetail = () => {
                   <Button
                     asChild
                     variant="outline"
-                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130]"
+                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4  font-normal text-[#1F2130]"
                   >
                     <a href={`https://wa.me/${property.owner.phone_number}`} target="_blank" rel="noopener noreferrer">
                       Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
@@ -702,7 +702,7 @@ const ListingDetail = () => {
                           <Badge
                             key={tag}
                             className={cn(
-                              'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D] capitalize'
+                              'absolute top-4 left-4 h-[25px] rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D] capitalize'
                             )}
                           >
                             {' '}
@@ -736,7 +736,7 @@ const ListingDetail = () => {
                           </p>
 
                           <div className="flex items-end gap-3 self-stretch">
-                            <div className="flex items-center gap-5 text-[14px] leading-4 text-[#41415A]">
+                            <div className="flex items-center gap-5 text-[14px]/4  text-[#41415A]">
                               <div className="flex items-center gap-2">
                                 <BedDouble className="size-[18px] text-[#1F2130]" />
                                 <span>{property.bedrooms} Beds</span>

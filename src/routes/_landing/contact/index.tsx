@@ -121,7 +121,7 @@ function RouteComponent() {
           <div className="flex w-full max-w-[554px] flex-col items-start gap-12">
             <h1 className="text-[50px] leading-[60px] font-semibold tracking-[-0.02em] text-[#1F2130]">Get in Touch</h1>
 
-            <p className="text-[20px] leading-7 text-[#4D5462]">
+            <p className="text-[20px]/7  text-[#4D5462]">
               If you would prefer to chat in real time with our support team, we are available online every week day.
             </p>
 
@@ -129,16 +129,16 @@ function RouteComponent() {
               <h2 className="text-[24px] leading-[29px] font-semibold tracking-[-0.02em] text-[#1F2130]">Follow us</h2>
               <div className="flex items-center gap-6">
                 <a href="https://www.facebook.com/geoplox" target="_blank" rel="noopener noreferrer">
-                  <Facebook className="fill-primary text-primary size-6" />
+                  <Facebook className="size-6 fill-primary text-primary" />
                 </a>
                 <a href="https://www.x.com/estateinformant" target="_blank" rel="noopener noreferrer">
-                  <Twitter className="fill-primary text-primary size-6" />
+                  <Twitter className="size-6 fill-primary text-primary" />
                 </a>
                 <a href="https://www.LinkedIn.com/geoplox" target="_blank" rel="noopener noreferrer">
-                  <Linkedin className="fill-primary text-primary size-6" />
+                  <Linkedin className="size-6 fill-primary text-primary" />
                 </a>
                 <a href="https://www.instagram.com/geoplox" target="_blank" rel="noopener noreferrer">
-                  <Instagram className="text-primary size-6" />
+                  <Instagram className="size-6 text-primary" />
                 </a>
               </div>
             </div>
@@ -155,7 +155,7 @@ function RouteComponent() {
 
             <div className="flex flex-col items-start gap-4 self-stretch">
               <h2 className="text-[24px] leading-[29px] font-semibold tracking-[-0.02em] text-[#1F2130]">Contact</h2>
-              <div className="text-[20px] leading-7 text-[#4D5462]">
+              <div className="text-[20px]/7  text-[#4D5462]">
                 <p>support@geoplox.com</p>
                 <p>info@geoplox.com</p>
                 <p>08132950172</p>
@@ -297,7 +297,7 @@ function RouteComponent() {
                   >
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent className="pb-6 text-[14px] leading-5 text-[#787878]">
+                  <AccordionContent className="pb-6 text-[14px]/5  text-[#787878]">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>

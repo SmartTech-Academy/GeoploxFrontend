@@ -97,7 +97,7 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="landing-container relative z-10 w-full py-(--landing-header-height)">
+      <div className="relative z-10 landing-container w-full py-(--landing-header-height)">
         <div className="flex w-full flex-col items-start gap-[66px] py-24 lg:py-0">
           <div className="flex max-w-[639px] flex-col items-start gap-[17px]">
             <div className="flex flex-col items-start gap-[9px]">
@@ -113,16 +113,16 @@ export function Hero() {
             </div>
 
             {/* Subheading */}
-            <p className="text-primary-foreground text-[20px] leading-7">
+            <p className="text-[20px] leading-7 text-primary-foreground">
               Get direct access to listings from real owners and developers — where trust meets transparency.
             </p>
 
             {/* Additional tagline */}
-            <p className="text-primary-foreground text-[14px] leading-5">No fake agents, no hidden fees.</p>
+            <p className="text-[14px] leading-5 text-primary-foreground">No fake agents, no hidden fees.</p>
           </div>
 
           {/* Search Interface */}
-          <div className="flex w-full flex-col items-center gap-3 rounded-4xl bg-[oklch(1_0_0_/_50%)] p-4 backdrop-blur-[12px] lg:max-w-[817px] lg:flex-row">
+          <div className="flex w-full flex-col items-center gap-3 rounded-4xl bg-[oklch(1_0_0/50%)] p-4 backdrop-blur-md lg:max-w-[817px] lg:flex-row">
             <div className="relative flex w-full flex-1 items-center gap-2">
               <Search className="absolute top-4 left-3 size-4 -translate-y-1/2 transform text-[#D4AF36]" />
               <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
@@ -136,7 +136,7 @@ export function Hero() {
                     <span className="truncate pl-5">
                       {selectedLocation ? selectedLocation.label : 'Search location'}
                     </span>
-                    <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
+                    <ChevronsUpDown className="ml-auto size-4  shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="max-h-60 w-[--radix-popover-trigger-width] overflow-y-auto p-0">
@@ -158,7 +158,7 @@ export function Hero() {
                         >
                           <Check
                             className={cn(
-                              'mr-2 h-4 w-4',
+                              'mr-2 size-4 ',
                               selectedLocation?.label === location.label ? 'opacity-100' : 'opacity-0'
                             )}
                           />
@@ -171,7 +171,7 @@ export function Hero() {
               </Popover>
             </div>
 
-            <div className="h-px w-full bg-[oklch(0.9158_0_0_/_53.33%)] lg:h-[28px] lg:w-px" />
+            <div className="h-px w-full bg-[oklch(0.9158_0_0/53.33%)] lg:h-[28px] lg:w-px" />
 
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-2">
@@ -191,7 +191,7 @@ export function Hero() {
                 </Select>
               </div>
 
-              <div className="h-[28px] w-px bg-[oklch(0.9158_0_0_/_53.33%)]" />
+              <div className="h-[28px] w-px bg-[oklch(0.9158_0_0/53.33%)]" />
 
               <Button
                 style={{

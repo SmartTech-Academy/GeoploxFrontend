@@ -30,7 +30,7 @@ export function ActiveListingsChart({ data, period, onPeriodChange }: ActiveList
     <div className="flex items-start gap-12 self-stretch rounded-xl border border-[#E3E3E8] bg-white p-6">
       <div className="flex w-full grow flex-col items-start gap-6">
         <header className="flex w-full items-center justify-between gap-6">
-          <h3 className="text-[12px] leading-3.5 tracking-[0.02em] text-[#7F7F7F] uppercase">Active Listings</h3>
+          <h3 className="text-[12px]/3.5  tracking-[0.02em] text-[#7F7F7F] uppercase">Active Listings</h3>
 
           <Select value={period} onValueChange={onPeriodChange}>
             <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-[#F9F9F9] text-[#41415A] focus:ring-0">
@@ -50,15 +50,15 @@ export function ActiveListingsChart({ data, period, onPeriodChange }: ActiveList
         {/* Legend */}
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-sm bg-[#EAB308]"></div>
+            <div className="size-3  rounded-sm bg-[#EAB308]"></div>
             <span className="text-sm text-gray-600">Rent</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-sm bg-[#DC2626]"></div>
+            <div className="size-3  rounded-sm bg-[#DC2626]"></div>
             <span className="text-sm text-gray-600">For Sale</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-sm bg-[#0891B2]"></div>
+            <div className="size-3  rounded-sm bg-[#0891B2]"></div>
             <span className="text-sm text-gray-600">Short Let</span>
           </div>
         </div>

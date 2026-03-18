@@ -71,7 +71,7 @@ const NotificationItem = ({
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8"
+        className="size-8 "
         onClick={(e) => {
           e.stopPropagation();
           deleteNotification(notification.id);

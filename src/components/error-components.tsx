@@ -132,10 +132,10 @@ const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ error, re
   const isDev = process.env.NODE_ENV === 'development';
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-red-50 to-red-100">
+    <div className="flex min-h-screen w-full items-center justify-center bg-linear-to-br from-red-50 to-red-100">
       <div className="max-w-lg px-4 text-center">
-        <div className="mx-auto h-24 w-24">
-          <svg viewBox="0 0 24 24" className="h-full w-full text-red-600">
+        <div className="mx-auto size-24 ">
+          <svg viewBox="0 0 24 24" className="size-full  text-red-600">
             <circle cx="12" cy="12" r="11" className="fill-current opacity-20" />
             <path
               className="fill-current"
@@ -158,14 +158,14 @@ const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ error, re
         <div className="mt-8 flex justify-center gap-4">
           <Button
             onClick={resetErrorBoundary}
-            className="border-primary h-11 gap-11 rounded-full border px-5 py-2.5 text-[16px] leading-4 font-medium tracking-[-0.02em] text-white"
+            className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px] leading-4 font-medium tracking-[-0.02em] text-white"
           >
             Try Again
           </Button>
           <Button
             onClick={() => (window.location.href = '/dashboard')}
             variant="outline"
-            className="border-primary h-11 gap-11 rounded-full border px-5 py-2.5 text-[16px] leading-4 font-medium tracking-[-0.02em]"
+            className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px] leading-4 font-medium tracking-[-0.02em]"
           >
             Go to Dashboard
           </Button>
@@ -178,32 +178,32 @@ const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ error, re
 // Loader Component - Mind-blowing design
 const Loader = () => {
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="flex min-h-screen w-full items-center justify-center bg-linear-to-br from-slate-50 via-white to-slate-100">
       <div className="relative flex flex-col items-center">
         {/* Main loader container with multiple spinning elements */}
-        <div className="relative h-32 w-32">
+        <div className="relative size-32 ">
           {/* Outer ring with gradient */}
-          <div className="from-primary via-primary/60 to-primary/30 before:from-primary before:via-primary/60 before:to-primary/30 absolute inset-0 h-32 w-32 animate-spin rounded-full border-4 border-transparent bg-gradient-to-r [background-clip:padding-box] before:absolute before:inset-[-4px] before:rounded-full before:bg-gradient-to-r before:opacity-70 before:blur-sm before:content-['']"></div>
+          <div className="absolute inset-0 h-32 w-32 animate-spin rounded-full border-4 border-transparent bg-gradient-to-r from-primary via-primary/60 to-primary/30 [background-clip:padding-box] before:absolute before:inset-[-4px] before:rounded-full before:bg-gradient-to-r before:from-primary before:via-primary/60 before:to-primary/30 before:opacity-70 before:blur-sm before:content-['']"></div>
 
           {/* Middle ring - counter rotating */}
-          <div className="from-primary/80 via-primary/40 absolute inset-4 h-24 w-24 animate-spin rounded-full border-4 border-transparent bg-gradient-to-l to-transparent [animation-direction:reverse] [animation-duration:1.5s]"></div>
+          <div className="absolute inset-4 h-24 w-24 animate-spin rounded-full border-4 border-transparent bg-gradient-to-l from-primary/80 via-primary/40 to-transparent [animation-direction:reverse] [animation-duration:1.5s]"></div>
 
           {/* Inner pulsing core */}
-          <div className="from-primary to-primary/70 shadow-primary/30 absolute inset-8 h-16 w-16 animate-pulse rounded-full bg-gradient-to-br shadow-2xl"></div>
+          <div className="absolute inset-8 h-16 w-16 animate-pulse rounded-full bg-gradient-to-br from-primary to-primary/70 shadow-2xl shadow-primary/30"></div>
 
           {/* Floating dots around the loader */}
-          <div className="bg-primary absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-4 transform animate-bounce rounded-full [animation-delay:-0.5s]"></div>
-          <div className="bg-primary absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 translate-y-4 transform animate-bounce rounded-full [animation-delay:-0.3s]"></div>
-          <div className="bg-primary absolute top-1/2 right-0 h-2 w-2 translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full [animation-delay:-0.7s]"></div>
-          <div className="bg-primary absolute top-1/2 left-0 h-2 w-2 -translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full [animation-delay:-0.1s]"></div>
+          <div className="absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-4 transform animate-bounce rounded-full bg-primary [animation-delay:-0.5s]"></div>
+          <div className="absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 translate-y-4 transform animate-bounce rounded-full bg-primary [animation-delay:-0.3s]"></div>
+          <div className="absolute top-1/2 right-0 h-2 w-2 translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full bg-primary [animation-delay:-0.7s]"></div>
+          <div className="absolute top-1/2 left-0 h-2 w-2 -translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full bg-primary [animation-delay:-0.1s]"></div>
         </div>
 
         {/* Particle effects */}
-        <div className="pointer-events-none absolute inset-0 h-full w-full">
+        <div className="pointer-events-none absolute inset-0 size-full ">
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
-              className={`bg-primary/40 absolute h-1 w-1 animate-ping rounded-full`}
+              className={`absolute h-1 w-1 animate-ping rounded-full bg-primary/40`}
               style={{
                 top: `${30 + Math.sin(i * 0.785) * 20}%`,
                 left: `${50 + Math.cos(i * 0.785) * 20}%`,
@@ -216,24 +216,24 @@ const Loader = () => {
 
         {/* Glowing text with typewriter effect */}
         <div className="relative mt-12">
-          <div className="from-primary to-primary/70 absolute inset-0 bg-gradient-to-r bg-clip-text text-transparent blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent blur-sm">
             <p className="text-xl font-bold tracking-wider">LOADING</p>
           </div>
-          <p className="from-primary to-primary/70 relative animate-pulse bg-gradient-to-r bg-clip-text text-xl font-bold tracking-wider text-transparent">
+          <p className="relative animate-pulse bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-xl font-bold tracking-wider text-transparent">
             LOADING
           </p>
 
           {/* Animated dots */}
           <div className="mt-2 flex justify-center space-x-1">
-            <div className="bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:0s]"></div>
-            <div className="bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:0.2s]"></div>
-            <div className="bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:0.4s]"></div>
+            <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:0s]"></div>
+            <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:0.2s]"></div>
+            <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:0.4s]"></div>
           </div>
         </div>
 
         {/* Subtle progress indication */}
         <div className="mt-8 h-1 w-64 overflow-hidden rounded-full bg-gray-200">
-          <div className="from-primary via-primary/80 to-primary h-full animate-pulse rounded-full bg-gradient-to-r bg-[length:200%_100%]"></div>
+          <div className="h-full animate-pulse rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary bg-[length:200%_100%]"></div>
         </div>
       </div>
     </div>

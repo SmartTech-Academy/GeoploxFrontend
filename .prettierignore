@@ -1,3 +1,2 @@
 # Ignore specific files
-#  src/App.tsx
- src/assets/index.ts
+index.html

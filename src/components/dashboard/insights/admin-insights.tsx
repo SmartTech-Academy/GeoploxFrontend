@@ -118,7 +118,7 @@ const AdminInsigths = () => {
 
         <Button
           variant="secondary"
-          className="h-8 rounded-[40px] bg-[#F9F9FB] p-4 text-[14px] leading-5 font-normal text-[#1F2130]"
+          className="h-8 rounded-[40px] bg-[#F9F9FB] p-4 text-[14px]/5  font-normal text-[#1F2130]"
         >
           Export
           <Download className="size-4" />
@@ -132,11 +132,11 @@ const AdminInsigths = () => {
             className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
           >
             <div className="box-border w-full border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-              <h6 className="text-[12px] leading-3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
+              <h6 className="text-[12px]/3.5  tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
             </div>
 
             <div className="flex items-baseline gap-2 px-6 pb-6">
-              <p className="text-[48px] leading-12 font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
+              <p className="text-[48px]/12  font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
               <span className="text-[16px] leading-[22px] text-[#1F2130]">
                 {metricType === 'properties' ? 'Properties' : 'Users'}
               </span>
@@ -158,16 +158,16 @@ const AdminInsigths = () => {
             className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
           >
             <div className="box-border w-full border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-              <h6 className="text-[12px] leading-3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
+              <h6 className="text-[12px]/3.5  tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
             </div>
 
             <div className="flex items-baseline gap-2 px-6 pb-6">
-              <p className="text-[48px] leading-12 font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
+              <p className="text-[48px]/12  font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
 
               <div className="flex items-center gap-1.5">
                 <MoveUpRight className="size-3 text-[#008A00]" />
-                <span className="text-[14px] leading-4 tracking-[-0.02em] text-[#008A00D2]">3.36</span>
-                <span className="text-[14px] leading-4 tracking-[-0.02em] text-[#71748C]">Last mth.</span>
+                <span className="text-[14px]/4  tracking-[-0.02em] text-[#008A00D2]">3.36</span>
+                <span className="text-[14px]/4  tracking-[-0.02em] text-[#71748C]">Last mth.</span>
               </div>
             </div>
           </div>

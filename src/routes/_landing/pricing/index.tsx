@@ -141,7 +141,7 @@ function RouteComponent() {
                   )}
 
                   <div className="flex flex-col items-start gap-5">
-                    <h3 className="text-[20px] leading-7 font-semibold text-[#1F2130]">{plan.name} Plan</h3>
+                    <h3 className="text-[20px]/7  font-semibold text-[#1F2130]">{plan.name} Plan</h3>
 
                     {plan.name === 'Basic' ? (
                       <span className="text-[32px] leading-[45px] font-semibold text-[#1F2130]">{plan.price}</span>
@@ -158,7 +158,7 @@ function RouteComponent() {
                       {planFeatures.map((feature: string) => (
                         <div key={feature} className="flex items-center gap-4">
                           <Check className="size-4 shrink-0 text-[#D4AF36]" />
-                          <span className="text-[14px] leading-5 text-[#71748C]">{feature}</span>
+                          <span className="text-[14px]/5  text-[#71748C]">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -183,12 +183,12 @@ function RouteComponent() {
         >
           <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07/20%)]" />
         </div>
-        <div className="landing-container relative z-10 flex w-full flex-col items-center justify-center gap-10 lg:flex-row">
+        <div className="relative z-10 landing-container flex w-full flex-col items-center justify-center gap-10 lg:flex-row">
           <div className="flex grow flex-col items-start gap-10 lg:w-1/2">
             <div className="flex flex-col items-start gap-[13px]">
               <h4 className="text-[44px] leading-[62px] text-[#1F2130]">Ready to Find Real Property?</h4>
 
-              <p className="text-[20px] leading-7 text-[#41415A]">
+              <p className="text-[20px]/7  text-[#41415A]">
                 Start your 7-day free trial and access Nigeria&apos;s most trusted real estate listings — full property
                 details, high-quality photos, direct contact info, and more
               </p>
@@ -205,7 +205,7 @@ function RouteComponent() {
                 Start Trial Now
               </Button>
 
-              <span className="text-[14px] leading-5 text-[#41415A]">No card required. Cancel any time.</span>
+              <span className="text-[14px]/5  text-[#41415A]">No card required. Cancel any time.</span>
             </div>
           </div>
 

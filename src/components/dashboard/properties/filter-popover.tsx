@@ -43,7 +43,7 @@ const FilterPopover: React.FC<{ onApply: (filters: Partial<FilterValues>) => voi
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
           <div className="space-y-2">
             <h4 className="leading-none font-medium">Filters</h4>
-            <p className="text-muted-foreground text-sm">Set filters for the property list.</p>
+            <p className="text-sm text-muted-foreground">Set filters for the property list.</p>
           </div>
           <div className="grid gap-4">
             <div className="grid grid-cols-3 items-center gap-4">

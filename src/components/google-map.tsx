@@ -61,7 +61,7 @@ const Map: React.FC<MapProps> = ({ address, city, state, country }) => {
       <Marker position={center} />
     </GoogleMap>
   ) : (
-    <div className="flex h-full w-full items-center justify-center bg-gray-200">
+    <div className="flex size-full  items-center justify-center bg-gray-200">
       <p>Loading map...</p>
     </div>
   );

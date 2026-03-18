@@ -34,7 +34,7 @@ const EmptyState = () => (
   <div className="flex w-full flex-col items-center justify-center gap-8 self-stretch py-14">
     <img src={assets.chatloading} className="h-[112px] w-[211px] animate-pulse" width={211} height={112} />
     <div className="flex flex-col items-center justify-center gap-3">
-      <h5 className="text-[20px] leading-7 font-semibold text-[#1F2130]">Your chat is empty</h5>
+      <h5 className="text-[20px]/7  font-semibold text-[#1F2130]">Your chat is empty</h5>
       <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
         It looks like you haven’t had a chat yet.
       </p>
@@ -93,7 +93,7 @@ export const ChatList: React.FC<ChatListProps> = ({
               onClick={() => setFilter('all')}
               className={`h-[36px] min-w-[55px] rounded-full font-semibold ${
                 filter === 'all'
-                  ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
+                  ? 'border-[#EAEAEA] text-primary hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
             >
@@ -105,7 +105,7 @@ export const ChatList: React.FC<ChatListProps> = ({
               onClick={() => setFilter('unread')}
               className={`h-[36px] min-w-[55px] rounded-full font-semibold ${
                 filter === 'unread'
-                  ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
+                  ? 'border-[#EAEAEA] text-primary hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
             >
@@ -146,17 +146,17 @@ export const ChatList: React.FC<ChatListProps> = ({
                         {`${otherParticipant.firstname} ${otherParticipant.lastname}`}
                       </h3>
                       <div className="flex max-w-10 flex-col items-end lg:flex-row lg:space-x-2">
-                        <span className="line-clamp-1 text-[12px] leading-3.5 text-[#71748C]">
+                        <span className="line-clamp-1 text-[12px]/3.5  text-[#71748C]">
                           {chat.last_message ? formatTime(chat.last_message.created_at) : ''}
                         </span>
                         {chat.unread_count > 0 && (
-                          <Badge className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 p-0 hover:bg-red-500">
+                          <Badge className="flex size-5  items-center justify-center rounded-full bg-red-500 p-0 hover:bg-red-500">
                             <span className="text-xs font-medium text-white">{chat.unread_count}</span>
                           </Badge>
                         )}
                       </div>
                     </div>
-                    <p className="mt-1 truncate text-[12px] leading-3.5 tracking-[0.01em] text-[#71748C]">
+                    <p className="mt-1 truncate text-[12px]/3.5  tracking-[0.01em] text-[#71748C]">
                       {chat.last_message?.body ?? 'No messages yet'}
                     </p>
                   </div>

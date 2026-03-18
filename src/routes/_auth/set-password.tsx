@@ -67,7 +67,7 @@ const PasswordRequirements = ({ password }: { password: string }) => {
         const isValid = password ? req.test.test(password) : false;
         return (
           <div key={req.id} className="flex items-center gap-2 text-sm">
-            {isValid ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
+            {isValid ? <Check className="size-4  text-green-600" /> : <X className="size-4  text-red-500" />}
             <span className={isValid ? 'text-green-600' : 'text-red-500'}>{req.label}</span>
           </div>
         );
@@ -113,13 +113,13 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex h-full w-full bg-white">
+    <div className="flex size-full  bg-white">
       <PageMetaTags
         title="Set Your Password"
         description="Complete your account setup by creating a secure password."
         keywords="account setup, create password"
       />
-      <div className="flex h-full min-h-screen w-full flex-col justify-between self-stretch py-10">
+      <div className="flex size-full min-h-screen  flex-col justify-between self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <img src={assets.logotext} alt="logo" className="h-[46px] w-[126px]" width={126} height={46} />
@@ -148,12 +148,12 @@ function RouteComponent() {
             }}
             className="flex w-full items-center gap-2 text-[#D4AF36] transition-colors hover:text-[#B69118]"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="size-5 " />
             <span className="text-[14px] leading-[21px] font-medium">Back</span>
           </button>
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Create Password</h1>
-            <p className="text-[14px] leading-5 text-[#71748C]">Complete your onboarding in 10 minutes.</p>
+            <p className="text-[14px]/5  text-[#71748C]">Complete your onboarding in 10 minutes.</p>
           </div>
 
           <div className="flex w-full flex-col gap-10">
@@ -181,7 +181,7 @@ function RouteComponent() {
                               onClick={() => setShowPassword(!showPassword)}
                               className="absolute top-1/2 right-3 -translate-y-1/2 text-[#D4AF36] hover:text-[#B69118]"
                             >
-                              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              {showPassword ? <EyeOff className="size-4 " /> : <Eye className="size-4 " />}
                             </button>
                           </div>
                         </FormControl>
@@ -217,7 +217,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-5 text-[#41415A]">
+          <p className="text-[14px]/5  text-[#41415A]">
             © {new Date().getFullYear()} — Geoplox, All Right Reserved.
           </p>
         </div>

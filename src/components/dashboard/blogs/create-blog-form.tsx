@@ -187,7 +187,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
               </Breadcrumb>
 
               <div className="flex w-full items-center justify-between gap-10 self-stretch">
-                <h1 className="text-[20px] leading-6 font-semibold text-black">{isEdit ? 'Edit Post' : 'New Post'}</h1>
+                <h1 className="text-[20px]/6  font-semibold text-black">{isEdit ? 'Edit Post' : 'New Post'}</h1>
 
                 <div className="flex items-center gap-3">
                   <Button
@@ -258,7 +258,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                           Drag and drop here or{' '}
                           <span className="cursor-pointer font-semibold text-[#B69118]">click to upload</span>
                         </p>
-                        <p className="text-[10px] leading-3 text-[#71748C]">
+                        <p className="text-[10px]/3  text-[#71748C]">
                           Supports PDF, JPEG, or PNG files. Smaller than 1 MB
                         </p>
                       </div>
@@ -273,7 +273,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         <img
                           src={URL.createObjectURL(headerImage)}
                           alt=""
-                          className="h-full w-full object-contain"
+                          className="size-full  object-contain"
                           width={250}
                           height={192}
                         />
@@ -281,7 +281,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
                       <div
                         className={cn(
-                          'absolute inset-0 z-10 flex h-full w-full items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
+                          'absolute inset-0 z-10 flex size-full  items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
                           hoveredDocument === 'headerImage' ? 'opacity-100' : 'pointer-events-none opacity-0'
                         )}
                       >
@@ -290,7 +290,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px] leading-3.5 font-normal text-black"
+                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px]/3.5  font-normal text-black"
                             onClick={handleImageRemove}
                           >
                             <Trash className="size-3.5 text-[#D20832]" />
@@ -301,7 +301,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px] leading-3.5 font-normal text-black"
+                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px]/3.5  font-normal text-black"
                             onClick={handleImageReplace}
                           >
                             <RotateCcw className="size-3.5" />
@@ -346,7 +346,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0"
+                        className="size-8  p-0"
                         onClick={() => editor?.chain().focus().toggleBold().run()}
                       >
                         <Bold className="size-4" />
@@ -356,7 +356,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0"
+                        className="size-8  p-0"
                         onClick={() => editor?.chain().focus().toggleItalic().run()}
                       >
                         <Italic className="size-4" />
@@ -366,7 +366,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0"
+                        className="size-8  p-0"
                         onClick={() => editor?.chain().focus().toggleBulletList().run()}
                       >
                         <List className="size-4" />
@@ -376,7 +376,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0"
+                        className="size-8  p-0"
                         onClick={() => editor?.chain().focus().toggleOrderedList().run()}
                       >
                         <ListOrdered className="size-4" />
@@ -386,17 +386,17 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0"
+                        className="size-8  p-0"
                         onClick={() => editor?.chain().focus().toggleBlockquote().run()}
                       >
                         <Quote className="size-4" />
                       </Button>
 
-                      <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Button type="button" variant="ghost" size="sm" className="size-8  p-0">
                         <LinkIcon className="size-4" />
                       </Button>
 
-                      <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Button type="button" variant="ghost" size="sm" className="size-8  p-0">
                         <ImageIcon className="size-4" />
                       </Button>
                     </div>

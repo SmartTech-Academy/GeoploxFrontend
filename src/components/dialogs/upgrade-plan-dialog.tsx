@@ -101,7 +101,7 @@ export const UpgradePlanDialog: React.FC<UpgradePlanDialogProps> = ({ open, onOp
               <div className="w-full">
                 <div
                   key={currentPlanIndex} // forces re-mount on switch
-                  className="animate-in fade-in-50 slide-in-from-bottom-4 mb-4 rounded-lg bg-[#F8F6F0] p-4"
+                  className="mb-4 animate-in rounded-lg bg-[#F8F6F0] p-4 fade-in-50 slide-in-from-bottom-4"
                 >
                   {/* Price */}
                   <div className="mb-6">
@@ -113,8 +113,8 @@ export const UpgradePlanDialog: React.FC<UpgradePlanDialogProps> = ({ open, onOp
                   <div className="space-y-3">
                     {currentPlanData.features.map((feature: string, index: number) => (
                       <div key={index} className="flex items-start gap-3">
-                        <Check className="mt-0.5 h-5 w-5 shrink-0 text-[#D4B04A]" />
-                        <span className="text-sm leading-5 text-[#6B7280]">{feature}</span>
+                        <Check className="mt-0.5 size-5  shrink-0 text-[#D4B04A]" />
+                        <span className="text-sm/5  text-[#6B7280]">{feature}</span>
                       </div>
                     ))}
                   </div>
@@ -127,7 +127,7 @@ export const UpgradePlanDialog: React.FC<UpgradePlanDialogProps> = ({ open, onOp
                       key={index}
                       type="button"
                       onClick={() => setCurrentPlanIndex(index)}
-                      className={`h-2 w-2 rounded-full transition-all duration-200 ${
+                      className={`size-2  rounded-full transition-all duration-200 ${
                         currentPlanIndex === index ? 'scale-110 bg-[#1F2130]' : 'bg-[#D1D5DB]'
                       }`}
                       aria-label={`Select ${upgradeablePlans[index].name} plan`}

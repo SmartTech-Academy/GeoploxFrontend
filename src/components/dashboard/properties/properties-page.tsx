@@ -146,7 +146,7 @@ const PropertiesPage: React.FC = () => {
   const EmptyState = ({ type }: { type: 'chat' | 'list' }) => {
     if (type === 'chat') {
       return (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-[#F9F9F9]">
+        <div className="flex size-full  flex-col items-center justify-center gap-4 bg-[#F9F9F9]">
           <div className="flex flex-col items-center justify-center gap-6">
             <img
               src={assets.messagingloading}
@@ -156,8 +156,8 @@ const PropertiesPage: React.FC = () => {
               height={84}
             />
             <div className="flex flex-col items-center justify-center gap-3">
-              <h5 className="text-[20px] leading-7 font-normal text-[#1F2130]">No property selected</h5>
-              <p className="text-center text-[14px] leading-5 tracking-[-0.02em] text-[#71748C]">
+              <h5 className="text-[20px]/7  font-normal text-[#1F2130]">No property selected</h5>
+              <p className="text-center text-[14px]/5  tracking-[-0.02em] text-[#71748C]">
                 Select a property from the list <br />
                 to view its details.
               </p>
@@ -170,7 +170,7 @@ const PropertiesPage: React.FC = () => {
       <div className="flex w-full flex-col items-center justify-center gap-8 self-stretch py-14">
         <img src={assets.chatloading} className="h-28 w-[211px] animate-pulse" width={211} height={112} />
         <div className="flex flex-col items-center justify-center gap-3">
-          <h5 className="text-[20px] leading-7 font-semibold text-[#1F2130]">Your property is empty</h5>
+          <h5 className="text-[20px]/7  font-semibold text-[#1F2130]">Your property is empty</h5>
           <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
             It looks like you haven’t created a proprety yet.
           </p>
@@ -223,7 +223,7 @@ const PropertiesPage: React.FC = () => {
               onClick={() => setStatusFilter('published')}
               className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
                 statusFilter === 'published'
-                  ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
+                  ? 'border-[#EAEAEA] text-primary hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
             >
@@ -235,7 +235,7 @@ const PropertiesPage: React.FC = () => {
               onClick={() => setStatusFilter('draft')}
               className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
                 statusFilter === 'draft'
-                  ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
+                  ? 'border-[#EAEAEA] text-primary hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
             >
@@ -247,7 +247,7 @@ const PropertiesPage: React.FC = () => {
               onClick={() => setStatusFilter('archived')}
               className={`h-8 min-w-[55px] rounded-full text-[12px] font-semibold ${
                 statusFilter === 'archived'
-                  ? 'text-primary border-[#EAEAEA] hover:bg-yellow-50'
+                  ? 'border-[#EAEAEA] text-primary hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
             >
@@ -297,13 +297,13 @@ const PropertiesPage: React.FC = () => {
                         </h3>
                         <div className="mt-1 flex items-center gap-1">
                           <MapPin className="size-3 text-gray-400" />
-                          <span className="text-[12px] leading-3.5 text-[#71748C]">
+                          <span className="text-[12px]/3.5  text-[#71748C]">
                             {property.city}, {property.state}
                           </span>
                         </div>
                       </div>
                       <Badge
-                        className={`items-center rounded border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
+                        className={`items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
                       >
                         <div
                           className={cn(
@@ -354,7 +354,7 @@ const PropertiesPage: React.FC = () => {
               background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
-            className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-3 font-normal text-white"
+            className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3  font-normal text-white"
           >
             <Link to="/properties/create">
               <HousePlus className="mr-2 size-4" /> New Listing
@@ -375,7 +375,7 @@ const PropertiesPage: React.FC = () => {
                     <img
                       src={selectedProperty.images[currentImageIndex]?.url || '/placeholder.svg'}
                       alt={selectedProperty.title}
-                      className="h-full w-full object-cover"
+                      className="size-full  object-cover"
                     />
                     <Button
                       variant="ghost"
@@ -408,7 +408,7 @@ const PropertiesPage: React.FC = () => {
                         <img
                           src={image.url || '/placeholder.svg'}
                           alt={`${selectedProperty.title} ${index + 1}`}
-                          className="h-full w-full object-cover"
+                          className="size-full  object-cover"
                         />
                       </button>
                     ))}
@@ -421,7 +421,7 @@ const PropertiesPage: React.FC = () => {
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-2">
                         <Badge
-                          className={`items-center rounded border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
+                          className={`items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
                         >
                           <div
                             className={cn(
@@ -436,13 +436,13 @@ const PropertiesPage: React.FC = () => {
                           {selectedProperty.category}
                         </Badge>
                         <Badge
-                          className={`items-center rounded border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
+                          className={`items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
                         >
                           {selectedProperty.property_type}
                         </Badge>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <h2 className="text-[14px] leading-4 font-semibold text-[#1F2130]">{selectedProperty.title}</h2>
+                        <h2 className="text-[14px]/4  font-semibold text-[#1F2130]">{selectedProperty.title}</h2>
                         <h3 className="text-[16px] leading-[21px] font-bold text-[#1F2130]">
                           {new Intl.NumberFormat('en-NG', {
                             style: 'currency',
@@ -453,7 +453,7 @@ const PropertiesPage: React.FC = () => {
 
                       <div className="flex items-center gap-1">
                         <MapPin className="size-4 text-gray-400" />
-                        <span className="text-[12px] leading-3.5 text-[#41415A]">{selectedProperty.address}</span>
+                        <span className="text-[12px]/3.5  text-[#41415A]">{selectedProperty.address}</span>
                       </div>
                     </div>
                     <DropdownMenu>
@@ -461,7 +461,7 @@ const PropertiesPage: React.FC = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-primary rounded-full p-2 text-[14px] leading-[17px] font-semibold hover:bg-gray-100"
+                          className="rounded-full p-2 text-[14px] leading-[17px] font-semibold text-primary hover:bg-gray-100"
                         >
                           <Edit3 className="mr-2 size-4" />
                           Manage
@@ -469,16 +469,16 @@ const PropertiesPage: React.FC = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
                         <DropdownMenuItem onClick={handleShare} className="flex items-center space-x-3">
-                          <Crown className="h-4 w-4 text-gray-600" />
+                          <Crown className="size-4  text-gray-600" />
                           <span>Promote </span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={handleShare} className="flex items-center space-x-3">
-                          <Share2 className="h-4 w-4" />
+                          <Share2 className="size-4 " />
                           <span>Share</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild className="flex cursor-pointer items-center space-x-3">
                           <Link to="/properties/$id" params={{ id: String(selectedProperty.id) }}>
-                            <Edit3 className="h-4 w-4 text-gray-600" />
+                            <Edit3 className="size-4  text-gray-600" />
                             <span>Edit Details</span>
                           </Link>
                         </DropdownMenuItem>
@@ -487,14 +487,14 @@ const PropertiesPage: React.FC = () => {
                           className="flex cursor-pointer items-center space-x-3"
                           disabled={isArchiving}
                         >
-                          <ArchiveRestore className="h-4 w-4 text-gray-600" />
+                          <ArchiveRestore className="size-4  text-gray-600" />
                           <span>{selectedProperty.status === 'archived' ? 'Restore' : 'Archive'}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => setOpenDeleteModal(true)}
                           className="flex cursor-pointer items-center space-x-3 text-red-600"
                         >
-                          <Trash2 className="h-4 w-4 text-gray-600" />
+                          <Trash2 className="size-4  text-gray-600" />
                           <span>Delete</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -504,15 +504,15 @@ const PropertiesPage: React.FC = () => {
                   {/* Property Stats */}
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
-                      <BedDouble className="text-primary size-4" />
+                      <BedDouble className="size-4 text-primary" />
                       <span className="text-[14px] text-[#71748C]">{selectedProperty.bedrooms} Beds</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <ShowerHead className="text-primary size-4" />
+                      <ShowerHead className="size-4 text-primary" />
                       <span className="text-[14px] text-[#71748C]">{selectedProperty.bathrooms} Baths</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Square className="text-primary size-4" />
+                      <Square className="size-4 text-primary" />
                       <span className="text-[14px] text-[#71748C]">
                         {selectedProperty.area_sqft.toLocaleString()} sq ft
                       </span>
@@ -523,9 +523,9 @@ const PropertiesPage: React.FC = () => {
                 {/* Description */}
                 <div className="mb-6">
                   <h4 className="mb-3 text-[18px] font-semibold text-[#1F2130]">Property Details</h4>
-                  <p className="text-[14px] leading-5 text-[#71748C]">{selectedProperty.desc}</p>
+                  <p className="text-[14px]/5  text-[#71748C]">{selectedProperty.desc}</p>
                   <div className="mt-4">
-                    <p className="text-[14px] leading-5 text-[#71748C]">
+                    <p className="text-[14px]/5  text-[#71748C]">
                       Located in a beautiful, serene, highly secured estate in the heart of Lekki.
                     </p>
                   </div>
@@ -536,7 +536,7 @@ const PropertiesPage: React.FC = () => {
                   <h4 className="mb-3 text-[18px] font-semibold text-[#1F2130]">Features include:</h4>
                   <ul className="space-y-2">
                     {selectedProperty.features.map((feature, index) => (
-                      <li key={index} className="text-[14px] leading-5 text-[#71748C]">
+                      <li key={index} className="text-[14px]/5  text-[#71748C]">
                         - {feature}
                       </li>
                     ))}
@@ -568,12 +568,12 @@ const PropertiesPage: React.FC = () => {
               </Avatar>
 
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-[13px] leading-4 font-semibold text-[#1F2130]">{selectedProperty.owner.name}</h3>
+                <h3 className="text-[13px]/4  font-semibold text-[#1F2130]">{selectedProperty.owner.name}</h3>
 
                 {selectedProperty.is_verified ? (
                   <div className="flex items-center gap-2">
-                    <BadgeCheck className="fill-primary size-4 shrink-0 text-white" />
-                    <span className="text-primary text-[12px] leading-[18px] font-semibold">Verified Owner</span>
+                    <BadgeCheck className="size-4 shrink-0 fill-primary text-white" />
+                    <span className="text-[12px] leading-[18px] font-semibold text-primary">Verified Owner</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
@@ -591,16 +591,16 @@ const PropertiesPage: React.FC = () => {
           <div className="box-border flex w-full flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
             <div className="flex flex-col items-start gap-2 self-stretch">
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px] leading-3 text-[#71748C]">Status</span>
-                <span className="text-[12px] leading-3 text-[#1F2130]">Active</span>
+                <span className="text-[12px]/3  text-[#71748C]">Status</span>
+                <span className="text-[12px]/3  text-[#1F2130]">Active</span>
               </div>
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px] leading-3 text-[#71748C]">Property ID</span>
-                <span className="text-[12px] leading-3 text-[#1F2130]">{selectedProperty.property_id}</span>
+                <span className="text-[12px]/3  text-[#71748C]">Property ID</span>
+                <span className="text-[12px]/3  text-[#1F2130]">{selectedProperty.property_id}</span>
               </div>
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px] leading-3 text-[#71748C]">Added</span>
-                <span className="text-[12px] leading-3 text-[#1F2130]">
+                <span className="text-[12px]/3  text-[#71748C]">Added</span>
+                <span className="text-[12px]/3  text-[#1F2130]">
                   {new Date(selectedProperty.created_at).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
@@ -609,12 +609,12 @@ const PropertiesPage: React.FC = () => {
                 </span>
               </div>
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px] leading-3 text-[#71748C]">Leads</span>
-                <span className="text-[12px] leading-3 text-[#1F2130]">N/A</span>
+                <span className="text-[12px]/3  text-[#71748C]">Leads</span>
+                <span className="text-[12px]/3  text-[#1F2130]">N/A</span>
               </div>
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px] leading-3 text-[#71748C]">Views</span>
-                <span className="text-[12px] leading-3 text-[#1F2130]">{selectedProperty.views.toLocaleString()}</span>
+                <span className="text-[12px]/3  text-[#71748C]">Views</span>
+                <span className="text-[12px]/3  text-[#1F2130]">{selectedProperty.views.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -657,8 +657,8 @@ const PropertiesPage: React.FC = () => {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden h-full w-full lg:flex">
-        <ResizablePanelGroup direction="horizontal" className="h-full w-full">
+      <div className="hidden size-full  lg:flex">
+        <ResizablePanelGroup direction="horizontal" className="size-full ">
           <ResizablePanel defaultSize={25} minSize={20} maxSize={35} className="border-r border-[#F1F1F4]">
             <div className="h-full">
               <PropertyList />

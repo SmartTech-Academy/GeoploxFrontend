@@ -118,7 +118,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
         <div className="flex w-full flex-col gap-10">
           <div className="flex flex-col items-center gap-3 self-stretch text-center">
             <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Personal Information</h2>
-            <p className="text-[14px] leading-5 text-[#71748C]">Update your details</p>
+            <p className="text-[14px]/5  text-[#71748C]">Update your details</p>
           </div>
 
           <div className="flex w-full flex-col gap-5">
@@ -133,7 +133,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                     <img
                       src={picturePreview || '/placeholder.svg'}
                       alt="Profile Preview"
-                      className="h-full w-full object-cover"
+                      className="size-full  object-cover"
                     />
                   ) : (
                     <Upload className="size-4 text-[#71748C]" />
@@ -148,8 +148,8 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <p className="text-[14px] leading-6 text-[#1F2130]">Profile Picture</p>
-                  <p className="text-[14px] leading-6 text-[#71748C]">
+                  <p className="text-[14px]/6  text-[#1F2130]">Profile Picture</p>
+                  <p className="text-[14px]/6  text-[#71748C]">
                     Upload a profile picture. Only .JPG and .PNG supported.
                   </p>
                 </div>
@@ -228,7 +228,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                           className="h-10 rounded-lg border-[#D5D5DD] pr-10"
                           {...field}
                         />
-                        <Phone className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transform fill-[#71748C] text-[#71748C]" />
+                        <Phone className="absolute top-1/2 right-3 size-4  -translate-y-1/2 transform fill-[#71748C] text-[#71748C]" />
                       </div>
                     </FormControl>
                     <FormMessage />

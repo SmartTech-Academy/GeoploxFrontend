@@ -24,7 +24,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex h-full min-h-screen w-full flex-col justify-between self-stretch py-10">
+    <div className="flex size-full min-h-screen  flex-col justify-between self-stretch py-10">
       <PageMetaTags
         title="Account Successfully Created"
         description="Welcome to Geoplox! Your account is ready. Start exploring properties or list your own."
@@ -49,7 +49,7 @@ function RouteComponent() {
         {/* Success Message */}
         <div className="flex w-full flex-col items-center gap-4 self-stretch text-center">
           <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Your account is ready</h1>
-          <p className="text-[14px] leading-5 text-[#71748C]">
+          <p className="text-[14px]/5  text-[#71748C]">
             You will be able to login with your email address
             <br />
             <span className="font-medium">({email || 'your.email@example.com'})</span>
@@ -73,7 +73,7 @@ function RouteComponent() {
 
       {/* Footer */}
       <div className="text-center">
-        <p className="text-[14px] leading-5 text-[#41415A]">
+        <p className="text-[14px]/5  text-[#41415A]">
           © {new Date().getFullYear()} — Geoplox, All Right Reserved.
         </p>
       </div>

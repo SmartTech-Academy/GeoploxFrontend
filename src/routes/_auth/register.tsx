@@ -58,13 +58,13 @@ function RouteComponent() {
   //   };
 
   return (
-    <div className="flex h-full w-full bg-white">
+    <div className="flex size-full  bg-white">
       <PageMetaTags
         title="Create Your Account"
         description="Join thousands of users on Geoplox. Create your free account to start buying, selling, or renting properties."
         keywords="geoplox signup, create property account, join geoplox"
       />
-      <div className="flex h-full min-h-screen w-full flex-col justify-between gap-5 self-stretch py-10">
+      <div className="flex size-full min-h-screen  flex-col justify-between gap-5 self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <Link to="/">
@@ -82,7 +82,7 @@ function RouteComponent() {
         <div className="mx-auto flex w-full flex-col items-center gap-10 px-4 lg:max-w-[560px] lg:px-0">
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Get Started</h1>
-            <p className="text-[14px] leading-5 text-[#71748C]">Complete your onboarding in 10 minutes.</p>
+            <p className="text-[14px]/5  text-[#71748C]">Complete your onboarding in 10 minutes.</p>
           </div>
 
           <div className="flex w-full flex-col gap-10">
@@ -254,7 +254,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-5 text-[#41415A]">
+          <p className="text-[14px]/5  text-[#41415A]">
             © {new Date().getFullYear()} — Geoplox, All Right Reserved.
           </p>
         </div>

@@ -39,7 +39,7 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
         <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Complete Onboarding</h2>
-        <p className="text-[14px] leading-5 text-[#71748C]">Review your account information before submitting</p>
+        <p className="text-[14px]/5  text-[#71748C]">Review your account information before submitting</p>
       </div>
 
       {(summary.business?.logo_url || summary.display_picture_url) && (
@@ -49,7 +49,7 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
               <img
                 src={summary.business?.logo_url || summary.display_picture_url}
                 alt="Profile or Business Logo"
-                className="h-full w-full object-cover"
+                className="size-full  object-cover"
               />
             )}
           </div>

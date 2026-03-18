@@ -60,7 +60,7 @@ export const ListingDetailSkeleton = () => {
           <div className="flex flex-col items-end">
             <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
               <div className="flex w-full items-center gap-4 border-b border-[#F1F1F4] pb-5">
-                <Skeleton className="size-[68px] rounded" />
+                <Skeleton className="size-[68px] rounded-sm" />
                 <div className="flex flex-col gap-2">
                   <Skeleton className="h-5 w-32" />
                   <Skeleton className="h-4 w-24" />

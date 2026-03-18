@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="flex flex-col items-start gap-6 self-stretch md:gap-7">
             {/* Header Section */}
             <div className="flex w-full flex-col gap-6 md:grid md:grid-cols-5 md:gap-36">
-              <h1 className="text-3xl leading-tight font-semibold tracking-[-0.02em] text-[#D4AF36] md:col-span-2 md:text-[48px] md:leading-[57px]">
+              <h1 className="text-3xl/tight  font-semibold tracking-[-0.02em] text-[#D4AF36] md:col-span-2 md:text-[48px] md:leading-[57px]">
                 Get in Touch
               </h1>
 
@@ -102,7 +102,7 @@ const Footer = () => {
                 height={40}
                 className="h-8 w-auto md:h-10 md:w-[126px]"
               />
-              <span className="mt-4 text-[14px] leading-5 text-[#DDDDDF] md:mt-0">
+              <span className="mt-4 text-[14px]/5  text-[#DDDDDF] md:mt-0">
                 © {new Date().getFullYear()} — Geoplox, All Right Reserved.
               </span>
             </div>

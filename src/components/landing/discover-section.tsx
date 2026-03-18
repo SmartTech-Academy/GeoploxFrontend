@@ -155,7 +155,7 @@ export function DiscoverSection() {
             <div className="flex w-full flex-col items-center gap-12 self-stretch">
               <div className="flex flex-col items-center gap-3 text-center">
                 <h3 className="text-[36px] leading-[41px] text-[#D4AF36]">{activeTab} around you</h3>
-                <p className="text-primary-foreground text-[20px] leading-6">
+                <p className="text-[20px] leading-6 text-primary-foreground">
                   Viewed and saved the most in the area over the past 24 hours
                 </p>
               </div>
@@ -187,7 +187,7 @@ export function DiscoverSection() {
 
                         <Badge
                           className={cn(
-                            'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]'
+                            'absolute top-4 left-4 h-[25px] rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]'
                           )}
                         >
                           <div className={cn('size-1.5 rounded-full', getStatusDotColor(property.category))} />
@@ -206,12 +206,12 @@ export function DiscoverSection() {
                           {formatPrice(property.price, property.currency)}
                         </h4>
                         <div className="flex flex-col items-start gap-[11px] self-stretch">
-                          <p className="text-primary-foreground text-[16px] leading-[18px]">
+                          <p className="text-[16px] leading-[18px] text-primary-foreground">
                             {property.location.city}, {property.location.state}
                           </p>
 
                           <div className="flex items-end gap-3 self-stretch">
-                            <div className="text-primary-foreground flex items-center gap-5 text-[14px] leading-4">
+                            <div className="flex items-center gap-5 text-[14px] leading-4 text-primary-foreground">
                               <div className="flex items-center gap-2">
                                 <BedDouble className="size-[18px] text-white" />
                                 <span>{property.bedrooms} Beds</span>
@@ -237,7 +237,7 @@ export function DiscoverSection() {
               <div className="flex flex-col items-start gap-2 py-6 text-center">
                 <Button
                   asChild
-                  className="min-w-[181px]] bg-secondary-foreground h-12 rounded-[40px] px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800"
+                  className="min-w-[181px]] h-12 rounded-[40px] bg-secondary-foreground px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800"
                 >
                   <Link to="/short-let">
                     Explore Listing <ChevronRight className="size-4 fill-white" />
@@ -251,11 +251,11 @@ export function DiscoverSection() {
 
       {/* next gen */}
       <section className="w-full bg-white py-16">
-        <div className="lg:landing-container flex flex-col items-center lg:gap-[104px]">
+        <div className="flex flex-col items-center lg:landing-container lg:gap-[104px]">
           <div className="mx-auto flex w-full max-w-[849px] flex-col gap-[23px] px-5 text-center lg:px-0">
             <h2 className="text-[42px] leading-[59px] text-[#1F2130]">Next-Gen Data for Next Level Deals</h2>
 
-            <p className="text-[20px] leading-7 text-[#41415A]">
+            <p className="text-[20px]/7  text-[#41415A]">
               Whether you’re looking for your next home, scouting investment properties, or sourcing deals for clients —
               this platform gives you the edge.
             </p>
@@ -286,12 +286,12 @@ export function DiscoverSection() {
               <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07/20%)]/20" />
             </div>
 
-            <div className=";lg:pl-10 relative z-10 flex w-full flex-col items-center justify-between gap-[95px] rounded-[13px] pr-5 pl-5 lg:flex-row lg:pr-0">
+            <div className=";lg:pl-10 relative z-10 flex w-full flex-col items-center justify-between gap-[95px] rounded-[13px] px-5  lg:flex-row lg:pr-0">
               <div className="flex h-auto flex-col items-start gap-10 lg:w-[521px] lg:shrink-0">
                 <div className="flex flex-col items-start gap-[13px]">
                   <h3 className="text-[44px] leading-[62px] text-[#1F2130]">Ready to Find Real Property?</h3>
 
-                  <p className="self-stretch text-[20px] leading-7 text-[#41415A]">
+                  <p className="self-stretch text-[20px]/7  text-[#41415A]">
                     Start your 7-day free trial and access Nigeria’s most trusted real estate listings — full property
                     details, high-quality photos, direct contact info, and more
                   </p>
@@ -308,7 +308,7 @@ export function DiscoverSection() {
                     Start Trial Now
                   </Button>
 
-                  <span className="self-stretch text-[14px] leading-5 text-[#41415A]">
+                  <span className="self-stretch text-[14px]/5  text-[#41415A]">
                     No card required. Cancel any time.
                   </span>
                 </div>
@@ -358,7 +358,7 @@ export function DiscoverSection() {
                       {blog.tags.map((tag, index) => (
                         <div
                           key={index}
-                          className="flex h-[25px] items-center justify-center rounded bg-[oklch(0.7665_0.1393_91.15/5%)] px-2 py-0.5 text-[14px] leading-[21px] text-[#D4AF36]"
+                          className="flex h-[25px] items-center justify-center rounded-sm bg-[oklch(0.7665_0.1393_91.15/5%)] px-2 py-0.5 text-[14px] leading-[21px] text-[#D4AF36]"
                         >
                           {tag}
                         </div>
@@ -366,11 +366,11 @@ export function DiscoverSection() {
                     </div>
 
                     <div className="flex flex-col items-start gap-3 self-stretch">
-                      <h5 className="self-stretch text-[16px] leading-6 font-semibold tracking-[-0.15px] text-[#0B0B0D]">
+                      <h5 className="self-stretch text-[16px]/6  font-semibold tracking-[-0.15px] text-[#0B0B0D]">
                         {blog.title}
                       </h5>
 
-                      <p className="line-clamp-2 text-[14px] leading-6 tracking-[-0.14px] text-[#6C7574]">
+                      <p className="line-clamp-2 text-[14px]/6  tracking-[-0.14px] text-[#6C7574]">
                         {blog.content}
                       </p>
                     </div>

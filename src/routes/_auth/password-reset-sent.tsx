@@ -17,13 +17,13 @@ function RouteComponent() {
   console.log('Email from search:', email);
 
   return (
-    <div className="flex h-full w-full bg-white">
+    <div className="flex size-full  bg-white">
       <PageMetaTags
         title="Password Reset Link Sent"
         description="We've sent a password reset link to your email. Check your inbox to continue."
         keywords="password reset confirmation"
       />
-      <div className="flex h-full min-h-screen w-full flex-col justify-between self-stretch py-10">
+      <div className="flex size-full min-h-screen  flex-col justify-between self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <Link to="/">
@@ -40,13 +40,13 @@ function RouteComponent() {
 
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
           {/* Icon */}
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#D4AF36]/10">
-            <Mail className="h-10 w-10 text-[#D4AF36]" />
+          <div className="flex size-20  items-center justify-center rounded-full bg-[#D4AF36]/10">
+            <Mail className="size-10  text-[#D4AF36]" />
           </div>
 
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Password Recovery link sent</h1>
-            <p className="max-w-[400px] text-center text-[14px] leading-5 text-[#71748C]">
+            <p className="max-w-[400px] text-center text-[14px]/5  text-[#71748C]">
               If your email address provided is associated with an account, you should receive a link to create a new
               password
             </p>
@@ -67,7 +67,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-5 text-[#41415A]">
+          <p className="text-[14px]/5  text-[#41415A]">
             © {new Date().getFullYear()} — Geoplox, All Right Reserved.
           </p>
         </div>

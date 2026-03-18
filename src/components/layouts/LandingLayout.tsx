@@ -28,7 +28,7 @@ const LandingLayout = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   return (
-    <div className="w-full bg-[rgba(255,_255,_255,_0.8)] shadow-[0px_4px_16px_rgba(0,_0,_0,_0.08)]">
+    <div className="w-full bg-[rgba(255,255,255,0.8)] shadow-[0px_4px_16px_rgba(0,0,0,0.08)]">
       <Topnav />
       <main className="min-h-screen">
         <Outlet />

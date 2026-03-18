@@ -79,7 +79,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
       <div className="grid h-[266px] shrink-0 grid-cols-2 gap-2 lg:w-[463px]">
         {/* Large Image - spans 2 rows */}
         <div className="row-span-2">
-          <img src={property.cover_image} alt={property.title} className="h-full w-full object-cover" />
+          <img src={property.cover_image} alt={property.title} className="size-full  object-cover" />
         </div>
 
         {/* Small Image 1 */}
@@ -87,7 +87,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
           <img
             src={property.thumbnail_images?.[0] || property.cover_image}
             alt={`${property.title} - view 1`}
-            className="h-full w-full object-cover"
+            className="size-full  object-cover"
           />
         </div>
 
@@ -96,7 +96,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
           <img
             src={property.thumbnail_images?.[1] || property.cover_image}
             alt={`${property.title} - view 2`}
-            className="h-full w-full object-cover"
+            className="size-full  object-cover"
           />
         </div>
       </div>
@@ -104,7 +104,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
       <div className="flex flex-col items-start gap-9">
         <div className="flex flex-col gap-4 self-stretch">
           <div className="flex flex-col items-start gap-2.5">
-            <Badge className="h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
+            <Badge className="h-[25px] rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]">
               {property.category}
             </Badge>
 
@@ -116,21 +116,21 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
           </div>
 
           <div className="flex flex-col items-start gap-[11px] self-stretch">
-            <span className="text-[14px] leading-4 text-[#545767]">
+            <span className="text-[14px]/4  text-[#545767]">
               {property.location.city}, {property.location.state}
             </span>
 
-            <div className="flex w-full items-center gap-5 self-stretch text-[14px] leading-4 text-[oklch(0_0_0/80%)]">
+            <div className="flex w-full items-center gap-5 self-stretch text-[14px]/4  text-[oklch(0_0_0/80%)]">
               <div className="flex items-center gap-2">
-                <BedDouble className="text-primary size-[18px]" />
+                <BedDouble className="size-[18px] text-primary" />
                 <span>{property.bedrooms} Beds</span>
               </div>
               <div className="flex items-center gap-2">
-                <ShowerHead className="text-primary size-[18px]" />
+                <ShowerHead className="size-[18px] text-primary" />
                 <span>{property.bathrooms} Baths</span>
               </div>
               <div className="flex items-center gap-2">
-                <Square className="text-primary size-[18px]" />
+                <Square className="size-[18px] text-primary" />
                 <span>{property.area_sqft.toLocaleString()} sq ft</span>
               </div>
             </div>
@@ -154,7 +154,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({ proper
               onClick={() => removeFromFavorites(property.id)}
               disabled={isPending}
             >
-              <Trash2 className="mr-2 h-4 w-4" />
+              <Trash2 className="mr-2 size-4 " />
               Remove
             </Button>
           ) : (

@@ -36,7 +36,7 @@ const PropertiesDetails = () => {
     ? {
         id: property.id,
         title: property.title,
-        category_slug: property.category as 'For Rent' | 'For Sale' | 'Short Let' | 'Joint Venture',
+        category_slug: property.category,
         property_type: toTitleCase(property.property_type),
         sub_type: property.sub_type || '',
         address: property.address || '',

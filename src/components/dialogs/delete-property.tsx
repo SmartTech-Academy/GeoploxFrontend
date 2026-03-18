@@ -32,7 +32,7 @@ const DeleteProperty: React.FC<DeletePropertyProps> = ({
         <DialogFooter>
           <DialogClose asChild>
             <Button
-              className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px] leading-3.5 font-semibold text-[#1F2130]"
+              className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px]/3.5  font-semibold text-[#1F2130]"
               variant="secondary"
             >
               Cancel
@@ -48,9 +48,9 @@ const DeleteProperty: React.FC<DeletePropertyProps> = ({
 
               boxShadow: ' 0px 2px 4px rgba(0, 0, 0, 0.2), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
-            className="h-8 rounded-4xl border border-[oklch(0.5477_0.2177_21.48/50%)] p-4 text-[12px] leading-3.5 font-semibold text-white"
+            className="h-8 rounded-4xl border border-[oklch(0.5477_0.2177_21.48/50%)] p-4 text-[12px]/3.5  font-semibold text-white"
           >
-            {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Yes, Delete'}
+            {isDeleting ? <Loader2 className="mr-2 size-4  animate-spin" /> : 'Yes, Delete'}
           </Button>
         </DialogFooter>
       </DialogContent>

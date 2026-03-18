@@ -42,11 +42,11 @@ const LoadingFallback = () => {
           <div className="flex w-full flex-col gap-4">
             <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
               <div
-                className="relative h-full rounded-full bg-gradient-to-r from-amber-400 to-[#D4AF36] transition-all duration-300 ease-out"
+                className="relative h-full rounded-full bg-linear-to-r from-amber-400 to-[#D4AF36] transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               >
                 {/* Shimmer effect */}
-                <div className="animate-shimmer absolute inset-0 -skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                <div className="animate-shimmer absolute inset-0 -skew-x-12 bg-linear-to-r from-transparent via-white/30 to-transparent" />
               </div>
             </div>
             <div className="text-center text-xs text-gray-500">{Math.round(progress)}%</div>
@@ -57,7 +57,7 @@ const LoadingFallback = () => {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="h-2 w-2 animate-bounce rounded-full bg-[#D4AF36]"
+                className="size-2  animate-bounce rounded-full bg-[#D4AF36]"
                 style={{
                   animationDelay: `${i * 0.1}s`,
                   animationDuration: '0.6s',
