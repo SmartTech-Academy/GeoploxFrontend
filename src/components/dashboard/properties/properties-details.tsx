@@ -1,12 +1,12 @@
-import { useParams } from '@tanstack/react-router';
-import PropertyForm, { PropertyFormValues } from './property-form';
-import { PageMetaTags } from '@/components/page-meta-data';
-import { useGetDashboardPropertyDetails } from '@/lib/services/properties';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useParams } from "@tanstack/react-router";
+import PropertyForm, { PropertyFormValues } from "./property-form";
+import { PageMetaTags } from "@/components/page-meta-data";
+import { useGetDashboardPropertyDetails } from "@/lib/services/properties";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PropertiesDetails = () => {
   const params = useParams({
-    from: '/_dashboard/properties/$id',
+    from: "/_dashboard/properties/$id",
   });
 
   const { data: propertyData, isLoading, isError } = useGetDashboardPropertyDetails(params.id);
@@ -27,8 +27,15 @@ const PropertiesDetails = () => {
   const property = propertyData?.data?.data?.data;
 
   const toTitleCase = (str: string) => {
-    if (!str) return '';
+    if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
+  const categorySlugMap: Record<string, PropertyFormValues["category_slug"]> = {
+    "For Rent": "for-rent",
+    "For Sale": "for-sale",
+    "Short Let": "short-let",
+    "Joint Venture": "joint-venture",
   };
 
   // Transform API data to form values
@@ -36,14 +43,14 @@ const PropertiesDetails = () => {
     ? {
         id: property.id,
         title: property.title,
-        category_slug: property.category,
+        category_slug: categorySlugMap[property.category] ?? "for-rent",
         property_type: toTitleCase(property.property_type),
-        sub_type: property.sub_type || '',
-        address: property.address || '',
-        country: property.country || '',
+        sub_type: property.property_sub_type || "",
+        address: property.address || "",
+        country: property.country || "",
         state: property.state,
         lga_or_city: property.city, // API provides LGA in the 'city' field
-        area: property.area || '',
+        area: property.area || "",
         description: property.desc,
         bedrooms: property.bedrooms,
         bathrooms: property.bathrooms,
@@ -52,12 +59,16 @@ const PropertiesDetails = () => {
         currency: property.currency,
         images: property.images?.map((img: { url: string }) => img.url) || [],
         features: property.features || [],
+        status: property.property_status || [],
       }
     : {};
 
   return (
     <>
-      <PageMetaTags title={`Edit Property: ${property?.title || 'Loading...'}`} description={property?.desc} />
+      <PageMetaTags
+        title={`Edit Property: ${property?.title || "Loading..."}`}
+        description={property?.desc}
+      />
       <PropertyForm isEdit={true} initialData={initialData} />
     </>
   );

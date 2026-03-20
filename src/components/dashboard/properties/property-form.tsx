@@ -1,14 +1,27 @@
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { cn, formatNumberWithCommas, parseNumber } from '@/lib/utils';
-import { Upload, RotateCcw, Trash, X, Slash, Loader2 } from 'lucide-react';
-import type React from 'react';
-import { useState, useRef, useEffect, useMemo } from 'react';
-import { z } from 'zod/v4';
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn, formatNumberWithCommas, parseNumber } from "@/lib/utils";
+import { Upload, RotateCcw, Trash, X, Slash, Loader2 } from "lucide-react";
+import type React from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { z } from "zod/v4";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,45 +29,46 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+} from "@/components/ui/breadcrumb";
 
-import { useForm } from 'react-hook-form';
-import { customResolver } from '@/lib/customZodResolver';
-import { Link, useRouter } from '@tanstack/react-router';
+import { useForm } from "react-hook-form";
+import { customResolver } from "@/lib/customZodResolver";
+import { Link, useRouter } from "@tanstack/react-router";
 import {
   useCreateProperty,
   useUpdateProperty,
   useUploadPropertyImage,
   useUploadPropertyDocument,
   useUploadProofOfAddress,
-} from '@/lib/services/properties';
-import { toast } from 'sonner';
-import { Separator } from '@/components/ui/separator';
-import statesAndLgasData from '@/data/statesAndLocalGov.json';
-import { useGetProfileData } from '@/lib/services/profile';
-import { listingTypes, propertyFeatures, propertyStatus, propertyTypes } from '@/data/reuseable';
+  useDeletePropertyImage,
+} from "@/lib/services/properties";
+import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
+import statesAndLgasData from "@/data/statesAndLocalGov.json";
+import { useGetProfileData } from "@/lib/services/profile";
+import { listingTypes, propertyFeatures, propertyStatus, propertyTypes } from "@/data/reuseable";
 
 // Zod Schema
 const PropertyFormSchema = z.object({
   id: z.string().optional(),
-  title: z.string().min(1, 'Listing title is required'),
-  category_slug: z.enum(['for-rent', 'for-sale', 'short-let', 'joint-venture'], {
-    error: 'Please select a listing type',
+  title: z.string().min(1, "Listing title is required"),
+  category_slug: z.enum(["for-rent", "for-sale", "short-let", "joint-venture"], {
+    error: "Please select a listing type",
   }),
-  property_type: z.string().min(1, 'Property type is required'),
-  sub_type: z.string().min(1, 'Property sub type is required'),
-  address: z.string().min(1, 'House/Apartment number is required'),
-  country: z.string().min(1, 'Country is required'),
-  state: z.string().min(1, 'State is required'),
-  lga_or_city: z.string().min(1, 'Locality is required'),
+  property_type: z.string().min(1, "Property type is required"),
+  sub_type: z.string().min(1, "Property sub type is required"),
+  address: z.string().min(1, "House/Apartment number is required"),
+  country: z.string().min(1, "Country is required"),
+  state: z.string().min(1, "State is required"),
+  lga_or_city: z.string().min(1, "Locality is required"),
   area: z.string().optional(),
-  description: z.string().min(10, 'Property description must be at least 10 characters'),
-  bedrooms: z.coerce.number().int().min(1, 'Number of bedrooms is required'),
-  bathrooms: z.coerce.number().int().min(1, 'Number of bathrooms is required'),
-  area_sqft: z.coerce.number().int().min(1, 'Total area is required'),
-  price: z.coerce.number().min(1, 'Property price is required'),
-  currency: z.string().min(1, 'Currency is required'),
-  images: z.array(z.string()).min(1, 'At least one property image is required'),
+  description: z.string().min(10, "Property description must be at least 10 characters"),
+  bedrooms: z.coerce.number().int().min(1, "Number of bedrooms is required"),
+  bathrooms: z.coerce.number().int().min(1, "Number of bathrooms is required"),
+  area_sqft: z.coerce.number().int().min(1, "Total area is required"),
+  price: z.coerce.number().min(1, "Property price is required"),
+  currency: z.string().min(1, "Currency is required"),
+  images: z.array(z.string()).min(1, "At least one property image is required"),
   documentType: z.string().optional(),
   propertyDocument: z.string().optional(),
   proofOfAddress: z.string().optional(),
@@ -72,7 +86,7 @@ interface PropertyFormProps {
 interface FileState {
   file: File;
   preview: string;
-  status: 'idle' | 'uploading' | 'success' | 'error';
+  status: "idle" | "uploading" | "success" | "error";
   url?: string;
   error?: string;
 }
@@ -82,19 +96,31 @@ interface DocumentState extends FileState {
 }
 
 const currencies = [
-  { value: 'NGN', label: '₦ Nigerian Naira' },
-  { value: 'USD', label: '$ US Dollar' },
-  { value: 'EUR', label: '€ Euro' },
-  { value: 'GBP', label: '£ British Pound' },
+  { value: "NGN", label: "₦ Nigerian Naira" },
+  { value: "USD", label: "$ US Dollar" },
+  { value: "EUR", label: "€ Euro" },
+  { value: "GBP", label: "£ British Pound" },
 ];
 
-const documentTypes = ['C of O', 'Deed of Assignment', 'Tenancy Agreement', 'Power of Attorney', 'Others'];
+const documentTypes = [
+  "C of O",
+  "Deed of Assignment",
+  "Tenancy Agreement",
+  "Power of Attorney",
+  "Others",
+];
 
 const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData }) => {
   const router = useRouter();
+
   const { data: user } = useGetProfileData();
   const [propertyImages, setPropertyImages] = useState<FileState[]>(
-    initialData?.images?.map((url) => ({ file: new File([], ''), preview: url, status: 'success', url })) || []
+    initialData?.images?.map((url) => ({
+      file: new File([], ""),
+      preview: url,
+      status: "success",
+      url,
+    })) || [],
   );
   const [propertyDocument, setPropertyDocument] = useState<DocumentState | null>(null);
   const [proofOfAddress, setProofOfAddress] = useState<DocumentState | null>(null);
@@ -103,14 +129,17 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const imageInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
   const proofOfAddressInputRef = useRef<HTMLInputElement>(null);
-  const [selectedState, setSelectedState] = useState(initialData?.state || '');
-  const [selectedLga, setSelectedLga] = useState(initialData?.lga_or_city || '');
+  const [selectedState, setSelectedState] = useState(initialData?.state || "");
+  const [selectedLga, setSelectedLga] = useState(initialData?.lga_or_city || "");
 
   const { mutateAsync: createProperty, isPending: isCreating } = useCreateProperty();
-  const { mutateAsync: updateProperty, isPending: isUpdating } = useUpdateProperty(initialData?.id || '');
+  const { mutateAsync: updateProperty, isPending: isUpdating } = useUpdateProperty(
+    initialData?.id || "",
+  );
   const { mutateAsync: uploadImage } = useUploadPropertyImage();
   const { mutateAsync: uploadPropertyDoc } = useUploadPropertyDocument();
   const { mutateAsync: uploadDocument } = useUploadProofOfAddress();
+  const { mutateAsync: deletePropertyImage } = useDeletePropertyImage();
 
   const isPending = isCreating || isUpdating;
 
@@ -128,42 +157,42 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
     }
     const stateData = statesAndLgasData.find((s) => s.state === selectedState);
 
-    return stateData && selectedLga in stateData ? (stateData[selectedLga as keyof typeof stateData] as string[]) : [];
+    return stateData && selectedLga in stateData
+      ? (stateData[selectedLga as keyof typeof stateData] as string[])
+      : [];
   }, [selectedLga, selectedState]);
 
   const form = useForm<PropertyFormValues>({
     resolver: customResolver(PropertyFormSchema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       id: initialData?.id,
-      title: initialData?.title ?? '',
-      category_slug: initialData?.category_slug ?? 'for-rent',
-      property_type: initialData?.property_type ?? '',
-      sub_type: initialData?.sub_type ?? '',
-      address: initialData?.address ?? '',
-      country: initialData?.country ?? 'Nigeria',
-      state: initialData?.state ?? '',
-      lga_or_city: initialData?.lga_or_city ?? '',
-      area: initialData?.area ?? '',
-      description: initialData?.description ?? '',
+      title: initialData?.title ?? "",
+      category_slug: initialData?.category_slug ?? "for-rent",
+      property_type: initialData?.property_type ?? "",
+      sub_type: initialData?.sub_type ?? "",
+      address: initialData?.address ?? "",
+      country: initialData?.country ?? "Nigeria",
+      state: initialData?.state ?? "",
+      lga_or_city: initialData?.lga_or_city ?? "",
+      area: initialData?.area ?? "",
+      description: initialData?.description ?? "",
       bedrooms: initialData?.bedrooms ?? 0,
       bathrooms: initialData?.bathrooms ?? 0,
       area_sqft: initialData?.area_sqft ?? 0,
       price: initialData?.price ?? 0,
-      currency: initialData?.currency ?? 'NGN',
+      currency: initialData?.currency ?? "NGN",
       images: initialData?.images ?? [],
-      documentType: initialData?.documentType ?? '',
-      propertyDocument: initialData?.propertyDocument ?? '',
-      proofOfAddress: initialData?.proofOfAddress ?? '',
+      documentType: initialData?.documentType ?? "",
+      propertyDocument: initialData?.propertyDocument ?? "",
+      proofOfAddress: initialData?.proofOfAddress ?? "",
       features: initialData?.features ?? [],
       status: initialData?.status ?? [],
     },
   });
 
-  const propertyType = form.watch('property_type');
-
-
+  const propertyType = form.watch("property_type");
 
   const subTypes = useMemo(() => {
     if (!propertyType) {
@@ -176,25 +205,25 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (propertyImages.length + files.length > 15) {
-      toast.error('You can upload a maximum of 15 images.');
+      toast.error("You can upload a maximum of 15 images.");
       return;
     }
     if (files.length > 0) {
       const newImageStates: FileState[] = files.map((file) => ({
         file,
         preview: URL.createObjectURL(file),
-        status: 'uploading',
+        status: "uploading",
       }));
 
       setPropertyImages((prev) => [...prev, ...newImageStates]);
 
       const uploadPromises = newImageStates.map((imageState, index) => {
         const formData = new FormData();
-        formData.append('property_images_data', imageState.file);
-        formData.append('image_number', String(propertyImages.length + index + 1));
+        formData.append("property_images_data", imageState.file);
+        formData.append("image_number", String(propertyImages.length + index + 1));
         return uploadImage(formData).then((response) => ({
           ...imageState,
-          status: 'success' as const,
+          status: "success" as const,
           url: response.data.data.image_url,
         }));
       });
@@ -205,17 +234,17 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
             prev.map((img) => {
               const successUpload = results.find((r) => r.preview === img.preview);
               return successUpload || img;
-            })
+            }),
           );
         })
         .catch(() => {
-          toast.error('Some images failed to upload.');
+          toast.error("Some images failed to upload.");
           setPropertyImages((prev) =>
             prev.map((img) =>
               newImageStates.some((s) => s.preview === img.preview)
-                ? { ...img, status: 'error', error: 'Upload failed' }
-                : img
-            )
+                ? { ...img, status: "error", error: "Upload failed" }
+                : img,
+            ),
           );
         });
     }
@@ -227,22 +256,24 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
       const docState: DocumentState = {
         file,
         preview: URL.createObjectURL(file),
-        status: 'uploading',
+        status: "uploading",
       };
       setPropertyDocument(docState);
 
       const formData = new FormData();
-      formData.append('property_document', file);
+      formData.append("property_document", file);
 
       uploadPropertyDoc(formData)
         .then((response) => {
           setPropertyDocument((prev) =>
-            prev ? { ...prev, status: 'success', url: response.data.data.image_url } : null
+            prev ? { ...prev, status: "success", url: response.data.data.image_url } : null,
           );
         })
         .catch(() => {
-          setPropertyDocument((prev) => (prev ? { ...prev, status: 'error', error: 'Upload failed' } : null));
-          toast.error('Failed to upload document.');
+          setPropertyDocument((prev) =>
+            prev ? { ...prev, status: "error", error: "Upload failed" } : null,
+          );
+          toast.error("Failed to upload document.");
         });
     }
   };
@@ -253,48 +284,71 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
       const docState: DocumentState = {
         file,
         preview: URL.createObjectURL(file),
-        status: 'uploading',
+        status: "uploading",
       };
       setProofOfAddress(docState);
 
       const formData = new FormData();
-      formData.append('prove_of_address_document', file);
+      formData.append("prove_of_address_document", file);
 
       uploadDocument(formData)
         .then((response) => {
           setProofOfAddress((prev) =>
-            prev ? { ...prev, status: 'success', url: response.data.data.image_url } : null
+            prev ? { ...prev, status: "success", url: response.data.data.image_url } : null,
           );
         })
         .catch(() => {
-          setProofOfAddress((prev) => (prev ? { ...prev, status: 'error', error: 'Upload failed' } : null));
-          toast.error('Failed to upload proof of address.');
+          setProofOfAddress((prev) =>
+            prev ? { ...prev, status: "error", error: "Upload failed" } : null,
+          );
+          toast.error("Failed to upload proof of address.");
         });
     }
   };
 
   useEffect(() => {
     const uploadedImageUrls = propertyImages
-      .filter((img) => img.status === 'success' && img.url)
+      .filter((img) => img.status === "success" && img.url)
       .map((img) => img.url!);
-    form.setValue('images', uploadedImageUrls);
+    form.setValue("images", uploadedImageUrls);
   }, [propertyImages, form]);
 
   useEffect(() => {
-    if (propertyDocument?.status === 'success' && propertyDocument.url) {
-      form.setValue('propertyDocument', propertyDocument.url);
+    if (propertyDocument?.status === "success" && propertyDocument.url) {
+      form.setValue("propertyDocument", propertyDocument.url);
     }
   }, [propertyDocument, form]);
 
   useEffect(() => {
-    if (proofOfAddress?.status === 'success' && proofOfAddress.url) {
-      form.setValue('proofOfAddress', proofOfAddress.url);
+    if (proofOfAddress?.status === "success" && proofOfAddress.url) {
+      form.setValue("proofOfAddress", proofOfAddress.url);
     }
   }, [proofOfAddress, form]);
 
-  const handleImageRemove = (index: number) => {
-    const newImages = propertyImages.filter((_, i) => i !== index);
-    setPropertyImages(newImages);
+  const handleImageRemove = async (index: number) => {
+    const imageToRemove = propertyImages[index];
+
+    // Only attempt to delete if the image has a URL (i.e., it's saved on the server)
+    if (imageToRemove.url) {
+      try {
+        // Extract the filename from the URL
+        const filename = imageToRemove.url.substring(imageToRemove.url.lastIndexOf("/") + 1);
+
+        // Call the delete mutation
+        await deletePropertyImage(filename);
+
+        // If deletion is successful, then remove from local state
+        const newImages = propertyImages.filter((_, i) => i !== index);
+        setPropertyImages(newImages);
+      } catch (error: any) {
+        toast.error(error?.response?.data?.message || "Failed to delete image.");
+      }
+    } else {
+      // If there's no URL, it's a new image that hasn't been uploaded yet.
+      // Just remove it from the local state.
+      const newImages = propertyImages.filter((_, i) => i !== index);
+      setPropertyImages(newImages);
+    }
   };
   const handleImageReplace = (index: number) => {
     handleImageRemove(index);
@@ -304,7 +358,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const handleDocumentRemove = () => {
     setPropertyDocument(null);
     if (documentInputRef.current) {
-      documentInputRef.current.value = '';
+      documentInputRef.current.value = "";
     }
   };
 
@@ -316,27 +370,33 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const handleProofOfAddressRemove = () => {
     setProofOfAddress(null);
     if (proofOfAddressInputRef.current) {
-      proofOfAddressInputRef.current.value = '';
+      proofOfAddressInputRef.current.value = "";
     }
   };
 
   const onSubmit = async (data: PropertyFormValues) => {
+    // Find the correct casing for property_type
+    const correctPropertyType = propertyTypes.find(
+      (p) => p.types.toLowerCase() === data.property_type.toLowerCase(),
+    );
+
     const payload = {
       ...data,
+      property_type: correctPropertyType ? correctPropertyType.types : data.property_type,
       price: Number(data.price),
     };
 
     try {
       if (isEdit) {
         await updateProperty(payload);
-        toast.success('Property updated successfully!');
+        toast.success("Property updated successfully!");
       } else {
         await createProperty(payload);
-        toast.success('Property created successfully!');
+        toast.success("Property created successfully!");
       }
-      router.navigate({ to: '/properties' });
+      router.navigate({ to: "/properties" });
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'An error occurred.');
+      toast.error(error.response?.data?.message || "An error occurred.");
     }
   };
 
@@ -356,11 +416,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator>
-                  <Slash className="size-3 " />
+                  <Slash className="size-3" />
                 </BreadcrumbSeparator>
                 <BreadcrumbItem>
                   <BreadcrumbPage className="max-w-[200px] truncate text-sm sm:max-w-none">
-                    {initialData?.title ?? ''}
+                    {initialData?.title ?? ""}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -368,7 +428,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
             <div className="flex w-full flex-col gap-4">
               <h1 className="text-lg font-semibold text-black sm:text-xl">
-                {isEdit ? 'Edit Property Details' : 'New Property'}
+                {isEdit ? "Edit Property Details" : "New Property"}
               </h1>
             </div>
           </div>
@@ -434,26 +494,33 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                       Property Type
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        form.setValue('sub_type', '');
-                      }}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
-                          <SelectValue placeholder="Select Property Type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {propertyTypes.map((type) => (
-                          <SelectItem key={type.types} value={type.types}>
-                            {type.types}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    {isEdit ? (
+                      <div className="flex h-10 items-center rounded-lg border border-[#D5D5DD] bg-[#F9F9FB] px-3 text-sm text-[#1F2130]">
+                        {form.getValues().property_type || initialData?.property_type || "—"}
+                      </div>
+                    ) : (
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          form.setValue("sub_type", "");
+                        }}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
+                            <SelectValue placeholder="Select Property Type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {propertyTypes.map((type) => (
+                            <SelectItem key={type.types} value={type.types}>
+                              {type.types}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -467,20 +534,31 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                       Property Sub-Type
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value} disabled={subTypes.length === 0}>
-                      <FormControl>
-                        <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
-                          <SelectValue placeholder="Select Property Sub-Type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {subTypes.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    {isEdit ? (
+                      <div className="flex h-10 items-center rounded-lg border border-[#D5D5DD] bg-[#F9F9FB] px-3 text-sm text-[#1F2130]">
+                        {form.getValues().sub_type || initialData?.sub_type || "—"}
+                      </div>
+                    ) : (
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={subTypes.length === 0}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
+                            <SelectValue placeholder="Select Property Sub-Type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {subTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -492,9 +570,15 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 name="address"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Address</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Address
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="45, Market Avenue" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="45, Market Avenue"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -508,13 +592,15 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 name="state"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">State</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      State
+                    </FormLabel>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
                         setSelectedState(value);
-                        form.setValue('lga_or_city', '');
-                        form.setValue('area', '');
+                        form.setValue("lga_or_city", "");
+                        form.setValue("area", "");
                       }}
                       value={field.value}
                     >
@@ -541,13 +627,15 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 name="lga_or_city"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Locality</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Locality
+                    </FormLabel>
                     <Select
                       disabled={!selectedState || lgas.length === 0}
                       onValueChange={(value) => {
                         field.onChange(value);
                         setSelectedLga(value);
-                        form.setValue('area', '');
+                        form.setValue("area", "");
                       }}
                       value={field.value}
                     >
@@ -573,7 +661,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 name="area"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Area</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Area
+                    </FormLabel>
                     <Select
                       disabled={!selectedLga || areas.length === 0}
                       onValueChange={field.onChange}
@@ -630,13 +720,15 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 name="bedrooms"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Bedrooms</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Bedrooms
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="5"
                         className="h-10 rounded-lg border-[#D5D5DD]"
                         {...field}
-                        value={formatNumberWithCommas(field.value?.toString() || '')}
+                        value={formatNumberWithCommas(field.value?.toString() || "")}
                         onChange={(e) => {
                           const raw = parseNumber(e.target.value);
                           field.onChange(raw); // store raw number
@@ -653,13 +745,15 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 name="bathrooms"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Bathroom</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Bathroom
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="6"
                         className="h-10 rounded-lg border-[#D5D5DD]"
                         {...field}
-                        value={formatNumberWithCommas(field.value?.toString() || '')}
+                        value={formatNumberWithCommas(field.value?.toString() || "")}
                         onChange={(e) => {
                           const raw = parseNumber(e.target.value);
                           field.onChange(raw); // store raw number
@@ -676,20 +770,24 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 name="area_sqft"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Total Area</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Total Area
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
                           placeholder="800"
                           className="h-10 rounded-lg border-[#D5D5DD] pr-12"
                           {...field}
-                          value={formatNumberWithCommas(field.value?.toString() || '')}
+                          value={formatNumberWithCommas(field.value?.toString() || "")}
                           onChange={(e) => {
                             const raw = parseNumber(e.target.value);
                             field.onChange(raw); // store raw number
                           }}
                         />
-                        <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-[#71748C]">sq m</span>
+                        <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-[#71748C]">
+                          sq m
+                        </span>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -710,7 +808,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                         placeholder="56,000,000.00"
                         className="h-10 rounded-lg border-[#D5D5DD]"
                         {...field}
-                        value={formatNumberWithCommas(field.value?.toString() || '')}
+                        value={formatNumberWithCommas(field.value?.toString() || "")}
                         onChange={(e) => {
                           const raw = parseNumber(e.target.value);
                           field.onChange(raw); // store raw number
@@ -727,7 +825,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 name="currency"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Currency</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Currency
+                    </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
@@ -764,9 +864,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                   >
                     <div className="flex flex-col items-center gap-3">
                       <p className="text-[14px] leading-[17px] text-[#71748C]">
-                        <span className="cursor-pointer font-semibold text-[#B69118]">Click </span> to upload
+                        <span className="cursor-pointer font-semibold text-[#B69118]">Click </span>{" "}
+                        to upload
                       </p>
-                      <p className="text-[10px]/3  text-[#71748C]">Supports JPEG, or PNG files.</p>
+                      <p className="text-[10px]/3 text-[#71748C]">Supports JPEG, or PNG files.</p>
                     </div>
                   </div>
                 </div>
@@ -780,15 +881,19 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       onMouseLeave={() => setHoveredImage(null)}
                     >
                       <div className="relative h-[120px] w-full bg-transparent sm:h-[108px]">
-                        <img src={image.preview} alt={`Property ${index + 1}`} className="size-full  object-cover" />
-                        {image.status === 'uploading' && (
+                        <img
+                          src={image.preview}
+                          alt={`Property ${index + 1}`}
+                          className="size-full object-cover"
+                        />
+                        {image.status === "uploading" && (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                            <Loader2 className="size-6  animate-spin text-white" />
+                            <Loader2 className="size-6 animate-spin text-white" />
                           </div>
                         )}
-                        {image.status === 'error' && (
+                        {image.status === "error" && (
                           <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-500/70 text-white">
-                            <X className="size-6 " />
+                            <X className="size-6" />
                             <span className="text-xs">Failed</span>
                           </div>
                         )}
@@ -796,8 +901,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
                       <div
                         className={cn(
-                          'absolute inset-0 z-10 flex size-full  items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
-                          hoveredImage === index ? 'opacity-100' : 'pointer-events-none opacity-0'
+                          "absolute inset-0 z-10 flex size-full items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300",
+                          hoveredImage === index ? "opacity-100" : "pointer-events-none opacity-0",
                         )}
                       >
                         <div className="flex items-center gap-3">
@@ -805,7 +910,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px]/3.5  font-normal text-black sm:px-6"
+                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px]/3.5 font-normal text-black sm:px-6"
                             onClick={() => handleImageRemove(index)}
                           >
                             <Trash className="size-3.5 text-[#D20832]" />
@@ -815,7 +920,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px]/3.5  font-normal text-black sm:px-6"
+                            className="h-[30px] rounded-[40px] bg-white px-4 py-2 text-[12px]/3.5 font-normal text-black sm:px-6"
                             onClick={() => handleImageReplace(index)}
                           >
                             <RotateCcw className="size-3.5" />
@@ -832,9 +937,12 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     >
                       <div className="flex flex-col items-center gap-3">
                         <p className="text-[14px] leading-[17px] text-[#71748C]">
-                          <span className="cursor-pointer font-semibold text-[#B69118]">Click </span> to upload
+                          <span className="cursor-pointer font-semibold text-[#B69118]">
+                            Click{" "}
+                          </span>{" "}
+                          to upload
                         </p>
-                        <p className="text-[10px]/3  text-[#71748C]">Supports JPEG, or PNG files.</p>
+                        <p className="text-[10px]/3 text-[#71748C]">Supports JPEG, or PNG files.</p>
                       </div>
                     </div>
                   )}
@@ -853,7 +961,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
             <Separator className="h-px w-full bg-[#EEEEF1]" />
 
-            {user?.user_role === 'owner' && (
+            {user?.user_role === "owner" && (
               <>
                 {/* Property Document */}
                 <div className="flex w-full flex-col gap-3">
@@ -894,9 +1002,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                         Supports JPEG, or PNG files.
                       </label>
 
-                      {propertyDocument?.status === 'uploading' ? (
+                      {propertyDocument?.status === "uploading" ? (
                         <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
-                          <Loader2 className="size-5  animate-spin text-gray-500" />
+                          <Loader2 className="size-5 animate-spin text-gray-500" />
                         </div>
                       ) : !propertyDocument ? (
                         <Button
@@ -911,17 +1019,21 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       ) : (
                         <div
                           className={cn(
-                            'flex items-center gap-3 rounded-lg border p-3',
-                            propertyDocument.status === 'error' ? 'border-red-500' : 'border-[#E3E3E8]'
+                            "flex items-center gap-3 rounded-lg border p-3",
+                            propertyDocument.status === "error"
+                              ? "border-red-500"
+                              : "border-[#E3E3E8]",
                           )}
                         >
-                          <span className="flex-1 truncate text-sm text-[#1F2130]">{propertyDocument.file.name}</span>
+                          <span className="flex-1 truncate text-sm text-[#1F2130]">
+                            {propertyDocument.file.name}
+                          </span>
                           <div className="flex items-center gap-2">
                             <Button
                               type="button"
                               size="sm"
                               variant="ghost"
-                              className="size-6  p-0"
+                              className="size-6 p-0"
                               onClick={handleDocumentReplace}
                             >
                               <RotateCcw className="size-3" />
@@ -930,7 +1042,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                               type="button"
                               size="sm"
                               variant="ghost"
-                              className="size-6  p-0 text-red-600"
+                              className="size-6 p-0 text-red-600"
                               onClick={handleDocumentRemove}
                             >
                               <X className="size-3" />
@@ -962,9 +1074,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       Upload a utility bill or other document as proof of address.
                     </label>
 
-                    {proofOfAddress?.status === 'uploading' ? (
+                    {proofOfAddress?.status === "uploading" ? (
                       <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
-                        <Loader2 className="size-5  animate-spin text-gray-500" />
+                        <Loader2 className="size-5 animate-spin text-gray-500" />
                       </div>
                     ) : !proofOfAddress ? (
                       <Button
@@ -979,17 +1091,19 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     ) : (
                       <div
                         className={cn(
-                          'flex items-center gap-3 rounded-lg border p-3',
-                          proofOfAddress.status === 'error' ? 'border-red-500' : 'border-[#E3E3E8]'
+                          "flex items-center gap-3 rounded-lg border p-3",
+                          proofOfAddress.status === "error" ? "border-red-500" : "border-[#E3E3E8]",
                         )}
                       >
-                        <span className="flex-1 truncate text-sm text-[#1F2130]">{proofOfAddress.file.name}</span>
+                        <span className="flex-1 truncate text-sm text-[#1F2130]">
+                          {proofOfAddress.file.name}
+                        </span>
                         <div className="flex items-center gap-2">
                           <Button
                             type="button"
                             size="sm"
                             variant="ghost"
-                            className="size-6  p-0"
+                            className="size-6 p-0"
                             onClick={() => proofOfAddressInputRef.current?.click()}
                           >
                             <RotateCcw className="size-3" />
@@ -998,7 +1112,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                             type="button"
                             size="sm"
                             variant="ghost"
-                            className="size-6  p-0 text-red-600"
+                            className="size-6 p-0 text-red-600"
                             onClick={handleProofOfAddressRemove}
                           >
                             <X className="size-3" />
@@ -1039,7 +1153,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                         render={({ field }) => {
                           const value = field.value ?? [];
                           return (
-                            <FormItem key={status} className="flex flex-row items-start space-y-0 space-x-3">
+                            <FormItem
+                              key={status}
+                              className="flex flex-row items-start space-y-0 space-x-3"
+                            >
                               <FormControl>
                                 <Checkbox
                                   checked={value.includes(status)}
@@ -1050,7 +1167,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                                   }}
                                 />
                               </FormControl>
-                              <FormLabel className="text-sm/5  font-normal">{status}</FormLabel>
+                              <FormLabel className="text-sm/5 font-normal">{status}</FormLabel>
                             </FormItem>
                           );
                         }}
@@ -1082,7 +1199,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                         render={({ field }) => {
                           const value = field.value ?? [];
                           return (
-                            <FormItem key={feature} className="flex flex-row items-start space-y-0 space-x-3">
+                            <FormItem
+                              key={feature}
+                              className="flex flex-row items-start space-y-0 space-x-3"
+                            >
                               <FormControl>
                                 <Checkbox
                                   checked={value.includes(feature)}
@@ -1093,7 +1213,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                                   }}
                                 />
                               </FormControl>
-                              <FormLabel className="text-sm/5  font-normal">{feature}</FormLabel>
+                              <FormLabel className="text-sm/5 font-normal">{feature}</FormLabel>
                             </FormItem>
                           );
                         }}
@@ -1106,29 +1226,27 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
             />
 
             {/* Global Form Errors */}
-{Object.keys(form.formState.errors).length > 0 && (
-  <div className="w-full rounded-lg border border-red-300 bg-red-50 p-4">
-    <div className="flex items-start gap-2">
-      <div className="shrink-0">
-        <X className="size-5  text-red-600" />
-      </div>
-      <div className="flex-1">
-        <h4 className="text-sm font-medium text-red-800">
-          Please fix the following errors:
-        </h4>
-        <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-red-700">
-          {Object.entries(form.formState.errors).map(([field, error]) => (
-            <li key={field}>
-              <span className="font-medium">{field}:</span>{' '}
-              {error?.message as string}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  </div>
-)}
-
+            {Object.keys(form.formState.errors).length > 0 && (
+              <div className="w-full rounded-lg border border-red-300 bg-red-50 p-4">
+                <div className="flex items-start gap-2">
+                  <div className="shrink-0">
+                    <X className="size-5 text-red-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-medium text-red-800">
+                      Please fix the following errors:
+                    </h4>
+                    <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-red-700">
+                      {Object.entries(form.formState.errors).map(([field, error]) => (
+                        <li key={field}>
+                          <span className="font-medium">{field}:</span> {error?.message as string}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Action Buttons - moved to bottom */}
             <div className="flex w-full flex-col gap-4 pt-6 sm:flex-row sm:items-center">
@@ -1143,13 +1261,20 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
               <Button
                 style={{
-                  background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                  background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
+                  boxShadow:
+                    "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                 }}
                 type="submit"
                 className="h-12 w-full rounded-[40px] px-6 py-3 text-[14px] font-semibold text-white sm:w-auto sm:flex-1"
               >
-                {isPending ? (isEdit ? 'Updating...' : 'Submitting...') : isEdit ? 'Update' : 'Submit'}
+                {isPending
+                  ? isEdit
+                    ? "Updating..."
+                    : "Submitting..."
+                  : isEdit
+                    ? "Update"
+                    : "Submit"}
               </Button>
             </div>
           </div>

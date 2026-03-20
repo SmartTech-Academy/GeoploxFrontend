@@ -198,6 +198,17 @@ export const useDeleteProperty = () => {
   });
 };
 
+export const useDeletePropertyImage = () => {
+  return useMutation({
+    mutationFn: (propertyPostion: string) => api.delete(`/dashboard/property-image/${propertyPostion}/delete`),
+    onSuccess: (data) => {
+      toast.success(data.data.message || 'Property image deleted successfully!');
+      queryClient.invalidateQueries({ queryKey: ['properties'] });
+    },
+  });
+};
+
+
 export const useAddToFavorites = () => {
   return useMutation({
     mutationFn: (propertyId: string) => api.post(`/dashboard/favorite/property/${propertyId}`),
