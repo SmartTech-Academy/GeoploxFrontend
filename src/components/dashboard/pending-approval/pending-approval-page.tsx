@@ -55,7 +55,7 @@ interface ListingDetails {
 }
 
 type Request = {
-  id: string; // Use string for codec/slug
+  id: string | number; // Use string for codec/slug, number for property ID
   date: string;
   type: "KYC" | "Listing";
   name: string;
@@ -446,7 +446,7 @@ const PendingApprovalPage = () => {
 
     const listingReqs: Request[] = properties.map(
       (prop: any): Request => ({
-        id: prop.slug,
+        id: prop.id,
         date: format(parseISO(prop.approval_request_date), "dd MMM, yyyy"),
         type: "Listing",
         name: prop.title,

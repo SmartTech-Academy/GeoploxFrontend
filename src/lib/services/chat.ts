@@ -23,12 +23,19 @@ export const useGetConversations = (params: { per_page?: number; [key: string]: 
 
 export const useCreateConversation = () => {
   return useMutation({
-    mutationFn: (data: any) => api.post('/chat/conversations', data),
+    mutationFn: (data: { participant_user_id: string; subject?: string }) => {
+      const formData = new FormData();
+      formData.append("participant_user_id", data.participant_user_id);
+      formData.append("subject", data.subject || "Chat");
+      formData.append("type", "private");
+      return api.post("/dashboard/chat/conversations", formData);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },
   });
 };
+
 
 export const useDeleteConversation = () => {
   return useMutation({

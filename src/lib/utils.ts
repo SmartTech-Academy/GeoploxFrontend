@@ -4,12 +4,26 @@ import { twMerge } from 'tailwind-merge';
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-export const formatPrice = (price: number, currency: string) => {
-  return new Intl.NumberFormat('en-NG', {
-    style: 'currency',
-    currency: currency,
-    minimumFractionDigits: 0,
-  }).format(price);
+export const formatPrice = (price: number, currency: string = 'NGN') => {
+  // Validate currency code - if not provided or invalid, use NGN as default
+  const validCurrency = currency && typeof currency === 'string' && currency.length === 3
+    ? currency.toUpperCase()
+    : 'NGN';
+
+  try {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: validCurrency,
+      minimumFractionDigits: 0,
+    }).format(price);
+  } catch (error) {
+    // If currency is still invalid, fallback to NGN
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 0,
+    }).format(price);
+  }
 };
 
 export const formatNumberWithCommas = (value: string) => {

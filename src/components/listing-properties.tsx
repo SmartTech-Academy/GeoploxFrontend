@@ -1,42 +1,41 @@
-import React, { useMemo, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { useLocation } from '@tanstack/react-router';
-import { useDebounce } from 'use-debounce';
-import { PropertyFilterSidebar } from '@/components/property-filter-sidebar';
-import { MobilePropertyFilters } from '@/components/mobile-property-filters';
-import { Property, PropertyListingCard } from './property-listing-card';
-import { useGetProperties } from '@/lib/services';
-import { PropertyListingCardSkeleton } from './property-listing-card-skeleton';
-import { cn } from '@/lib/utils';
-import statesAndLocalGov from '@/data/statesAndLocalGov.json';
-import { propertyTypes, sortOptions } from '@/data/reuseable';
+import React, { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useLocation } from "@tanstack/react-router";
+import { useDebounce } from "use-debounce";
+import { PropertyFilterSidebar } from "@/components/property-filter-sidebar";
+import { MobilePropertyFilters } from "@/components/mobile-property-filters";
+import { Property, PropertyListingCard } from "./property-listing-card";
+import { useGetProperties } from "@/lib/services";
+import { PropertyListingCardSkeleton } from "./property-listing-card-skeleton";
+import { cn } from "@/lib/utils";
+import statesAndLocalGov from "@/data/statesAndLocalGov.json";
+import { propertyTypes, sortOptions } from "@/data/reuseable";
 
 const ListingProperties = () => {
   const location = useLocation();
-  const isListingPage = location.pathname.includes('/listing');
-  const isAdminListingPage = location.pathname.includes('/admin-listing');
+  const isListingPage = location.pathname.includes("/listing");
+  const isAdminListingPage = location.pathname.includes("/admin-listing");
 
-  const pageType = location.pathname.includes('/short-let')
+  const pageType = location.pathname.includes("/short-let")
     ? `buy`
-    : location.pathname.includes('/for-rent')
+    : location.pathname.includes("/for-rent")
       ? `for-rent`
-      : location.pathname.includes('/for-sale')
+      : location.pathname.includes("/for-sale")
         ? `for-sale`
-        : location.pathname.includes('/joint-venture')
+        : location.pathname.includes("/joint-venture")
           ? `joint-venture`
-          : 'all';
+          : "all";
 
   const [filters, setFilters] = useState<Record<string, any>>({
-    per_page: 5,
     page: 1,
-    sort: 'newest',
+    sort: "newest",
   });
 
   const [debouncedFilters] = useDebounce(filters, 300);
   const { data: propertiesResponse, isPending: isLoadingProperties } = useGetProperties(
     { ...debouncedFilters, pageType },
     isListingPage || isAdminListingPage,
-    isAdminListingPage
+    isAdminListingPage,
   );
 
   const responseData = propertiesResponse?.data?.data;
@@ -48,14 +47,16 @@ const ListingProperties = () => {
           ...p,
           id: String(p.id),
           location: {
-            city: p.city,
-            state: p.state,
+            city: p.location?.city ?? "N/A",
+            state: p.location?.state ?? "N/A",
           },
-          category: p.category || 'N/A',
-          cover_image: p.cover_image || p.images?.find((img: any) => img.is_cover)?.url || '/placeholder.png',
+          category: p.category || "N/A",
+          cover_image:
+            p.cover_image || p.images?.find((img: any) => img.is_cover)?.url || "/placeholder.png",
           excerpt: p.excerpt || p.desc,
         }))
       : rawProperties;
+
   const totalResults = responseData?.meta?.total ?? 0;
   const lastPage = responseData?.meta?.last_page ?? 1;
 
@@ -73,9 +74,8 @@ const ListingProperties = () => {
 
   const handleClearFilters = () => {
     setFilters({
-      per_page: 5,
       page: 1,
-      sort: 'newest',
+      sort: "newest",
     });
   };
 
@@ -122,7 +122,8 @@ const ListingProperties = () => {
 
   let displayedLocations: string[] = [];
   if (filters.state && filters.city) {
-    displayedLocations = (statesAndLocalGov.find((s) => s.state === filters.state) as any)?.[filters.city] || [];
+    displayedLocations =
+      (statesAndLocalGov.find((s) => s.state === filters.state) as any)?.[filters.city] || [];
   } else if (filters.state) {
     displayedLocations = statesAndLocalGov.find((s) => s.state === filters.state)?.lgas || [];
   } else {
@@ -141,15 +142,15 @@ const ListingProperties = () => {
           <div className="flex h-dvh w-[334px] shrink-0 flex-col items-start gap-[17px]">
             <h2 className="text-[32px] leading-[38px] font-semibold tracking-[-0.02em] text-[#1F2130]">
               {isAdminListingPage
-                ? 'Admin Listings'
+                ? "Admin Listings"
                 : isListingPage
-                  ? 'My Listings'
+                  ? "My Listings"
                   : `${
-                      location.pathname.includes('/short-let')
-                        ? 'Buy'
-                        : location.pathname.includes('/for-rent')
-                          ? 'Rent'
-                          : 'Sell'
+                      location.pathname.includes("/short-let")
+                        ? "Buy"
+                        : location.pathname.includes("/for-rent")
+                          ? "Rent"
+                          : "Sell"
                     } Property`}
             </h2>
 
@@ -164,7 +165,7 @@ const ListingProperties = () => {
           <div className="flex grow flex-col items-start gap-4 pt-11">
             {/* Header */}
             <div className="flex w-full justify-between gap-6 self-stretch">
-              <h1 className="text-[16px]/6  text-[#535364]">{totalResults} Results</h1>
+              <h1 className="text-[16px]/6 text-[#535364]">{totalResults} Results</h1>
               <div className="flex items-center justify-center gap-6">
                 {sortOptions.map((option) => (
                   <Button
@@ -172,8 +173,9 @@ const ListingProperties = () => {
                     variant="ghost"
                     onClick={() => handleSortChange(option.value)}
                     className={cn(
-                      'h-8 rounded-none border-x-0 border-y-0  py-4 text-[16px]/6  font-normal text-[#71748C]',
-                      filters.sort === option.value && 'border-b border-primary font-semibold text-primary'
+                      "h-8 rounded-none border-x-0 border-y-0 py-4 text-[16px]/6 font-normal text-[#71748C]",
+                      filters.sort === option.value &&
+                        "border-b border-primary font-semibold text-primary",
                     )}
                   >
                     {option.label}
@@ -186,7 +188,9 @@ const ListingProperties = () => {
               <div className="flex w-full flex-col items-start gap-4 self-stretch">
                 <div className="flex w-full flex-col gap-4 bg-[#F8F8F8] p-4 text-[#41415A]">
                   {/* Header */}
-                  <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">Quick Filter</h3>
+                  <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">
+                    Quick Filter
+                  </h3>
 
                   {/* Property Types Row */}
                   <div className="flex flex-wrap items-center gap-1">
@@ -195,13 +199,15 @@ const ListingProperties = () => {
                         <span
                           onClick={() => handlePropertyTypeChange(type.types)}
                           className={cn(
-                            'cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:text-primary hover:underline',
-                            filters.property_type === type.types && 'font-semibold text-primary'
+                            "cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:text-primary hover:underline",
+                            filters.property_type === type.types && "font-semibold text-primary",
                           )}
                         >
-                          {type.types.replace('_', ' ')}
+                          {type.types.replace("_", " ")}
                         </span>
-                        {index < propertyTypes.length - 1 && <span className="mx-2 text-gray-300">|</span>}
+                        {index < propertyTypes.length - 1 && (
+                          <span className="mx-2 text-gray-300">|</span>
+                        )}
                       </React.Fragment>
                     ))}
                   </div>
@@ -213,15 +219,37 @@ const ListingProperties = () => {
                           key={subType}
                           onClick={() => handleSubTypeChange(subType)}
                           className={cn(
-                            'cursor-pointer rounded-full border px-3 py-1 text-[12px] transition-colors',
+                            "cursor-pointer rounded-full border px-3 py-1 text-[12px] transition-colors",
                             filters.filter_property_sub_type === subType
-                              ? 'border-primary bg-primary text-white'
-                              : 'border-gray-300 text-gray-600 hover:border-primary hover:text-primary'
+                              ? "border-primary bg-primary text-white"
+                              : "border-gray-300 text-gray-600 hover:border-primary hover:text-primary",
                           )}
                         >
                           {subType}
                         </span>
                       ))}
+                    </div>
+                  )}
+
+                  {/* Clear Category Filter */}
+                  {filters.category_id && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[12px] font-semibold text-[#1F2130]">
+                        Category: {filters.category_id}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          handleFilterChange({
+                            ...filters,
+                            category_id: undefined,
+                          })
+                        }
+                        className="h-6 rounded-full border border-red-300 bg-white px-2 text-[10px] font-semibold text-red-600 hover:bg-red-50"
+                      >
+                        ✕ Clear
+                      </Button>
                     </div>
                   )}
 
@@ -236,10 +264,12 @@ const ListingProperties = () => {
                         >
                           ← Back to States
                         </Button>
-                        <span className="text-[12px] font-semibold text-[#1F2130]">{filters.state}</span>
+                        <span className="text-[12px] font-semibold text-[#1F2130]">
+                          {filters.state}
+                        </span>
                         {filters.city && (
                           <>
-                            <span className="text-[12px] text-[#1F2130]">{'>'}</span>
+                            <span className="text-[12px] text-[#1F2130]">{">"}</span>
                             <Button
                               variant="link"
                               onClick={handleBackToLgas}
@@ -263,13 +293,15 @@ const ListingProperties = () => {
                                 : handleStateClick(location)
                             }
                             className={cn(
-                              'cursor-pointer text-[12px] leading-[17px] transition-colors hover:text-primary hover:underline',
-                              !filters.state && 'font-medium'
+                              "cursor-pointer text-[12px] leading-[17px] transition-colors hover:text-primary hover:underline",
+                              !filters.state && "font-medium",
                             )}
                           >
                             {location}
                           </span>
-                          {index < displayedLocations.length - 1 && <span className="mx-2 text-gray-300">|</span>}
+                          {index < displayedLocations.length - 1 && (
+                            <span className="mx-2 text-gray-300">|</span>
+                          )}
                         </React.Fragment>
                       ))}
                     </div>
@@ -280,7 +312,9 @@ const ListingProperties = () => {
               {/* Property Listings */}
               <div className="flex w-full flex-col gap-10">
                 {isLoadingProperties
-                  ? Array.from({ length: 5 }).map((_, index) => <PropertyListingCardSkeleton key={index} />)
+                  ? Array.from({ length: 5 }).map((_, index) => (
+                      <PropertyListingCardSkeleton key={index} />
+                    ))
                   : properties.map((property) => (
                       <PropertyListingCard
                         key={property.id}
@@ -319,31 +353,42 @@ const ListingProperties = () => {
         {/* Mobile Layout */}
         <div className="flex w-full flex-col pt-4 lg:hidden">
           {/* Mobile Filters */}
-          <MobilePropertyFilters filters={filters} onFiltersChange={handleFilterChange} onClear={handleClearFilters} />
+          <MobilePropertyFilters
+            filters={filters}
+            onFiltersChange={handleFilterChange}
+            onClear={handleClearFilters}
+          />
 
           {/* Mobile Results Header */}
           <div className="mb-4 px-4">
-            <h1 className="mb-4 text-[16px]/6  font-medium text-[#535364]">{totalResults} Results</h1>
+            <h1 className="mb-4 text-[16px]/6 font-medium text-[#535364]">
+              {totalResults} Results
+            </h1>
           </div>
 
           {/* Mobile Quick Filter */}
           <div className="mx-4 mb-6">
             <div className="flex w-full flex-col gap-4 rounded-xl bg-[#F8F8F8] p-4 text-[#41415A]">
-              <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]"> Quick Filter</h3>
+              <h3 className="text-[12px] leading-[17px] font-semibold text-[#1F2130]">
+                {" "}
+                Quick Filter
+              </h3>
               <div className="flex flex-wrap items-center gap-1">
                 {propertyTypes.map((item, index) => (
                   <React.Fragment key={item.types}>
                     <span
                       onClick={() => handlePropertyTypeChange(item.types)}
                       className={cn(
-                        'cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:text-primary hover:underline',
-                        filters.property_type === item.types && 'font-semibold text-primary'
+                        "cursor-pointer text-[12px] leading-[17px] capitalize transition-colors hover:text-primary hover:underline",
+                        filters.property_type === item.types && "font-semibold text-primary",
                       )}
                     >
                       {item.types}
                     </span>
 
-                    {index < propertyTypes.length - 1 && <span className="mx-2 text-gray-300">|</span>}
+                    {index < propertyTypes.length - 1 && (
+                      <span className="mx-2 text-gray-300">|</span>
+                    )}
                   </React.Fragment>
                 ))}
 
@@ -354,10 +399,10 @@ const ListingProperties = () => {
                         key={subType}
                         onClick={() => handleSubTypeChange(subType)}
                         className={cn(
-                          'cursor-pointer rounded-full border px-3 py-1 text-[12px] transition-colors',
+                          "cursor-pointer rounded-full border px-3 py-1 text-[12px] transition-colors",
                           filters.filter_property_sub_type === subType
-                            ? 'border-primary bg-primary text-white'
-                            : 'border-gray-300 text-gray-600 hover:border-primary hover:text-primary'
+                            ? "border-primary bg-primary text-white"
+                            : "border-gray-300 text-gray-600 hover:border-primary hover:text-primary",
                         )}
                       >
                         {subType}
@@ -376,10 +421,12 @@ const ListingProperties = () => {
                     >
                       ← Back to States
                     </Button>
-                    <span className="text-[12px] font-semibold text-[#1F2130]">{filters.state}</span>
+                    <span className="text-[12px] font-semibold text-[#1F2130]">
+                      {filters.state}
+                    </span>
                     {filters.city && (
                       <>
-                        <span className="text-[12px] text-[#1F2130]">{'>'}</span>
+                        <span className="text-[12px] text-[#1F2130]">{">"}</span>
                         <Button
                           variant="link"
                           onClick={handleBackToLgas}
@@ -403,13 +450,15 @@ const ListingProperties = () => {
                             : handleStateClick(location)
                         }
                         className={cn(
-                          'cursor-pointer text-[12px] leading-[17px] transition-colors hover:text-[#D4AF36] hover:underline',
-                          !filters.state && 'font-medium'
+                          "cursor-pointer text-[12px] leading-[17px] transition-colors hover:text-[#D4AF36] hover:underline",
+                          !filters.state && "font-medium",
                         )}
                       >
                         {location}
                       </span>
-                      {index < displayedLocations.length && <span className="mx-2 text-gray-300">|</span>}
+                      {index < displayedLocations.length && (
+                        <span className="mx-2 text-gray-300">|</span>
+                      )}
                     </React.Fragment>
                   ))}
                 </div>
@@ -420,7 +469,9 @@ const ListingProperties = () => {
           {/* Mobile Property Listings */}
           <div className="flex flex-col gap-6 px-4">
             {isLoadingProperties
-              ? Array.from({ length: 3 }).map((_, index) => <PropertyListingCardSkeleton key={index} />)
+              ? Array.from({ length: 3 }).map((_, index) => (
+                  <PropertyListingCardSkeleton key={index} />
+                ))
               : properties.map((property) => (
                   <PropertyListingCard
                     key={property.id}

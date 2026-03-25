@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   MoreVertical,
   Heart,
@@ -13,8 +13,8 @@ import {
   ShowerHead,
   Square,
   Slash,
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,19 +22,19 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator as DropdownMenuSeparatorAction,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { cn, formatPrice } from '@/lib/utils';
-import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate, useParams } from '@tanstack/react-router';
-import { PageMetaTags } from './page-meta-data';
+} from "@/components/ui/dropdown-menu";
+import { cn, formatPrice } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate, useParams } from "@tanstack/react-router";
+import { PageMetaTags } from "./page-meta-data";
 import {
   useBlacklistUser,
   useDeleteProperty,
@@ -44,29 +44,28 @@ import {
   useRevokeUserVerification,
   useAddToFavorites,
   useRemoveFromFavorites,
-} from '@/lib/services';
-import { toast } from 'sonner';
-import { ListingDetailSkeleton } from './listing-detail-skeleton';
+  useCreateConversation,
+} from "@/lib/services";
+import { toast } from "sonner";
+import { ListingDetailSkeleton } from "./listing-detail-skeleton";
 
-import { ContactOwnerDialog } from './dialogs/contact-owner-dialog';
-import DeletePropertyModal from './dialogs/delete-property';
-import assets from '@/assets';
-import { PropertyListingCardSkeleton } from './property-listing-card-skeleton';
-import Map from './google-map';
-import { useGetProfileData } from '@/lib/services/profile';
+import DeletePropertyModal from "./dialogs/delete-property";
+import assets from "@/assets";
+import { PropertyListingCardSkeleton } from "./property-listing-card-skeleton";
+import Map from "./google-map";
+import { useGetProfileData } from "@/lib/services/profile";
 
 const ListingDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Simplified route detection - use the existing route context
   const params = useParams({ strict: false });
   const { id: slug } = params as any;
 
-  const isDashboard = location.pathname.includes('/listing/');
-  const isAdminListing = location.pathname.includes('/admin-listing/');
+  const isDashboard = location.pathname.includes("/listing/");
+  const isAdminListing = location.pathname.includes("/admin-listing/");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isContactDialogOpen, setContactDialogOpen] = useState(false);
+  const [isCreatingConversation, setIsCreatingConversation] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const { mutate: flagProperty, isPending: isFlagging } = useFlagProperty();
@@ -74,17 +73,20 @@ const ListingDetail = () => {
   const { mutate: blacklistUser, isPending: isBlacklisting } = useBlacklistUser();
   const { mutate: revokeVerification, isPending: isRevoking } = useRevokeUserVerification();
   const { mutate: addToFavorites, isPending: isAddingToFavorites } = useAddToFavorites();
-  const { mutate: removeFromFavorites, isPending: isRemovingFromFavorites } = useRemoveFromFavorites([
-    'property',
-    slug,
-  ]);
+  const { mutate: removeFromFavorites, isPending: isRemovingFromFavorites } =
+    useRemoveFromFavorites(["property", slug]);
+  const { mutate: createConversation } = useCreateConversation();
 
-  const { data: propertyDetailsResponse, isPending: isLoadingDetails } = useGetPropertyDetails(slug, isDashboard);
-  const { data: relatedPropertiesResponse, isPending: isLoadingRelated } = useGetRelatedProperties(slug);
+  const { data: propertyDetailsResponse, isPending: isLoadingDetails } = useGetPropertyDetails(
+    slug,
+    isDashboard,
+  );
+  const { data: relatedPropertiesResponse, isPending: isLoadingRelated } =
+    useGetRelatedProperties(slug);
 
   const { data: user } = useGetProfileData();
 
-  const property = propertyDetailsResponse?.data.data;
+  const property = propertyDetailsResponse?.data?.data?.data;
 
   const [isFavorited, setIsFavorited] = useState(property?.is_favourited || false);
 
@@ -96,8 +98,9 @@ const ListingDetail = () => {
 
   const handleFavoriteToggle = () => {
     if (!user?.firstname) {
-      toast.error('Please log in to add to favorite');
-      navigate({ to: '/login' });
+      toast.error("Please log in to add to favorite");
+      navigate({ to: "/login" });
+      return;
     }
     if (!property) return;
     if (isFavorited) {
@@ -122,44 +125,79 @@ const ListingDetail = () => {
           title: document.title,
           url: window.location.href,
         })
-        .catch((error) => console.error('Error sharing:', error));
+        .catch((error) => console.error("Error sharing:", error));
     } else {
       navigator.clipboard.writeText(window.location.href).then(() => {
-        toast.success('Link copied to clipboard!');
+        toast.success("Link copied to clipboard!");
       });
     }
   };
 
   const displayTitle = property
     ? `${property.property_type} ${
-        property.category.toLowerCase().startsWith('for') ? property.category : `for ${property.category}`
+        property.category && typeof property.category === "string"
+          ? property.category.toLowerCase().startsWith("for")
+            ? property.category
+            : `for ${property.category}`
+          : ""
       } in ${property.state} | ${property.city}${
         property.bedrooms
           ? ` | ${property.bedrooms} Bedrooms`
           : property.features && property.features.length > 0
             ? ` | ${property.features[0]}`
-            : ''
+            : ""
       }`
-    : '';
+    : "";
 
   const handleDelete = () => {
     if (!property) return;
     deleteProperty(property.id, {
       onSuccess: () => {
         setDeleteModalOpen(false);
-        navigate({ to: '/admin-listing' });
+        navigate({ to: "/admin-listing" });
       },
     });
   };
 
   const handleBlacklist = () => {
-    if (!property) return;
+    if (!property?.owner) return;
     blacklistUser(property.owner.id);
   };
 
   const handleRevokeVerification = () => {
-    if (!property) return;
+    if (!property?.owner) return;
     revokeVerification(property.owner.id);
+  };
+
+  const handleContactClick = () => {
+    if (!user?.firstname) {
+      toast.error("Please log in to contact the property owner");
+      navigate({ to: "/login" });
+      return;
+    }
+    if (!property?.owner?.id) {
+      toast.error("Owner information is unavailable.");
+      return;
+    }
+
+    setIsCreatingConversation(true);
+    createConversation(
+      {
+        participant_user_id: property.owner.id,
+        subject: `Enquiry about ${property.property_type} in ${property.city}, ${property.state}`,
+      },
+      {
+        onSuccess: () => {
+          setIsCreatingConversation(false);
+          toast.success("Chat opened successfully!");
+          navigate({ to: "/messages" });
+        },
+        onError: () => {
+          setIsCreatingConversation(false);
+          toast.error("Failed to open chat. Please try again.");
+        },
+      },
+    );
   };
 
   const relatedProperties = relatedPropertiesResponse?.data.data ?? [];
@@ -174,9 +212,9 @@ const ListingDetail = () => {
   };
 
   const handleDownload = () => {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = images[currentImageIndex];
-    const imageName = images[currentImageIndex].split('/').pop();
+    const imageName = images[currentImageIndex].split("/").pop();
     link.download = imageName || `property-image-${currentImageIndex + 1}.jpg`;
     document.body.appendChild(link);
     link.click();
@@ -191,15 +229,93 @@ const ListingDetail = () => {
     return <div>Property not found.</div>;
   }
 
+  if (!property.owner) {
+    return <div>Property data is incomplete.</div>;
+  }
+
+  const OwnerContactCard = () => (
+    <div className="flex w-full flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4 lg:w-[325px]">
+      <div className="flex w-full items-center gap-4 border-b border-[#F1F1F4] pb-5">
+        <Avatar className="size-[68px] rounded-[5px]">
+          <AvatarImage src={property.owner?.image_url} alt={property.owner?.name ?? ""} />
+          <AvatarFallback>{property.owner?.name?.charAt(0) ?? "?"}</AvatarFallback>
+        </Avatar>
+
+        <div className="flex flex-col items-start gap-2 self-stretch">
+          <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">
+            {property.owner?.name}
+          </h4>
+          <div className="flex items-center gap-2">
+            {property.is_verified && <BadgeCheck className="size-4 text-primary" />}
+            <span className="text-[12px] leading-[18px] font-semibold text-primary capitalize">
+              Verified {property.owner?.role}
+            </span>
+          </div>
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-[12px] leading-[18px] font-medium text-[#535364]">
+              Property ID:
+            </span>
+            <span className="text-[12px] leading-[18px] font-semibold text-[#1F2130]">
+              {property.id}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3 self-stretch">
+        <Button
+          onClick={handleContactClick}
+          disabled={isCreatingConversation}
+          style={{
+            background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
+            boxShadow:
+              "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
+          }}
+          className="h-8 self-stretch rounded-[40px] border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
+        >
+          {isCreatingConversation ? "Opening Chat..." : "Contact"} <Lock className="size-3" />
+        </Button>
+
+        <Button
+          asChild
+          variant="outline"
+          className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4 font-normal text-[#1F2130]"
+        >
+          <a href={`mailto:${property.owner?.email_address}`}>
+            Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
+          </a>
+        </Button>
+
+        <Button
+          asChild
+          variant="outline"
+          className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4 font-normal text-[#1F2130]"
+        >
+          <a
+            href={`https://wa.me/${property.owner?.phone_number}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
+          </a>
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <div
       className={cn(
-        'min-h-screen w-full bg-white',
-        isDashboard || isAdminListing ? 'py-8' : 'py-(--landing-header-height)'
+        "min-h-screen w-full bg-white",
+        isDashboard || isAdminListing ? "py-8" : "py-(--landing-header-height)",
       )}
     >
       {isDashboard ? (
-        <PageMetaTags title={`Listing: ${displayTitle}`} description={property.desc} keywords="listing management" />
+        <PageMetaTags
+          title={`Listing: ${displayTitle}`}
+          description={property.desc}
+          keywords="listing management"
+        />
       ) : (
         <PageMetaTags
           title={displayTitle}
@@ -209,12 +325,15 @@ const ListingDetail = () => {
           propertyType={property.property_type}
           listingType="buy"
           image={property.images.find((img: { is_cover: boolean }) => img.is_cover)?.url}
-          keywords={`${property.property_type} in ${property.city}, ${property.tags.join(', ')}`}
+          keywords={`${property.property_type} in ${property.city}, ${property.tags.join(", ")}`}
         />
       )}
 
       <div
-        className={cn('w-full', !isDashboard && !isAdminListing && 'landing-container flex flex-col gap-8 pt-[77px]')}
+        className={cn(
+          "w-full",
+          !isDashboard && !isAdminListing && "landing-container flex flex-col gap-8 pt-[77px]",
+        )}
       >
         <header className="flex w-full flex-col items-center justify-between lg:flex-row">
           <div className="flex flex-col items-start self-stretch">
@@ -266,18 +385,18 @@ const ListingDetail = () => {
                       <BreadcrumbLink asChild>
                         <Link
                           to={
-                            location.pathname.includes('/short-let')
-                              ? '/short-let'
-                              : location.pathname.includes('/for-rent')
-                                ? '/for-rent'
-                                : '/for-sale'
+                            location.pathname.includes("/short-let")
+                              ? "/short-let"
+                              : location.pathname.includes("/for-rent")
+                                ? "/for-rent"
+                                : "/for-sale"
                           }
                         >
-                          {location.pathname.includes('/short-let')
-                            ? 'Buy'
-                            : location.pathname.includes('/for-rent')
-                              ? 'Rent'
-                              : 'Sell'}
+                          {location.pathname.includes("/short-let")
+                            ? "Buy"
+                            : location.pathname.includes("/for-rent")
+                              ? "Rent"
+                              : "Sell"}
                         </Link>
                       </BreadcrumbLink>
                     </BreadcrumbItem>
@@ -292,7 +411,7 @@ const ListingDetail = () => {
               )}
             </div>
 
-            <h1 className="text-[26px]/10  font-semibold text-[#1A2258]">{displayTitle}</h1>
+            <h1 className="text-[26px]/10 font-semibold text-[#1A2258]">{displayTitle}</h1>
           </div>
 
           <div className="flex items-start justify-end self-stretch">
@@ -305,8 +424,10 @@ const ListingDetail = () => {
                     onClick={handleFavoriteToggle}
                     disabled={isAddingToFavorites || isRemovingFromFavorites}
                   >
-                    <Heart className={cn('mr-2 size-4', isFavorited && 'fill-red-500 text-red-500')} />
-                    {isFavorited ? 'Saved' : 'Save to Favourites'}
+                    <Heart
+                      className={cn("mr-2 size-4", isFavorited && "fill-red-500 text-red-500")}
+                    />
+                    {isFavorited ? "Saved" : "Save to Favourites"}
                   </Button>
 
                   <Button
@@ -328,23 +449,30 @@ const ListingDetail = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => flagProperty(property.id)} disabled={isFlagging}>
-                      {isFlagging ? 'Flagging...' : 'Flag Property'}
+                    <DropdownMenuItem
+                      onClick={() => flagProperty(property.id)}
+                      disabled={isFlagging}
+                    >
+                      {isFlagging ? "Flagging..." : "Flag Property"}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleRevokeVerification} disabled={isRevoking}>
-                      {isRevoking ? 'Revoking...' : 'Revoke Verification'}
+                      {isRevoking ? "Revoking..." : "Revoke Verification"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparatorAction />
                     <DropdownMenuItem
-                      onClick={() => handleBlacklist()}
+                      onClick={handleBlacklist}
                       disabled={isBlacklisting}
                       className="text-red-600"
                     >
-                      {isBlacklisting ? 'Blacklisting...' : 'Blacklist Owner'}
+                      {isBlacklisting ? "Blacklisting..." : "Blacklist Owner"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparatorAction />
-                    <DropdownMenuItem onClick={handleDelete} disabled={isDeleting} className="text-red-600">
-                      {isDeleting ? 'Deleting...' : 'Delete Property'}
+                    <DropdownMenuItem
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className="text-red-600"
+                    >
+                      {isDeleting ? "Deleting..." : "Delete Property"}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -353,16 +481,16 @@ const ListingDetail = () => {
           </div>
         </header>
 
-        <div className="flex w-full flex-col gap-6 lg:flex-row">
+        <div className="flex w-full flex-col gap-6 lg:flex-row lg:gap-8">
           {/* Property Gallery */}
-          <div className="flex flex-1 flex-col gap-11">
+          <div className="flex w-full flex-1 flex-col gap-11 lg:max-w-[calc(100%-350px)]">
             <div className="relative flex flex-col gap-[19px]">
               {/* Main Image */}
               <div className="relative h-[500px] w-full overflow-hidden">
                 <img
-                  src={images[currentImageIndex] || '/placeholder.svg'}
+                  src={images[currentImageIndex] || "/placeholder.svg"}
                   alt="Property image"
-                  className="size-full  object-cover"
+                  className="size-full object-cover"
                 />
 
                 {/* Navigation Arrows */}
@@ -395,7 +523,7 @@ const ListingDetail = () => {
                   </div>
                 </div>
 
-                {/* For Sale Badge */}
+                {/* Heart icon */}
                 <div className="absolute top-4 right-2">
                   <Heart className="size-6 fill-white text-white" />
                 </div>
@@ -408,22 +536,22 @@ const ListingDetail = () => {
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
                     className={`size-[135.2px] shrink-0 overflow-hidden border-2 ${
-                      currentImageIndex === index ? 'border-primary' : 'border-gray-200'
+                      currentImageIndex === index ? "border-primary" : "border-gray-200"
                     }`}
                   >
                     <img
-                      src={image || '/placeholder.svg'}
+                      src={image || "/placeholder.svg"}
                       alt={`Thumbnail ${index + 1}`}
                       width={135.2}
                       height={135.2}
-                      className="size-full  object-cover"
+                      className="size-full object-cover"
                     />
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* seperation */}
+            {/* Property info section */}
             <div className="flex w-full flex-col gap-11">
               <div className="flex flex-col items-start gap-3 self-stretch border-b border-[#EAEBF0] pb-[21px]">
                 <div className="flex items-center gap-3">
@@ -445,7 +573,6 @@ const ListingDetail = () => {
                     {formatPrice(property.price, property.currency)}
                   </h3>
 
-                  {/* Property Icons */}
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2.5 text-[18px] leading-[21px]">
                       <BedDouble className="size-6 text-primary" />
@@ -457,23 +584,26 @@ const ListingDetail = () => {
                     </div>
                     <div className="flex items-center gap-2.5 text-[18px] leading-[21px]">
                       <Square className="size-6 text-primary" />
-                      <span className="text-black">{property.area_sqft.toLocaleString()} sq ft</span>
+                      <span className="text-black">
+                        {property.area_sqft
+                          ? `${property.area_sqft.toLocaleString()} sq ft`
+                          : "N/A"}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* propery details */}
+              {/* Property Details */}
               <div className="flex flex-col gap-10 self-start rounded-[10px] bg-white">
                 <h2 className="text-[28px] leading-[34px] font-semibold tracking-[-0.5px] text-[#15181E]">
                   Property Details
                 </h2>
 
-                <div className="space-y-4 text-[16px]/7  text-[#4D5462]">
-                  <p className="">{property.desc}</p>
-
+                <div className="space-y-4 text-[16px]/7 text-[#4D5462]">
+                  <p>{property.desc}</p>
                   <p>Price: {formatPrice(property.price, property.currency)}</p>
-                  <div className={cn('flex flex-col gap-2', 'bg-white')}>
+                  <div className={cn("flex flex-col gap-2", "bg-white")}>
                     {property.features && property.features.length > 0 && (
                       <>
                         <p className="font-semibold">Features include:</p>
@@ -489,14 +619,16 @@ const ListingDetail = () => {
               </div>
             </div>
 
+            {/* Neighborhood / Map */}
             <div className="flex w-full flex-col gap-11">
               <div className="flex flex-col items-start gap-10 rounded-[10px] bg-white">
                 <div className="flex flex-col items-start gap-6">
                   <h2 className="text-[28px] leading-[34px] font-semibold tracking-[-0.5px] text-[#15181E]">
                     Neighborhood
                   </h2>
-                  <p className="text-[20px]/7  tracking-[-0.5px] text-[#4D5462]">
-                    Use interactive map to explore the neighborhood and see how it matches your interests.
+                  <p className="text-[20px]/7 tracking-[-0.5px] text-[#4D5462]">
+                    Use interactive map to explore the neighborhood and see how it matches your
+                    interests.
                   </p>
                 </div>
 
@@ -508,9 +640,8 @@ const ListingDetail = () => {
                     country={property.country}
                   />
 
-                  {/* Expand Map Button */}
                   <button className="absolute top-4 right-4 rounded-sm bg-white p-2 shadow-md hover:bg-gray-50">
-                    <svg className="size-4 " fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -521,148 +652,45 @@ const ListingDetail = () => {
                   </button>
                 </div>
 
-                <div className="bg-[ flex flex-col gap-3 self-stretch bg-[oklch(0.5477_0.2177_21.48/5%)] p-3">
-                  <h5 className="text-[12px] leading-[17px] font-semibold text-[#D20832]">Disclaimer</h5>
-
+                <div className="flex flex-col gap-3 self-stretch bg-[oklch(0.5477_0.2177_21.48/5%)] p-3">
+                  <h5 className="text-[12px] leading-[17px] font-semibold text-[#D20832]">
+                    Disclaimer
+                  </h5>
                   <p className="text-[12px] leading-[17px] text-[#41415A]">
-                    The property listed above is provided and maintained by the property owner and/or property
-                    developer. While Geoplox may conduct basic verification of listings, users are strongly advised to
-                    carry out their own independent due diligence before making any transaction. Geoplox does not act as
-                    a broker or intermediary and assumes no liability for the actions, representations, or omissions of
-                    any property owner or developer.
+                    The property listed above is provided and maintained by the property owner
+                    and/or property developer. While Geoplox may conduct basic verification of
+                    listings, users are strongly advised to carry out their own independent due
+                    diligence before making any transaction. Geoplox does not act as a broker or
+                    intermediary and assumes no liability for the actions, representations, or
+                    omissions of any property owner or developer.
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Agent Contact Card */}
+          {/* Sidebar: Agent Contact Card */}
           {isDashboard || isAdminListing ? (
-            <div className="flex flex-col items-end">
-              <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
-                <div className="flex w-full items-center gap-4 border-b border-[#F1F1F4] pb-5">
-                  <Avatar className="size-[68px] rounded-[5px]">
-                    <AvatarImage src={property?.owner?.image_url} alt={property.owner.name} />
-                    <AvatarFallback>{property.owner.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-
-                  <div className="flex flex-col items-start gap-2 self-stretch">
-                    <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">{property.owner.name}</h4>
-                    <div className="flex items-center gap-2">
-                      {property.is_verified && <BadgeCheck className="size-4 text-primary" />}
-                      <span className="text-[12px] leading-[18px] font-semibold text-primary capitalize">
-                        Verified {property.owner.role}
-                      </span>
-                    </div>
-                    {/* Property ID */}
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="text-[12px] leading-[18px] font-medium text-[#535364]">Property ID:</span>
-                      <span className="text-[12px] leading-[18px] font-semibold text-[#1F2130]">{property.id}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3 self-stretch">
-                  <Button
-                    onClick={() => setContactDialogOpen(true)}
-                    style={{
-                      background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                      boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
-                    }}
-                    className="h-8 self-stretch rounded-[40px] border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
-                  >
-                    Contact <Lock className="size-3" />
-                  </Button>
-
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4  font-normal text-[#1F2130]"
-                  >
-                    <a href={`mailto:${property.owner.email_address}`}>
-                      Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4  font-normal text-[#1F2130]"
-                  >
-                    <a href={`https://wa.me/${property.owner.phone_number}`} target="_blank" rel="noopener noreferrer">
-                      Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
-                    </a>
-                  </Button>
-                </div>
-              </div>
+            <div className="flex w-full flex-col items-end gap-4 lg:w-[325px] lg:shrink-0">
+              <OwnerContactCard />
             </div>
           ) : user ? (
-            <div className="flex flex-col items-end">
-              <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
-                <div className="flex w-full items-center gap-4 border-b border-[#F1F1F4] pb-5">
-                  <Avatar className="size-[68px] rounded-[5px]">
-                    <AvatarImage src={property?.owner?.image_url} alt={property.owner.name} />
-                    <AvatarFallback>{property.owner.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-
-                  <div className="flex flex-col items-start gap-2 self-stretch">
-                    <h4 className="text-[16px] leading-[19px] font-semibold text-[#1F2130]">{property.owner.name}</h4>
-                    <div className="flex items-center gap-2">
-                      {property.is_verified && <BadgeCheck className="size-4 text-primary" />}
-                      <span className="text-[12px] leading-[18px] font-semibold text-primary capitalize">
-                        Verified {property.owner.role}
-                      </span>
-                    </div>
-                    {/* Property ID */}
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="text-[12px] leading-[18px] font-medium text-[#535364]">Property ID:</span>
-                      <span className="text-[12px] leading-[18px] font-semibold text-[#1F2130]">{property.id}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3 self-stretch">
-                  <Button
-                    onClick={() => setContactDialogOpen(true)}
-                    style={{
-                      background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                      boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
-                    }}
-                    className="h-8 self-stretch rounded-[40px] border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
-                  >
-                    Contact <Lock className="size-3" />
-                  </Button>
-
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4  font-normal text-[#1F2130]"
-                  >
-                    <a href={`mailto:${property.owner.email_address}`}>
-                      Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4  font-normal text-[#1F2130]"
-                  >
-                    <a href={`https://wa.me/${property.owner.phone_number}`} target="_blank" rel="noopener noreferrer">
-                      Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
-                    </a>
-                  </Button>
-                </div>
-              </div>
+            <div className="flex w-full flex-col items-end gap-4 lg:w-[325px] lg:shrink-0">
+              <OwnerContactCard />
             </div>
           ) : (
             <div className="flex flex-col items-end">
               <div className="flex w-[325px] shrink-0 flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
                 <div className="flex flex-col gap-3 self-stretch">
-                  <p className="text-center font-semibold text-gray-700">Want to connect with the owner?</p>
+                  <p className="text-center font-semibold text-gray-700">
+                    Want to connect with the owner?
+                  </p>
                   <Button
-                    onClick={() => navigate({ to: '/login' })}
+                    onClick={() => navigate({ to: "/login" })}
                     style={{
-                      background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                      boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                      background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
+                      boxShadow:
+                        "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                     }}
                     className="h-10 self-stretch rounded-[40px] p-4 text-[14px] leading-[17px] font-semibold text-white"
                   >
@@ -673,6 +701,8 @@ const ListingDetail = () => {
             </div>
           )}
         </div>
+
+        {/* Recommended Properties */}
         {!(isDashboard || isAdminListing) && relatedProperties.length > 0 && (
           <div className="flex flex-col items-start gap-10">
             <h4 className="text-[28px] leading-[34px] font-semibold tracking-[-0.5px] text-[#15181E]">
@@ -681,37 +711,38 @@ const ListingDetail = () => {
 
             <div className="grid w-full grid-cols-1 gap-x-5 gap-y-10 self-stretch md:grid-cols-2 lg:grid-cols-3">
               {isLoadingRelated
-                ? Array.from({ length: 3 }).map((_, index) => <PropertyListingCardSkeleton key={index} />)
-                : relatedProperties.slice(0, 3).map((property: any) => (
+                ? Array.from({ length: 3 }).map((_, index) => (
+                    <PropertyListingCardSkeleton key={index} />
+                  ))
+                : relatedProperties.slice(0, 3).map((relatedProperty: any) => (
                     <Link
                       to={`/short-let`}
-                      params={{ id: property.slug }}
-                      key={property.id}
+                      params={{ id: relatedProperty.slug }}
+                      key={relatedProperty.id}
                       className="flex flex-col items-start gap-6 overflow-hidden"
                     >
                       <div className="relative">
                         <img
-                          src={property.cover_image || '/placeholder.png'}
+                          src={relatedProperty.cover_image || "/placeholder.png"}
                           alt="Property"
                           width={397}
                           height={284}
                           className="h-[284.42px] w-full object-cover"
                         />
 
-                        {property?.tags?.slice(0, 1)?.map((tag: string) => (
+                        {relatedProperty?.tags?.slice(0, 1)?.map((tag: string) => (
                           <Badge
                             key={tag}
                             className={cn(
-                              'absolute top-4 left-4 h-[25px] rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D] capitalize'
+                              "absolute top-4 left-4 h-[25px] rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D] capitalize",
                             )}
                           >
-                            {' '}
                             <div
                               className={cn(
-                                'size-1.5 rounded-full',
-                                property.category === 'For Sale' && 'bg-[#D20832]',
-                                property.category === 'For Rent' && 'bg-[#0CBA65]',
-                                property.category === 'Short Let' && 'bg-[#1893DD]'
+                                "size-1.5 rounded-full",
+                                relatedProperty.category === "For Sale" && "bg-[#D20832]",
+                                relatedProperty.category === "For Rent" && "bg-[#0CBA65]",
+                                relatedProperty.category === "Short Let" && "bg-[#1893DD]",
                               )}
                             />
                             {tag}
@@ -726,28 +757,34 @@ const ListingDetail = () => {
                           <Heart className="size-6 text-white" />
                         </Button>
                       </div>
+
                       <div className="flex flex-col items-start gap-3">
                         <h4 className="font-dm_sans text-[24px] leading-[31px] font-semibold text-[#1F2130]">
-                          {formatPrice(property.price, property.currency)}
+                          {formatPrice(relatedProperty.price, relatedProperty.currency)}
                         </h4>
                         <div className="flex flex-col items-start gap-[11px] self-stretch">
                           <p className="text-[16px] leading-[18px] text-[#41415A]">
-                            {property.location.city}, {property.location.state}
+                            {relatedProperty.location?.city}, {relatedProperty.location?.state}
                           </p>
 
                           <div className="flex items-end gap-3 self-stretch">
-                            <div className="flex items-center gap-5 text-[14px]/4  text-[#41415A]">
+                            <div className="flex items-center gap-5 text-[14px]/4 text-[#41415A]">
                               <div className="flex items-center gap-2">
                                 <BedDouble className="size-[18px] text-[#1F2130]" />
-                                <span>{property.bedrooms} Beds</span>
+                                <span>{relatedProperty.bedrooms} Beds</span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <ShowerHead className="size-[18px] text-[#1F2130]" />
-                                <span>{property.bathrooms} Baths</span>
+                                <span>{relatedProperty.bathrooms} Baths</span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <Square className="size-[18px] text-[#1F2130]" />
-                                <span>{property.area_sqft.toLocaleString()} sqft</span>
+                                <span>
+                                  {relatedProperty.area_sqft
+                                    ? relatedProperty.area_sqft.toLocaleString()
+                                    : "N/A"}{" "}
+                                  sqft
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -760,7 +797,7 @@ const ListingDetail = () => {
             <div className="flex w-full items-center justify-center">
               <Button
                 variant="secondary"
-                className="h-12 rounded-[40px] bg-[#F9F9F9] px-6 py-[15px] text-[16px] leading-[19xp] font-semibold text-[#1F2130]"
+                className="h-12 rounded-[40px] bg-[#F9F9F9] px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-[#1F2130]"
               >
                 Explore Listing
                 <ChevronRight className="size-4 fill-[#1F2130]" />
@@ -769,7 +806,7 @@ const ListingDetail = () => {
           </div>
         )}
       </div>
-      <ContactOwnerDialog propertyId={property.id} open={isContactDialogOpen} onOpenChange={setContactDialogOpen} />
+
       {isAdminListing && (
         <DeletePropertyModal
           openDeleteModal={isDeleteModalOpen}
