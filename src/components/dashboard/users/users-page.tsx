@@ -465,14 +465,17 @@ const UserView = ({ selectedUser, activeTab, setActiveTab }: UserViewProps) => {
                   <MoreVertical className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => setVerifyOpen(true)}
-                  className="flex items-center gap-2"
-                >
-                  <Settings className="size-4" />
-                  Verify User
-                </DropdownMenuItem>
+                {selectedUser.status !== "verified" && (
+                  <DropdownMenuItem
+                    onClick={() => setVerifyOpen(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <Settings className="size-4" />
+                    Verify User
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   onClick={() => setBlacklistOpen(true)}
                   className="flex items-center gap-2 text-red-600"

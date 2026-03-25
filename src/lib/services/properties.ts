@@ -200,7 +200,9 @@ export const useDeleteProperty = () => {
 
 export const useDeletePropertyImage = () => {
   return useMutation({
-    mutationFn: (propertyPostion: string) => api.delete(`/dashboard/property-image/${propertyPostion}/delete`),
+    mutationFn: (property_image_url: string) => api.post(`/dashboard/property/image/delete`,{
+        property_image_url:property_image_url,
+    }),
     onSuccess: (data) => {
       toast.success(data.data.message || 'Property image deleted successfully!');
       queryClient.invalidateQueries({ queryKey: ['properties'] });

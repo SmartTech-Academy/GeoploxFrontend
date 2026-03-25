@@ -1,180 +1,154 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Download, MoveUpRight } from 'lucide-react';
-import { PageMetaTags } from '@/components/page-meta-data';
-import ListingActivities from '@/components/charts/ListingActivities';
-import { ConversionsChart } from '@/components/charts/ConversionsChart';
-import { useState } from 'react';
+import { PageMetaTags } from "@/components/page-meta-data";
+import ListingActivities from "@/components/charts/ListingActivities";
+import { ConversionsChart } from "@/components/charts/ConversionsChart";
+import { useMemo, useState } from "react";
+import { useGetPlatformPerformance } from "@/lib/services/admin";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const PROPERTIES_OVERVIEW = [
-  {
-    title: 'Total Listings',
-    value: '145',
-  },
-  {
-    title: 'Active Listing',
-    value: '110',
-  },
-  {
-    title: 'Archived Listing',
-    value: '30',
-  },
-];
+const OverviewCard = ({
+  title,
+  value,
+  isLoading,
+}: {
+  title: string;
+  value: string | number;
+  isLoading: boolean;
+}) => (
+  <div className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white">
+    <div className="box-border w-full border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
+      <h6 className="text-[12px]/3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">{title}</h6>
+    </div>
+    <div className="flex items-baseline gap-2 px-6 pb-6">
+      {isLoading ? (
+        <Skeleton className="h-12 w-24" />
+      ) : (
+        <p className="text-[48px]/12 font-semibold tracking-[-1px] text-[#1F2130]">{value}</p>
+      )}
+      <span className="text-[16px] leading-[22px] text-[#1F2130]">Properties</span>
+    </div>
+  </div>
+);
 
-const USERS_OVERVIEW = [
-  {
-    title: 'Total Users',
-    value: '1.2K',
-  },
-  {
-    title: 'Active Users',
-    value: '850',
-  },
-  {
-    title: 'Verified Users',
-    value: '600',
-  },
-];
+const KpiCard = ({
+  title,
+  value,
+  isLoading,
+}: {
+  title: string;
+  value: string | number;
+  isLoading: boolean;
+}) => (
+  <div className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white">
+    <div className="box-border w-full border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
+      <h6 className="text-[12px]/3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">{title}</h6>
+    </div>
+    <div className="flex items-baseline gap-2 px-6 pb-6">
+      {isLoading ? (
+        <Skeleton className="h-12 w-20" />
+      ) : (
+        <p className="text-[48px]/12 font-semibold tracking-[-1px] text-[#1F2130]">{value}</p>
+      )}
+      {/* Change indicator can be added later if API supports it */}
+    </div>
+  </div>
+);
 
-const TOTALS = [
-  { title: 'Total Clicks', value: '2.04K' },
-  { title: 'Total Leads', value: '140' },
-  { title: 'Total Views', value: '5.15K' },
-  { title: 'Total Saves & shares', value: '565' },
-];
+const AdminInsights = () => {
+  const [period, setPeriod] = useState("last_6_months");
+  const [filter] = useState("all");
 
-const conversionChartData = [
-  { month: 'Jan', rent: 186, forSale: 80, shortLet: 200 },
-  { month: 'Feb', rent: 305, forSale: 200, shortLet: 100 },
-  { month: 'Mar', rent: 237, forSale: 120, shortLet: 150 },
-  { month: 'Apr', rent: 73, forSale: 190, shortLet: 50 },
-  { month: 'May', rent: 209, forSale: 130, shortLet: 180 },
-  { month: 'Jun', rent: 214, forSale: 140, shortLet: 220 },
-];
+  const { data: performanceData, isLoading } = useGetPlatformPerformance({ period, filter });
 
-const listingActivitiesData = [
-  {
-    slug: 'for-for-rent' as const,
-    label: 'Rent',
-    points: [
-      { x: '2025-01-01', y: 10 },
-      { x: '2025-02-01', y: 20 },
-      { x: '2025-03-01', y: 15 },
-      { x: '2025-04-01', y: 30 },
-      { x: '2025-05-01', y: 25 },
-      { x: '2025-06-01', y: 40 },
-    ],
-  },
-  {
-    slug: 'for-sale' as const,
-    label: 'For Sale',
-    points: [
-      { x: '2025-01-01', y: 5 },
-      { x: '2025-02-01', y: 15 },
-      { x: '2025-03-01', y: 10 },
-      { x: '2025-04-01', y: 25 },
-      { x: '2025-05-01', y: 20 },
-      { x: '2025-06-01', y: 35 },
-    ],
-  },
-  {
-    slug: 'shortlet' as const,
-    label: 'Short Let',
-    points: [
-      { x: '2025-01-01', y: 12 },
-      { x: '2025-02-01', y: 8 },
-      { x: '2025-03-01', y: 22 },
-      { x: '2025-04-01', y: 18 },
-      { x: '2025-05-01', y: 30 },
-      { x: '2025-06-01', y: 20 },
-    ],
-  },
-];
+  const totals = performanceData?.data?.data?.totals;
+  const kpis = performanceData?.data?.data?.kpis;
+  const listingActivities = performanceData?.data?.data?.listing_activities;
+  const conversions = performanceData?.data?.data?.conversions;
 
-const AdminInsigths = () => {
-  const [metricType, setMetricType] = useState('properties');
-  const [conversionPeriod, setConversionPeriod] = useState('last_6_months');
-  const overviewData = metricType === 'properties' ? PROPERTIES_OVERVIEW : USERS_OVERVIEW;
+  const listingActivitiesData = useMemo(() => {
+    if (!listingActivities) return [];
+    return listingActivities.labels.map((label: any, index: number) => ({
+      name: label,
+      "For Sale": listingActivities.series.for_sale[index] || 0,
+      "For Rent": listingActivities.series.for_rent[index] || 0,
+      "Short Let": listingActivities.series.short_let[index] || 0,
+    }));
+  }, [listingActivities]);
+
+  const conversionChartData = useMemo(() => {
+    if (!conversions) return [];
+    return conversions.labels.map((label: any, index: number) => ({
+      month: label,
+      forSale: conversions.series.for_sale[index] || 0,
+      rent: conversions.series.for_rent[index] || 0,
+      shortLet: conversions.series.short_let[index] || 0,
+    }));
+  }, [conversions]);
 
   return (
     <div className="flex w-full flex-col items-start gap-5 py-8">
       <PageMetaTags
-        title="Market Insights"
-        description="Get data-driven insights into market trends, pricing analytics, and investment opportunities."
-        keywords="market insights, real estate trends, property analytics"
+        title="Admin Insights"
+        description="Get a comprehensive overview of platform performance, user metrics, and listing activities."
+        keywords="admin dashboard, platform analytics, user insights, property trends"
       />
       <header className="flex w-full items-center justify-between gap-2 self-stretch">
-        <Select defaultValue={metricType} onValueChange={setMetricType}>
+        {/* <Select defaultValue={filter} onValueChange={setFilter}>
           <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-[#F9F9F9] text-[#41415A] focus:ring-0">
             <div className="flex items-center gap-2">
               <SelectValue />
             </div>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="properties">All Properties</SelectItem>
-            <SelectItem value="users">User Metric</SelectItem>
+            <SelectItem value="all">All Properties</SelectItem>
+            <SelectItem value="for-sale">For Sale</SelectItem>
+            <SelectItem value="for-rent">For Rent</SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
 
-        <Button
+        {/* <Button
           variant="secondary"
-          className="h-8 rounded-[40px] bg-[#F9F9FB] p-4 text-[14px]/5  font-normal text-[#1F2130]"
+          className="h-8 rounded-[40px] bg-[#F9F9FB] p-4 text-[14px]/5 font-normal text-[#1F2130]"
         >
           Export
           <Download className="size-4" />
-        </Button>
+        </Button> */}
       </header>
 
       <section className="grid grid-cols-1 gap-5 self-stretch lg:grid-cols-3">
-        {overviewData.map((item, index) => (
-          <div
-            key={index}
-            className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
-          >
-            <div className="box-border w-full border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-              <h6 className="text-[12px]/3.5  tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
-            </div>
-
-            <div className="flex items-baseline gap-2 px-6 pb-6">
-              <p className="text-[48px]/12  font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
-              <span className="text-[16px] leading-[22px] text-[#1F2130]">
-                {metricType === 'properties' ? 'Properties' : 'Users'}
-              </span>
-            </div>
-          </div>
-        ))}
+        <OverviewCard
+          title="Total Listings"
+          value={totals?.total_listings ?? 0}
+          isLoading={isLoading}
+        />
+        <OverviewCard
+          title="Active Listing"
+          value={totals?.active_listings ?? 0}
+          isLoading={isLoading}
+        />
+        <OverviewCard
+          title="Archived Listing"
+          value={totals?.archived_listings ?? 0}
+          isLoading={isLoading}
+        />
       </section>
 
       <section className="grid w-full grid-cols-1 gap-6 rounded-lg lg:grid-cols-2">
-        <ListingActivities data={listingActivitiesData} isLoading={false} />
-
-        <ConversionsChart data={conversionChartData} period={conversionPeriod} onPeriodChange={setConversionPeriod} />
+        <ListingActivities data={listingActivitiesData} isLoading={isLoading} />
+        <ConversionsChart data={conversionChartData} period={period} onPeriodChange={setPeriod} />
       </section>
 
-      <section className="grid w-full grid-cols-1 gap-5 self-stretch lg:grid-cols-4">
-        {TOTALS.map((item, index) => (
-          <div
-            key={index}
-            className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
-          >
-            <div className="box-border w-full border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-              <h6 className="text-[12px]/3.5  tracking-[-0.02em] text-[#7F7F7F] uppercase">{item.title}</h6>
-            </div>
-
-            <div className="flex items-baseline gap-2 px-6 pb-6">
-              <p className="text-[48px]/12  font-semibold tracking-[-1px] text-[#1F2130]">{item.value}</p>
-
-              <div className="flex items-center gap-1.5">
-                <MoveUpRight className="size-3 text-[#008A00]" />
-                <span className="text-[14px]/4  tracking-[-0.02em] text-[#008A00D2]">3.36</span>
-                <span className="text-[14px]/4  tracking-[-0.02em] text-[#71748C]">Last mth.</span>
-              </div>
-            </div>
-          </div>
-        ))}
+      <section className="grid w-full grid-cols-1 gap-5 self-stretch md:grid-cols-2 lg:grid-cols-4">
+        <KpiCard title="Total Clicks" value={kpis?.total_clicks ?? 0} isLoading={isLoading} />
+        <KpiCard title="Total Leads" value={kpis?.total_leads ?? 0} isLoading={isLoading} />
+        <KpiCard title="Total Views" value={kpis?.total_views ?? 0} isLoading={isLoading} />
+        <KpiCard
+          title="Total Saves & Shares"
+          value={kpis?.total_saves_shares ?? 0}
+          isLoading={isLoading}
+        />
       </section>
     </div>
   );
 };
 
-export default AdminInsigths;
+export default AdminInsights;

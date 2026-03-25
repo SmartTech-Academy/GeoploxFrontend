@@ -332,10 +332,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
     if (imageToRemove.url) {
       try {
         // Extract the filename from the URL
-        const filename = imageToRemove.url.substring(imageToRemove.url.lastIndexOf("/") + 1);
 
         // Call the delete mutation
-        await deletePropertyImage(filename);
+        await deletePropertyImage(imageToRemove.url);
 
         // If deletion is successful, then remove from local state
         const newImages = propertyImages.filter((_, i) => i !== index);
