@@ -120,28 +120,29 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
 
   return (
     <div className="flex w-full flex-col items-center justify-between gap-4 self-stretch border-b border-[#F1F1F4] pb-10 lg:flex-row lg:gap-[89px]">
-      <div className="grid h-[266px] shrink-0 grid-cols-2 gap-2 lg:w-[463px]">
+      <div className="grid h-[266px] grid-cols-2 gap-2 lg:w-[463px] lg:shrink-0">
         {/* Large Image - spans 2 rows */}
-        <div className="row-span-2">
+        <div className="row-span-2 max-h-[266px]">
           <img src={property.cover_image} alt={property.title} className="size-full object-cover" />
         </div>
 
-        {/* Small Image 1 */}
-        <div className="h-[129px] w-full">
-          <img
-            src={property.thumbnail_images?.[0] || property.cover_image}
-            alt={`${property.title} - view 1`}
-            className="size-full object-cover"
-          />
-        </div>
-
-        {/* Small Image 2 */}
-        <div className="h-[129px]">
-          <img
-            src={property.thumbnail_images?.[1] || property.cover_image}
-            alt={`${property.title} - view 2`}
-            className="size-full object-cover"
-          />
+        <div className="flex flex-col gap-2">
+          {/* Small Image 1 */}
+          <div className="h-[129px] w-full">
+            <img
+              src={property.thumbnail_images?.[0] || property.cover_image}
+              alt={`${property.title} - view 1`}
+              className="size-full object-cover"
+            />
+          </div>
+          {/* Small Image 2 */}
+          <div className="h-[129px]">
+            <img
+              src={property.thumbnail_images?.[1] || property.cover_image}
+              alt={`${property.title} - view 2`}
+              className="size-full object-cover"
+            />
+          </div>
         </div>
       </div>
 

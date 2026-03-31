@@ -85,8 +85,9 @@ const ListingDetail = () => {
     useGetRelatedProperties(slug);
 
   const { data: user } = useGetProfileData();
-
-  const property = propertyDetailsResponse?.data?.data?.data;
+  const property = isDashboard
+      ? propertyDetailsResponse?.data?.data?.data
+      : propertyDetailsResponse?.data?.data;
 
   const [isFavorited, setIsFavorited] = useState(property?.is_favourited || false);
 
@@ -226,11 +227,15 @@ const ListingDetail = () => {
   }
 
   if (!property) {
-    return <div>Property not found.</div>;
+    return <div className="flex min-h-screen items-center justify-center">Property not found.</div>;
   }
 
   if (!property.owner) {
-    return <div>Property data is incomplete.</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        Property data is incomplete.
+      </div>
+    );
   }
 
   const OwnerContactCard = () => (

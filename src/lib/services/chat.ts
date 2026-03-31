@@ -18,6 +18,8 @@ export const useGetConversations = (params: { per_page?: number; [key: string]: 
       return undefined;
     },
     initialPageParam: 1,
+    refetchInterval: 10000,
+    refetchIntervalInBackground: false,
   });
 };
 
@@ -35,7 +37,6 @@ export const useCreateConversation = () => {
     },
   });
 };
-
 
 export const useDeleteConversation = () => {
   return useMutation({
@@ -77,7 +78,7 @@ export const useGetMessages = (conversationId: string | number | null, params: {
       const response = await api.get(`/dashboard/chat/conversations/${conversationId}/messages`, {
         params: { ...params, page: pageParam },
       });
-      return response.data; // The whole response is needed for messages
+      return response.data;
     },
     getNextPageParam: (lastPage) => {
       if (lastPage.meta.current_page < lastPage.meta.last_page) {
@@ -87,14 +88,17 @@ export const useGetMessages = (conversationId: string | number | null, params: {
     },
     enabled: !!conversationId,
     initialPageParam: 1,
+    refetchInterval: 5000,
+    refetchIntervalInBackground: false,
   });
 };
 
-export const useSendMessage = (conversationId: string) => {
+export const useSendMessage = (conversationId: string | number) => {
   return useMutation({
     mutationFn: (data: any) => api.post(`/dashboard/chat/conversations/${conversationId}/messages`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
 };
@@ -103,5 +107,7 @@ export const useGetUnreadMessageCount = () => {
   return useQuery({
     queryKey: ['unread-message-count'],
     queryFn: () => api.get('/chat/messages/unread-count'),
+    refetchInterval: 15000,
+    refetchIntervalInBackground: false,
   });
 };

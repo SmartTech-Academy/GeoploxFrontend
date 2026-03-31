@@ -47,8 +47,8 @@ const ListingProperties = () => {
           ...p,
           id: String(p.id),
           location: {
-            city: p.location?.city ?? "N/A",
-            state: p.location?.state ?? "N/A",
+            city: p.location?.city || p?.city || "N/A",
+            state: p.location?.state || p?.state ||  "N/A",
           },
           category: p.category || "N/A",
           cover_image:

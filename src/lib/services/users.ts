@@ -49,7 +49,7 @@ export const useBlacklistUser = (options?: UseMutationOptions<any, any, string>)
 export const useGetUserPerformance = (params: { period: string; filter: string; user_codec: string }) => {
   return useQuery({
     queryKey: ['user-performance', params],
-    queryFn: () => api.get('/dashboard/admin/users/performance/', { params }),
+    queryFn: () => api.get('/dashboard/admin/users/performance', { params }),
     enabled: !!params.user_codec, // Only run query if user_codec is available
   });
 };
