@@ -10,12 +10,13 @@ import { PropertyListingCardSkeleton } from "./property-listing-card-skeleton";
 import { cn } from "@/lib/utils";
 import statesAndLocalGov from "@/data/statesAndLocalGov.json";
 import { propertyTypes, sortOptions } from "@/data/reuseable";
+import { useGetProfileData } from "@/lib/services/profile";
 
 const ListingProperties = () => {
   const location = useLocation();
   const isListingPage = location.pathname.includes("/listing");
   const isAdminListingPage = location.pathname.includes("/admin-listing");
-
+    const isProperties = location.pathname.includes("/properties");
   const pageType = location.pathname.includes("/short-let")
     ? `buy`
     : location.pathname.includes("/for-rent")
@@ -25,15 +26,20 @@ const ListingProperties = () => {
         : location.pathname.includes("/joint-venture")
           ? `joint-venture`
           : "all";
-
+const {data:profileData} =useGetProfileData()
   const [filters, setFilters] = useState<Record<string, any>>({
     page: 1,
     sort: "newest",
+
   });
+
 
   const [debouncedFilters] = useDebounce(filters, 300);
   const { data: propertiesResponse, isPending: isLoadingProperties } = useGetProperties(
-    { ...debouncedFilters, pageType },
+    { ...debouncedFilters, pageType ,
+
+        developer_or_owners_name: isListingPage || isProperties ? profileData?.username : undefined
+    },
     isListingPage || isAdminListingPage,
     isAdminListingPage,
   );

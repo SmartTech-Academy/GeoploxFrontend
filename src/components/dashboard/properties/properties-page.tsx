@@ -49,6 +49,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { PropertyFilterSidebar } from '@/components/property-filter-sidebar';
 import Map from '@/components/google-map';
+import { useGetProfileData } from '@/lib/services/profile';
 
 // Updated TypeScript interfaces to match API response
 interface PropertyOwner {
@@ -106,7 +107,7 @@ const PropertiesPage: React.FC = () => {
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(10);
-
+const {data:profileData} =useGetProfileData()
   const {
     data: propertiesData,
     isLoading,
@@ -116,7 +117,8 @@ const PropertiesPage: React.FC = () => {
       status: statusFilter,
       ...filters,
       page: currentPage,
-      per_page: perPage
+      per_page: perPage,
+      developer_or_owners_name:profileData?.username
     },
     true
   );
@@ -162,6 +164,7 @@ const PropertiesPage: React.FC = () => {
     }
     return [];
   }, [propertiesData]);
+
 
   useEffect(() => {
     if (properties.length > 0 && !selectedProperty) {
@@ -330,26 +333,13 @@ const PropertiesPage: React.FC = () => {
             </Button>
           </div>
 
-          {/* Per Page Selector */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Show:</span>
-            <select
-              value={perPage}
-              onChange={(e) => handlePerPageChange(Number(e.target.value))}
-              className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm"
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-            </select>
-          </div>
+
         </div>
       </div>
 
       {/* Property List with pagination */}
       <div className="flex flex-1 flex-col overflow-y-auto">
-        <div className="property-list-container flex-1 overflow-y-auto lg:pr-6">
+        <div className="flex-1 overflow-y-auto lg:pr-6">
           {isLoading ? (
             <div className="space-y-4 p-4">
               <Skeleton className="h-20 w-full" />
@@ -486,6 +476,20 @@ const PropertiesPage: React.FC = () => {
                 </PaginationContent>
               </Pagination>
             </div>
+            {/* Per Page Selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">Show:</span>
+            <select
+              value={perPage}
+              onChange={(e) => handlePerPageChange(Number(e.target.value))}
+              className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
           </div>
         )}
       </div>
