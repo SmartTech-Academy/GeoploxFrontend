@@ -91,9 +91,19 @@ interface Property {
   thumbnail_images: string[];
   owner: PropertyOwner;
   location: PropertyLocation;
+  country?: string;
+  state?: string;
+  city?: string;
+  area?: string;
+  address?: string;
   tags: string[];
   power_ratio: number;
   created_at: string;
+  images?:{
+     "url":string,
+                        "is_cover": true,
+                        "position": 1
+  }[]
 }
 
 type StatusFilterType = 'published' | 'archived' | 'draft';
@@ -164,6 +174,7 @@ const {data:profileData} =useGetProfileData()
     }
     return [];
   }, [propertiesData]);
+
 
 
   useEffect(() => {
@@ -353,7 +364,7 @@ const {data:profileData} =useGetProfileData()
           ) : (
             properties.map((property: Property) => {
               // Use cover_image as the main image, fallback to first thumbnail
-              const coverImage = property.cover_image || property.thumbnail_images?.[0];
+              const coverImage = property.cover_image || property.thumbnail_images?.[0] || property?.images?.[0]?.url;
               return (
                 <div
                   key={property.id}
@@ -374,12 +385,12 @@ const {data:profileData} =useGetProfileData()
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <h3 className="truncate text-[14px] leading-[17px] font-semibold text-[#41415A]">
-                            {property.title}
+                            {property?.title}
                           </h3>
                           <div className="mt-1 flex items-center gap-1">
                             <MapPin className="size-3 text-gray-400" />
                             <span className="text-[12px]/3.5 text-[#71748C]">
-                              {property.location.city}, {property.location.state}
+                              {property?.location?.city}, {property?.location?.state}
                             </span>
                           </div>
                         </div>
@@ -498,14 +509,35 @@ const {data:profileData} =useGetProfileData()
 
   const PropertyDetails: React.FC = () => {
     // Get all images from thumbnail_images and cover_image
-    const allImages = useMemo(() => {
-      if (!selectedProperty) return [];
-      const images = [...(selectedProperty.thumbnail_images || [])];
-      if (selectedProperty.cover_image && !images.includes(selectedProperty.cover_image)) {
-        images.unshift(selectedProperty.cover_image);
-      }
-      return images;
-    }, []);
+  const allImages = useMemo(() => {
+  if (!selectedProperty) return [];
+
+  // New API format: images array with objects
+  if (selectedProperty.images?.length) {
+    return [...selectedProperty.images]
+      .sort((a, b) => {
+        // Ensure cover image is always first
+        if (a.is_cover) return -1;
+        if (b.is_cover) return 1;
+
+        // Then sort by position
+        return a.position - b.position;
+      })
+      .map((img) => img.url);
+  }
+
+  // Old format: thumbnail_images + cover_image
+  const images = [...(selectedProperty.thumbnail_images || [])];
+
+  if (
+    selectedProperty.cover_image &&
+    !images.includes(selectedProperty.cover_image)
+  ) {
+    images.unshift(selectedProperty.cover_image);
+  }
+
+  return images;
+}, []);
 
     const nextImage = () => {
       setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
@@ -636,8 +668,8 @@ const {data:profileData} =useGetProfileData()
                       <div className="flex items-center gap-1">
                         <MapPin className="size-4 text-gray-400" />
                         <span className="text-[12px]/3.5 text-[#41415A]">
-                          {selectedProperty.location.address ||
-                           `${selectedProperty.location.city}, ${selectedProperty.location.state}`}
+                          {
+                           `${selectedProperty?.location?.address || selectedProperty?.address}  ${selectedProperty?.location?.city || selectedProperty?.city}, ${selectedProperty?.location?.state || selectedProperty?.state}`}
                         </span>
                       </div>
                     </div>
@@ -805,10 +837,10 @@ const {data:profileData} =useGetProfileData()
 
         <div className="h-[358px] w-full">
           <Map
-            address={selectedProperty.location.address}
-            city={selectedProperty.location.city}
-            state={selectedProperty.location.state}
-            country={selectedProperty.location.country}
+            address={selectedProperty?.location?.address || selectedProperty?.address || ""}
+            city={selectedProperty?.location?.city || selectedProperty?.city  || ""}
+            state={selectedProperty?.location?.state ||  selectedProperty?.state || ""}
+            country={selectedProperty?.location?.country ||selectedProperty?.country || ""}
           />
         </div>
       </div>

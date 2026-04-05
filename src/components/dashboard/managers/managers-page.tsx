@@ -1,5 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Search,
   Settings,
@@ -29,42 +29,24 @@ import AssignModal from '@/components/dialogs/assign-modal';
 import { PageMetaTags } from '@/components/page-meta-data';
 import ListingActivities from '@/components/charts/ListingActivities';
 import { ConversionsChart } from '@/components/charts/ConversionsChart';
+import { CreateManagerDialog } from '@/components/dialogs/create-manager-dialog';
+import { useDebounce } from '@/hooks/use-debounce';
+import { useGetManagers, useGetManagersAssignedUsers, useToggleManagerAccess } from '@/lib/services/managers';
+import { format } from 'date-fns';
+import { toast } from 'sonner';
 
-type ManagerFilterType = 'all' | 'account' | 'content';
-interface ManagerPermissions {
-  canResetPassword: boolean;
-  canRevokeAccess: boolean;
-  canManageContent: boolean;
-  canManageAccounts: boolean;
-}
+type ManagerFilterType = 'all' | 'active' | 'suspended';
 
 type TabType = 'profile' | 'performance';
 
-interface AssignedRegion {
-  name: string;
-  assignedOn: string;
-}
-
-interface AssignedDeveloper {
-  user: string;
-  email: string;
-  assignedOn: string;
-  region: string;
-  developerEmail: string;
-}
-
 interface Manager {
-  id: number;
+  id: string; // manager_codec
   name: string;
   email: string;
-  role: 'Content' | 'Account';
   avatar?: string;
   phoneNumber?: string;
-  createdOn: string;
-  status: 'active' | 'inactive';
-  permissions: ManagerPermissions;
-  assignedRegions: AssignedRegion[];
-  assignedDevelopers: AssignedDeveloper[];
+  createdOn?: string;
+  status: 'active' | 'suspended' | 'unknown';
 }
 
 interface OverviewMetric {
@@ -158,160 +140,48 @@ const ManagersPage = () => {
   const [showRegionActions, setShowRegionActions] = useState(false);
   const [showDeveloperActions, setShowDeveloperActions] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [openCreateManager, setOpenCreateManager] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [conversionPeriod, setConversionPeriod] = useState('last_6_months');
 
-  const managers: Manager[] = [
-    {
-      id: 1,
-      name: 'David Elson',
-      email: 'rodger913@aol.com',
-      role: 'Content',
-      avatar: assets.messaging1,
-      phoneNumber: '0805-555-3323',
-      createdOn: 'July 20, 2025',
-      status: 'active',
-      permissions: {
-        canResetPassword: true,
-        canRevokeAccess: true,
-        canManageContent: true,
-        canManageAccounts: false,
-      },
-      assignedRegions: [
-        { name: 'Lagos Mainland', assignedOn: 'July 20, 2025' },
-        { name: 'Lekki-Ajah Axis', assignedOn: 'July 20, 2025' },
-      ],
-      assignedDevelopers: [
-        {
-          user: 'Sarah Bello',
-          email: 'janet.lee@email.com',
-          assignedOn: 'July 20, 2025',
-          region: 'John Edet Real Estate',
-          developerEmail: 'johnedetrstate@email.com',
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'David Elson',
-      email: 'rodger913@aol.com',
-      role: 'Account',
-      avatar: assets.messaging2,
-      phoneNumber: '0805-555-3323',
-      createdOn: 'July 18, 2025',
-      status: 'active',
-      permissions: {
-        canResetPassword: true,
-        canRevokeAccess: true,
-        canManageContent: false,
-        canManageAccounts: true,
-      },
-      assignedRegions: [
-        { name: 'Lagos Mainland', assignedOn: 'July 20, 2025' },
-        { name: 'Lekki-Ajah Axis', assignedOn: 'July 20, 2025' },
-      ],
-      assignedDevelopers: [
-        {
-          user: 'Sarah Bello',
-          email: 'janet.lee@email.com',
-          assignedOn: 'July 20, 2025',
-          region: 'John Edet Real Estate',
-          developerEmail: 'johnedetrstate@email.com',
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: 'Kimberly Mastrangelo',
-      email: 's.t.sharkey@outlook.com',
-      role: 'Account',
-      avatar: assets.messaging3,
-      phoneNumber: '0805-555-3323',
-      createdOn: 'July 15, 2025',
-      status: 'active',
-      permissions: {
-        canResetPassword: true,
-        canRevokeAccess: true,
-        canManageContent: false,
-        canManageAccounts: true,
-      },
-      assignedRegions: [
-        { name: 'Lagos Mainland', assignedOn: 'July 20, 2025' },
-        { name: 'Lekki-Ajah Axis', assignedOn: 'July 20, 2025' },
-      ],
-      assignedDevelopers: [
-        {
-          user: 'Sarah Bello',
-          email: 'janet.lee@email.com',
-          assignedOn: 'July 20, 2025',
-          region: 'John Edet Real Estate',
-          developerEmail: 'johnedetrstate@email.com',
-        },
-      ],
-    },
-    {
-      id: 4,
-      name: 'Daniel Hamilton',
-      email: 'patricia651@outlook.com',
-      role: 'Account',
-      avatar: assets.messaging4,
-      phoneNumber: '0805-555-3323',
-      createdOn: 'July 12, 2025',
-      status: 'active',
-      permissions: {
-        canResetPassword: true,
-        canRevokeAccess: true,
-        canManageContent: false,
-        canManageAccounts: true,
-      },
-      assignedRegions: [
-        { name: 'Lagos Mainland', assignedOn: 'July 20, 2025' },
-        { name: 'Lekki-Ajah Axis', assignedOn: 'July 20, 2025' },
-      ],
-      assignedDevelopers: [
-        {
-          user: 'Sarah Bello',
-          email: 'janet.lee@email.com',
-          assignedOn: 'July 20, 2025',
-          region: 'John Edet Real Estate',
-          developerEmail: 'johnedetrstate@email.com',
-        },
-      ],
-    },
-    {
-      id: 5,
-      name: 'Bradley Lawlor',
-      email: 'jerry73@aol.com',
-      role: 'Account',
-      avatar: assets.messaging5,
-      phoneNumber: '0805-555-3323',
-      createdOn: 'July 10, 2025',
-      status: 'active',
-      permissions: {
-        canResetPassword: true,
-        canRevokeAccess: true,
-        canManageContent: false,
-        canManageAccounts: true,
-      },
-      assignedRegions: [
-        { name: 'Lagos Mainland', assignedOn: 'July 20, 2025' },
-        { name: 'Lekki-Ajah Axis', assignedOn: 'July 20, 2025' },
-      ],
-      assignedDevelopers: [
-        {
-          user: 'Sarah Bello',
-          email: 'janet.lee@email.com',
-          assignedOn: 'July 20, 2025',
-          region: 'John Edet Real Estate',
-          developerEmail: 'johnedetrstate@email.com',
-        },
-      ],
-    },
-  ];
-
-  const filteredManagers = managers.filter((manager) => {
-    if (filter === 'all') return true;
-    return manager.role.toLowerCase() === filter;
+  const { data: managersData, isLoading: isLoadingManagers } = useGetManagers({
+    users_per_page: 20,
+    users_page: 1,
+    search_user: debouncedSearchQuery || undefined,
+    status: filter,
   });
+
+  const managers: Manager[] = useMemo(() => {
+    const list = managersData?.data?.data?.managers;
+    if (!Array.isArray(list)) return [];
+
+    return list
+      .map((m: any): Manager | null => {
+        const id = m?.manager_codec || m?.codec || (m?.id ? String(m.id) : '');
+        if (!id) return null;
+
+        const rawStatus = String(m?.onboarding_status || m?.status || '').toLowerCase();
+        const status: Manager['status'] =
+          rawStatus === 'active' ? 'active' : rawStatus === 'suspended' ? 'suspended' : 'unknown';
+
+        const createdAt = m?.created_at || m?.entity_creation_date;
+        const createdOn = createdAt ? format(new Date(createdAt), 'MMMM d, yyyy') : undefined;
+
+        return {
+          id,
+          name: `${m?.firstname || ''} ${m?.lastname || ''}`.trim() || m?.username || 'Manager',
+          email: m?.email_address || m?.email || '',
+          phoneNumber: m?.phone_number || m?.phone || undefined,
+          avatar: m?.image || m?.display_picture_url || undefined,
+          createdOn,
+          status,
+        };
+      })
+      .filter(Boolean) as Manager[];
+  }, [managersData]);
+
+  const filteredManagers = managers;
 
   return (
     <div className="flex h-screen w-full flex-col items-start gap-0 self-stretch py-8 lg:flex-row">
@@ -330,6 +200,10 @@ const ManagersPage = () => {
             setSelectedManager={setSelectedManager}
             filter={filter}
             setFilter={setFilter}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            isLoading={isLoadingManagers}
+            onCreate={() => setOpenCreateManager(true)}
           />
         ) : (
           <>
@@ -338,6 +212,7 @@ const ManagersPage = () => {
             </Button>
             <ManagerView
               selectedManager={selectedManager}
+              setSelectedManager={setSelectedManager}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               showRegionActions={showRegionActions}
@@ -347,6 +222,12 @@ const ManagersPage = () => {
               setOpenModal={setOpenModal}
               conversionPeriod={conversionPeriod}
               setConversionPeriod={setConversionPeriod}
+            />
+            <AssignModal
+              open={openModal}
+              onOpenChange={setOpenModal}
+              managerId={selectedManager?.id}
+              managerName={selectedManager?.name}
             />
           </>
         )}
@@ -363,6 +244,10 @@ const ManagersPage = () => {
                 setSelectedManager={setSelectedManager}
                 filter={filter}
                 setFilter={setFilter}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                isLoading={isLoadingManagers}
+                onCreate={() => setOpenCreateManager(true)}
               />
             </div>
           </ResizablePanel>
@@ -371,6 +256,7 @@ const ManagersPage = () => {
             <div className="h-[calc(100svh-150px)] w-full overflow-y-auto pl-8">
               <ManagerView
                 selectedManager={selectedManager}
+                setSelectedManager={setSelectedManager}
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 showRegionActions={showRegionActions}
@@ -381,11 +267,18 @@ const ManagersPage = () => {
                 conversionPeriod={conversionPeriod}
                 setConversionPeriod={setConversionPeriod}
               />
-              <AssignModal open={openModal} onOpenChange={setOpenModal} />
+              <AssignModal
+                open={openModal}
+                onOpenChange={setOpenModal}
+                managerId={selectedManager?.id}
+                managerName={selectedManager?.name}
+              />
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
+
+      <CreateManagerDialog open={openCreateManager} onOpenChange={setOpenCreateManager} />
     </div>
   );
 };
@@ -438,9 +331,23 @@ interface ManagerListProps {
   setSelectedManager: (manager: Manager | null) => void;
   filter: ManagerFilterType;
   setFilter: (filter: ManagerFilterType) => void;
+  searchQuery: string;
+  setSearchQuery: (q: string) => void;
+  isLoading: boolean;
+  onCreate: () => void;
 }
 
-const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, setFilter }: ManagerListProps) => (
+const ManagerList = ({
+  managers,
+  selectedManager,
+  setSelectedManager,
+  filter,
+  setFilter,
+  searchQuery,
+  setSearchQuery,
+  isLoading,
+  onCreate,
+}: ManagerListProps) => (
   <div className="flex h-full flex-col gap-4 bg-white lg:pr-6">
     {/* Header and Search */}
     <div className="w-full pr-6">
@@ -451,6 +358,8 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
             type="text"
             placeholder="Search managers"
             className="h-10 self-stretch rounded-lg border border-[#D5D5DD] px-3 pl-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
@@ -470,28 +379,28 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
               All
             </Button>
             <Button
-              variant={filter === 'account' ? 'outline' : 'ghost'}
+              variant={filter === 'active' ? 'outline' : 'ghost'}
               size="sm"
-              onClick={() => setFilter('account')}
+              onClick={() => setFilter('active')}
               className={`h-8 min-w-20 rounded-full text-[12px] font-semibold ${
-                filter === 'account'
+                filter === 'active'
                   ? 'border-[#EAEAEA] text-primary hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
             >
-              Account
+              Active
             </Button>
             <Button
-              variant={filter === 'content' ? 'outline' : 'ghost'}
+              variant={filter === 'suspended' ? 'outline' : 'ghost'}
               size="sm"
-              onClick={() => setFilter('content')}
+              onClick={() => setFilter('suspended')}
               className={`h-8 min-w-[90px] rounded-full text-[12px] font-semibold ${
-                filter === 'content'
+                filter === 'suspended'
                   ? 'border-[#EAEAEA] text-primary hover:bg-yellow-50'
                   : 'bg-[#ECECEC] text-[#41415C] hover:text-gray-800'
               }`}
             >
-              Content
+              Suspended
             </Button>
           </div>
 
@@ -502,6 +411,7 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
               boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
             }}
             className="h-8 w-fit rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3  font-normal text-white"
+            onClick={onCreate}
           >
             <UserPlus2 className="size-4" />
             Create
@@ -512,7 +422,9 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
 
     {/* Manager List */}
     <div className="flex-1 overflow-y-auto pr-6 lg:pr-0">
-      {managers.length === 0 ? (
+      {isLoading ? (
+        <div className="p-4 text-[12px] text-[#71748C]">Loading managers...</div>
+      ) : managers.length === 0 ? (
         <EmptyState type="list" />
       ) : (
         <div className="w-full">
@@ -550,10 +462,14 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
                 <div
                   className={cn(
                     'mr-1 size-1.5 rounded-full',
-                    manager.role === 'Content' ? 'bg-[#FDCE05]' : 'bg-[#0AA6A9]'
+                    manager.status === 'active'
+                      ? 'bg-[#008A00]'
+                      : manager.status === 'suspended'
+                        ? 'bg-[#D64545]'
+                        : 'bg-[#A0A0B0]'
                   )}
                 />
-                {manager.role}
+                {manager.status === 'unknown' ? 'Unknown' : manager.status}
               </Badge>
             </div>
           ))}
@@ -564,6 +480,7 @@ const ManagerList = ({ managers, selectedManager, setSelectedManager, filter, se
 );
 interface ManagerViewProps {
   selectedManager: Manager | null;
+  setSelectedManager: (manager: Manager | null) => void;
   activeTab: TabType;
   setActiveTab: (tab: TabType) => void;
   showRegionActions: boolean;
@@ -577,6 +494,7 @@ interface ManagerViewProps {
 
 const ManagerView = ({
   selectedManager,
+  setSelectedManager,
   activeTab,
   setActiveTab,
   showRegionActions,
@@ -590,6 +508,28 @@ const ManagerView = ({
   if (!selectedManager) {
     return <EmptyState type="manager" />;
   }
+
+  const { data: assignedUsersData, isLoading: isLoadingAssignedUsers } = useGetManagersAssignedUsers(
+    selectedManager.id
+  );
+  const { mutate: toggleAccess, isPending: isTogglingAccess } = useToggleManagerAccess({
+    onSuccess: (_res, variables) => {
+      const nextStatus = variables.managers_access_toggle === 'no' ? 'suspended' : 'active';
+      setSelectedManager((prev) => (prev ? { ...prev, status: nextStatus } : prev));
+    },
+  });
+
+  const assignedUsers = Array.isArray(assignedUsersData?.data?.data?.assigned_users)
+    ? assignedUsersData.data.data.assigned_users
+    : [];
+
+  const handleToggleAccess = () => {
+    const nextToggle: 'yes' | 'no' = selectedManager.status === 'suspended' ? 'yes' : 'no';
+    const actionLabel = nextToggle === 'no' ? 'suspend' : 'restore';
+    const ok = window.confirm(`Are you sure you want to ${actionLabel} access for ${selectedManager.name}?`);
+    if (!ok) return;
+    toggleAccess({ manager_codec: selectedManager.id, managers_access_toggle: nextToggle });
+  };
 
   return (
     <div className="flex h-full flex-1 flex-col rounded-[15px] border border-[#DDDDDD] lg:rounded-[15px]">
@@ -618,15 +558,25 @@ const ManagerView = ({
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setOpenModal(true)} className="flex items-center gap-2">
                 <User className="size-4 " />
-                Assign Listing
+                Assign Users
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center gap-2">
+              <DropdownMenuItem
+                className="flex items-center gap-2"
+                onClick={() => toast.info('Password reset is not available here.')}
+              >
                 <Settings className="size-4 " />
                 Reset Password
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center gap-2 text-red-600">
+              <DropdownMenuItem
+                className={cn(
+                  'flex items-center gap-2',
+                  selectedManager.status === 'suspended' ? 'text-[#008A00]' : 'text-red-600'
+                )}
+                onClick={handleToggleAccess}
+                disabled={isTogglingAccess}
+              >
                 <Ban className="size-4 " />
-                Revoke Access
+                {selectedManager.status === 'suspended' ? 'Restore Access' : 'Revoke Access'}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -642,10 +592,14 @@ const ManagerView = ({
             <div
               className={cn(
                 'mr-1 size-1.5 rounded-full',
-                selectedManager.role === 'Content' ? 'bg-[#FDCE05]' : 'bg-[#0AA6A9]'
+                selectedManager.status === 'active'
+                  ? 'bg-[#008A00]'
+                  : selectedManager.status === 'suspended'
+                    ? 'bg-[#D64545]'
+                    : 'bg-[#A0A0B0]'
               )}
             />
-            {selectedManager.role}
+            {selectedManager.status === 'unknown' ? 'Unknown' : selectedManager.status}
           </Badge>
         </div>
 
@@ -684,54 +638,33 @@ const ManagerView = ({
             </div>
             <div className="flex items-center justify-between gap-10 self-stretch py-2">
               <label className="text-[14px]/3.5  text-[#71748C]">Phone Number</label>
-              <p className="text-[14px]/3.5  text-[#1F2130]">{selectedManager.phoneNumber}</p>
+              <p className="text-[14px]/3.5  text-[#1F2130]">{selectedManager.phoneNumber || '—'}</p>
             </div>
             <div className="flex items-center justify-between gap-10 self-stretch py-2">
               <label className="text-[14px]/3.5  text-[#71748C]">Created on</label>
-              <p className="text-[14px]/3.5  text-[#1F2130]">{selectedManager.createdOn}</p>
+              <p className="text-[14px]/3.5  text-[#1F2130]">{selectedManager.createdOn || '—'}</p>
             </div>
 
-            <div className="">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">Assigned Listing (by Region)</h3>
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+                <h3 className="text-lg font-medium text-gray-900">Assigned Listings (by Region)</h3>
                 <button
                   onClick={() => setShowRegionActions(!showRegionActions)}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-orange-600 hover:text-orange-700"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-[#71748C] hover:text-[#41415A]"
                 >
                   <Settings className="size-4 " />
-                  {showRegionActions ? 'Hide Actions' : 'Manage'}
+                  {showRegionActions ? 'Hide' : 'Info'}
                 </button>
               </div>
-
-              <div className="space-y-4">
-                {selectedManager.assignedRegions.map((region, index) => (
-                  <div key={index} className="rounded-lg bg-gray-50 p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between py-1">
-                          <label className="text-sm text-gray-500">Region</label>
-                          <p className="text-sm text-gray-900">{region.name}</p>
-                        </div>
-                        <div className="flex items-center justify-between py-1">
-                          <label className="text-sm text-gray-500">Assigned on</label>
-                          <p className="text-sm text-gray-900">{region.assignedOn}</p>
-                        </div>
-                      </div>
-                      {showRegionActions && (
-                        <button className="ml-4 rounded-lg p-2 text-red-500 hover:bg-red-50 hover:text-red-700">
-                          <Trash2 className="size-4 " />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+              <div className="rounded-lg bg-gray-50 p-4 text-[12px] text-[#71748C]">
+                Region-based assignments are not available from the current API.
               </div>
             </div>
 
-            {/* Assigned Listing (by Developer/Owner) Section */}
+            {/* Assigned Users (Owner/Developer) Section */}
             <div>
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">Assigned Listing (by Developer / Owner )</h3>
+                <h3 className="text-lg font-medium text-gray-900">Assigned Users (Developer / Owner)</h3>
                 <button
                   onClick={() => setShowDeveloperActions(!showDeveloperActions)}
                   className={cn(
@@ -745,51 +678,57 @@ const ManagerView = ({
                     <Settings className="size-4 " />
                   )}
 
-                  {showDeveloperActions ? 'Save Changes' : 'Manage'}
+                  {showDeveloperActions ? 'Done' : 'Manage'}
                 </button>
               </div>
 
               <div className="space-y-4">
-                {selectedManager.assignedDevelopers.map((developer, index) => (
-                  <div key={index} className="rounded-lg bg-gray-50 p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center justify-between py-1">
-                          <label className="text-sm text-gray-500">User</label>
-                          <p className="text-sm text-gray-900">{developer.user}</p>
-                        </div>
-                        <div className="flex items-center justify-between py-1">
-                          <label className="text-sm text-gray-500">Email Address</label>
-                          <a href={`mailto:${developer.email}`} className="text-sm text-blue-600 hover:text-blue-800">
-                            {developer.email}
-                          </a>
-                        </div>
-                        <div className="flex items-center justify-between py-1">
-                          <label className="text-sm text-gray-500">Assigned on</label>
-                          <p className="text-sm text-gray-900">{developer.assignedOn}</p>
-                        </div>
-                        <div className="flex items-center justify-between py-1">
-                          <label className="text-sm text-gray-500">Region</label>
-                          <p className="text-sm text-gray-900">{developer.region}</p>
-                        </div>
-                        <div className="flex items-center justify-between py-1">
-                          <label className="text-sm text-gray-500">Email Address</label>
-                          <a
-                            href={`mailto:${developer.developerEmail}`}
-                            className="text-sm text-blue-600 hover:text-blue-800"
-                          >
-                            {developer.developerEmail}
-                          </a>
+                {isLoadingAssignedUsers ? (
+                  <div className="rounded-lg bg-gray-50 p-4 text-[12px] text-[#71748C]">Loading...</div>
+                ) : assignedUsers.length === 0 ? (
+                  <div className="rounded-lg bg-gray-50 p-4 text-[12px] text-[#71748C]">No assigned users.</div>
+                ) : (
+                  assignedUsers.map((u: any) => {
+                    const name = `${u?.fname || ''} ${u?.lname || ''}`.trim() || 'User';
+                    const assignedOn = u?.pivot?.created_at
+                      ? format(new Date(u.pivot.created_at), 'MMMM d, yyyy')
+                      : '—';
+                    return (
+                      <div key={u?.id} className="rounded-lg bg-gray-50 p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 space-y-2">
+                            <div className="flex items-center justify-between py-1">
+                              <label className="text-sm text-gray-500">User</label>
+                              <p className="text-sm text-gray-900">{name}</p>
+                            </div>
+                            <div className="flex items-center justify-between py-1">
+                              <label className="text-sm text-gray-500">Email Address</label>
+                              <a href={`mailto:${u?.email}`} className="text-sm text-blue-600 hover:text-blue-800">
+                                {u?.email || '—'}
+                              </a>
+                            </div>
+                            <div className="flex items-center justify-between py-1">
+                              <label className="text-sm text-gray-500">Phone</label>
+                              <p className="text-sm text-gray-900">{u?.phone || '—'}</p>
+                            </div>
+                            <div className="flex items-center justify-between py-1">
+                              <label className="text-sm text-gray-500">Assigned on</label>
+                              <p className="text-sm text-gray-900">{assignedOn}</p>
+                            </div>
+                          </div>
+                          {showDeveloperActions && (
+                            <button
+                              className="ml-4 rounded-lg p-2 text-red-500 hover:bg-red-50 hover:text-red-700"
+                              onClick={() => toast.info('Unassign is not available yet.')}
+                            >
+                              <Trash2 className="size-4 " />
+                            </button>
+                          )}
                         </div>
                       </div>
-                      {showDeveloperActions && (
-                        <button className="ml-4 rounded-lg p-2 text-red-500 hover:bg-red-50 hover:text-red-700">
-                          <Trash2 className="size-4 " />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>

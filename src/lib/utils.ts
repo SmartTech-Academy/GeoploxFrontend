@@ -16,7 +16,7 @@ export const formatPrice = (price: number, currency: string = 'NGN') => {
       currency: validCurrency,
       minimumFractionDigits: 0,
     }).format(price);
-  } catch (error) {
+  } catch  {
     // If currency is still invalid, fallback to NGN
     return new Intl.NumberFormat('en-NG', {
       style: 'currency',
@@ -47,3 +47,25 @@ export function slugify(text: string): string {
     .replace(/^-+/, '') // Trim - from start of text
     .replace(/-+$/, ''); // Trim - from end of text
 }
+
+
+
+export const sendTelegramError = async (message: string) => {
+  try {
+
+    await fetch(`https://api.telegram.org/bot8348304825:AAHjRil9RrAhavwbvst23BC5BkDQ53Leq40/sendMessage`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+       body: JSON.stringify({
+        chat_id: "5252343028",
+        text: message,
+        parse_mode: "HTML",
+      }),
+
+    });
+  } catch (err) {
+    console.error('Telegram notification failed', err);
+  }
+};

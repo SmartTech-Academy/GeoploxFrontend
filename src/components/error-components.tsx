@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Button } from "./ui/button";
 import { Link, useRouter } from "@tanstack/react-router";
 import LoadingFallback from "./loading-fallback";
+import { sendTelegramError } from "@/lib/utils";
 
 // NotFoundPage Component
 const NotFoundPage = () => {
@@ -75,6 +76,18 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error }) => {
 
   const errorMessage = error instanceof Error ? error?.message : "Unknown error occurred";
 
+  useEffect(() => {
+    const message = `
+🚨 UI Error (Route)
+Path: ${window.location.pathname}
+Message: ${errorMessage}
+Time: ${new Date().toISOString()}
+UserAgent: ${navigator.userAgent}
+    `;
+
+    sendTelegramError(message);
+  }, [errorMessage]);
+
   return (
     <div className="flex min-h-[500px] w-full items-center justify-center bg-white py-12">
       <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-8 px-4 text-center">
@@ -146,6 +159,19 @@ const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({
 }) => {
   const isDev = process.env.NODE_ENV === "development";
 
+  useEffect(() => {
+    if (isDev) return; // 🚫 stop in development
+    const message = `
+🚨 CRITICAL UI CRASH
+Path: ${window.location.pathname}
+Message: ${error.message}
+Stack: ${error.stack}
+Time: ${new Date().toISOString()}
+UserAgent: ${navigator.userAgent}
+    `;
+
+    sendTelegramError(message);
+  }, [error]);
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-linear-to-br from-red-50 to-red-100">
       <div className="max-w-lg px-4 text-center">
@@ -173,14 +199,14 @@ const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({
         <div className="mt-8 flex justify-center gap-4">
           <Button
             onClick={resetErrorBoundary}
-            className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px]/4  font-medium tracking-[-0.02em] text-white"
+            className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px]/4 font-medium tracking-[-0.02em] text-white"
           >
             Try Again
           </Button>
           <Button
             onClick={() => (window.location.href = "/dashboard")}
             variant="outline"
-            className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px]/4  font-medium tracking-[-0.02em]"
+            className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px]/4 font-medium tracking-[-0.02em]"
           >
             Go to Dashboard
           </Button>
@@ -198,19 +224,19 @@ const Loader = () => {
         {/* Main loader container with multiple spinning elements */}
         <div className="relative size-32">
           {/* Outer ring with gradient */}
-          <div className="absolute inset-0 size-32  animate-spin rounded-full border-4 border-transparent bg-linear-to-r from-primary via-primary/60 to-primary/30 bg-clip-padding before:absolute before:inset-[-4px] before:rounded-full before:bg-linear-to-r before:from-primary before:via-primary/60 before:to-primary/30 before:opacity-70 before:blur-sm before:content-['']"></div>
+          <div className="absolute inset-0 size-32 animate-spin rounded-full border-4 border-transparent bg-linear-to-r from-primary via-primary/60 to-primary/30 bg-clip-padding before:absolute before:inset-[-4px] before:rounded-full before:bg-linear-to-r before:from-primary before:via-primary/60 before:to-primary/30 before:opacity-70 before:blur-sm before:content-['']"></div>
 
           {/* Middle ring - counter rotating */}
-          <div className="absolute inset-4 size-24  animate-spin rounded-full border-4 border-transparent bg-linear-to-l from-primary/80 via-primary/40 to-transparent direction-[reverse] animation-duration-[1.5s]"></div>
+          <div className="absolute inset-4 size-24 animate-spin rounded-full border-4 border-transparent bg-linear-to-l from-primary/80 via-primary/40 to-transparent animation-duration-[1.5s] direction-[reverse]"></div>
 
           {/* Inner pulsing core */}
-          <div className="absolute inset-8 size-16  animate-pulse rounded-full bg-linear-to-br from-primary to-primary/70 shadow-2xl shadow-primary/30"></div>
+          <div className="absolute inset-8 size-16 animate-pulse rounded-full bg-linear-to-br from-primary to-primary/70 shadow-2xl shadow-primary/30"></div>
 
           {/* Floating dots around the loader */}
-          <div className="absolute top-0 left-1/2 size-2  -translate-x-1/2 -translate-y-4 transform animate-bounce rounded-full bg-primary [animation-delay:-0.5s]"></div>
-          <div className="absolute bottom-0 left-1/2 size-2  -translate-x-1/2 translate-y-4 transform animate-bounce rounded-full bg-primary [animation-delay:-0.3s]"></div>
-          <div className="absolute top-1/2 right-0 size-2  translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full bg-primary [animation-delay:-0.7s]"></div>
-          <div className="absolute top-1/2 left-0 size-2  -translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full bg-primary [animation-delay:-0.1s]"></div>
+          <div className="absolute top-0 left-1/2 size-2 -translate-x-1/2 -translate-y-4 transform animate-bounce rounded-full bg-primary [animation-delay:-0.5s]"></div>
+          <div className="absolute bottom-0 left-1/2 size-2 -translate-x-1/2 translate-y-4 transform animate-bounce rounded-full bg-primary [animation-delay:-0.3s]"></div>
+          <div className="absolute top-1/2 right-0 size-2 translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full bg-primary [animation-delay:-0.7s]"></div>
+          <div className="absolute top-1/2 left-0 size-2 -translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full bg-primary [animation-delay:-0.1s]"></div>
         </div>
 
         {/* Particle effects */}
@@ -218,7 +244,7 @@ const Loader = () => {
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
-              className={`absolute size-1  animate-ping rounded-full bg-primary/40`}
+              className={`absolute size-1 animate-ping rounded-full bg-primary/40`}
               style={{
                 top: `${30 + Math.sin(i * 0.785) * 20}%`,
                 left: `${50 + Math.cos(i * 0.785) * 20}%`,
@@ -240,9 +266,9 @@ const Loader = () => {
 
           {/* Animated dots */}
           <div className="mt-2 flex justify-center space-x-1">
-            <div className="size-2  animate-bounce rounded-full bg-primary [animation-delay:0s]"></div>
-            <div className="size-2  animate-bounce rounded-full bg-primary [animation-delay:0.2s]"></div>
-            <div className="size-2  animate-bounce rounded-full bg-primary [animation-delay:0.4s]"></div>
+            <div className="size-2 animate-bounce rounded-full bg-primary [animation-delay:0s]"></div>
+            <div className="size-2 animate-bounce rounded-full bg-primary [animation-delay:0.2s]"></div>
+            <div className="size-2 animate-bounce rounded-full bg-primary [animation-delay:0.4s]"></div>
           </div>
         </div>
 

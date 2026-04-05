@@ -45,6 +45,7 @@ export const useGetBillingInfo = () => {
 }
 
 export const useGetProfileData = () => {
+  const token = localStorage.getItem('token');
   return useQuery({
     queryKey: ['profile'],
     queryFn: async (): Promise<UserProfile> => {
@@ -52,6 +53,7 @@ export const useGetProfileData = () => {
       return response.data.data;
     },
     retry: false, // Optional: prevent retrying on auth errors
+    enabled: !!token,
   });
 };
 
