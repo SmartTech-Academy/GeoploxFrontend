@@ -482,10 +482,10 @@ const ManagerView = ({
   setSelectedManager,
   activeTab,
   setActiveTab,
-  showRegionActions,
-  setShowRegionActions,
+  // showRegionActions,
+  // setShowRegionActions,
   showDeveloperActions,
-  setShowDeveloperActions,
+  // setShowDeveloperActions,
   setOpenModal,
   conversionPeriod,
   setConversionPeriod,
@@ -598,16 +598,16 @@ const ManagerView = ({
           >
             Profile
           </button>
-          <button
-            onClick={() => setActiveTab('performance')}
-            className={`border-b-2 pb-2 text-[16px] transition-colors ${
-              activeTab === 'performance'
-                ? 'border-[#D4AF36] font-semibold text-[#D4AF36]'
-                : 'border-transparent text-[#71748C] hover:text-[#1F2130]'
-            }`}
-          >
-            Performance
-          </button>
+          {/*<button*/}
+          {/*  onClick={() => setActiveTab('performance')}*/}
+          {/*  className={`border-b-2 pb-2 text-[16px] transition-colors ${*/}
+          {/*    activeTab === 'performance'*/}
+          {/*      ? 'border-[#D4AF36] font-semibold text-[#D4AF36]'*/}
+          {/*      : 'border-transparent text-[#71748C] hover:text-[#1F2130]'*/}
+          {/*  }`}*/}
+          {/*>*/}
+          {/*  Performance*/}
+          {/*</button>*/}
         </div>
       </div>
 
@@ -627,27 +627,27 @@ const ManagerView = ({
               <p className="text-[14px]/3.5 text-[#1F2130]">{selectedManager.createdOn || '—'}</p>
             </div>
 
-            <div>
-              <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">Assigned Listings (by Region)</h3>
-                <button
-                  onClick={() => setShowRegionActions(!showRegionActions)}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-[#71748C] hover:text-[#41415A]"
-                >
-                  <Settings className="size-4" />
-                  {showRegionActions ? 'Hide' : 'Info'}
-                </button>
-              </div>
-              <div className="rounded-lg bg-gray-50 p-4 text-[12px] text-[#71748C]">
-                Region-based assignments are not available from the current API.
-              </div>
-            </div>
+            {/*<div>*/}
+            {/*  <div className="mb-2 flex items-center justify-between">*/}
+            {/*    <h3 className="text-lg font-medium text-gray-900">Assigned Listings (by Region)</h3>*/}
+            {/*    <button*/}
+            {/*      onClick={() => setShowRegionActions(!showRegionActions)}*/}
+            {/*      className="flex items-center gap-2 px-4 py-2 text-sm text-[#71748C] hover:text-[#41415A]"*/}
+            {/*    >*/}
+            {/*      <Settings className="size-4" />*/}
+            {/*      {showRegionActions ? 'Hide' : 'Info'}*/}
+            {/*    </button>*/}
+            {/*  </div>*/}
+            {/*  <div className="rounded-lg bg-gray-50 p-4 text-[12px] text-[#71748C]">*/}
+            {/*    Region-based assignments are not available from the current API.*/}
+            {/*  </div>*/}
+            {/*</div>*/}
 
             <div>
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-lg font-medium text-gray-900">Assigned Users (Developer / Owner)</h3>
                 <button
-                  onClick={() => setShowDeveloperActions(!showDeveloperActions)}
+                  onClick={() => setOpenModal(true)}
                   className={cn(
                     'flex items-center gap-2 px-4 py-2 text-sm',
                     showDeveloperActions ? 'text-[#008A00]' : 'text-[#D4AF36]'

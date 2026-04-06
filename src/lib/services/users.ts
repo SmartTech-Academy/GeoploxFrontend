@@ -1,4 +1,4 @@
-import { useMutation, useQuery, UseMutationOptions } from '@tanstack/react-query';
+import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 import { toast } from 'sonner';
 import api from '../api';
@@ -8,10 +8,14 @@ interface ApiResponse {
   message: string;
 }
 
-export const useGetUsers = (params?: any) => {
+export const useGetUsers = (
+  params?: any,
+  options?: Omit<UseQueryOptions<AxiosResponse<any>, any>, 'queryKey' | 'queryFn'>
+) => {
   return useQuery({
     queryKey: ['users', params],
     queryFn: () => api.get('/dashboard/admin/users', { params }),
+    ...options,
   });
 };
 

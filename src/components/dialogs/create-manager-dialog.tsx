@@ -41,18 +41,21 @@ export function CreateManagerDialog({
     reValidateMode: 'onChange',
   });
 
-  const { mutate: registerManager, isPending } = useRegisterManager({
-    onSuccess: (res: any) => {
-      const activationCode = res?.data?.data?.activation_code;
-      if (activationCode) toast.info(`Activation code: ${activationCode}`);
-      onOpenChange(false);
-      form.reset();
-    },
-  });
+  const { mutate: registerManager, isPending } = useRegisterManager();
+
   const [showPassword, setShowPassword] = React.useState(false);
 
   function onSubmit(values: CreateManagerFormValues) {
-    registerManager(values);
+    registerManager(values, {
+      onSuccess: (res: any) => {
+        const activationCode = res?.data?.data?.activation_code;
+
+        if (activationCode) toast.info(`Activation code: ${activationCode}`);
+
+        onOpenChange(false); // ✅ will now actually close
+        form.reset();
+      },
+    });
   }
 
 
