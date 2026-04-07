@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import assets from '@/assets';
 import { customResolver } from '@/lib/customZodResolver';
 import { PageMetaTags } from '@/components/page-meta-data';
+import { useVaidateRegistrationData } from '@/lib/services';
+import { toast } from 'sonner';
 
 // Zod schema for registration form
 const registerSchema = z.object({
@@ -28,6 +30,7 @@ export const Route = createFileRoute('/_auth/register')({
 function RouteComponent() {
   const navigate = useNavigate();
 
+  const { mutate, isPending } = useVaidateRegistrationData();
   const form = useForm<RegisterFormValues>({
     resolver: customResolver(registerSchema),
     mode: 'onChange',
@@ -42,11 +45,24 @@ function RouteComponent() {
   });
 
   const onSubmit = (values: RegisterFormValues) => {
-    // Navigate to the next step to set the password, passing user details
-    navigate({
-      to: '/set-password',
-      search: values,
-    });
+
+    mutate({
+      phone:values.phoneNumber,
+      email:values.email,
+      username: values.username,
+    },{
+      onSuccess: () => {
+        toast.success('Registration data validated successfully');
+        // Navigate to the next step to set the password, passing user details
+        navigate({
+          to: '/set-password',
+          search: values,
+        });
+      },
+
+
+    })
+
   };
 
   //   const handleGoogleSignIn = () => {
@@ -58,13 +74,13 @@ function RouteComponent() {
   //   };
 
   return (
-    <div className="flex size-full  bg-white">
+    <div className="flex size-full bg-white">
       <PageMetaTags
         title="Create Your Account"
         description="Join thousands of users on Geoplox. Create your free account to start buying, selling, or renting properties."
         keywords="geoplox signup, create property account, join geoplox"
       />
-      <div className="flex size-full min-h-screen  flex-col justify-between gap-5 self-stretch py-10">
+      <div className="flex size-full min-h-screen flex-col justify-between gap-5 self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <Link to="/">
@@ -82,7 +98,7 @@ function RouteComponent() {
         <div className="mx-auto flex w-full flex-col items-center gap-10 px-4 lg:max-w-[560px] lg:px-0">
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Get Started</h1>
-            <p className="text-[14px]/5  text-[#71748C]">Complete your onboarding in 10 minutes.</p>
+            <p className="text-[14px]/5 text-[#71748C]">Complete your onboarding in 10 minutes.</p>
           </div>
 
           <div className="flex w-full flex-col gap-10">
@@ -96,7 +112,7 @@ function RouteComponent() {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem className="w-full gap-1.5">
-                          <FormLabel className="leadinng-[17px] text-[14px] font-normal text-[#41415A]">
+                          <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                             First Name
                           </FormLabel>
                           <FormControl>
@@ -116,7 +132,7 @@ function RouteComponent() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem className="w-full gap-1.5">
-                          <FormLabel className="leadinng-[17px] text-[14px] font-normal text-[#41415A]">
+                          <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                             Last Name
                           </FormLabel>
                           <FormControl>
@@ -139,7 +155,7 @@ function RouteComponent() {
                       name="username"
                       render={({ field }) => (
                         <FormItem className="w-full gap-1.5">
-                          <FormLabel className="leadinng-[17px] text-[14px] font-normal text-[#41415A]">
+                          <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                             Username
                           </FormLabel>
                           <FormControl>
@@ -159,7 +175,7 @@ function RouteComponent() {
                       name="phoneNumber"
                       render={({ field }) => (
                         <FormItem className="w-full gap-1.5">
-                          <FormLabel className="leadinng-[17px] text-[14px] font-normal text-[#41415A]">
+                          <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                             Phone Number
                           </FormLabel>
                           <FormControl>
@@ -181,7 +197,7 @@ function RouteComponent() {
                     name="email"
                     render={({ field }) => (
                       <FormItem className="w-full gap-1.5">
-                        <FormLabel className="leadinng-[17px] text-[14px] font-normal text-[#41415A]">
+                        <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                           Email Address
                         </FormLabel>
                         <FormControl>
@@ -202,14 +218,15 @@ function RouteComponent() {
                 <div className="flex flex-col items-start gap-7 self-stretch">
                   <Button
                     type="submit"
-                    disabled={form.formState.isSubmitting}
+                    disabled={!form.formState.isValid || isPending || form.formState.isSubmitting}
                     style={{
                       background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
                       boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
                     }}
                     className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                   >
-                    {form.formState.isSubmitting ? 'Loading...' : 'Get Started'}
+                    {isPending ? 'Loading...' : 'Get Started'}
+
                   </Button>
 
                   {/* <div className="flex w-full flex-col items-start gap-7">
@@ -254,9 +271,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px]/5  text-[#41415A]">
-            © {new Date().getFullYear()} — Geoplox, All Right Reserved.
-          </p>
+          <p className="text-[14px]/5 text-[#41415A]">© {new Date().getFullYear()} — Geoplox, All Right Reserved.</p>
         </div>
       </div>
     </div>

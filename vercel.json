@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    { "source": "/blog-graphql", "destination": "https://blog.geoplox.com/graphql" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }

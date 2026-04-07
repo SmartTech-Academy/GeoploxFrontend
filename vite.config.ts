@@ -25,4 +25,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      "/blog-graphql": {
+        target: "https://blog.geoplox.com",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/blog-graphql$/, "/graphql"),
+      },
+    },
+  },
 });

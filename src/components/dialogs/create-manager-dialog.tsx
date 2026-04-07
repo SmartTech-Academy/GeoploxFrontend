@@ -82,7 +82,7 @@ export function CreateManagerDialog({
                   <FormItem>
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Micheal" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input placeholder="John" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -96,7 +96,7 @@ export function CreateManagerDialog({
                   <FormItem>
                     <FormLabel>Last Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Okeakwalam" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input placeholder="Doe" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,7 +112,7 @@ export function CreateManagerDialog({
                   <FormItem>
                     <FormLabel>Phone</FormLabel>
                     <FormControl>
-                      <Input placeholder="09169088777" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input placeholder="09169088711" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

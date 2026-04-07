@@ -38,12 +38,13 @@ export const Route = createFileRoute('/_auth/verify-otp')({
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const { email, phone } = useSearch({ from: '/_auth/verify-otp' });
+  const { email } = useSearch({ from: '/_auth/verify-otp' });
   const { mutate: verifyOtp, isPending: isVerifying } = useVerify();
   const { mutate: resendCode, isPending: isResending } = useResend();
   const [countdown, setCountdown] = useState(0);
   const [localOTP, setLocalOTP] = useState('');
 
+  console.log('email', email);
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => {
@@ -108,20 +109,31 @@ function RouteComponent() {
   };
 
   // Format phone number for display (mask most digits)
-  const formatPhoneForDisplay = (phoneNumber?: string) => {
-    if (!phoneNumber) return '***3323';
-    const digits = phoneNumber.replace(/\D/g, '');
-    return `***${digits.slice(-4)}`;
+  // const formatPhoneForDisplay = (phoneNumber?: string) => {
+  //   if (!phoneNumber) return '***3323';
+  //   const digits = phoneNumber.replace(/\D/g, '');
+  //   return `***${digits.slice(-4)}`;
+  // };
+
+  // Format email for display (mask username)
+  const formatEmailForDisplay = (emailAddress?: string) => {
+    if (!emailAddress) return 'u***@gmail.com';
+    const [username, domain] = emailAddress.split('@');
+    if (!domain) return 'u***@gmail.com';
+    // Show first 3 characters of username, mask the rest
+    const maskedUsername = username.length > 3 ? `${username.slice(0, 3)}***` : `${username}***`;
+
+    return `${maskedUsername}@${domain}`;
   };
 
   return (
-    <div className="flex size-full  bg-white">
+    <div className="flex size-full bg-white">
       <PageMetaTags
         title="Verify Your Account"
         description="Enter the verification code sent to your phone to complete account verification."
         keywords="account verification, OTP verification"
       />
-      <div className="flex size-full min-h-screen  flex-col justify-between self-stretch py-10">
+      <div className="flex size-full min-h-screen flex-col justify-between self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <Link to="/">
@@ -139,9 +151,9 @@ function RouteComponent() {
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
           <div className="flex w-full flex-col items-center gap-4 self-stretch px-4">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Verify your Account</h1>
-            <p className="text-center text-[14px]/5  text-[#71748C]">
-              Enter the 6-digit code sent to your phone number ending with{' '}
-              <span className="font-medium">{formatPhoneForDisplay(phone)}</span>
+            <p className="text-center text-[14px]/5 text-[#71748C]">
+              Enter the 6-digit code sent to your email address{' '}
+              <span className="font-medium">{formatEmailForDisplay(email)}</span>
             </p>
           </div>
 
@@ -194,12 +206,12 @@ function RouteComponent() {
 
                 {/* Resend Code */}
                 <div className="text-center">
-                  <p className="text-[14px]/5  text-[#41415A]">
+                  <p className="text-[14px]/5 text-[#41415A]">
                     Didn&apos;t receive?{' '}
                     <button
                       type="button"
                       onClick={handleResendCode}
-                      className="font-semibold text-primary hover:underline disabled:cursor-not-allowed disabled:text-gray-400 disabled:no-underline"
+                      className="text-primary font-semibold hover:underline disabled:cursor-not-allowed disabled:text-gray-400 disabled:no-underline"
                       disabled={countdown > 0 || isResending}
                     >
                       {isResending ? 'Sending...' : countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code'}
@@ -213,9 +225,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px]/5  text-[#41415A]">
-            © {new Date().getFullYear()} — Geoplox, All Right Reserved.
-          </p>
+          <p className="text-[14px]/5 text-[#41415A]">© {new Date().getFullYear()} — Geoplox, All Right Reserved.</p>
         </div>
       </div>
     </div>

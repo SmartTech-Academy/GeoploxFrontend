@@ -37,16 +37,23 @@ export const Route = createFileRoute('/_auth/set-password')({
 // Password validation schema
 const passwordSchema = z
   .string()
-  .min(10, 'Minimum 10 characters')
+  .min(8, 'Minimum 8 characters')
   .regex(/[a-z]/, 'One lowercase letter')
   .regex(/[A-Z]/, 'One uppercase letter')
   .regex(/[0-9]/, 'One number')
   .regex(/[^a-zA-Z0-9]/, 'One special character')
   .refine((val) => !/\s/.test(val), 'No space');
 
-const formSchema = z.object({
-  password: passwordSchema,
-});
+// Updated Form Schema with Confirm Password
+const formSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -58,7 +65,8 @@ const PasswordRequirements = ({ password }: { password: string }) => {
     { id: 'special', test: /[^a-zA-Z0-9]/, label: 'One special character' },
     { id: 'number', test: /[0-9]/, label: 'One number' },
     { id: 'nospace', test: /^\S*$/, label: 'No space' },
-    { id: 'minlength', test: /.{10,}/, label: 'Minimum 10 character' },
+    // Updated to 8 characters
+    { id: 'minlength', test: /.{8,}/, label: 'Minimum 8 character' },
   ];
 
   return (
@@ -67,7 +75,7 @@ const PasswordRequirements = ({ password }: { password: string }) => {
         const isValid = password ? req.test.test(password) : false;
         return (
           <div key={req.id} className="flex items-center gap-2 text-sm">
-            {isValid ? <Check className="size-4  text-green-600" /> : <X className="size-4  text-red-500" />}
+            {isValid ? <Check className="size-4 text-green-600" /> : <X className="size-4 text-red-500" />}
             <span className={isValid ? 'text-green-600' : 'text-red-500'}>{req.label}</span>
           </div>
         );
@@ -79,6 +87,7 @@ const PasswordRequirements = ({ password }: { password: string }) => {
 function RouteComponent() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const searchParams = useSearch({ from: '/_auth/set-password' });
   const { mutate, isPending } = useRegister();
 
@@ -88,10 +97,12 @@ function RouteComponent() {
     reValidateMode: 'onChange',
     defaultValues: {
       password: '',
+      confirmPassword: '',
     },
   });
 
   const onSubmit = (values: FormValues) => {
+    // Explicitly constructing the object to ensure confirmPassword is NOT sent to API
     const registrationData = {
       fname: searchParams.firstName,
       lname: searchParams.lastName,
@@ -113,13 +124,13 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex size-full  bg-white">
+    <div className="flex size-full bg-white">
       <PageMetaTags
         title="Set Your Password"
         description="Complete your account setup by creating a secure password."
         keywords="account setup, create password"
       />
-      <div className="flex size-full min-h-screen  flex-col justify-between self-stretch py-10">
+      <div className="flex size-full min-h-screen flex-col justify-between self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <img src={assets.logotext} alt="logo" className="h-[46px] w-[126px]" width={126} height={46} />
@@ -148,12 +159,12 @@ function RouteComponent() {
             }}
             className="flex w-full items-center gap-2 text-[#D4AF36] transition-colors hover:text-[#B69118]"
           >
-            <ChevronLeft className="size-5 " />
+            <ChevronLeft className="size-5" />
             <span className="text-[14px] leading-[21px] font-medium">Back</span>
           </button>
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
             <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Create Password</h1>
-            <p className="text-[14px]/5  text-[#71748C]">Complete your onboarding in 10 minutes.</p>
+            <p className="text-[14px]/5 text-[#71748C]">Complete your onboarding in 10 minutes.</p>
           </div>
 
           <div className="flex w-full flex-col gap-10">
@@ -165,7 +176,7 @@ function RouteComponent() {
                     name="password"
                     render={({ field }) => (
                       <FormItem className="w-full gap-1.5">
-                        <FormLabel className="leadinng-[17px] text-[14px] font-normal text-[#41415A]">
+                        <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                           Create Password
                         </FormLabel>
                         <FormControl>
@@ -181,7 +192,7 @@ function RouteComponent() {
                               onClick={() => setShowPassword(!showPassword)}
                               className="absolute top-1/2 right-3 -translate-y-1/2 text-[#D4AF36] hover:text-[#B69118]"
                             >
-                              {showPassword ? <EyeOff className="size-4 " /> : <Eye className="size-4 " />}
+                              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                             </button>
                           </div>
                         </FormControl>
@@ -190,6 +201,37 @@ function RouteComponent() {
                         <div className="w-full">
                           <PasswordRequirements password={form.getValues().password} />
                         </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Confirm Password Field */}
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem className="w-full gap-1.5">
+                        <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                          Confirm Password
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              type={showConfirmPassword ? 'text' : 'password'}
+                              placeholder="••••••••••••"
+                              className="h-10 w-full self-stretch rounded-xl border-[#D5D5DD] px-6 pr-12"
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              className="absolute top-1/2 right-3 -translate-y-1/2 text-[#D4AF36] hover:text-[#B69118]"
+                            >
+                              {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                            </button>
+                          </div>
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -217,9 +259,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px]/5  text-[#41415A]">
-            © {new Date().getFullYear()} — Geoplox, All Right Reserved.
-          </p>
+          <p className="text-[14px]/5 text-[#41415A]">© {new Date().getFullYear()} — Geoplox, All Right Reserved.</p>
         </div>
       </div>
     </div>

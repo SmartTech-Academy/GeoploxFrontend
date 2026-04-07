@@ -48,6 +48,24 @@ export function slugify(text: string): string {
     .replace(/-+$/, ''); // Trim - from end of text
 }
 
+export function stripHtml(html: string): string {
+  if (!html) return '';
+  // DOMParser preserves spacing better than regex for real HTML content.
+  if (typeof window !== 'undefined' && typeof DOMParser !== 'undefined') {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+export function excerptFromHtml(html: string, maxLen: number = 180): string {
+  const text = stripHtml(html);
+  if (text.length <= maxLen) return text;
+  const clipped = text.slice(0, maxLen);
+  const lastSpace = clipped.lastIndexOf(' ');
+  return `${(lastSpace > 50 ? clipped.slice(0, lastSpace) : clipped).trim()}…`;
+}
+
 
 
 export const sendTelegramError = async (message: string) => {

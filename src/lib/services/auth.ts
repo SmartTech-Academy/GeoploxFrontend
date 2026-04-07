@@ -22,6 +22,15 @@ export const useRegister = () => {
   });
 };
 
+export const useVaidateRegistrationData = () => {
+  return useMutation({
+    mutationFn: (data: any) => api.post('/auth/validate/registration-data', data),
+  });
+};
+
+
+
+
 export const useLogout = () => {
   return useMutation({
     mutationFn: () => api.post('/auth/logout'),

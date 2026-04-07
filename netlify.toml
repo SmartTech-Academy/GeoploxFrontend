@@ -4,6 +4,12 @@
   publish = "dist" # This should be your build output directory. For Vite, it's 'dist'.
 
 [[redirects]]
+  from = "/blog-graphql"
+  to = "https://blog.geoplox.com/graphql"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
