@@ -1,8 +1,7 @@
 export const BLOG_BASE_URL = (import.meta.env.VITE_BLOG_BASE_URL as string | undefined) ?? 'https://blog.geoplox.com';
 
 // Prefer same-origin proxy to avoid CORS in browsers. Configure via Vite/Netlify/Vercel rewrites.
-export const BLOG_GRAPHQL_URL =
-  (import.meta.env.VITE_BLOG_GRAPHQL_URL as string | undefined) ?? '/blog-graphql';
+export const BLOG_GRAPHQL_URL = import.meta.env.VITE_BLOG_GRAPHQL_URL ?? 'https://blog.geoplox.com/graphql';
 
 type GraphqlError = {
   message: string;

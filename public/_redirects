@@ -2,3 +2,4 @@
 # It ensures that all paths are served by index.html, allowing
 # the client-side router to handle them.
 /* /index.html 200
+/blog-graphql  https://blog.geoplox.com/graphql  200
