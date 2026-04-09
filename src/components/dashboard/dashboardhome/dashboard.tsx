@@ -8,8 +8,9 @@ import { PageMetaTags } from '@/components/page-meta-data';
 import { ActiveListingsChart } from '@/components/charts/ActiveListingsChart';
 import { useGetProfileData } from '@/lib/services/profile';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useGetDashboardOverview } from '@/lib/services/dashboard';
+import { toast } from 'sonner';
 
 interface RecentMessage {
   conversation_id: number;
@@ -62,6 +63,19 @@ const Dashboard = () => {
   };
 
   const isLoading = isProfileLoading || isDashboardLoading;
+
+  useEffect(() => {
+    if (dashboardData?.data?.data?.Dashboard_Warning_Message) {
+      const toastId = toast.info(dashboardData?.data?.data?.Dashboard_Warning_Message, {
+        action: {
+          label: 'Dismiss',
+          onClick: () => toast.dismiss(toastId), // dismisses the toast
+        },
+        duration:Infinity,
+      });
+
+    }
+  }, [dashboardData]);
 
   return (
     <div className="flex w-full flex-col items-start gap-5 py-8">

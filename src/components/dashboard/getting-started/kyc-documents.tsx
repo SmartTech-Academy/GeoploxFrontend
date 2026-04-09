@@ -162,7 +162,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
 
         <div className="flex w-full flex-col gap-1.5">
           <label className="cursor-pointer text-[14px] leading-[17px] font-normal text-[#41415A]">
-            Proof of Address
+            {isOwner ? "Proof of Identity" : "Proof of Address"}
           </label>
           {!govtId ? (
             <div
@@ -230,7 +230,7 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
           />
 
           <p className="text-xs text-[#71748C]">
-            E.g. Utility Bill / Bank document / Tenancy-related document
+            {isOwner ? "Govt. issued ID or International passport" : "E.g. Utility Bill / Bank document / Tenancy-related document"}
           </p>
         </div>
       </div>
