@@ -1,4 +1,4 @@
-import assets from '@/assets';
+import assets from "@/assets";
 import {
   Sidebar,
   SidebarContent,
@@ -9,18 +9,18 @@ import {
   SidebarMenuButton,
   SidebarSeparator,
   useSidebar,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 
-import { Link, useLocation } from '@tanstack/react-router';
-import { HelpCircle, LogOut } from 'lucide-react';
-import { useGetProfileData } from '@/lib/services/profile';
-import { Skeleton } from './ui/skeleton';
-import { getPrimaryNavigation } from '@/lib/navigation';
-import { queryClient } from '@/lib/queryClient';
+import { Link, useLocation } from "@tanstack/react-router";
+import { HelpCircle, LogOut } from "lucide-react";
+import { useGetProfileData } from "@/lib/services/profile";
+import { Skeleton } from "./ui/skeleton";
+import { getPrimaryNavigation } from "@/lib/navigation";
+import { queryClient } from "@/lib/queryClient";
 
 const bottomNavigation = [
-  { name: 'Help', href: '/contact', icon: HelpCircle },
-  { name: 'Logout', href: '/logout', icon: LogOut },
+  { name: "Help", href: "/contact", icon: HelpCircle },
+  { name: "Logout", href: "/logout", icon: LogOut },
 ];
 
 export function AppSidebar() {
@@ -31,17 +31,17 @@ export function AppSidebar() {
   const mainNavigation = getPrimaryNavigation(user);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     // Invalidate all queries to clear cached data
     queryClient.cancelQueries();
     queryClient.clear(); // start fresh
     // Redirect to login, which will happen automatically from DashboardLayout's effect
     setOpenMobile(false);
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   return (
-    <Sidebar className="border-r-0" style={{ backgroundColor: '#F8F8F8' }}>
+    <Sidebar className="border-r-0" style={{ backgroundColor: "#F8F8F8" }}>
       <SidebarHeader className="p-6">
         <img src={assets.logotext} alt="logo" width={126} height={40} className="h-10 w-[126px]" />
       </SidebarHeader>
@@ -64,7 +64,7 @@ export function AppSidebar() {
                       className="h-10 w-full rounded-xl text-[16px] leading-[18px] hover:bg-white hover:text-[#D4AF36] data-[active=true]:bg-white data-[active=true]:font-medium data-[active=true]:text-[#D4AF36]"
                     >
                       <Link onClick={() => setOpenMobile(false)} to={item.href}>
-                        <item.icon className={isActive ? 'fill-[#D4AF36] text-[#D4AF36]' : ''} />
+                        <item.icon className={isActive ? "fill-[#D4AF36] text-[#D4AF36]" : ""} />
                         <span>{item.name}</span>
                       </Link>
                     </SidebarMenuButton>
@@ -80,7 +80,7 @@ export function AppSidebar() {
         <SidebarMenu className="w-full gap-1">
           {bottomNavigation.map((item) => {
             const isActive = pathname.includes(item.href);
-            if (item.name === 'Logout') {
+            if (item.name === "Logout") {
               return (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton

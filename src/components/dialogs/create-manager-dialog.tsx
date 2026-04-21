@@ -1,21 +1,35 @@
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { customResolver } from '@/lib/customZodResolver';
-import { useRegisterManager } from '@/lib/services/managers';
-import z from 'zod/v4';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { customResolver } from "@/lib/customZodResolver";
+import { useRegisterManager } from "@/lib/services/managers";
+import z from "zod/v4";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const createManagerSchema = z.object({
-  fname: z.string().min(1, 'First name is required'),
-  lname: z.string().min(1, 'Last name is required'),
-  phone: z.string().min(6, 'Phone number is required'),
-  email: z.string().email('Enter a valid email address'),
-  username: z.string().min(3, 'Username is required'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  fname: z.string().min(1, "First name is required"),
+  lname: z.string().min(1, "Last name is required"),
+  phone: z.string().min(6, "Phone number is required"),
+  email: z.string().email("Enter a valid email address"),
+  username: z.string().min(3, "Username is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type CreateManagerFormValues = z.infer<typeof createManagerSchema>;
@@ -30,15 +44,15 @@ export function CreateManagerDialog({
   const form = useForm<CreateManagerFormValues>({
     resolver: customResolver(createManagerSchema),
     defaultValues: {
-      fname: '',
-      lname: '',
-      phone: '',
-      email: '',
-      username: '',
-      password: '',
+      fname: "",
+      lname: "",
+      phone: "",
+      email: "",
+      username: "",
+      password: "",
     },
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
 
   const { mutate: registerManager, isPending } = useRegisterManager();
@@ -57,7 +71,6 @@ export function CreateManagerDialog({
       },
     });
   }
-
 
   return (
     <Dialog
@@ -82,7 +95,11 @@ export function CreateManagerDialog({
                   <FormItem>
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="John" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="John"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -96,7 +113,11 @@ export function CreateManagerDialog({
                   <FormItem>
                     <FormLabel>Last Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Doe" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="Doe"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,7 +133,11 @@ export function CreateManagerDialog({
                   <FormItem>
                     <FormLabel>Phone</FormLabel>
                     <FormControl>
-                      <Input placeholder="09169088711" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="09169088711"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -147,7 +172,11 @@ export function CreateManagerDialog({
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="micheal" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="micheal"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -164,7 +193,7 @@ export function CreateManagerDialog({
                       <div className="relative">
                         <Input
                           placeholder="Enter password"
-                          type={showPassword ? 'text' : 'password'}
+                          type={showPassword ? "text" : "password"}
                           className="h-10 rounded-lg border-[#D5D5DD] pr-12"
                           {...field}
                         />
@@ -173,7 +202,7 @@ export function CreateManagerDialog({
                           onClick={() => setShowPassword((v) => !v)}
                           className="absolute top-1/2 right-3 -translate-y-1/2 text-[12px] font-semibold text-primary hover:underline"
                         >
-                          {showPassword ? 'Hide' : 'Show'}
+                          {showPassword ? "Hide" : "Show"}
                         </button>
                       </div>
                     </FormControl>
@@ -193,12 +222,13 @@ export function CreateManagerDialog({
                 type="submit"
                 disabled={isPending}
                 style={{
-                  background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                  background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
+                  boxShadow:
+                    "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                 }}
                 className="border border-[oklch(0.235_0_0/50%)] text-white"
               >
-                {isPending ? 'Creating...' : 'Create'}
+                {isPending ? "Creating..." : "Create"}
               </Button>
             </DialogFooter>
           </form>

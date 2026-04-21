@@ -1,7 +1,7 @@
-import { useGetFavorites } from '@/lib/services/favorites';
-import { PropertyListingCard } from '@/components/property-listing-card';
-import { PropertyListingCardSkeleton } from '@/components/property-listing-card-skeleton';
-import { EmptyState } from '@/components/empty-state';
+import { useGetFavorites } from "@/lib/services/favorites";
+import { PropertyListingCard } from "@/components/property-listing-card";
+import { PropertyListingCardSkeleton } from "@/components/property-listing-card-skeleton";
+import { EmptyState } from "@/components/empty-state";
 
 const FavoritesPage = () => {
   const { data: favoritesResponse, isLoading } = useGetFavorites();

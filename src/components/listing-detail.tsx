@@ -86,8 +86,8 @@ const ListingDetail = () => {
 
   const { data: user } = useGetProfileData();
   const property = isDashboard
-      ? propertyDetailsResponse?.data?.data?.data
-      : propertyDetailsResponse?.data?.data;
+    ? propertyDetailsResponse?.data?.data?.data
+    : propertyDetailsResponse?.data?.data;
 
   const [isFavorited, setIsFavorited] = useState(property?.is_favourited || false);
 

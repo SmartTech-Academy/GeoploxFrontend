@@ -1,5 +1,5 @@
-import { PageMetaTags } from '@/components/page-meta-data';
-import PropertyForm from './property-form';
+import { PageMetaTags } from "@/components/page-meta-data";
+import PropertyForm from "./property-form";
 
 const PropertiesCreate = () => {
   return (

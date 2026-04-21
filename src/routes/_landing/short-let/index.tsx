@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from "@tanstack/react-router";
 
-import ListingProperties from '@/components/listing-properties';
-import { PageMetaTags } from '@/components/page-meta-data';
+import ListingProperties from "@/components/listing-properties";
+import { PageMetaTags } from "@/components/page-meta-data";
 
-export const Route = createFileRoute('/_landing/short-let/')({
+export const Route = createFileRoute("/_landing/short-let/")({
   component: () => (
     <>
       <PageMetaTags

@@ -1,32 +1,43 @@
-import assets from '@/assets';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Form } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { customResolver } from '@/lib/customZodResolver';
-import { useUpdatePersonalInformation } from '@/lib/services/profile';
-import { UserProfile } from '@/lib/types';
-import { cn } from '@/lib/utils';
-import { Phone, Upload, XIcon } from 'lucide-react';
-import React, { useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import z from 'zod';
-import statesAndLgasData from '@/data/statesAndLocalGov.json';
+import assets from "@/assets";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  ImageCrop,
+  ImageCropApply,
+  ImageCropContent,
+  ImageCropReset,
+} from "@/components/ui/kibo-ui/image-crop";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { customResolver } from "@/lib/customZodResolver";
+import { useUpdatePersonalInformation } from "@/lib/services/profile";
+import { UserProfile } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { Phone, Upload, XIcon } from "lucide-react";
+import React, { useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
+import statesAndLgasData from "@/data/statesAndLocalGov.json";
 
 const step2Schema = z.object({
   profilePicture: z.any().optional(),
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  phoneNumber: z.string().min(1, 'Phone number is required'),
-  whatsappNumber: z.string().min(1, 'WhatsApp number is required'),
-  homeAddress: z.string().min(1, 'Home address is required'),
-  state: z.string().min(1, 'State is required'),
-  localGovernment: z.string().min(1, 'Locality/Area is required'),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  phoneNumber: z.string().min(1, "Phone number is required"),
+  whatsappNumber: z.string().min(1, "WhatsApp number is required"),
+  homeAddress: z.string().min(1, "Home address is required"),
+  state: z.string().min(1, "State is required"),
+  localGovernment: z.string().min(1, "Locality/Area is required"),
   bio: z.string().optional(),
 });
 
@@ -38,7 +49,9 @@ interface PersonalInformationSectionProps {
 
 const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({ user }) => {
   const { mutateAsync: updatePersonalInfo, isPending } = useUpdatePersonalInformation();
-  const [picturePreview, setPicturePreview] = useState<string | null>(user?.display_picture_url || null);
+  const [picturePreview, setPicturePreview] = useState<string | null>(
+    user?.display_picture_url || null,
+  );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCropDialogOpen, setCropDialogOpen] = useState(false);
   const [selectedState, setSelectedState] = useState(user?.state || undefined);
@@ -54,17 +67,17 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
 
   const form = useForm<PersonalInfoFormValues>({
     resolver: customResolver(step2Schema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
-      firstName: user?.firstname || '',
-      lastName: user?.lastname || '',
-      phoneNumber: user?.phone_number || '',
-      whatsappNumber: user?.whatsapp_number || '',
-      homeAddress: user?.home_address || '',
+      firstName: user?.firstname || "",
+      lastName: user?.lastname || "",
+      phoneNumber: user?.phone_number || "",
+      whatsappNumber: user?.whatsapp_number || "",
+      homeAddress: user?.home_address || "",
       state: user?.state || undefined,
       localGovernment: user?.local_gov_area || undefined,
-      bio: user?.bio || '',
+      bio: user?.bio || "",
     },
   });
 
@@ -82,7 +95,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
 
   const handleCrop = (croppedImage: string) => {
     setPicturePreview(croppedImage);
-    form.setValue('profilePicture', croppedImage);
+    form.setValue("profilePicture", croppedImage);
     setCropDialogOpen(false);
     setSelectedFile(null);
   };
@@ -105,9 +118,9 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
         bio: values.bio,
         base64_file: values.profilePicture,
       });
-      toast.success('Personal information updated successfully!');
+      toast.success("Personal information updated successfully!");
     } catch (error: any) {
-      const message = error.response?.data?.message || 'An error occurred.';
+      const message = error.response?.data?.message || "An error occurred.";
       toast.error(message);
     }
   };
@@ -117,8 +130,10 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
         <div className="flex w-full flex-col gap-10">
           <div className="flex flex-col items-center gap-3 self-stretch text-center">
-            <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Personal Information</h2>
-            <p className="text-[14px]/5  text-[#71748C]">Update your details</p>
+            <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">
+              Personal Information
+            </h2>
+            <p className="text-[14px]/5 text-[#71748C]">Update your details</p>
           </div>
 
           <div className="flex w-full flex-col gap-5">
@@ -131,9 +146,9 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 >
                   {picturePreview ? (
                     <img
-                      src={picturePreview || '/placeholder.svg'}
+                      src={picturePreview || "/placeholder.svg"}
                       alt="Profile Preview"
-                      className="size-full  object-cover"
+                      className="size-full object-cover"
                     />
                   ) : (
                     <Upload className="size-4 text-[#71748C]" />
@@ -148,8 +163,8 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <p className="text-[14px]/6  text-[#1F2130]">Profile Picture</p>
-                  <p className="text-[14px]/6  text-[#71748C]">
+                  <p className="text-[14px]/6 text-[#1F2130]">Profile Picture</p>
+                  <p className="text-[14px]/6 text-[#71748C]">
                     Upload a profile picture. Only .JPG and .PNG supported.
                   </p>
                 </div>
@@ -172,7 +187,12 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                       <div className="flex items-center justify-center gap-2 pt-4">
                         <ImageCropApply />
                         <ImageCropReset />
-                        <Button onClick={handleDialogClose} size="icon" type="button" variant="ghost">
+                        <Button
+                          onClick={handleDialogClose}
+                          size="icon"
+                          type="button"
+                          variant="ghost"
+                        >
                           <XIcon className="size-4" />
                         </Button>
                       </div>
@@ -188,9 +208,15 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 name="firstName"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">First Name</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      First Name
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Rene" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="Rene"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -202,9 +228,15 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 name="lastName"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Last Name</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Last Name
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Forbes" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="Forbes"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -228,7 +260,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                           className="h-10 rounded-lg border-[#D5D5DD] pr-10"
                           {...field}
                         />
-                        <Phone className="absolute top-1/2 right-3 size-4  -translate-y-1/2 transform fill-[#71748C] text-[#71748C]" />
+                        <Phone className="absolute top-1/2 right-3 size-4 -translate-y-1/2 transform fill-[#71748C] text-[#71748C]" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -268,7 +300,9 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
               name="homeAddress"
               render={({ field }) => (
                 <FormItem className="w-full gap-1.5">
-                  <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Home Address</FormLabel>
+                  <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                    Home Address
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="12, Oba Akinjobi Road, Ikeja GRA"
@@ -287,7 +321,9 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
               name="bio"
               render={({ field }) => (
                 <FormItem className="w-full gap-1.5">
-                  <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Bio</FormLabel>
+                  <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                    Bio
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Tell us a little about yourself"
@@ -307,12 +343,14 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 name="state"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">State</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      State
+                    </FormLabel>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
                         setSelectedState(value);
-                        form.setValue('localGovernment', ''); // Reset LGA on state change
+                        form.setValue("localGovernment", ""); // Reset LGA on state change
                       }}
                       value={field.value}
                     >
@@ -372,20 +410,23 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
           <Button
             type="button"
             variant="secondary"
-            className={cn('h-10 flex-1 rounded-full bg-[#F1F1F4] text-[14px] font-semibold text-[#1F2130]')}
+            className={cn(
+              "h-10 flex-1 rounded-full bg-[#F1F1F4] text-[14px] font-semibold text-[#1F2130]",
+            )}
           >
             Back
           </Button>
           <Button
             style={{
-              background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-              boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+              background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
+              boxShadow:
+                "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
             }}
             type="submit"
             className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] text-[14px] font-semibold text-white"
             disabled={isPending}
           >
-            {isPending ? 'Saving...' : 'Save Changes'}
+            {isPending ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </form>

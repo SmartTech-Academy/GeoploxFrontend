@@ -1,4 +1,4 @@
-import assets from '@/assets';
+import assets from "@/assets";
 
 /**
  * Generate image source with fallback and type handling
@@ -7,10 +7,10 @@ import assets from '@/assets';
  */
 function getImageSource(imageData: string | File | undefined) {
   // If imageData is undefined or null, use default logo
-  if (!imageData) return '/logo.svg';
+  if (!imageData) return "/logo.svg";
 
   // If it's already a string (like a URL or base64), return as-is
-  if (typeof imageData === 'string') return imageData;
+  if (typeof imageData === "string") return imageData;
 
   // If it's a File object, create a URL for it
   if (imageData instanceof File) {
@@ -18,7 +18,7 @@ function getImageSource(imageData: string | File | undefined) {
   }
 
   // Fallback to default logo if nothing matches
-  return '/logo.svg';
+  return "/logo.svg";
 }
 
 interface MetaInfoOptions {
@@ -29,19 +29,19 @@ interface MetaInfoOptions {
   price?: string;
   location?: string;
   propertyType?: string;
-  listingType?: 'buy' | 'rent' | 'sell' | 'joint-venture';
+  listingType?: "buy" | "rent" | "sell" | "joint-venture";
 }
 
 function generateMetaInfo(options: MetaInfoOptions = {}) {
   // Default site-wide information
   const defaults = {
-    siteName: 'Geoplox',
-    baseTitle: 'Geoplox - Real Estate Done Right',
+    siteName: "Geoplox",
+    baseTitle: "Geoplox - Real Estate Done Right",
     baseDescription:
-      'Find your perfect home or investment property. Buy, for-sale, and for-rent properties with direct access to listings from real owners and developers. No fake agents, no hidden fees.',
+      "Find your perfect home or investment property. Buy, for-sale, and for-rent properties with direct access to listings from real owners and developers. No fake agents, no hidden fees.",
     baseKeywords:
-      'real estate, property, buy house, for-rent apartment, for-sale property, homes for sale, rental properties, real estate listings, property investment, residential, commercial',
-    baseImage: assets.logotext || '/logo.svg',
+      "real estate, property, buy house, for-rent apartment, for-sale property, homes for sale, rental properties, real estate listings, property investment, residential, commercial",
+    baseImage: assets.logotext || "/logo.svg",
   };
 
   // Generate dynamic content based on listing type and property details
@@ -54,17 +54,21 @@ function generateMetaInfo(options: MetaInfoOptions = {}) {
 
     if (options.propertyType && options.location) {
       const action =
-        options.listingType === 'rent' ? 'for Rent' : options.listingType === 'sell' ? 'for Sale' : 'Available';
+        options.listingType === "rent"
+          ? "for Rent"
+          : options.listingType === "sell"
+            ? "for Sale"
+            : "Available";
       dynamicTitle = `${options.propertyType} ${action} in ${options.location} | ${defaults.siteName}`;
     } else if (options.listingType) {
       const action =
-        options.listingType === 'rent'
-          ? 'Properties for Rent'
-          : options.listingType === 'sell'
-            ? 'Properties for Sale'
-            : options.listingType === 'buy'
-              ? 'Properties to Buy'
-              : 'Properties';
+        options.listingType === "rent"
+          ? "Properties for Rent"
+          : options.listingType === "sell"
+            ? "Properties for Sale"
+            : options.listingType === "buy"
+              ? "Properties to Buy"
+              : "Properties";
       dynamicTitle = `${action} | ${defaults.siteName}`;
     }
 
@@ -79,14 +83,15 @@ function generateMetaInfo(options: MetaInfoOptions = {}) {
     let dynamicDesc = defaults.baseDescription;
 
     if (options.propertyType && options.location && options.price) {
-      const action = options.listingType === 'rent' ? 'rent' : 'buy';
+      const action = options.listingType === "rent" ? "rent" : "buy";
       dynamicDesc = `${options.propertyType} available to ${action} in ${options.location} for ${options.price}. Direct access to property listings from real owners and developers. No fake agents, no hidden fees.`;
     } else if (options.listingType) {
       const actions = {
-        buy: 'Discover your dream home with our extensive collection of properties for sale.',
-        rent: 'Find the perfect rental property that suits your lifestyle and budget.',
-        sell: 'List your property and connect directly with potential buyers.',
-        'joint-venture': ' Explore properties with joint venture opportunities to maximize your investment.',
+        buy: "Discover your dream home with our extensive collection of properties for sale.",
+        rent: "Find the perfect rental property that suits your lifestyle and budget.",
+        sell: "List your property and connect directly with potential buyers.",
+        "joint-venture":
+          " Explore properties with joint venture opportunities to maximize your investment.",
       };
       dynamicDesc = `${actions[options.listingType]} ${defaults.baseDescription}`;
     }
@@ -103,26 +108,30 @@ function generateMetaInfo(options: MetaInfoOptions = {}) {
 
     // Add location-specific keywords
     if (options.location) {
-      keywords.push(`${options.location} real estate, properties in ${options.location}, ${options.location} homes`);
+      keywords.push(
+        `${options.location} real estate, properties in ${options.location}, ${options.location} homes`,
+      );
     }
 
     // Add property type keywords
     if (options.propertyType) {
-      keywords.push(`${options.propertyType}, ${options.propertyType} for sale, ${options.propertyType} for rent`);
+      keywords.push(
+        `${options.propertyType}, ${options.propertyType} for sale, ${options.propertyType} for rent`,
+      );
     }
 
     // Add listing type keywords
     if (options.listingType) {
       const typeKeywords = {
-        buy: 'homes for sale, buy property, purchase real estate, property investment',
-        rent: 'rental properties, apartments for for-rent, house rental, lease property',
-        sell: 'for-sale property, list property, property listing, real estate agent',
-        'joint-venture': 'joint venture properties, investment partnership, property collaboration',
+        buy: "homes for sale, buy property, purchase real estate, property investment",
+        rent: "rental properties, apartments for for-rent, house rental, lease property",
+        sell: "for-sale property, list property, property listing, real estate agent",
+        "joint-venture": "joint venture properties, investment partnership, property collaboration",
       };
       keywords.push(typeKeywords[options.listingType]);
     }
 
-    return keywords.join(', ');
+    return keywords.join(", ");
   };
 
   // Merge provided options with defaults
@@ -144,14 +153,14 @@ function generateMetaInfo(options: MetaInfoOptions = {}) {
     getOgDescription: () => meta.description,
     getOgImage: () => meta.image,
     getOgUrl: () => window.location.href,
-    getOgType: () => 'website',
+    getOgType: () => "website",
     getOgSiteName: () => defaults.siteName,
 
     // Twitter Card Meta Tags
     getTwitterTitle: () => meta.title,
     getTwitterDescription: () => meta.description,
     getTwitterImage: () => meta.image,
-    getTwitterCard: () => 'summary_large_image',
+    getTwitterCard: () => "summary_large_image",
 
     // Real Estate Specific Meta Tags
     getPropertyPrice: () => options.price,
@@ -169,7 +178,7 @@ interface PageMetaTagsProps {
   price?: string;
   location?: string;
   propertyType?: string;
-  listingType?: 'buy' | 'rent' | 'sell' | 'joint-venture';
+  listingType?: "buy" | "rent" | "sell" | "joint-venture";
 }
 
 export function PageMetaTags({

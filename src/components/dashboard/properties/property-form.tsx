@@ -63,10 +63,12 @@ const PropertyFormSchema = z.object({
   lga_or_city: z.string().min(1, 'Locality is required'),
   area: z.string().optional(),
   description: z.string().min(10, 'Property description must be at least 10 characters'),
-  bedrooms: z.coerce.number().int().min(1, 'Number of bedrooms is required'),
-  bathrooms: z.coerce.number().int().min(1, 'Number of bathrooms is required'),
-  area_sqft: z.coerce.number().int().min(1, 'Total area is required'),
-  price: z.coerce.number().min(1, 'Property price is required'),
+
+  bedrooms: z.number().int().min(1).optional(),
+  bathrooms: z.number().int().min(1).optional(),
+  area_sqft: z.number().int().min(1).optional(),
+
+  price: z.number().min(1, 'Property price is required'),
   currency: z.string().min(1, 'Currency is required'),
   images: z.array(z.string()).min(1, 'At least one property image is required'),
   documentType: z.string().optional(),

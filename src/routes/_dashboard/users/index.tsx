@@ -1,8 +1,10 @@
-import { WithSuspense } from '@/components/error-components';
-import { createFileRoute } from '@tanstack/react-router';
-import { lazy } from 'react';
+import { WithSuspense } from "@/components/error-components";
+import { createFileRoute } from "@tanstack/react-router";
+import { lazy } from "react";
 
-const RouteComponent = WithSuspense(lazy(() => import('../../../components/dashboard/users/users-page')));
-export const Route = createFileRoute('/_dashboard/users/')({
+const RouteComponent = WithSuspense(
+  lazy(() => import("../../../components/dashboard/users/users-page")),
+);
+export const Route = createFileRoute("/_dashboard/users/")({
   component: RouteComponent,
 });

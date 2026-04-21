@@ -1,26 +1,26 @@
-import { Button } from '@/components/ui/button';
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
-import { Check } from 'lucide-react';
-import assets from '@/assets';
-import { PageMetaTags } from '@/components/page-meta-data';
-import LoadingFallback from '@/components/loading-fallback';
-import { useGetPlans } from '@/lib/services';
+import { Button } from "@/components/ui/button";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { Check } from "lucide-react";
+import assets from "@/assets";
+import { PageMetaTags } from "@/components/page-meta-data";
+import LoadingFallback from "@/components/loading-fallback";
+import { useGetPlans } from "@/lib/services";
 
-export const Route = createFileRoute('/_landing/pricing/')({
+export const Route = createFileRoute("/_landing/pricing/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [activeTab, setActiveTab] = useState('Monthly');
+  const [activeTab, setActiveTab] = useState("Monthly");
   const { data: plansResponse, isPending: isLoadingPlans } = useGetPlans();
 
   const plansData = plansResponse?.data.data;
   const plans = plansData ? [plansData.basic, plansData.premium, plansData.enterprise] : [];
 
   const tabs = [
-    { name: 'Monthly', icon: '' },
-    { name: 'Annually', icon: '' },
+    { name: "Monthly", icon: "" },
+    { name: "Annually", icon: "" },
   ];
 
   // Show loading state
@@ -30,9 +30,9 @@ function RouteComponent() {
 
   // Helper function to get button text for each plan
   const getButtonText = (planName: string) => {
-    if (planName === 'Basic') return 'Free for 14 days';
-    if (planName === 'Premium') return 'Get Premium';
-    return 'Get Enterprise';
+    if (planName === "Basic") return "Free for 14 days";
+    if (planName === "Premium") return "Get Premium";
+    return "Get Enterprise";
   };
 
   // Helper function to get card styling
@@ -40,35 +40,37 @@ function RouteComponent() {
     if (isRecommended) {
       return {
         className:
-          'relative flex grow flex-col justify-between gap-6 rounded-xl border-[0.6px] border-[#EFE1B5] bg-[#F8F2DF] px-7 py-8',
-        style: { backdropFilter: 'blur(3px)' },
+          "relative flex grow flex-col justify-between gap-6 rounded-xl border-[0.6px] border-[#EFE1B5] bg-[#F8F2DF] px-7 py-8",
+        style: { backdropFilter: "blur(3px)" },
       };
     }
     return {
-      className: 'flex grow flex-col justify-between gap-6 rounded-xl border-[0.6px] border-[#D8D8D8] px-7 py-8',
-      style: { backdropFilter: 'blur(3px)' },
+      className:
+        "flex grow flex-col justify-between gap-6 rounded-xl border-[0.6px] border-[#D8D8D8] px-7 py-8",
+      style: { backdropFilter: "blur(3px)" },
     };
   };
 
   // Helper function to get button styling
   const getButtonStyle = (planName: string) => {
-    if (planName === 'Premium') {
+    if (planName === "Premium") {
       return {
         style: {
-          background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-          boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+          background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
+          boxShadow:
+            "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
         },
         className:
-          'h-10 w-full rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white',
+          "h-10 w-full rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white",
       };
     }
     return {
       style: {
-        background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-        boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+        background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
+        boxShadow: "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
       },
       className: `h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white hover:bg-[#A0750A] ${
-        planName === 'Enterprise' ? 'mt-16' : ''
+        planName === "Enterprise" ? "mt-16" : ""
       }`,
     };
   };
@@ -100,14 +102,14 @@ function RouteComponent() {
                   style={{
                     boxShadow:
                       activeTab === tab.name
-                        ? '0px 0px 10px rgba(31, 33, 48, 0.06), 0px 1px 1px rgba(31, 33, 48, 0.25), inset 0px 2px 1px rgba(255, 255, 255, 0.7)'
-                        : 'none',
+                        ? "0px 0px 10px rgba(31, 33, 48, 0.06), 0px 1px 1px rgba(31, 33, 48, 0.25), inset 0px 2px 1px rgba(255, 255, 255, 0.7)"
+                        : "none",
                   }}
-                  variant={activeTab === tab.name ? 'default' : 'outline'}
+                  variant={activeTab === tab.name ? "default" : "outline"}
                   className={`h-[33px] rounded-[6px] px-3 py-[11px] text-[18px] leading-[21px] text-[#41415A] transition-all duration-300 ease-in-out ${
                     activeTab === tab.name
-                      ? 'border border-[#D5D5DD] bg-white font-semibold hover:bg-gray-100'
-                      : 'border-none bg-[#F9F9FB] font-normal hover:bg-white hover:text-black'
+                      ? "border border-[#D5D5DD] bg-white font-semibold hover:bg-gray-100"
+                      : "border-none bg-[#F9F9FB] font-normal hover:bg-white hover:text-black"
                   }`}
                   onClick={() => setActiveTab(tab.name)}
                 >
@@ -123,10 +125,10 @@ function RouteComponent() {
               const buttonStyle = getButtonStyle(plan.name);
 
               let planFeatures = plan.features;
-              if (plan.name === 'Premium') {
+              if (plan.name === "Premium") {
                 planFeatures = plan.features
-                  .filter((feature: string) => !feature.toLowerCase().includes('priority'))
-                  .concat(['Email Support', 'Downloadable watermarked property images']);
+                  .filter((feature: string) => !feature.toLowerCase().includes("priority"))
+                  .concat(["Email Support", "Downloadable watermarked property images"]);
               }
 
               return (
@@ -141,16 +143,22 @@ function RouteComponent() {
                   )}
 
                   <div className="flex flex-col items-start gap-5">
-                    <h3 className="text-[20px]/7  font-semibold text-[#1F2130]">{plan.name} Plan</h3>
+                    <h3 className="text-[20px]/7 font-semibold text-[#1F2130]">
+                      {plan.name} Plan
+                    </h3>
 
-                    {plan.name === 'Basic' ? (
-                      <span className="text-[32px] leading-[45px] font-semibold text-[#1F2130]">{plan.price}</span>
+                    {plan.name === "Basic" ? (
+                      <span className="text-[32px] leading-[45px] font-semibold text-[#1F2130]">
+                        {plan.price}
+                      </span>
                     ) : (
                       <div className="flex items-baseline gap-1">
                         <span className="text-[32px] leading-[45px] font-semibold text-[#1F2130]">
-                          {plan.price.split('/')[0]}
+                          {plan.price.split("/")[0]}
                         </span>
-                        <span className="text-[16px] leading-[22px] text-[#71748C]">/{plan.price.split('/')[1]}</span>
+                        <span className="text-[16px] leading-[22px] text-[#71748C]">
+                          /{plan.price.split("/")[1]}
+                        </span>
                       </div>
                     )}
 
@@ -158,7 +166,7 @@ function RouteComponent() {
                       {planFeatures.map((feature: string) => (
                         <div key={feature} className="flex items-center gap-4">
                           <Check className="size-4 shrink-0 text-[#D4AF36]" />
-                          <span className="text-[14px]/5  text-[#71748C]">{feature}</span>
+                          <span className="text-[14px]/5 text-[#71748C]">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -186,30 +194,41 @@ function RouteComponent() {
         <div className="relative z-10 landing-container flex w-full flex-col items-center justify-center gap-10 lg:flex-row">
           <div className="flex grow flex-col items-start gap-10 lg:w-1/2">
             <div className="flex flex-col items-start gap-[13px]">
-              <h4 className="text-[44px] leading-[62px] text-[#1F2130]">Ready to Find Real Property?</h4>
+              <h4 className="text-[44px] leading-[62px] text-[#1F2130]">
+                Ready to Find Real Property?
+              </h4>
 
-              <p className="text-[20px]/7  text-[#41415A]">
-                Start your 7-day free trial and access Nigeria&apos;s most trusted real estate listings — full property
-                details, high-quality photos, direct contact info, and more
+              <p className="text-[20px]/7 text-[#41415A]">
+                Start your 7-day free trial and access Nigeria&apos;s most trusted real estate
+                listings — full property details, high-quality photos, direct contact info, and more
               </p>
             </div>
 
             <div className="flex flex-col items-start gap-6 self-stretch">
               <Button
                 style={{
-                  background: 'linear-gradient(180deg, #787878 0%, #1E1E1E 60%)',
-                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                  background: "linear-gradient(180deg, #787878 0%, #1E1E1E 60%)",
+                  boxShadow:
+                    "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                 }}
                 className="h-12 rounded-[40px] border border-[oklch(0.235_0_0/50%)] px-6 py-4 text-[16px] leading-[19px] font-semibold text-white"
               >
                 Start Trial Now
               </Button>
 
-              <span className="text-[14px]/5  text-[#41415A]">No card required. Cancel any time.</span>
+              <span className="text-[14px]/5 text-[#41415A]">
+                No card required. Cancel any time.
+              </span>
             </div>
           </div>
 
-          <img className="h-auto lg:w-1/2" src={assets.africanfamily} alt="family" width={573.58} height={294.28} />
+          <img
+            className="h-auto lg:w-1/2"
+            src={assets.africanfamily}
+            alt="family"
+            width={573.58}
+            height={294.28}
+          />
         </div>
       </section>
     </div>

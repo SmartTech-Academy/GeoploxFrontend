@@ -1,8 +1,8 @@
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
-import { ShieldAlert } from 'lucide-react';
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { ShieldAlert } from "lucide-react";
 
-export const Route = createFileRoute('/_auth/unauthorized')({
+export const Route = createFileRoute("/_auth/unauthorized")({
   component: UnauthorizedComponent,
 });
 
@@ -24,7 +24,7 @@ function UnauthorizedComponent() {
 
         <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row">
           <Button
-            onClick={() => router.navigate({ to: '/' })}
+            onClick={() => router.navigate({ to: "/" })}
             variant="outline"
             className="h-11 flex-1 rounded-full px-5 py-2.5 text-base font-medium"
           >

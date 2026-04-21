@@ -1,13 +1,27 @@
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import React, { Dispatch, SetStateAction } from 'react';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { customResolver } from '@/lib/customZodResolver';
-import z from 'zod/v4';
-import { useForm } from 'react-hook-form';
-import { Input } from '../ui/input';
-import { useChangePassword } from '@/lib/services/profile';
-import { toast } from 'sonner';
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import React, { Dispatch, SetStateAction } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { customResolver } from "@/lib/customZodResolver";
+import z from "zod/v4";
+import { useForm } from "react-hook-form";
+import { Input } from "../ui/input";
+import { useChangePassword } from "@/lib/services/profile";
+import { toast } from "sonner";
 
 interface PropertyProps {
   onOpenChange: Dispatch<SetStateAction<boolean>>;
@@ -15,8 +29,8 @@ interface PropertyProps {
 }
 
 const passwordSchema = z.object({
-  current_password: z.string().min(1, 'Old password is required'),
-  new_password: z.string().min(6, 'New password must be at least 6 characters'),
+  current_password: z.string().min(1, "Old password is required"),
+  new_password: z.string().min(6, "New password must be at least 6 characters"),
 });
 
 type PasswordFormValues = z.infer<typeof passwordSchema>;
@@ -26,11 +40,11 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
   const form = useForm<PasswordFormValues>({
     resolver: customResolver(passwordSchema),
     defaultValues: {
-      current_password: '',
-      new_password: '',
+      current_password: "",
+      new_password: "",
     },
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
 
   const [showOldPassword, setShowOldPassword] = React.useState(false);
@@ -39,11 +53,12 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
   async function onSubmit(values: PasswordFormValues) {
     try {
       await changePassword(values);
-      toast.success('Password changed successfully!');
+      toast.success("Password changed successfully!");
       onOpenChange(false);
       form.reset();
     } catch (error: any) {
-      const message = error.response?.data?.message || 'An error occurred while changing your password.';
+      const message =
+        error.response?.data?.message || "An error occurred while changing your password.";
       toast.error(message);
     }
   }
@@ -70,16 +85,16 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
                     <FormControl>
                       <div className="relative">
                         <Input
-                          type={showOldPassword ? 'text' : 'password'}
+                          type={showOldPassword ? "text" : "password"}
                           placeholder="Enter old password"
                           className="h-10 rounded-lg border-[#D5D5DD] pr-10"
                           {...field}
                         />
                         <span
-                          className="absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px] leading-3.5 font-semibold text-primary hover:underline"
+                          className="absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px]/3.5  font-semibold text-primary hover:underline"
                           onClick={() => setShowOldPassword((prev) => !prev)}
                         >
-                          {showOldPassword ? 'Hide' : 'Show'}
+                          {showOldPassword ? "Hide" : "Show"}
                         </span>
                       </div>
                     </FormControl>
@@ -100,16 +115,16 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
                     <FormControl>
                       <div className="relative">
                         <Input
-                          type={showNewPassword ? 'text' : 'password'}
+                          type={showNewPassword ? "text" : "password"}
                           placeholder="Enter new password"
                           className="h-10 rounded-lg border-[#D5D5DD] pr-10"
                           {...field}
                         />
                         <span
-                          className="absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px] leading-3.5 font-semibold text-primary hover:underline"
+                          className="absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px]/3.5  font-semibold text-primary hover:underline"
                           onClick={() => setShowNewPassword((prev) => !prev)}
                         >
-                          {showNewPassword ? 'Hide' : 'Show'}
+                          {showNewPassword ? "Hide" : "Show"}
                         </span>
                       </div>
                     </FormControl>
@@ -123,7 +138,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
               <DialogClose asChild>
                 <Button
                   type="button"
-                  className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px]/3.5  font-semibold text-[#1F2130]"
+                  className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px]/3.5 font-semibold text-[#1F2130]"
                   variant="secondary"
                 >
                   Cancel
@@ -133,13 +148,14 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
                 type="submit"
                 variant="default"
                 style={{
-                  background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                  background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
+                  boxShadow:
+                    "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                 }}
                 disabled={isPending}
-                className="h-8 rounded-4xl border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3.5  font-semibold text-white"
+                className="h-8 rounded-4xl border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3.5 font-semibold text-white"
               >
-                {isPending ? 'Saving...' : 'Save Changes'}
+                {isPending ? "Saving..." : "Save Changes"}
               </Button>
             </DialogFooter>
           </form>

@@ -1,34 +1,52 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { customResolver } from '@/lib/customZodResolver';
-import { cn } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { useForm } from 'react-hook-form';
-import z from 'zod';
-import { Phone, Upload, XIcon } from 'lucide-react';
-import assets from '@/assets';
-import React, { useMemo, useRef, useState } from 'react';
-import { UserProfile } from '@/lib/types';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
-import { useUpdateBusinessInformation } from '@/lib/services/profile';
-import { toast } from 'sonner';
-import statesAndLgasData from '@/data/statesAndLocalGov.json';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { customResolver } from "@/lib/customZodResolver";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import z from "zod";
+import { Phone, Upload, XIcon } from "lucide-react";
+import assets from "@/assets";
+import React, { useMemo, useRef, useState } from "react";
+import { UserProfile } from "@/lib/types";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  ImageCrop,
+  ImageCropApply,
+  ImageCropContent,
+  ImageCropReset,
+} from "@/components/ui/kibo-ui/image-crop";
+import { useUpdateBusinessInformation } from "@/lib/services/profile";
+import { toast } from "sonner";
+import statesAndLgasData from "@/data/statesAndLocalGov.json";
 
 const step3BusinessSchema = z.object({
   businessLogo: z.any().optional(),
-  businessName: z.string().min(1, 'Business name is required'),
-  businessEmail: z.email('Valid email is required'),
-  businessPhone: z.string().min(11, 'Business phone must be 11 digits'),
-  businessWhatsapp: z.string().min(11, 'Business WhatsApp must be 11 digits'),
+  businessName: z.string().min(1, "Business name is required"),
+  businessEmail: z.email("Valid email is required"),
+  businessPhone: z.string().min(11, "Business phone must be 11 digits"),
+  businessWhatsapp: z.string().min(11, "Business WhatsApp must be 11 digits"),
   website: z.string().optional(),
   instagram: z.string().optional(),
-  businessAddress: z.string().min(1, 'Business address is required'),
-  businessState: z.string().min(1, 'State is required'),
-  businessLocalGovernment: z.string().min(1, 'Locality/Area is required'),
+  businessAddress: z.string().min(1, "Business address is required"),
+  businessState: z.string().min(1, "State is required"),
+  businessLocalGovernment: z.string().min(1, "Locality/Area is required"),
 });
 
 interface BusinessInformationSectionProps {
@@ -53,16 +71,16 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
 
   const form = useForm({
     resolver: customResolver(step3BusinessSchema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
-      businessName: user?.business?.name || '',
-      businessEmail: user?.business?.email || '',
-      businessPhone: user?.business?.phone || '',
-      businessWhatsapp: user?.business?.whatsapp || '',
-      website: user?.business?.website || '',
-      instagram: user?.business?.instagram || '',
-      businessAddress: user?.business?.address || '',
+      businessName: user?.business?.name || "",
+      businessEmail: user?.business?.email || "",
+      businessPhone: user?.business?.phone || "",
+      businessWhatsapp: user?.business?.whatsapp || "",
+      website: user?.business?.website || "",
+      instagram: user?.business?.instagram || "",
+      businessAddress: user?.business?.address || "",
       businessState: user?.business?.state || undefined,
       businessLocalGovernment: user?.business?.lga || undefined,
     },
@@ -82,9 +100,11 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
         local_gov_area: values.businessLocalGovernment,
         base64_file: values.businessLogo,
       });
-      toast.success('Business information updated successfully!');
+      toast.success("Business information updated successfully!");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'An error occurred while updating business information.');
+      toast.error(
+        error.response?.data?.message || "An error occurred while updating business information.",
+      );
     }
   }
 
@@ -102,7 +122,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
 
   const handleCrop = (croppedImage: string) => {
     setLogoPreview(croppedImage);
-    form.setValue('businessLogo', croppedImage);
+    form.setValue("businessLogo", croppedImage);
     setCropDialogOpen(false);
     setSelectedFile(null);
   };
@@ -117,8 +137,10 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
         <div className="flex w-full flex-col gap-10 bg-white">
           <div className="flex flex-col items-center gap-3 self-stretch text-center">
-            <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Business Information</h2>
-            <p className="text-[14px]/5  text-[#71748C]">Update your business details</p>
+            <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">
+              Business Information
+            </h2>
+            <p className="text-[14px]/5 text-[#71748C]">Update your business details</p>
           </div>
 
           <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
@@ -130,9 +152,9 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
               >
                 {logoPreview ? (
                   <img
-                    src={logoPreview || '/placeholder.svg'}
+                    src={logoPreview || "/placeholder.svg"}
                     alt="Business Logo"
-                    className="size-full  object-cover"
+                    className="size-full object-cover"
                   />
                 ) : (
                   <Upload className="size-4 text-[#71748C]" />
@@ -147,8 +169,8 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
               </div>
 
               <div className="flex flex-col gap-1">
-                <p className="text-[14px]/6  text-[#1F2130]">Business Logo</p>
-                <p className="text-[14px]/6  text-[#71748C]">
+                <p className="text-[14px]/6 text-[#1F2130]">Business Logo</p>
+                <p className="text-[14px]/6 text-[#71748C]">
                   Upload a profile picture. Only .JPG and .PNG supported.
                 </p>
               </div>
@@ -193,7 +215,11 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                       Business Name
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Forbes Realty" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="Forbes Realty"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -238,7 +264,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                           className="h-10 rounded-lg border-[#D5D5DD] pr-10"
                           {...field}
                         />
-                        <Phone className="fill-[#71748C]] absolute top-1/2 right-3 size-4  -translate-y-1/2 transform text-[#71748C]" />
+                        <Phone className="fill-[#71748C]] absolute top-1/2 right-3 size-4 -translate-y-1/2 transform text-[#71748C]" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -279,7 +305,9 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                 name="website"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Website</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Website
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="www.forbesrealty.com"
@@ -297,9 +325,15 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                 name="instagram"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Instagram</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Instagram
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="http://" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                      <Input
+                        placeholder="http://"
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -334,12 +368,14 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                 name="businessState"
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">State</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      State
+                    </FormLabel>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
                         setSelectedState(value);
-                        form.setValue('businessLocalGovernment', ''); // Reset LGA on state change
+                        form.setValue("businessLocalGovernment", ""); // Reset LGA on state change
                       }}
                       value={field.value}
                     >
@@ -398,20 +434,23 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
           <Button
             type="button"
             variant="secondary"
-            className={cn('h-10 flex-1 rounded-full bg-[#F1F1F4] text-[14px] font-semibold text-[#1F2130]')}
+            className={cn(
+              "h-10 flex-1 rounded-full bg-[#F1F1F4] text-[14px] font-semibold text-[#1F2130]",
+            )}
           >
             Back
           </Button>
           <Button
             style={{
-              background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-              boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+              background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
+              boxShadow:
+                "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
             }}
             type="submit"
             className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] text-[14px] font-semibold text-white"
             disabled={isPending}
           >
-            {isPending ? 'Saving...' : 'Save Changes'}
+            {isPending ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </form>

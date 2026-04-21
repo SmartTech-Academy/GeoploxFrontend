@@ -1,5 +1,5 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { wpGraphqlRequest } from '@/lib/wpGraphql';
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { wpGraphqlRequest } from "@/lib/wpGraphql";
 
 export type WpAvatar = { url?: string | null } | null;
 
@@ -187,7 +187,7 @@ const GET_POST_BY_URI = /* GraphQL */ `
 
 export function useInfiniteWpPosts(first: number = 10) {
   return useInfiniteQuery({
-    queryKey: ['wp-posts', { first }],
+    queryKey: ["wp-posts", { first }],
     initialPageParam: null as string | null,
     queryFn: async ({ pageParam, signal }) => {
       const data = await wpGraphqlRequest<GetAllPostsData, GetAllPostsVars>(
@@ -197,15 +197,16 @@ export function useInfiniteWpPosts(first: number = 10) {
       );
       return data.posts;
     },
-    getNextPageParam: (lastPage) => (lastPage.pageInfo.hasNextPage ? lastPage.pageInfo.endCursor ?? null : null),
+    getNextPageParam: (lastPage) =>
+      lastPage.pageInfo.hasNextPage ? (lastPage.pageInfo.endCursor ?? null) : null,
   });
 }
 
 export function useWpPostBySlug(slug: string | undefined) {
-  const uri = slug ? `/${slug.replace(/^\/+|\/+$/g, '')}/` : undefined;
+  const uri = slug ? `/${slug.replace(/^\/+|\/+$/g, "")}/` : undefined;
 
   return useQuery({
-    queryKey: ['wp-post', { uri }],
+    queryKey: ["wp-post", { uri }],
     queryFn: ({ signal }) =>
       wpGraphqlRequest<GetPostByUriData, GetPostByUriVars>(GET_POST_BY_URI, { uri: uri! }, signal),
     enabled: !!uri,

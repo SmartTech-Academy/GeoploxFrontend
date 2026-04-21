@@ -1,18 +1,32 @@
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import type { Dispatch, SetStateAction } from 'react';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { customResolver } from '@/lib/customZodResolver';
-import z from 'zod/v4';
-import { useForm } from 'react-hook-form';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { useAssignUsersToManager } from '@/lib/services/managers';
-import { useGetUsers } from '@/lib/services/users';
-import { toast } from 'sonner';
-import React, { useId, useState } from 'react';
-import { useDebounce } from '@/hooks/use-debounce';
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type { Dispatch, SetStateAction } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { customResolver } from "@/lib/customZodResolver";
+import z from "zod/v4";
+import { useForm } from "react-hook-form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useAssignUsersToManager } from "@/lib/services/managers";
+import { useGetUsers } from "@/lib/services/users";
+import { toast } from "sonner";
+import React, { useId, useState } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface AssignModalProps {
   onOpenChange: Dispatch<SetStateAction<boolean>>;
@@ -30,7 +44,7 @@ interface User {
   phone_number: string;
   whatsapp_number: string | null;
   user_role: string;
-  onboarding_status: 'active' | 'suspended' | 'pending' | string;
+  onboarding_status: "active" | "suspended" | "pending" | string;
   country: string;
   state: string | null;
   local_gov_area: string | null;
@@ -42,7 +56,7 @@ interface User {
   display_picture_url: string;
   government_id_doc_url: string;
   bio: string | null;
-  '2fa': boolean;
+  "2fa": boolean;
   approval_type: string;
   approval_request_date: string; // ISO date
   email_verified: boolean;
@@ -51,43 +65,50 @@ interface User {
 }
 
 const assignSchema = z.object({
-  user_ids: z.array(z.string()).min(1, 'Please select at least one user'),
+  user_ids: z.array(z.string()).min(1, "Please select at least one user"),
 });
 
 type AssignFormValues = z.infer<typeof assignSchema>;
 
-const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange, managerId, managerName }) => {
+const AssignModal: React.FC<AssignModalProps> = ({
+  open,
+  onOpenChange,
+  managerId,
+  managerName,
+}) => {
   const formId = useId();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
 
-  const { data: usersData, isPending:isLoadingUserData, isFetching } = useGetUsers(
+  const {
+    data: usersData,
+    isPending: isLoadingUserData,
+    isFetching,
+  } = useGetUsers(
     {
-      status: 'all',
+      status: "all",
       search_user: debouncedSearch || undefined,
     },
-    { enabled: open }
+    { enabled: open },
   );
   const users: User[] = usersData?.data?.data?.users ?? [];
 
-  const filteredUsers = users.filter((u) => u.user_role !== 'manager');
+  const filteredUsers = users.filter((u) => u.user_role !== "manager");
 
   const form = useForm<AssignFormValues>({
     resolver: customResolver(assignSchema),
     defaultValues: {
       user_ids: [],
     },
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
 
   const { mutate: assignUsers, isPending } = useAssignUsersToManager();
 
-
   function onSubmit(values: AssignFormValues) {
-
     if (!managerId) {
-      toast.error('Select a manager first.');
+      toast.error("Select a manager first.");
       return;
     }
     assignUsers(
@@ -96,16 +117,18 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange, managerId
         onSuccess: () => {
           onOpenChange(false);
           form.reset();
-          setSearch('');
+          setSearch("");
         },
-      }
+      },
     );
   }
 
   const toggleUser = (userId: string) => {
-    const current = form.getValues('user_ids');
-    const next = current.includes(userId) ? current.filter((id) => id !== userId) : [...current, userId];
-    form.setValue('user_ids', next, { shouldValidate: true });
+    const current = form.getValues("user_ids");
+    const next = current.includes(userId)
+      ? current.filter((id) => id !== userId)
+      : [...current, userId];
+    form.setValue("user_ids", next, { shouldValidate: true });
   };
 
   return (
@@ -115,7 +138,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange, managerId
         onOpenChange(nextOpen);
         if (!nextOpen) {
           form.reset();
-          setSearch('');
+          setSearch("");
         }
       }}
     >
@@ -130,7 +153,9 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange, managerId
             <div className="flex w-full flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <p className="text-[12px] text-[#71748C]">
-                  {managerName ? `Assigning to: ${managerName}` : 'Select a manager to assign users.'}
+                  {managerName
+                    ? `Assigning to: ${managerName}`
+                    : "Select a manager to assign users."}
                 </p>
                 <Input
                   value={search}
@@ -145,7 +170,9 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange, managerId
                 name="user_ids"
                 render={() => (
                   <FormItem className="w-full">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Users</FormLabel>
+                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Users
+                    </FormLabel>
                     <FormControl>
                       <div className="max-h-64 overflow-y-auto rounded-lg border border-[#E8E8E8] bg-white p-3">
                         {isLoadingUserData ? (
@@ -157,18 +184,21 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange, managerId
                         ) : (
                           <div className="flex flex-col gap-2">
                             {filteredUsers.map((u: User) => {
-                              const checked = form.getValues('user_ids').includes(u.codec);
+                              const checked = form.getValues("user_ids").includes(u.codec);
                               return (
                                 <div
                                   key={u.codec}
-                                  className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-[#F9F9FB]"
+                                  className="flex items-center gap-3 rounded-md p-2  hover:bg-[#F9F9FB]"
                                 >
                                   <Checkbox
                                     id={u.codec}
                                     checked={checked}
                                     onCheckedChange={() => toggleUser(u.codec)}
                                   />
-                                  <Label htmlFor={u.codec} className="cursor-pointer text-[14px] text-[#1F2130]">
+                                  <Label
+                                    htmlFor={u.codec}
+                                    className="cursor-pointer text-[14px] text-[#1F2130]"
+                                  >
                                     {`${u.lastname} ${u.firstname}`}
                                   </Label>
                                 </div>
@@ -198,13 +228,14 @@ const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange, managerId
                 form={formId}
                 variant="default"
                 style={{
-                  background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                  background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
+                  boxShadow:
+                    "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                 }}
                 disabled={isPending || !managerId}
                 className="h-8 rounded-4xl border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3.5 font-semibold text-white"
               >
-                {isPending ? 'Assigning...' : 'Assign'}
+                {isPending ? "Assigning..." : "Assign"}
               </Button>
             </DialogFooter>
           </DialogContent>

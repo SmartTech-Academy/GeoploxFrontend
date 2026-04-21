@@ -16,7 +16,7 @@ const ListingProperties = () => {
   const location = useLocation();
   const isListingPage = location.pathname.includes("/listing");
   const isAdminListingPage = location.pathname.includes("/admin-listing");
-    const isProperties = location.pathname.includes("/properties");
+  const isProperties = location.pathname.includes("/properties");
   const pageType = location.pathname.includes("/short-let")
     ? `buy`
     : location.pathname.includes("/for-rent")
@@ -26,19 +26,19 @@ const ListingProperties = () => {
         : location.pathname.includes("/joint-venture")
           ? `joint-venture`
           : "all";
-const {data:profileData} =useGetProfileData()
+  const { data: profileData } = useGetProfileData();
   const [filters, setFilters] = useState<Record<string, any>>({
     page: 1,
     sort: "newest",
-
   });
-
 
   const [debouncedFilters] = useDebounce(filters, 300);
   const { data: propertiesResponse, isPending: isLoadingProperties } = useGetProperties(
-    { ...debouncedFilters, pageType ,
+    {
+      ...debouncedFilters,
+      pageType,
 
-        developer_or_owners_name: isListingPage || isProperties ? profileData?.username : undefined
+      developer_or_owners_name: isListingPage || isProperties ? profileData?.username : undefined,
     },
     isListingPage || isAdminListingPage,
     isAdminListingPage,
@@ -54,7 +54,7 @@ const {data:profileData} =useGetProfileData()
           id: String(p.id),
           location: {
             city: p.location?.city || p?.city || "N/A",
-            state: p.location?.state || p?.state ||  "N/A",
+            state: p.location?.state || p?.state || "N/A",
           },
           category: p.category || "N/A",
           cover_image:

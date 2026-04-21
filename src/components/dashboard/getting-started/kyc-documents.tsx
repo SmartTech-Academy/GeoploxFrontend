@@ -230,7 +230,9 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
           />
 
           <p className="text-xs text-[#71748C]">
-            {isOwner ? "Govt. issued ID or International passport" : "E.g. Utility Bill / Bank document / Tenancy-related document"}
+            {isOwner
+              ? "Govt. issued ID or International passport"
+              : "E.g. Utility Bill / Bank document / Tenancy-related document"}
           </p>
         </div>
       </div>

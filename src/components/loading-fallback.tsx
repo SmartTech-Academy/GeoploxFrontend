@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const LoadingFallback = () => {
   const [progress, setProgress] = useState(0);
@@ -20,7 +20,13 @@ const LoadingFallback = () => {
     <div className="flex min-h-[500px] w-full items-center justify-center bg-white">
       <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-4 text-center">
         {/* Icon */}
-        <svg width="32" height="41" viewBox="0 0 32 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width="32"
+          height="41"
+          viewBox="0 0 32 41"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             d="M8.2793 10.16C8.2793 9.94306 8.45514 9.76721 8.67206 9.76721H10.6754C10.8923 9.76721 11.0681 9.94306 11.0681 10.16V16.0036H8.2793V10.16Z"
             fill="#D4AF36"
@@ -34,8 +40,12 @@ const LoadingFallback = () => {
         {/* Title */}
         <div className="flex flex-col items-center gap-6 self-stretch">
           <div className="flex flex-col items-center gap-4">
-            <h2 className="text-[24px] leading-[29px] font-semibold tracking-[-0.02em] text-[#1F2130]">Almost there</h2>
-            <p className="text-[16px] leading-[22px] tracking-[-0.01em] text-[#41415A]">Building your experience...</p>
+            <h2 className="text-[24px] leading-[29px] font-semibold tracking-[-0.02em] text-[#1F2130]">
+              Almost there
+            </h2>
+            <p className="text-[16px] leading-[22px] tracking-[-0.01em] text-[#41415A]">
+              Building your experience...
+            </p>
           </div>
 
           {/* Progress Bar */}
@@ -57,10 +67,10 @@ const LoadingFallback = () => {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="size-2  animate-bounce rounded-full bg-[#D4AF36]"
+                className="size-2 animate-bounce rounded-full bg-[#D4AF36]"
                 style={{
                   animationDelay: `${i * 0.1}s`,
-                  animationDuration: '0.6s',
+                  animationDuration: "0.6s",
                 }}
               />
             ))}

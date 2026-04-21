@@ -1,13 +1,25 @@
-import assets from '@/assets';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useNavigate } from '@tanstack/react-router';
-import { Search, Home, ChevronsUpDown, Check } from 'lucide-react';
-import { useState, useMemo } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
-import statesAndLocalGov from '@/data/statesAndLocalGov.json';
-import { cn } from '@/lib/utils';
+import assets from "@/assets";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useNavigate } from "@tanstack/react-router";
+import { Search, Home, ChevronsUpDown, Check } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import statesAndLocalGov from "@/data/statesAndLocalGov.json";
+import { cn } from "@/lib/utils";
 
 interface Location {
   label: string;
@@ -20,7 +32,7 @@ interface Location {
 
 export function Hero() {
   const navigate = useNavigate();
-  const [listingType, setListingType] = useState('buy');
+  const [listingType, setListingType] = useState("buy");
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
@@ -59,7 +71,7 @@ export function Hero() {
     return allLocations;
   }, []);
 
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const filteredLocations = useMemo(() => {
     if (!query) return locations;
     const q = query.toLowerCase();
@@ -113,12 +125,15 @@ export function Hero() {
             </div>
 
             {/* Subheading */}
-            <p className="text-[20px] leading-7 text-primary-foreground">
-              Get direct access to listings from real owners and developers — where trust meets transparency.
+            <p className="text-[20px]/7  text-primary-foreground">
+              Get direct access to listings from real owners and developers — where trust meets
+              transparency.
             </p>
 
             {/* Additional tagline */}
-            <p className="text-[14px] leading-5 text-primary-foreground">No fake agents, no hidden fees.</p>
+            <p className="text-[14px]/5  text-primary-foreground">
+              No fake agents, no hidden fees.
+            </p>
           </div>
 
           {/* Search Interface */}
@@ -134,14 +149,18 @@ export function Hero() {
                     className="h-10 w-full justify-start rounded-[85px] border border-[#D5D5DD] bg-white py-[14px] pl-10 text-base text-gray-900 placeholder:text-gray-500 focus-visible:ring-0"
                   >
                     <span className="truncate pl-5">
-                      {selectedLocation ? selectedLocation.label : 'Search location'}
+                      {selectedLocation ? selectedLocation.label : "Search location"}
                     </span>
-                    <ChevronsUpDown className="ml-auto size-4  shrink-0 opacity-50" />
+                    <ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="max-h-60 w-[--radix-popover-trigger-width] overflow-y-auto p-0">
                   <Command>
-                    <CommandInput placeholder="Search location..." value={query} onValueChange={setQuery} />
+                    <CommandInput
+                      placeholder="Search location..."
+                      value={query}
+                      onValueChange={setQuery}
+                    />
                     <CommandEmpty>No location found.</CommandEmpty>
                     <CommandGroup>
                       {filteredLocations.map((location) => (
@@ -150,7 +169,7 @@ export function Hero() {
                           value={location.label}
                           onSelect={(currentValue) => {
                             const newSelectedLocation = locations.find(
-                              (loc) => loc.label.toLowerCase() === currentValue.toLowerCase()
+                              (loc) => loc.label.toLowerCase() === currentValue.toLowerCase(),
                             );
                             setSelectedLocation(newSelectedLocation || null);
                             setIsPopoverOpen(false);
@@ -158,8 +177,10 @@ export function Hero() {
                         >
                           <Check
                             className={cn(
-                              'mr-2 size-4 ',
-                              selectedLocation?.label === location.label ? 'opacity-100' : 'opacity-0'
+                              "mr-2 size-4",
+                              selectedLocation?.label === location.label
+                                ? "opacity-100"
+                                : "opacity-0",
                             )}
                           />
                           {location.label}
@@ -195,9 +216,10 @@ export function Hero() {
 
               <Button
                 style={{
-                  background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-                  border: '1px solid rgba(30, 30, 30, 0.5)',
-                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                  background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
+                  border: "1px solid rgba(30, 30, 30, 0.5)",
+                  boxShadow:
+                    "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                 }}
                 onClick={handleFindProperty}
                 className="flex h-10 items-center justify-center rounded-[40px] p-4 text-[14px] leading-[17px] font-semibold text-white"

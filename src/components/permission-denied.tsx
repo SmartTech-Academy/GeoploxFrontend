@@ -1,8 +1,8 @@
-import { Button } from './ui/button';
-import { Link, useRouter } from '@tanstack/react-router';
-import { ShieldAlert } from 'lucide-react';
-import { useGetProfileData } from '@/lib/services/profile';
-import { getLoginRedirectPath } from '@/lib/navigation';
+import { Button } from "./ui/button";
+import { Link, useRouter } from "@tanstack/react-router";
+import { ShieldAlert } from "lucide-react";
+import { useGetProfileData } from "@/lib/services/profile";
+import { getLoginRedirectPath } from "@/lib/navigation";
 
 const PermissionDenied = () => {
   const router = useRouter();

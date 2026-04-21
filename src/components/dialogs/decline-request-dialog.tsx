@@ -1,6 +1,6 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -8,15 +8,22 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { customResolver } from '@/lib/customZodResolver';
-import { Loader2 } from 'lucide-react';
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { customResolver } from "@/lib/customZodResolver";
+import { Loader2 } from "lucide-react";
 
 const declineSchema = z.object({
-  reason: z.string().min(10, 'Please provide a reason for declining (min. 10 characters).'),
+  reason: z.string().min(10, "Please provide a reason for declining (min. 10 characters)."),
 });
 
 type DeclineFormData = z.infer<typeof declineSchema>;
@@ -36,7 +43,7 @@ export const DeclineRequestDialog: React.FC<DeclineRequestDialogProps> = ({
 }) => {
   const form = useForm<DeclineFormData>({
     resolver: customResolver(declineSchema),
-    defaultValues: { reason: '' },
+    defaultValues: { reason: "" },
   });
 
   const onSubmit = (data: DeclineFormData) => {
@@ -70,7 +77,7 @@ export const DeclineRequestDialog: React.FC<DeclineRequestDialogProps> = ({
                 Cancel
               </Button>
               <Button type="submit" variant="destructive" disabled={isPending}>
-                {isPending && <Loader2 className="mr-2 size-4  animate-spin" />}
+                {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
                 Decline
               </Button>
             </DialogFooter>

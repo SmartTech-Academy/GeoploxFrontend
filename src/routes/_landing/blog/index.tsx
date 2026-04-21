@@ -1,20 +1,19 @@
-import assets from '@/assets';
-import { PageMetaTags } from '@/components/page-meta-data';
-import { Button } from '@/components/ui/button';
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { useInfiniteWpPosts } from '@/lib/services/wpBlog';
-import { excerptFromHtml } from '@/lib/utils';
-import { toAbsoluteBlogUrl } from '@/lib/wpGraphql';
-import { Skeleton } from '@/components/ui/skeleton';
-import { format } from 'date-fns';
+import assets from "@/assets";
+import { PageMetaTags } from "@/components/page-meta-data";
+import { Button } from "@/components/ui/button";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useInfiniteWpPosts } from "@/lib/services/wpBlog";
+import { excerptFromHtml } from "@/lib/utils";
+import { toAbsoluteBlogUrl } from "@/lib/wpGraphql";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
 
-
-export const Route = createFileRoute('/_landing/blog/')({
+export const Route = createFileRoute("/_landing/blog/")({
   component: RouteComponent,
 });
 
 function slugFromUri(uri: string) {
-  return uri.replace(/^\/+|\/+$/g, '');
+  return uri.replace(/^\/+|\/+$/g, "");
 }
 
 function RouteComponent() {
@@ -51,7 +50,7 @@ function RouteComponent() {
               </div>
 
               {/* Subheading */}
-              <p className="text-[20px] leading-7 text-primary-foreground">
+              <p className="text-[20px]/7  text-primary-foreground">
                 Updates about current market trends and news
               </p>
             </div>
@@ -92,7 +91,10 @@ function RouteComponent() {
           {postsQuery.isLoading ? (
             <div className="flex flex-col gap-[64px]">
               {Array.from({ length: 3 }).map((_, idx) => (
-                <div key={idx} className="flex flex-col-reverse items-center justify-center gap-10 lg:flex-row">
+                <div
+                  key={idx}
+                  className="flex flex-col-reverse items-center justify-center gap-10 lg:flex-row"
+                >
                   <div className="flex flex-col items-start lg:w-1/2">
                     <div className="flex w-full flex-col gap-6 self-stretch">
                       <div className="flex items-center gap-3">
@@ -115,12 +117,14 @@ function RouteComponent() {
               Failed to load blog posts. {(postsQuery.error as Error)?.message}
             </div>
           ) : posts.length === 0 ? (
-            <div className="rounded-xl border border-[#E9EBEC] bg-white p-6 text-[#060809]">No blog posts yet.</div>
+            <div className="rounded-xl border border-[#E9EBEC] bg-white p-6 text-[#060809]">
+              No blog posts yet.
+            </div>
           ) : (
             posts.map((post) => {
               const slug = slugFromUri(post.uri);
-              const dateLabel = post.date ? format(new Date(post.date), 'EEEE, MMMM d, yyyy') : '';
-              const category = post.categories?.nodes?.[0]?.name ?? 'Blog';
+              const dateLabel = post.date ? format(new Date(post.date), "EEEE, MMMM d, yyyy") : "";
+              const category = post.categories?.nodes?.[0]?.name ?? "Blog";
               const imageUrl =
                 toAbsoluteBlogUrl(post.featuredImage?.node?.sourceUrl) ??
                 toAbsoluteBlogUrl(post.featuredImage?.node?.filePath) ??
@@ -136,9 +140,13 @@ function RouteComponent() {
                   <div className="flex flex-col items-start lg:w-1/2">
                     <div className="flex flex-col gap-6 self-stretch">
                       <div className="flex items-center gap-3">
-                        <span className="text-[15px]/5 tracking-[-0.12px] text-[#060809]">{category}</span>
+                        <span className="text-[15px]/5 tracking-[-0.12px] text-[#060809]">
+                          {category}
+                        </span>
                         {dateLabel ? (
-                          <span className="text-[15px]/5 tracking-[-0.12px] text-[#7B828E]">{dateLabel}</span>
+                          <span className="text-[15px]/5 tracking-[-0.12px] text-[#7B828E]">
+                            {dateLabel}
+                          </span>
                         ) : null}
                       </div>
 
@@ -148,7 +156,7 @@ function RouteComponent() {
                         </h4>
 
                         <p className="line-clamp-2 text-[15px]/5 tracking-[-0.12px] text-[#060809]">
-                          {excerptFromHtml(post.content ?? '')}
+                          {excerptFromHtml(post.content ?? "")}
                         </p>
                       </div>
                     </div>
@@ -158,7 +166,7 @@ function RouteComponent() {
                     src={imageUrl}
                     width={573}
                     height={294}
-                    alt={post.featuredImage?.node?.altText || post.title || 'Blog post'}
+                    alt={post.featuredImage?.node?.altText || post.title || "Blog post"}
                     className="h-auto w-full rounded-xl object-cover lg:w-1/2"
                   />
                 </Link>
@@ -170,14 +178,16 @@ function RouteComponent() {
             <Button
               className="h-12 rounded-[40px] bg-[#F9F9F9] px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-[#1F2130]"
               variant="secondary"
-              disabled={postsQuery.isLoading || !postsQuery.hasNextPage || postsQuery.isFetchingNextPage}
+              disabled={
+                postsQuery.isLoading || !postsQuery.hasNextPage || postsQuery.isFetchingNextPage
+              }
               onClick={() => postsQuery.fetchNextPage()}
             >
               {postsQuery.isLoading || postsQuery.isFetchingNextPage
-                ? 'Loading…'
+                ? "Loading…"
                 : postsQuery.hasNextPage
-                  ? 'Load More'
-                  : 'No More Posts'}
+                  ? "Load More"
+                  : "No More Posts"}
             </Button>
           </div>
         </div>

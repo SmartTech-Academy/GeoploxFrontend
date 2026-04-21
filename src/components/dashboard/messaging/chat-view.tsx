@@ -1,28 +1,28 @@
-import React, { useState, useEffect, useRef, Fragment } from 'react';
-import { MoreHorizontal, Smile, Paperclip, Flag, Trash2, X, SendHorizonal } from 'lucide-react';
-import { useInView } from 'react-intersection-observer';
-import { format, parseISO } from 'date-fns';
+import React, { useState, useEffect, useRef, Fragment } from "react";
+import { MoreHorizontal, Smile, Paperclip, Flag, Trash2, X, SendHorizonal } from "lucide-react";
+import { useInView } from "react-intersection-observer";
+import { format, parseISO } from "date-fns";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   useDeleteConversation,
   useGetMessages,
   useMarkConversationAsRead,
   useReportConversation,
   useSendMessage,
-} from '@/lib/services/chat';
-import { UserProfile } from '@/lib/types';
-import LoadingFallback from '@/components/loading-fallback';
-import { cn } from '@/lib/utils';
-import { Conversation } from './chat';
+} from "@/lib/services/chat";
+import { UserProfile } from "@/lib/types";
+import LoadingFallback from "@/components/loading-fallback";
+import { cn } from "@/lib/utils";
+import { Conversation } from "./chat";
 
 interface ChatViewProps {
   selectedChat: Conversation;
@@ -31,10 +31,14 @@ interface ChatViewProps {
   profileData: UserProfile | undefined;
 }
 
-export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedChat, profileData }) => {
+export const ChatView: React.FC<ChatViewProps> = ({
+  selectedChat,
+  setSelectedChat,
+  profileData,
+}) => {
   const { ref, inView } = useInView();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const {
     data: messagesData,
@@ -65,12 +69,12 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
     e.preventDefault();
     if (!message.trim() || !selectedChat) return;
     sendMessage({ body: message });
-    setMessage('');
+    setMessage("");
   };
 
   const handleReport = () => {
     if (selectedChat) {
-      reportConversation({ id: String(selectedChat.id), data: { reason: 'Spam' } });
+      reportConversation({ id: String(selectedChat.id), data: { reason: "Spam" } });
     }
   };
 
@@ -93,14 +97,14 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
               <Avatar className="size-16 rounded-[6px]">
                 <AvatarImage src={otherParticipant?.display_picture_url} />
                 <AvatarFallback className="bg-gray-200">
-                  {`${otherParticipant?.firstname[0] ?? ''}${otherParticipant?.lastname[0] ?? ''}`}
+                  {`${otherParticipant?.firstname[0] ?? ""}${otherParticipant?.lastname[0] ?? ""}`}
                 </AvatarFallback>
               </Avatar>
             </div>
             <div>
               <h2 className="font-semibold text-gray-900">{`${otherParticipant?.firstname} ${otherParticipant?.lastname}`}</h2>
               <p className="text-sm text-gray-500">
-                {otherParticipant?.username ? `@${otherParticipant.username}` : 'Online'}
+                {otherParticipant?.username ? `@${otherParticipant.username}` : "Online"}
               </p>
             </div>
           </div>
@@ -112,15 +116,21 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={handleReport} className="flex items-center space-x-3">
-                <Flag className="size-4  text-gray-600" />
+                <Flag className="size-4 text-gray-600" />
                 <span>Report User</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDelete} className="flex items-center space-x-3 text-red-600">
-                <Trash2 className="size-4 " />
+              <DropdownMenuItem
+                onClick={handleDelete}
+                className="flex items-center space-x-3 text-red-600"
+              >
+                <Trash2 className="size-4" />
                 <span>Delete Chat</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSelectedChat(null)} className="flex items-center space-x-3">
-                <X className="size-4  text-gray-600" />
+              <DropdownMenuItem
+                onClick={() => setSelectedChat(null)}
+                className="flex items-center space-x-3"
+              >
+                <X className="size-4 text-gray-600" />
                 <span>Close Chat</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -137,8 +147,8 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
             const isMe = msg.sender.codec === profileData?.codec;
             const showDateDivider =
               index === 0 ||
-              format(parseISO(msg.created_at), 'yyyy-MM-dd') !==
-                format(parseISO(allMessages[index - 1].created_at), 'yyyy-MM-dd');
+              format(parseISO(msg.created_at), "yyyy-MM-dd") !==
+                format(parseISO(allMessages[index - 1].created_at), "yyyy-MM-dd");
 
             return (
               <Fragment key={msg.id}>
@@ -149,12 +159,12 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
                     </div>
                     <div className="relative flex justify-center text-sm">
                       <span className="bg-[#F9F9F9] px-2 text-sm text-gray-500">
-                        {format(parseISO(msg.created_at), 'MMMM d, yyyy')}
+                        {format(parseISO(msg.created_at), "MMMM d, yyyy")}
                       </span>
                     </div>
                   </div>
                 )}
-                <div className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                <div className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                   <div className={`flex max-w-xs space-x-2 lg:max-w-md`}>
                     {!isMe && (
                       <Avatar className="size-10 rounded-[10px]">
@@ -166,10 +176,10 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
                     )}
                     <div
                       className={cn(
-                        'rounded-2xl px-4 py-3',
+                        "rounded-2xl px-4 py-3",
                         isMe
-                          ? 'rounded-br-md bg-[#D4AF36] text-white shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.04),0px_4px_6px_-2px_rgba(16,24,40,0.02)]'
-                          : 'rounded-bl-md border border-[#ECECEC] bg-white text-[#2E2E3E]'
+                          ? "rounded-br-md bg-[#D4AF36] text-white shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.04),0px_4px_6px_-2px_rgba(16,24,40,0.02)]"
+                          : "rounded-bl-md border border-[#ECECEC] bg-white text-[#2E2E3E]",
                       )}
                     >
                       <p className="text-sm">{msg.body}</p>
@@ -224,13 +234,14 @@ export const ChatView: React.FC<ChatViewProps> = ({ selectedChat, setSelectedCha
               type="submit"
               size="sm"
               style={{
-                background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-                boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
+                boxShadow:
+                  "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
               }}
               className="h-8 rounded-[40px] border border-[oklch(0.235_0_0/50%)] bg-gray-800 p-3 text-white hover:bg-gray-700"
             >
               Send
-              <SendHorizonal className="size-4 " />
+              <SendHorizonal className="size-4" />
             </Button>
           </div>
         </form>

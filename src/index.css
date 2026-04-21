@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -40,8 +40,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-gill-sans: 'Gill Sans', sans-serif;
-  --font-dm_sans: 'DM Sans', sans-serif;
+  --font-gill-sans: "Gill Sans", sans-serif;
+  --font-dm_sans: "DM Sans", sans-serif;
 }
 
 :root {
@@ -151,7 +151,7 @@
   line-height: 20px;
 
   @property --tw-leading {
-    syntax: '*';
+    syntax: "*";
     inherits: false;
   }
 }
@@ -194,7 +194,7 @@
 }
 
 html {
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-optical-sizing: auto;
   font-display: swap;
   text-rendering: optimizeLegibility;
@@ -246,9 +246,6 @@ img {
     @apply h-auto  !size-auto;
     text-indent: 0;
   }
-
-
-
 
   .wp-content :where(a) {
     @apply underline decoration-black/20 underline-offset-4 hover:decoration-black/60;

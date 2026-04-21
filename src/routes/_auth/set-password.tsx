@@ -1,18 +1,25 @@
-import { createFileRoute, Link, useNavigate, useSearch } from '@tanstack/react-router';
-import { useForm } from 'react-hook-form';
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
 
-import * as z from 'zod/v4';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Eye, EyeOff, Check, X, ChevronLeft } from 'lucide-react';
+import * as z from "zod/v4";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Eye, EyeOff, Check, X, ChevronLeft } from "lucide-react";
 
-import { useRegister } from '@/lib/services';
-import assets from '@/assets';
-import { customResolver } from '@/lib/customZodResolver';
-import { PageMetaTags } from '@/components/page-meta-data';
-import { toast } from 'sonner';
+import { useRegister } from "@/lib/services";
+import assets from "@/assets";
+import { customResolver } from "@/lib/customZodResolver";
+import { PageMetaTags } from "@/components/page-meta-data";
+import { toast } from "sonner";
 
 type SetPasswordSearch = {
   firstName: string;
@@ -22,7 +29,7 @@ type SetPasswordSearch = {
   email: string;
 };
 
-export const Route = createFileRoute('/_auth/set-password')({
+export const Route = createFileRoute("/_auth/set-password")({
   component: RouteComponent,
   validateSearch: (search: Record<string, unknown>): SetPasswordSearch => ({
     ...search,
@@ -37,22 +44,22 @@ export const Route = createFileRoute('/_auth/set-password')({
 // Password validation schema
 const passwordSchema = z
   .string()
-  .min(8, 'Minimum 8 characters')
-  .regex(/[a-z]/, 'One lowercase letter')
-  .regex(/[A-Z]/, 'One uppercase letter')
-  .regex(/[0-9]/, 'One number')
-  .regex(/[^a-zA-Z0-9]/, 'One special character')
-  .refine((val) => !/\s/.test(val), 'No space');
+  .min(8, "Minimum 8 characters")
+  .regex(/[a-z]/, "One lowercase letter")
+  .regex(/[A-Z]/, "One uppercase letter")
+  .regex(/[0-9]/, "One number")
+  .regex(/[^a-zA-Z0-9]/, "One special character")
+  .refine((val) => !/\s/.test(val), "No space");
 
 // Updated Form Schema with Confirm Password
 const formSchema = z
   .object({
     password: passwordSchema,
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirmPassword'],
+    path: ["confirmPassword"],
   });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -60,13 +67,13 @@ type FormValues = z.infer<typeof formSchema>;
 // Custom password requirements component
 const PasswordRequirements = ({ password }: { password: string }) => {
   const requirements = [
-    { id: 'lowercase', test: /[a-z]/, label: 'One lowercase letter' },
-    { id: 'uppercase', test: /[A-Z]/, label: 'One uppercase letter' },
-    { id: 'special', test: /[^a-zA-Z0-9]/, label: 'One special character' },
-    { id: 'number', test: /[0-9]/, label: 'One number' },
-    { id: 'nospace', test: /^\S*$/, label: 'No space' },
+    { id: "lowercase", test: /[a-z]/, label: "One lowercase letter" },
+    { id: "uppercase", test: /[A-Z]/, label: "One uppercase letter" },
+    { id: "special", test: /[^a-zA-Z0-9]/, label: "One special character" },
+    { id: "number", test: /[0-9]/, label: "One number" },
+    { id: "nospace", test: /^\S*$/, label: "No space" },
     // Updated to 8 characters
-    { id: 'minlength', test: /.{8,}/, label: 'Minimum 8 character' },
+    { id: "minlength", test: /.{8,}/, label: "Minimum 8 character" },
   ];
 
   return (
@@ -75,8 +82,12 @@ const PasswordRequirements = ({ password }: { password: string }) => {
         const isValid = password ? req.test.test(password) : false;
         return (
           <div key={req.id} className="flex items-center gap-2 text-sm">
-            {isValid ? <Check className="size-4 text-green-600" /> : <X className="size-4 text-red-500" />}
-            <span className={isValid ? 'text-green-600' : 'text-red-500'}>{req.label}</span>
+            {isValid ? (
+              <Check className="size-4 text-green-600" />
+            ) : (
+              <X className="size-4 text-red-500" />
+            )}
+            <span className={isValid ? "text-green-600" : "text-red-500"}>{req.label}</span>
           </div>
         );
       })}
@@ -88,16 +99,16 @@ function RouteComponent() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const searchParams = useSearch({ from: '/_auth/set-password' });
+  const searchParams = useSearch({ from: "/_auth/set-password" });
   const { mutate, isPending } = useRegister();
 
   const form = useForm<FormValues>({
     resolver: customResolver(formSchema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
-      password: '',
-      confirmPassword: '',
+      password: "",
+      confirmPassword: "",
     },
   });
 
@@ -114,9 +125,9 @@ function RouteComponent() {
 
     mutate(registrationData, {
       onSuccess: () => {
-        toast.success('Registration successful! Please check your email for your activation code.');
+        toast.success("Registration successful! Please check your email for your activation code.");
         navigate({
-          to: '/verify-otp',
+          to: "/verify-otp",
           search: { email: registrationData.email, phone: registrationData.phone },
         });
       },
@@ -133,12 +144,18 @@ function RouteComponent() {
       <div className="flex size-full min-h-screen flex-col justify-between self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
-          <img src={assets.logotext} alt="logo" className="h-[46px] w-[126px]" width={126} height={46} />
+          <img
+            src={assets.logotext}
+            alt="logo"
+            className="h-[46px] w-[126px]"
+            width={126}
+            height={46}
+          />
 
           <span className="inline-flex gap-1 text-[14px] leading-[21px] text-[#41415A]">
-            Have an Account?{' '}
+            Have an Account?{" "}
             <Link to="/login" className="font-semibold text-[#D4AF36] hover:underline">
-              Sign In{' '}
+              Sign In{" "}
             </Link>
           </span>
         </div>
@@ -147,7 +164,7 @@ function RouteComponent() {
           <button
             onClick={() => {
               navigate({
-                to: '/register',
+                to: "/register",
                 search: {
                   firstName: searchParams.firstName,
                   lastName: searchParams.lastName,
@@ -163,7 +180,9 @@ function RouteComponent() {
             <span className="text-[14px] leading-[21px] font-medium">Back</span>
           </button>
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
-            <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Create Password</h1>
+            <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">
+              Create Password
+            </h1>
             <p className="text-[14px]/5 text-[#71748C]">Complete your onboarding in 10 minutes.</p>
           </div>
 
@@ -182,7 +201,7 @@ function RouteComponent() {
                         <FormControl>
                           <div className="relative">
                             <Input
-                              type={showPassword ? 'text' : 'password'}
+                              type={showPassword ? "text" : "password"}
                               placeholder="••••••••••••"
                               className="h-10 w-full self-stretch rounded-xl border-[#D5D5DD] px-6 pr-12"
                               {...field}
@@ -192,7 +211,11 @@ function RouteComponent() {
                               onClick={() => setShowPassword(!showPassword)}
                               className="absolute top-1/2 right-3 -translate-y-1/2 text-[#D4AF36] hover:text-[#B69118]"
                             >
-                              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                              {showPassword ? (
+                                <EyeOff className="size-4" />
+                              ) : (
+                                <Eye className="size-4" />
+                              )}
                             </button>
                           </div>
                         </FormControl>
@@ -218,7 +241,7 @@ function RouteComponent() {
                         <FormControl>
                           <div className="relative">
                             <Input
-                              type={showConfirmPassword ? 'text' : 'password'}
+                              type={showConfirmPassword ? "text" : "password"}
                               placeholder="••••••••••••"
                               className="h-10 w-full self-stretch rounded-xl border-[#D5D5DD] px-6 pr-12"
                               {...field}
@@ -228,7 +251,11 @@ function RouteComponent() {
                               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                               className="absolute top-1/2 right-3 -translate-y-1/2 text-[#D4AF36] hover:text-[#B69118]"
                             >
-                              {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                              {showConfirmPassword ? (
+                                <EyeOff className="size-4" />
+                              ) : (
+                                <Eye className="size-4" />
+                              )}
                             </button>
                           </div>
                         </FormControl>
@@ -243,13 +270,14 @@ function RouteComponent() {
                   <Button
                     type="submit"
                     style={{
-                      background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                      boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                      background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
+                      boxShadow:
+                        "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                     }}
                     className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                     disabled={!form.formState.isValid || isPending}
                   >
-                    {isPending ? 'Creating Account...' : 'Continue'}
+                    {isPending ? "Creating Account..." : "Continue"}
                   </Button>
                 </div>
               </form>
@@ -259,7 +287,9 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px]/5 text-[#41415A]">© {new Date().getFullYear()} — Geoplox, All Right Reserved.</p>
+          <p className="text-[14px]/5 text-[#41415A]">
+            © {new Date().getFullYear()} — Geoplox, All Right Reserved.
+          </p>
         </div>
       </div>
     </div>

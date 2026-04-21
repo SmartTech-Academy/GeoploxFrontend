@@ -1,15 +1,28 @@
-import React from 'react';
+import React from "react";
 
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Slash, Trash, RotateCcw, CircleX } from 'lucide-react';
-import { useState, useRef } from 'react';
-import { z } from 'zod/v4';
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Slash, Trash, RotateCcw, CircleX } from "lucide-react";
+import { useState, useRef } from "react";
+import { z } from "zod/v4";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,27 +30,27 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { useForm } from 'react-hook-form';
+} from "@/components/ui/breadcrumb";
+import { useForm } from "react-hook-form";
 
-import { Separator } from '@/components/ui/separator';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { Bold, Italic, List, ListOrdered, Quote, LinkIcon, ImageIcon } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
-import { cn } from '@/lib/utils';
-import { customResolver } from '@/lib/customZodResolver';
+import { Separator } from "@/components/ui/separator";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { Bold, Italic, List, ListOrdered, Quote, LinkIcon, ImageIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
+import { customResolver } from "@/lib/customZodResolver";
 
 // Zod Schema for Blog Form
 const BlogFormSchema = z.object({
-  listingTitle: z.string().min(1, 'Listing title is required'),
+  listingTitle: z.string().min(1, "Listing title is required"),
   headerImage: z.instanceof(File).optional(),
-  bodyText: z.string().min(10, 'Body text must be at least 10 characters'),
+  bodyText: z.string().min(10, "Body text must be at least 10 characters"),
   seoTitle: z.array(z.string()).default([]),
   focusKeyphrase: z.string().optional(),
-  slug: z.string().min(1, 'Slug is required'),
-  metaDescription: z.string().min(1, 'Meta description is required'),
-  blogCategory: z.string().min(1, 'Blog category is required'),
+  slug: z.string().min(1, "Slug is required"),
+  metaDescription: z.string().min(1, "Meta description is required"),
+  blogCategory: z.string().min(1, "Blog category is required"),
   customTags: z.array(z.string()).default([]),
 });
 
@@ -49,27 +62,27 @@ interface BlogFormProps {
 }
 
 const blogCategories = [
-  'Market Trends',
-  'Investment Tips',
-  'Property News',
-  'Real Estate Guide',
-  'Legal Advice',
-  'Technology',
-  'Lifestyle',
+  "Market Trends",
+  "Investment Tips",
+  "Property News",
+  "Real Estate Guide",
+  "Legal Advice",
+  "Technology",
+  "Lifestyle",
 ];
 
 const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }) => {
   const [headerImage, setHeaderImage] = useState<File | null>(null);
-  const [seoTitleInput, setSeoTitleInput] = useState('');
-  const [customTagInput, setCustomTagInput] = useState('');
+  const [seoTitleInput, setSeoTitleInput] = useState("");
+  const [customTagInput, setCustomTagInput] = useState("");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [hoveredDocument, setHoveredDocument] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<BlogFormValues>({
     resolver: customResolver(BlogFormSchema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       seoTitle: [],
       customTags: [],
@@ -80,9 +93,9 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
   // Tiptap Editor
   const editor = useEditor({
     extensions: [StarterKit],
-    content: initialData?.bodyText || '',
+    content: initialData?.bodyText || "",
     onUpdate: ({ editor }) => {
-      form.setValue('bodyText', editor.getHTML());
+      form.setValue("bodyText", editor.getHTML());
     },
   });
 
@@ -90,15 +103,15 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
     const file = event.target.files?.[0];
     if (file) {
       setHeaderImage(file);
-      form.setValue('headerImage', file);
+      form.setValue("headerImage", file);
     }
   };
 
   const handleImageRemove = () => {
     setHeaderImage(null);
-    form.setValue('headerImage', undefined);
+    form.setValue("headerImage", undefined);
     if (imageInputRef.current) {
-      imageInputRef.current.value = '';
+      imageInputRef.current.value = "";
     }
   };
 
@@ -108,33 +121,33 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
   const addSeoTag = () => {
     if (seoTitleInput.trim()) {
-      const currentTags = form.getValues('seoTitle');
-      form.setValue('seoTitle', [...currentTags, seoTitleInput.trim()]);
-      setSeoTitleInput('');
+      const currentTags = form.getValues("seoTitle");
+      form.setValue("seoTitle", [...currentTags, seoTitleInput.trim()]);
+      setSeoTitleInput("");
     }
   };
 
   const removeSeoTag = (index: number) => {
-    const currentTags = form.getValues('seoTitle');
+    const currentTags = form.getValues("seoTitle");
     form.setValue(
-      'seoTitle',
-      currentTags.filter((_, i) => i !== index)
+      "seoTitle",
+      currentTags.filter((_, i) => i !== index),
     );
   };
 
   const addCustomTag = () => {
     if (customTagInput.trim()) {
-      const currentTags = form.getValues('customTags');
-      form.setValue('customTags', [...currentTags, customTagInput.trim()]);
-      setCustomTagInput('');
+      const currentTags = form.getValues("customTags");
+      form.setValue("customTags", [...currentTags, customTagInput.trim()]);
+      setCustomTagInput("");
     }
   };
 
   const removeCustomTag = (index: number) => {
-    const currentTags = form.getValues('customTags');
+    const currentTags = form.getValues("customTags");
     form.setValue(
-      'customTags',
-      currentTags.filter((_, i) => i !== index)
+      "customTags",
+      currentTags.filter((_, i) => i !== index),
     );
   };
 
@@ -145,15 +158,15 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
   };
 
   // Watch title changes to auto-generate slug
-  const watchedTitle = form.watch('listingTitle');
+  const watchedTitle = form.watch("listingTitle");
   React.useEffect(() => {
-    if (watchedTitle && !form.getValues('slug')) {
-      form.setValue('slug', generateSlug(watchedTitle));
+    if (watchedTitle && !form.getValues("slug")) {
+      form.setValue("slug", generateSlug(watchedTitle));
     }
   }, [watchedTitle, form]);
 
@@ -180,14 +193,16 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                   </BreadcrumbSeparator>
                   <BreadcrumbItem>
                     <BreadcrumbPage>
-                      {initialData?.listingTitle || 'How to position your team for success'}
+                      {initialData?.listingTitle || "How to position your team for success"}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
 
               <div className="flex w-full items-center justify-between gap-10 self-stretch">
-                <h1 className="text-[20px]/6  font-semibold text-black">{isEdit ? 'Edit Post' : 'New Post'}</h1>
+                <h1 className="text-[20px]/6 font-semibold text-black">
+                  {isEdit ? "Edit Post" : "New Post"}
+                </h1>
 
                 <div className="flex items-center gap-3">
                   <Button
@@ -209,8 +224,9 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
                   <Button
                     style={{
-                      background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-                      boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                      background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
+                      boxShadow:
+                        "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                     }}
                     className="h-8 rounded-[40px] border border-[oklch(0.235_0_0/50%)] px-6 text-[14px] leading-[17px] font-semibold text-white"
                   >
@@ -246,7 +262,9 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
                 {/* Header Image */}
                 <div className="flex w-full flex-col gap-3">
-                  <h3 className="text-[14px] leading-[17px] font-normal text-[#41415A]">Header Image</h3>
+                  <h3 className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                    Header Image
+                  </h3>
 
                   {!headerImage ? (
                     <div
@@ -255,10 +273,12 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                     >
                       <div className="flex flex-col items-center gap-3">
                         <p className="text-[14px] leading-[17px] text-[#71748C]">
-                          Drag and drop here or{' '}
-                          <span className="cursor-pointer font-semibold text-[#B69118]">click to upload</span>
+                          Drag and drop here or{" "}
+                          <span className="cursor-pointer font-semibold text-[#B69118]">
+                            click to upload
+                          </span>
                         </p>
-                        <p className="text-[10px]/3  text-[#71748C]">
+                        <p className="text-[10px]/3 text-[#71748C]">
                           Supports PDF, JPEG, or PNG files. Smaller than 1 MB
                         </p>
                       </div>
@@ -266,14 +286,14 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                   ) : (
                     <div
                       className="relative flex w-full items-center justify-center self-stretch rounded-[6px] bg-[#E3E3E8] py-3"
-                      onMouseEnter={() => setHoveredDocument('headerImage')}
+                      onMouseEnter={() => setHoveredDocument("headerImage")}
                       onMouseLeave={() => setHoveredDocument(null)}
                     >
                       <div className="h-48 w-[250px] bg-transparent">
                         <img
                           src={URL.createObjectURL(headerImage)}
                           alt=""
-                          className="size-full  object-contain"
+                          className="size-full object-contain"
                           width={250}
                           height={192}
                         />
@@ -281,8 +301,10 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
                       <div
                         className={cn(
-                          'absolute inset-0 z-10 flex size-full  items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300',
-                          hoveredDocument === 'headerImage' ? 'opacity-100' : 'pointer-events-none opacity-0'
+                          "absolute inset-0 z-10 flex size-full items-center justify-center rounded-[6px] bg-[oklch(0_0_0/20%)] backdrop-blur-[2px] transition-all duration-300",
+                          hoveredDocument === "headerImage"
+                            ? "opacity-100"
+                            : "pointer-events-none opacity-0",
                         )}
                       >
                         <div className="flex items-center gap-3">
@@ -290,7 +312,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px]/3.5  font-normal text-black"
+                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px]/3.5 font-normal text-black"
                             onClick={handleImageRemove}
                           >
                             <Trash className="size-3.5 text-[#D20832]" />
@@ -301,7 +323,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                             type="button"
                             size="sm"
                             variant="secondary"
-                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px]/3.5  font-normal text-black"
+                            className="h-[30px] rounded-[40px] bg-white px-6 py-2 text-[12px]/3.5 font-normal text-black"
                             onClick={handleImageReplace}
                           >
                             <RotateCcw className="size-3.5" />
@@ -323,7 +345,9 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
                 {/* Body Text Editor */}
                 <div className="flex w-full flex-col gap-3">
-                  <h3 className="text-[14px] leading-[17px] font-normal text-[#41415A]">Body Text</h3>
+                  <h3 className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                    Body Text
+                  </h3>
 
                   <div className="flex w-full flex-col gap-0">
                     {/* Editor Toolbar */}
@@ -346,7 +370,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="size-8  p-0"
+                        className="size-8 p-0"
                         onClick={() => editor?.chain().focus().toggleBold().run()}
                       >
                         <Bold className="size-4" />
@@ -356,7 +380,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="size-8  p-0"
+                        className="size-8 p-0"
                         onClick={() => editor?.chain().focus().toggleItalic().run()}
                       >
                         <Italic className="size-4" />
@@ -366,7 +390,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="size-8  p-0"
+                        className="size-8 p-0"
                         onClick={() => editor?.chain().focus().toggleBulletList().run()}
                       >
                         <List className="size-4" />
@@ -376,7 +400,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="size-8  p-0"
+                        className="size-8 p-0"
                         onClick={() => editor?.chain().focus().toggleOrderedList().run()}
                       >
                         <ListOrdered className="size-4" />
@@ -386,24 +410,27 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="size-8  p-0"
+                        className="size-8 p-0"
                         onClick={() => editor?.chain().focus().toggleBlockquote().run()}
                       >
                         <Quote className="size-4" />
                       </Button>
 
-                      <Button type="button" variant="ghost" size="sm" className="size-8  p-0">
+                      <Button type="button" variant="ghost" size="sm" className="size-8 p-0">
                         <LinkIcon className="size-4" />
                       </Button>
 
-                      <Button type="button" variant="ghost" size="sm" className="size-8  p-0">
+                      <Button type="button" variant="ghost" size="sm" className="size-8 p-0">
                         <ImageIcon className="size-4" />
                       </Button>
                     </div>
 
                     {/* Editor Content */}
                     <div className="min-h-[200px] rounded-b-lg border border-[#D5D5DD] p-4">
-                      <EditorContent editor={editor} className="prose prose-sm max-w-none focus:outline-none" />
+                      <EditorContent
+                        editor={editor}
+                        className="prose prose-sm max-w-none focus:outline-none"
+                      />
                     </div>
                   </div>
                 </div>
@@ -438,10 +465,12 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                   />
 
                   <div className="flex w-full flex-col gap-1.5">
-                    <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">Custom Tags</label>
+                    <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                      Custom Tags
+                    </label>
                     <div className="relative">
                       <div className="flex min-h-10 w-full flex-wrap items-center gap-1 rounded-lg border border-[#D5D5DD] bg-white px-3">
-                        {form.watch('customTags').map((tag, index) => (
+                        {form.watch("customTags").map((tag, index) => (
                           <Badge
                             key={index}
                             variant="secondary"
@@ -454,11 +483,11 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                           </Badge>
                         ))}
                         <Input
-                          placeholder={form.watch('customTags').length === 0 ? 'Add tag' : ''}
+                          placeholder={form.watch("customTags").length === 0 ? "Add tag" : ""}
                           value={customTagInput}
                           onChange={(e) => setCustomTagInput(e.target.value)}
                           onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === "Enter") {
                               e.preventDefault();
                               addCustomTag();
                             }
@@ -473,14 +502,18 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
 
               {/* Right Column - SEO Configuration */}
               <div className="flex flex-col gap-5 border-l border-[#F1F1F4] pl-6">
-                <h2 className="text-[16px] leading-[19px] font-semibold text-[#41415A]">SEO Configuration</h2>
+                <h2 className="text-[16px] leading-[19px] font-semibold text-[#41415A]">
+                  SEO Configuration
+                </h2>
 
                 {/* SEO Title */}
                 <div className="flex w-full flex-col gap-1.5">
-                  <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">SEO Title</label>
+                  <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                    SEO Title
+                  </label>
                   <div className="relative">
                     <div className="flex min-h-10 w-full flex-wrap items-center gap-1 rounded-lg border border-[#D5D5DD] bg-white px-3">
-                      {form.watch('seoTitle').map((tag, index) => (
+                      {form.watch("seoTitle").map((tag, index) => (
                         <Badge
                           key={index}
                           variant="secondary"
@@ -493,11 +526,11 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         </Badge>
                       ))}
                       <Input
-                        placeholder={form.watch('seoTitle').length === 0 ? 'Add SEO title' : ''}
+                        placeholder={form.watch("seoTitle").length === 0 ? "Add SEO title" : ""}
                         value={seoTitleInput}
                         onChange={(e) => setSeoTitleInput(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
+                          if (e.key === "Enter") {
                             e.preventDefault();
                             addSeoTag();
                           }
@@ -535,7 +568,9 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                   name="slug"
                   render={({ field }) => (
                     <FormItem className="w-full gap-1.5">
-                      <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Slug</FormLabel>
+                      <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                        Slug
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="3-bedroom-apartments-lekki"
@@ -580,7 +615,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
           <DialogHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span>{form.watch('blogCategory') || 'Market Trends'}</span>
+                <span>{form.watch("blogCategory") || "Market Trends"}</span>
                 <span>•</span>
                 <span>Sunday, February 12, 2023</span>
               </div>
@@ -588,12 +623,14 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
           </DialogHeader>
 
           <div className="space-y-6">
-            <DialogTitle>{form.watch('listingTitle') || 'How to position your team for success'}</DialogTitle>
+            <DialogTitle>
+              {form.watch("listingTitle") || "How to position your team for success"}
+            </DialogTitle>
 
             {headerImage && (
               <div className="w-full">
                 <img
-                  src={URL.createObjectURL(headerImage) || '/placeholder.svg'}
+                  src={URL.createObjectURL(headerImage) || "/placeholder.svg"}
                   alt="Header"
                   className="h-64 w-full rounded-lg object-cover"
                 />
@@ -601,7 +638,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
             )}
 
             <div className="prose prose-lg max-w-none">
-              <div dangerouslySetInnerHTML={{ __html: editor?.getHTML() || '' }} />
+              <div dangerouslySetInnerHTML={{ __html: editor?.getHTML() || "" }} />
             </div>
           </div>
         </DialogContent>

@@ -55,8 +55,8 @@ Status: ${status}
 Message: ${errorMessage || "No message"}
 Time: ${new Date().toISOString()}
     `;
-    const isDev = process.env.NODE_ENV === 'development';
-  if(!isDev)  await sendTelegramError(message);
+    const isDev = process.env.NODE_ENV === "development";
+    if (!isDev) await sendTelegramError(message);
 
     if (status === 401) {
       if (

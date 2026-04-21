@@ -23,11 +23,11 @@ export interface Property {
   excerpt: string;
   cover_image: string;
   thumbnail_images?: string[];
-  images?:{
-    "url": string,
-    "is_cover": boolean,
-    "position": number
-}[],
+  images?: {
+    url: string;
+    is_cover: boolean;
+    position: number;
+  }[];
   category: string;
   property_type: string;
   owner?: {
@@ -135,7 +135,11 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
           {/* Small Image 1 */}
           <div className="h-[129px] w-full">
             <img
-              src={property?.thumbnail_images?.[1] || property?.images?.[1]?.url || property.cover_image}
+              src={
+                property?.thumbnail_images?.[1] ||
+                property?.images?.[1]?.url ||
+                property.cover_image
+              }
               alt={`${property.title} - view 1`}
               className="size-full object-cover"
             />
@@ -143,7 +147,11 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
           {/* Small Image 2 */}
           <div className="h-[129px]">
             <img
-              src={property?.thumbnail_images?.[2] || property?.images?.[2]?.url || property.cover_image}
+              src={
+                property?.thumbnail_images?.[2] ||
+                property?.images?.[2]?.url ||
+                property.cover_image
+              }
               alt={`${property.title} - view 2`}
               className="size-full object-cover"
             />
