@@ -33,12 +33,15 @@ const ListingProperties = () => {
   });
 
   const [debouncedFilters] = useDebounce(filters, 300);
+  const shouldIncludeOwnerName =
+    (isListingPage || isProperties) &&
+    (profileData?.user_role === "owner" || profileData?.user_role === "developer");
+
   const { data: propertiesResponse, isPending: isLoadingProperties } = useGetProperties(
     {
       ...debouncedFilters,
       pageType,
-
-      developer_or_owners_name: isListingPage || isProperties ? profileData?.username : undefined,
+      developer_or_owners_name: shouldIncludeOwnerName ? profileData?.username : undefined,
     },
     isListingPage || isAdminListingPage,
     isAdminListingPage,

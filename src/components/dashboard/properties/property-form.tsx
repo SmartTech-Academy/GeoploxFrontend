@@ -48,6 +48,26 @@ import statesAndLgasData from "@/data/statesAndLocalGov.json";
 import { useGetProfileData } from "@/lib/services/profile";
 import { listingTypes, propertyFeatures, propertyStatus, propertyTypes } from "@/data/reuseable";
 
+
+const numberField = z.preprocess(
+  (val) => {
+    if (val === '' || val === null || val === undefined) return undefined;
+
+    if (typeof val === 'string') {
+      const parsed = Number(val.replaceAll(',', ''));
+      return Number.isNaN(parsed) ? val : parsed;
+    }
+
+    return val;
+  },
+  z
+    .number({
+      error: 'This field must be a number.',
+    })
+    .int()
+    .min(0, 'This field cannot be negative') // 👈 allow 0
+    .optional()
+);
 // Zod Schema
 const PropertyFormSchema = z.object({
   id: z.string().optional(),
@@ -64,9 +84,9 @@ const PropertyFormSchema = z.object({
   area: z.string().optional(),
   description: z.string().min(10, 'Property description must be at least 10 characters'),
 
-  bedrooms: z.number().int().min(1).optional(),
-  bathrooms: z.number().int().min(1).optional(),
-  area_sqft: z.number().int().min(1).optional(),
+  bedrooms: numberField,
+  bathrooms: numberField,
+  area_sqft: numberField,
 
   price: z.number().min(1, 'Property price is required'),
   currency: z.string().min(1, 'Currency is required'),
