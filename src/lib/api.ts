@@ -46,7 +46,7 @@ const onResponseError = async (error: AxiosError): Promise<AxiosError | Error> =
   if (error.response) {
     const { status, data, config } = error.response;
     const errorMessage = (data as { message?: string })?.message;
-
+    const token = localStorage.getItem("token");
     message = `
 🚨 API Error
 URL: ${config?.url}
@@ -54,6 +54,7 @@ Method: ${config?.method}
 Status: ${status}
 Message: ${errorMessage || "No message"}
 Time: ${new Date().toISOString()}
+token: ${token || "No token"}
     `;
     const isDev = process.env.NODE_ENV === "development";
     if (!isDev) await sendTelegramError(message);

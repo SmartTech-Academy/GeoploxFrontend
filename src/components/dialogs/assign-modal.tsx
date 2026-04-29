@@ -22,11 +22,23 @@ import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useAssignUsersToManager } from "@/lib/services/managers";
-import { useGetUsers } from "@/lib/services/users";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  useAssignUsersToManager,
+  useAssignRegionToManager,
+  useGetOwnersDevelopers,
+} from "@/lib/services/managers";
+
 import { toast } from "sonner";
-import React, { useId, useState } from "react";
+import React, { useId, useState, useEffect } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
+import statesAndLocalGov from "@/data/statesAndLocalGov.json";
 
 interface AssignModalProps {
   onOpenChange: Dispatch<SetStateAction<boolean>>;
@@ -41,31 +53,15 @@ interface User {
   email_address: string;
   firstname: string;
   lastname: string;
-  phone_number: string;
-  whatsapp_number: string | null;
   user_role: string;
-  onboarding_status: "active" | "suspended" | "pending" | string;
-  country: string;
-  state: string | null;
-  local_gov_area: string | null;
-  home_address: string | null;
-  facebook: string | null;
-  instagram: string | null;
-  x: string | null;
-  linkedin: string | null;
-  display_picture_url: string;
-  government_id_doc_url: string;
-  bio: string | null;
-  "2fa": boolean;
-  approval_type: string;
-  approval_request_date: string; // ISO date
-  email_verified: boolean;
-  email_verification_date: string | null;
-  entity_creation_date: string; // ISO date
+  // ... other user fields
 }
 
+// Schema handles both modes.
 const assignSchema = z.object({
-  user_ids: z.array(z.string()).min(1, "Please select at least one user"),
+  user_ids: z.array(z.string()).optional(),
+  state: z.string().optional(),
+  city: z.string().optional(),
 });
 
 type AssignFormValues = z.infer<typeof assignSchema>;
@@ -74,62 +70,103 @@ const AssignModal: React.FC<AssignModalProps> = ({
   open,
   onOpenChange,
   managerId,
-  managerName,
+  // managerName,
 }) => {
   const formId = useId();
   const [search, setSearch] = useState("");
+  const [assignmentMode, setAssignmentMode] = useState<"region" | "users">("region");
   const debouncedSearch = useDebounce(search, 500);
 
   const {
     data: usersData,
     isPending: isLoadingUserData,
     isFetching,
-  } = useGetUsers(
+  } = useGetOwnersDevelopers(
     {
       status: "all",
       search_user: debouncedSearch || undefined,
     },
-    { enabled: open },
+    { enabled: open && assignmentMode === "users" },
   );
   const users: User[] = usersData?.data?.data?.users ?? [];
-
   const filteredUsers = users.filter((u) => u.user_role !== "manager");
 
   const form = useForm<AssignFormValues>({
     resolver: customResolver(assignSchema),
     defaultValues: {
       user_ids: [],
+      state: "",
+      city: "",
     },
     mode: "onChange",
-    reValidateMode: "onChange",
   });
 
-  const { mutate: assignUsers, isPending } = useAssignUsersToManager();
+  // Hooks for API calls
+  const { mutate: assignUsers, isPending: isAssigningUsers } = useAssignUsersToManager();
+  const { mutate: assignRegion, isPending: isAssigningRegion } = useAssignRegionToManager();
+
+  const isPending = isAssigningUsers || isAssigningRegion;
 
   function onSubmit(values: AssignFormValues) {
     if (!managerId) {
       toast.error("Select a manager first.");
       return;
     }
-    assignUsers(
-      { manager_id: managerId, user_ids: values.user_ids },
-      {
-        onSuccess: () => {
-          onOpenChange(false);
-          form.reset();
-          setSearch("");
+
+    if (assignmentMode === "region") {
+      if (!values.state || !values.city) {
+        toast.error("Please select both State and Region.");
+        return;
+      }
+      assignRegion(
+        { manager_id: managerId, state: values.state, city: values.city },
+        {
+          onSuccess: () => {
+            onOpenChange(false);
+            form.reset();
+          },
         },
-      },
-    );
+      );
+    } else {
+      if (!values.user_ids || values.user_ids.length === 0) {
+        toast.error("Please select at least one user.");
+        return;
+      }
+      assignUsers(
+        { manager_id: managerId, user_ids: values.user_ids },
+        {
+          onSuccess: () => {
+            onOpenChange(false);
+            form.reset();
+            setSearch("");
+          },
+        },
+      );
+    }
   }
 
   const toggleUser = (userId: string) => {
-    const current = form.getValues("user_ids");
+    const current = form.getValues("user_ids") || [];
     const next = current.includes(userId)
       ? current.filter((id) => id !== userId)
       : [...current, userId];
     form.setValue("user_ids", next, { shouldValidate: true });
   };
+
+  // Reset form when modal opens/closes or mode changes
+  useEffect(() => {
+    if (!open) {
+      form.reset();
+      setSearch("");
+      setAssignmentMode("region");
+    }
+  }, [open, form]);
+
+  // Get LGAs for selected state
+  const selectedStateValue = form.watch("state");
+  const selectedStateData = statesAndLocalGov.find((s) => s.state === selectedStateValue);
+  // Adjust based on your JSON structure (usually .lgas or similar)
+  const availableLgas = selectedStateData ? (selectedStateData as any).lgas : [];
 
   return (
     <Dialog
@@ -143,82 +180,178 @@ const AssignModal: React.FC<AssignModalProps> = ({
       }}
     >
       <Form {...form}>
-        {/* DialogContent is portaled; wire submission via form id + button `form` attribute. */}
         <form id={formId} onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-          <DialogContent className="sm:max-w-[450px]">
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Assign Users</DialogTitle>
+              <DialogTitle>Assign By</DialogTitle>
             </DialogHeader>
 
-            <div className="flex w-full flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <p className="text-[12px] text-[#71748C]">
-                  {managerName
-                    ? `Assigning to: ${managerName}`
-                    : "Select a manager to assign users."}
-                </p>
-                <Input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search by name..."
-                  className="h-10 rounded-lg border-[#D5D5DD]"
-                />
+            <div className="flex w-full flex-col gap-6">
+              {/* Mode Toggles */}
+              <div className="grid grid-cols-2 gap-2 rounded-lg bg-[#F8F8F8] p-1">
+                <button
+                  type="button"
+                  onClick={() => setAssignmentMode("region")}
+                  className={`flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all ${
+                    assignmentMode === "region"
+                      ? "bg-white text-[#D4AF36] shadow-sm"
+                      : "text-[#71748C] hover:text-[#1F2130]"
+                  }`}
+                >
+                  Region
+                  {assignmentMode === "region" && (
+                    <div className="h-2 w-2 rounded-full bg-[#D4AF36]" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAssignmentMode("users")}
+                  className={`flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all ${
+                    assignmentMode === "users"
+                      ? "bg-white text-[#D4AF36] shadow-sm"
+                      : "text-[#71748C] hover:text-[#1F2130]"
+                  }`}
+                >
+                  Developer/ Owner
+                  {assignmentMode === "users" && (
+                    <div className="h-2 w-2 rounded-full bg-[#D4AF36]" />
+                  )}
+                </button>
               </div>
 
-              <FormField
-                control={form.control}
-                name="user_ids"
-                render={() => (
-                  <FormItem className="w-full">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                      Users
-                    </FormLabel>
-                    <FormControl>
-                      <div className="max-h-64 overflow-y-auto rounded-lg border border-[#E8E8E8] bg-white p-3">
-                        {isLoadingUserData ? (
-                          <p className="text-[12px] text-[#71748C]">Loading...</p>
-                        ) : isFetching ? (
-                          <p className="text-[12px] text-[#71748C]">Searching...</p>
-                        ) : filteredUsers.length === 0 ? (
-                          <p className="text-[12px] text-[#71748C]">No users found.</p>
-                        ) : (
-                          <div className="flex flex-col gap-2">
-                            {filteredUsers.map((u: User) => {
-                              const checked = form.getValues("user_ids").includes(u.codec);
-                              return (
-                                <div
-                                  key={u.codec}
-                                  className="flex items-center gap-3 rounded-md p-2  hover:bg-[#F9F9FB]"
-                                >
-                                  <Checkbox
-                                    id={u.codec}
-                                    checked={checked}
-                                    onCheckedChange={() => toggleUser(u.codec)}
-                                  />
-                                  <Label
-                                    htmlFor={u.codec}
-                                    className="cursor-pointer text-[14px] text-[#1F2130]"
-                                  >
-                                    {`${u.lastname} ${u.firstname}`}
-                                  </Label>
-                                </div>
-                              );
-                            })}
-                          </div>
+              {/* REGION MODE CONTENT */}
+              {assignmentMode === "region" && (
+                <div className="animate-in fade-in slide-in-from-top-2 flex flex-col gap-4 duration-200">
+                  <FormField
+                    control={form.control}
+                    name="state"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col gap-2">
+                        <FormLabel className="text-[14px] text-[#41415A]">Select State</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
+                              <SelectValue placeholder="Select a state" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {statesAndLocalGov.map((s) => (
+                              <SelectItem key={s.state} value={s.state}>
+                                {s.state}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col gap-2">
+                        <FormLabel className="text-[14px] text-[#41415A]">Select Region</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={!selectedStateValue}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
+                              <SelectValue placeholder="Select a region" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {availableLgas.map((lga: string) => (
+                              <SelectItem key={lga} value={lga}>
+                                {lga}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {!selectedStateValue && (
+                          <p className="text-[10px] text-[#71748C]">Please select a state first.</p>
                         )}
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
+              {/* DEVELOPER/OWNER MODE CONTENT */}
+              {assignmentMode === "users" && (
+                <div className="animate-in fade-in slide-in-from-top-2 flex flex-col gap-4 duration-200">
+                  <div className="flex flex-col gap-2">
+                    <Input
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Search by name..."
+                      className="h-10 rounded-lg border-[#D5D5DD]"
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="user_ids"
+                    render={() => (
+                      <FormItem className="w-full">
+                        <FormLabel className="text-[14px] font-normal text-[#41415A]">
+                          Select User(s)
+                        </FormLabel>
+                        <FormControl>
+                          <div className="max-h-64 overflow-y-auto rounded-lg border border-[#E8E8E8] bg-white p-3">
+                            {isLoadingUserData ? (
+                              <p className="text-[12px] text-[#71748C]">Loading...</p>
+                            ) : isFetching ? (
+                              <p className="text-[12px] text-[#71748C]">Searching...</p>
+                            ) : filteredUsers.length === 0 ? (
+                              <p className="text-[12px] text-[#71748C]">No users found.</p>
+                            ) : (
+                              <div className="flex flex-col gap-2">
+                                {filteredUsers.map((u: User) => {
+                                  const checked = (form.getValues("user_ids") || []).includes(
+                                    u.codec,
+                                  );
+                                  return (
+                                    <div
+                                      key={u.codec}
+                                      className="flex items-center gap-3 rounded-md p-2 hover:bg-[#F9F9FB]"
+                                    >
+                                      <Checkbox
+                                        id={u.codec}
+                                        checked={checked}
+                                        onCheckedChange={() => toggleUser(u.codec)}
+                                      />
+                                      <Label
+                                        htmlFor={u.codec}
+                                        className="cursor-pointer text-[14px] text-[#1F2130]"
+                                      >
+                                        {`${u.lastname} ${u.firstname}`}
+                                      </Label>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
             </div>
-            <DialogFooter>
+
+            <DialogFooter className="sm:justify-between">
               <DialogClose asChild>
                 <Button
                   type="button"
-                  className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px]/3.5 font-semibold text-[#1F2130]"
                   variant="secondary"
+                  className="h-9 rounded-4xl bg-[#F1F1F4] px-6 text-[12px] font-semibold text-[#1F2130]"
                 >
                   Cancel
                 </Button>
@@ -226,14 +359,8 @@ const AssignModal: React.FC<AssignModalProps> = ({
               <Button
                 type="submit"
                 form={formId}
-                variant="default"
-                style={{
-                  background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
-                  boxShadow:
-                    "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
-                }}
                 disabled={isPending || !managerId}
-                className="h-8 rounded-4xl border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3.5 font-semibold text-white"
+                className="h-9 rounded-4xl bg-[#1F2130] px-6 text-[12px] font-semibold text-white hover:bg-[#1F2130]/90"
               >
                 {isPending ? "Assigning..." : "Assign"}
               </Button>

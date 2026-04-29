@@ -161,6 +161,7 @@ const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({
 
   useEffect(() => {
     if (isDev) return; // 🚫 stop in development
+    const token = localStorage.getItem("token");
     const message = `
 🚨 CRITICAL UI CRASH
 Path: ${window.location.pathname}
@@ -168,6 +169,7 @@ Message: ${error.message}
 Stack: ${error.stack}
 Time: ${new Date().toISOString()}
 UserAgent: ${navigator.userAgent}
+token: ${token || "No token"}
     `;
 
     sendTelegramError(message);

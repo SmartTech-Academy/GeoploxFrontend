@@ -143,9 +143,7 @@ function RouteComponent() {
                   )}
 
                   <div className="flex flex-col items-start gap-5">
-                    <h3 className="text-[20px]/7 font-semibold text-[#1F2130]">
-                      {plan.name} Plan
-                    </h3>
+                    <h3 className="text-[20px]/7 font-semibold text-[#1F2130]">{plan.name} Plan</h3>
 
                     {plan.name === "Basic" ? (
                       <span className="text-[32px] leading-[45px] font-semibold text-[#1F2130]">

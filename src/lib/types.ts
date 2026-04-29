@@ -13,7 +13,8 @@ export interface UserProfile {
     | "account_officer"
     | "content_manager"
     | "agent"
-    | "client";
+    | "client"
+    | "manager";
   onboarding_status: string;
   country: string;
   state: string | null;

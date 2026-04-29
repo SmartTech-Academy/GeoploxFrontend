@@ -48,13 +48,12 @@ import statesAndLgasData from "@/data/statesAndLocalGov.json";
 import { useGetProfileData } from "@/lib/services/profile";
 import { listingTypes, propertyFeatures, propertyStatus, propertyTypes } from "@/data/reuseable";
 
-
 const numberField = z.preprocess(
   (val) => {
-    if (val === '' || val === null || val === undefined) return undefined;
+    if (val === "" || val === null || val === undefined) return undefined;
 
-    if (typeof val === 'string') {
-      const parsed = Number(val.replaceAll(',', ''));
+    if (typeof val === "string") {
+      const parsed = Number(val.replaceAll(",", ""));
       return Number.isNaN(parsed) ? val : parsed;
     }
 
@@ -62,35 +61,35 @@ const numberField = z.preprocess(
   },
   z
     .number({
-      error: 'This field must be a number.',
+      error: "This field must be a number.",
     })
     .int()
-    .min(0, 'This field cannot be negative') // 👈 allow 0
-    .optional()
+    .min(0, "This field cannot be negative") // 👈 allow 0
+    .optional(),
 );
 // Zod Schema
 const PropertyFormSchema = z.object({
   id: z.string().optional(),
-  title: z.string().min(1, 'Listing title is required'),
-  category_slug: z.enum(['for-rent', 'for-sale', 'short-let', 'joint-venture'], {
-    error: 'Please select a listing type',
+  title: z.string().min(1, "Listing title is required"),
+  category_slug: z.enum(["for-rent", "for-sale", "short-let", "joint-venture"], {
+    error: "Please select a listing type",
   }),
-  property_type: z.string().min(1, 'Property type is required'),
+  property_type: z.string().min(1, "Property type is required"),
   sub_type: z.string().optional(),
-  address: z.string().min(1, 'House/Apartment number is required'),
-  country: z.string().min(1, 'Country is required'),
-  state: z.string().min(1, 'State is required'),
-  lga_or_city: z.string().min(1, 'Locality is required'),
+  address: z.string().min(1, "House/Apartment number is required"),
+  country: z.string().min(1, "Country is required"),
+  state: z.string().min(1, "State is required"),
+  lga_or_city: z.string().min(1, "Locality is required"),
   area: z.string().optional(),
-  description: z.string().min(10, 'Property description must be at least 10 characters'),
+  description: z.string().min(10, "Property description must be at least 10 characters"),
 
   bedrooms: numberField,
   bathrooms: numberField,
   area_sqft: numberField,
 
-  price: z.number().min(1, 'Property price is required'),
-  currency: z.string().min(1, 'Currency is required'),
-  images: z.array(z.string()).min(1, 'At least one property image is required'),
+  price: numberField,
+  currency: z.string().min(1, "Currency is required"),
+  images: z.array(z.string()).min(1, "At least one property image is required"),
   documentType: z.string().optional(),
   propertyDocument: z.string().optional(),
   proofOfAddress: z.string().optional(),

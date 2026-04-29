@@ -71,6 +71,9 @@ export const getPrimaryNavigation = (user: UserProfile | null | undefined) => {
   if (user.user_role === "admin") {
     return adminNavigation;
   }
+  if (user.user_role === "manager") {
+    return accountOfficerNavigation;
+  }
   if (user.onboarding_status !== "active" && user.onboarding_status !== "newly_registered") {
     return onboardingNavigation;
   }

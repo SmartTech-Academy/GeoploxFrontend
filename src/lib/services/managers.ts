@@ -1,4 +1,4 @@
-import { useMutation, useQuery, UseMutationOptions } from "@tanstack/react-query";
+import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 import { toast } from "sonner";
 import api from "../api";
@@ -65,6 +65,17 @@ export const useRegisterManager = (
   });
 };
 
+export const useGetOwnersDevelopers = (
+  params?: any,
+  options?: Omit<UseQueryOptions<AxiosResponse<any>, any>, "queryKey" | "queryFn">,
+) => {
+  return useQuery({
+    queryKey: ["owners-developers", params],
+    queryFn: () => api.get("/dashboard/managers/fetch/owners-developers", { params }),
+    ...options,
+  });
+};
+
 type AssignUsersPayload = { manager_id: string; user_ids: string[] };
 
 export const useAssignUsersToManager = (
@@ -78,6 +89,31 @@ export const useAssignUsersToManager = (
     onSuccess: (response: AxiosResponse<ApiResponse>, _variables, _context) => {
       toast.success(response.data?.message || "Users successfully assigned to manager.");
       queryClient.invalidateQueries({ queryKey: ["manager-assigned-users"] });
+    },
+  });
+};
+
+type AssignRegionPayload = {
+  manager_id: string;
+  state: string;
+  city: string;
+};
+
+export const useAssignRegionToManager = () => {
+  return useMutation({
+    mutationFn: (payload: AssignRegionPayload) => {
+      // Ensure manager_id is sent correctly.
+      // If your backend expects the encrypted string, ensure you pass the raw ID if the hook handles encryption,
+      // or pass the encrypted string if that's what 'managerId' prop contains.
+      // Based on your snippet, it looks like it expects the encrypted string in 'manager_id'.
+      return api.post("/dashboard/managers/assign-region", payload);
+    },
+    onSuccess: (response: AxiosResponse<ApiResponse>) => {
+      toast.success(response.data?.message || "Region successfully assigned to manager.");
+      queryClient.invalidateQueries({ queryKey: ["manager-assigned-users"] }); // Or whatever your region query key is
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to assign region.");
     },
   });
 };
