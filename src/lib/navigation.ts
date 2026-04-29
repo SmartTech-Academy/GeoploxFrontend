@@ -31,14 +31,14 @@ export const adminNavigation: NavigationItem[] = [
 ];
 export const contentManagerNavigation: NavigationItem[] = [
   { name: "Blogs", href: "/blogs", icon: Newspaper },
-  { name: "Favorites", href: "/favorites", icon: Star },
+  { name: "Favorites", href: "/favorites", icon  : Star },
   { name: "Insights", href: "/insights", icon: CandlestickChart },
 ];
 export const accountOfficerNavigation: NavigationItem[] = [
   { name: "Listing", href: "/listing", icon: Home },
-  { name: "Favorites", href: "/favorites", icon: Star },
+  // { name: "Favorites", href: "/favorites", icon: Star },
   { name: "Pending Approvals", href: "/pending-approvals", icon: CircleCheck },
-  { name: "Messages", href: "/messages", icon: MessageSquare },
+  // { name: "Messages", href: "/messages", icon: MessageSquare },
   { name: "Users", href: "/users", icon: Users },
 ];
 export const agentClientNavigation: NavigationItem[] = [
