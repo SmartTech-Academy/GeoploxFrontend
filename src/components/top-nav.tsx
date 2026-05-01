@@ -25,6 +25,7 @@ const routeTitleMap: Record<string, string> = {
   "/listing": "Listings",
   "/messages": "Messages",
   "/users": "Users",
+  "/managers-users": "Users",
   "/managers": "Property Managers",
   "/performance": "Performance",
   "/insights": "Market Insights",
@@ -96,13 +97,7 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
     navigate({ to: "/login" });
   };
 
-  //   const handleAdminVerify = async () => {
-  //     if (user?.codec) {
-  //       await adminVerifyUser(user.codec);
-  //       queryClient.invalidateQueries();
-  //       toast.success('User verified successfully!');
-  //     }
-  //   };
+
 
   return (
     <header className="h-[74px] border-b border-gray-200 bg-white px-6 py-4">

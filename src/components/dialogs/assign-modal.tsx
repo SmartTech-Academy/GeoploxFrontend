@@ -48,13 +48,9 @@ interface AssignModalProps {
 }
 
 interface User {
-  codec: string;
-  username: string;
-  email_address: string;
-  firstname: string;
-  lastname: string;
-  user_role: string;
-  // ... other user fields
+  id: string;
+  fname: string;
+  lname: string;
 }
 
 // Schema handles both modes.
@@ -88,8 +84,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
     },
     { enabled: open && assignmentMode === "users" },
   );
-  const users: User[] = usersData?.data?.data?.users ?? [];
-  const filteredUsers = users.filter((u) => u.user_role !== "manager");
+  const users: User[] = usersData?.data?.data ?? [];
 
   const form = useForm<AssignFormValues>({
     resolver: customResolver(assignSchema),
@@ -307,29 +302,27 @@ const AssignModal: React.FC<AssignModalProps> = ({
                               <p className="text-[12px] text-[#71748C]">Loading...</p>
                             ) : isFetching ? (
                               <p className="text-[12px] text-[#71748C]">Searching...</p>
-                            ) : filteredUsers.length === 0 ? (
+                            ) : users.length === 0 ? (
                               <p className="text-[12px] text-[#71748C]">No users found.</p>
                             ) : (
                               <div className="flex flex-col gap-2">
-                                {filteredUsers.map((u: User) => {
-                                  const checked = (form.getValues("user_ids") || []).includes(
-                                    u.codec,
-                                  );
+                                {users.map((u: User) => {
+                                  const checked = (form.getValues("user_ids") || []).includes(u.id);
                                   return (
                                     <div
-                                      key={u.codec}
+                                      key={u.id}
                                       className="flex items-center gap-3 rounded-md p-2 hover:bg-[#F9F9FB]"
                                     >
                                       <Checkbox
-                                        id={u.codec}
+                                        id={u.id}
                                         checked={checked}
-                                        onCheckedChange={() => toggleUser(u.codec)}
+                                        onCheckedChange={() => toggleUser(u.id)}
                                       />
                                       <Label
-                                        htmlFor={u.codec}
+                                        htmlFor={u.id}
                                         className="cursor-pointer text-[14px] text-[#1F2130]"
                                       >
-                                        {`${u.lastname} ${u.firstname}`}
+                                        {`${u.lname} ${u.fname}`}
                                       </Label>
                                     </div>
                                   );

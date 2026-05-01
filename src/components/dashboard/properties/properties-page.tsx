@@ -379,45 +379,45 @@ const PropertiesPage: React.FC = () => {
                     selectedProperty?.id === property.id ? "bg-[#FDF9ED]" : ""
                   }`}
                 >
-                  <div className="flex w-full items-start gap-3.5">
-                    <div className="relative">
-                      <img
-                        src={coverImage || "/placeholder.svg"}
-                        alt={property.title}
-                        className="size-20 rounded-[6px] object-cover"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="truncate text-[14px] leading-[17px] font-semibold text-[#41415A]">
-                            {property?.title}
-                          </h3>
-                          <div className="mt-1 flex items-center gap-1">
-                            <MapPin className="size-3 text-gray-400" />
-                            <span className="text-[12px]/3.5 text-[#71748C]">
-                              {property?.location?.city}, {property?.location?.state}
-                            </span>
-                          </div>
-                        </div>
-                        <Badge
-                          className={`items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
-                        >
-                          <div
-                            className={cn(
-                              "mr-1 size-1.5 rounded-full",
-                              property.category === "Short Let"
-                                ? "bg-[#0AA6A9]"
-                                : property.category === "For Rent"
-                                  ? "bg-[#FDCE05]"
-                                  : "bg-[#D20832]",
-                            )}
-                          />
-                          {property.category}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
+	                  <div className="flex w-full items-center gap-3.5">
+	                    <div className="relative">
+	                      <img
+	                        src={coverImage || "/placeholder.svg"}
+	                        alt={property.title}
+	                        className="size-20 rounded-[6px] object-cover"
+	                      />
+	                    </div>
+	                    <div className="min-w-0 flex-1">
+	                      <div className="flex items-start gap-2">
+	                        <div className="min-w-0 flex-1">
+	                          <h3 className="truncate text-[14px] leading-[17px] font-semibold text-[#41415A]">
+	                            {property?.title}
+	                          </h3>
+	                          <div className="mt-1 flex items-center gap-1">
+	                            <MapPin className="size-3 text-gray-400" />
+	                            <span className="text-[12px]/3.5 text-[#71748C]">
+	                              {property?.location?.city}, {property?.location?.state}
+	                            </span>
+	                          </div>
+	                        </div>
+	                        <Badge
+	                          className="shrink-0 items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]"
+	                        >
+	                          <div
+	                            className={cn(
+	                              "mr-1 size-1.5 rounded-full",
+	                              property.category === "Short Let"
+	                                ? "bg-[#0AA6A9]"
+	                                : property.category === "For Rent"
+	                                  ? "bg-[#FDCE05]"
+	                                  : "bg-[#D20832]",
+	                            )}
+	                          />
+	                          {property.category}
+	                        </Badge>
+	                      </div>
+	                    </div>
+	                  </div>
                 </div>
               );
             })

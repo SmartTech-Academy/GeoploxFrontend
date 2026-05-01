@@ -31,7 +31,7 @@ export const adminNavigation: NavigationItem[] = [
 ];
 export const contentManagerNavigation: NavigationItem[] = [
   { name: "Blogs", href: "/blogs", icon: Newspaper },
-  { name: "Favorites", href: "/favorites", icon  : Star },
+  { name: "Favorites", href: "/favorites", icon: Star },
   { name: "Insights", href: "/insights", icon: CandlestickChart },
 ];
 export const accountOfficerNavigation: NavigationItem[] = [
@@ -39,7 +39,11 @@ export const accountOfficerNavigation: NavigationItem[] = [
   // { name: "Favorites", href: "/favorites", icon: Star },
   { name: "Pending Approvals", href: "/pending-approvals", icon: CircleCheck },
   // { name: "Messages", href: "/messages", icon: MessageSquare },
-  { name: "Users", href: "/users", icon: Users },
+];
+export const managerNavigation: NavigationItem[] = [
+  { name: "Listing", href: "/listing", icon: Home },
+  { name: "Pending Approvals", href: "/pending-approvals", icon: CircleCheck },
+  { name: "Users", href: "/managers-users", icon: Users },
 ];
 export const agentClientNavigation: NavigationItem[] = [
   { name: "Listing", href: "/listing", icon: Home },
@@ -72,7 +76,7 @@ export const getPrimaryNavigation = (user: UserProfile | null | undefined) => {
     return adminNavigation;
   }
   if (user.user_role === "manager") {
-    return accountOfficerNavigation;
+    return managerNavigation;
   }
   if (user.onboarding_status !== "active" && user.onboarding_status !== "newly_registered") {
     return onboardingNavigation;

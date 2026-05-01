@@ -525,9 +525,39 @@ const ManagerView = ({
     return <EmptyState type="manager" />;
   }
 
-  const assignedUsers = Array.isArray(assignedUsersData?.data?.data?.assigned_users)
+  interface AssignedUser {
+    codec: "eyJpdiI6ImxXUENSV3hWWFVzWWZJQXNqVHRqMWc9PSIsInZhbHVlIjoiODgxZjlySEhlak1wK3gvSDRRYStMdz09IiwibWFjIjoiMzUyOWRiZDZhZDBkYmM4ODY2ZDkxODE4NTJmZTFhMjFlMGQ3MTgxMzM0NDg3ZTE4NjFmNzg1YzEyN2ViZGMxNiIsInRhZyI6IiJ9";
+    username: "virawolf";
+    email_address: "hecami3187@virawolf.com";
+    firstname: "Hecami";
+    lastname: "Virawolf";
+    phone_number: "08033012346";
+    whatsapp_number: "08033012346";
+    user_role: "owner";
+    onboarding_status: "active";
+    country: "Nigeria";
+    state: "Lagos";
+    local_gov_area: "Epe";
+    home_address: "12 Oba";
+    facebook: null;
+    instagram: null;
+    x: null;
+    linkedin: null;
+    display_picture_url: "https://res.cloudinary.com/demxvjw2m/image/upload/v1777531416/uploads/DP/scg0nclhf8koz3xgjcsq.png";
+    government_id_doc_url: "https://res.cloudinary.com/demxvjw2m/image/upload/v1777531438/uploads/FILES/iaxudj2faxbwu0i4p7qr.png";
+    bio: null;
+    "2fa": false;
+    approval_type: "KYC";
+    approval_request_date: "2026-04-30T07:34:17+00:00";
+    email_verified: false;
+    email_verification_date: "2026-04-30T06:42:50+00:00";
+    entity_creation_date: "2026-04-29T16:12:26+00:00";
+  }
+  const assignedUsers: AssignedUser[] = Array.isArray(assignedUsersData?.data?.data?.assigned_users)
     ? assignedUsersData.data.data.assigned_users
     : [];
+
+  console.log("assignedUsers", assignedUsers);
 
   const handleToggleAccess = () => {
     const nextToggle: "yes" | "no" = selectedManager.status === "suspended" ? "yes" : "no";
@@ -706,13 +736,13 @@ const ManagerView = ({
                     No assigned users.
                   </div>
                 ) : (
-                  assignedUsers.map((u: any) => {
-                    const name = `${u?.fname || ""} ${u?.lname || ""}`.trim() || "User";
-                    const assignedOn = u?.pivot?.created_at
-                      ? format(new Date(u.pivot.created_at), "MMMM d, yyyy")
-                      : "—";
+                  assignedUsers.map((u: AssignedUser) => {
+                    const name = `${u?.firstname || ""} ${u?.lastname || ""}`.trim() || "User";
+                    // const assignedOn = u?.pivot?.created_at
+                    //   ? format(new Date(u.pivot.created_at), "MMMM d, yyyy")
+                    //   : "—";
                     return (
-                      <div key={u?.id} className="rounded-lg bg-gray-50 p-4">
+                      <div key={u?.codec} className="rounded-lg bg-gray-50 p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex-1 space-y-2">
                             <div className="flex items-center justify-between py-1">
@@ -722,20 +752,20 @@ const ManagerView = ({
                             <div className="flex items-center justify-between py-1">
                               <label className="text-sm text-gray-500">Email Address</label>
                               <a
-                                href={`mailto:${u?.email}`}
+                                href={`mailto:${u?.email_address}`}
                                 className="text-sm text-blue-600 hover:text-blue-800"
                               >
-                                {u?.email || "—"}
+                                {u?.email_address || "—"}
                               </a>
                             </div>
                             <div className="flex items-center justify-between py-1">
                               <label className="text-sm text-gray-500">Phone</label>
-                              <p className="text-sm text-gray-900">{u?.phone || "—"}</p>
+                              <p className="text-sm text-gray-900">{u?.phone_number || "—"}</p>
                             </div>
-                            <div className="flex items-center justify-between py-1">
-                              <label className="text-sm text-gray-500">Assigned on</label>
-                              <p className="text-sm text-gray-900">{assignedOn}</p>
-                            </div>
+                            {/*<div className="flex items-center justify-between py-1">*/}
+                            {/*  <label className="text-sm text-gray-500">Assigned on</label>*/}
+                            {/*  <p className="text-sm text-gray-900">{assignedOn}</p>*/}
+                            {/*</div>*/}
                           </div>
                           {showDeveloperActions && (
                             <button

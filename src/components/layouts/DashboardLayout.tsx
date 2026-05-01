@@ -11,7 +11,7 @@ import PermissionDenied from "../permission-denied";
 import { getPrimaryNavigation } from "@/lib/navigation";
 
 const DashboardLayout = () => {
-  const [useMaxWidth, setUseMaxWith] = useState(true);
+  const [useMaxWidth, setUseMaxWith] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { data: user, isPending, isError } = useGetProfileData();
