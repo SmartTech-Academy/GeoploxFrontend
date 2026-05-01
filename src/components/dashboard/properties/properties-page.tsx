@@ -118,6 +118,11 @@ const PropertiesPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(10);
   const { data: profileData } = useGetProfileData();
+  const isAdminListingPage =
+    typeof window !== "undefined" && window.location.pathname.includes("/admin-listing");
+  const includeOwnerName =
+    !isAdminListingPage &&
+    (profileData?.user_role === "owner" || profileData?.user_role === "developer");
   const {
     data: propertiesData,
     isLoading,
@@ -128,9 +133,10 @@ const PropertiesPage: React.FC = () => {
       ...filters,
       page: currentPage,
       per_page: perPage,
-      developer_or_owners_name: profileData?.username,
+      developer_or_owners_name: includeOwnerName ? profileData?.username : undefined,
     },
     true,
+    isAdminListingPage,
   );
 
   const { mutate: archiveProperty, isPending: isArchiving } = useArchiveProperty();
@@ -270,6 +276,7 @@ const PropertiesPage: React.FC = () => {
           </SheetTrigger>
           <SheetContent side="left" className="w-full max-w-sm p-0">
             <PropertyFilterSidebar
+              inDash={true}
               filters={filters}
               onFiltersChange={(newFilters) => {
                 setFilters(newFilters);
@@ -379,45 +386,43 @@ const PropertiesPage: React.FC = () => {
                     selectedProperty?.id === property.id ? "bg-[#FDF9ED]" : ""
                   }`}
                 >
-	                  <div className="flex w-full items-center gap-3.5">
-	                    <div className="relative">
-	                      <img
-	                        src={coverImage || "/placeholder.svg"}
-	                        alt={property.title}
-	                        className="size-20 rounded-[6px] object-cover"
-	                      />
-	                    </div>
-	                    <div className="min-w-0 flex-1">
-	                      <div className="flex items-start gap-2">
-	                        <div className="min-w-0 flex-1">
-	                          <h3 className="truncate text-[14px] leading-[17px] font-semibold text-[#41415A]">
-	                            {property?.title}
-	                          </h3>
-	                          <div className="mt-1 flex items-center gap-1">
-	                            <MapPin className="size-3 text-gray-400" />
-	                            <span className="text-[12px]/3.5 text-[#71748C]">
-	                              {property?.location?.city}, {property?.location?.state}
-	                            </span>
-	                          </div>
-	                        </div>
-	                        <Badge
-	                          className="shrink-0 items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]"
-	                        >
-	                          <div
-	                            className={cn(
-	                              "mr-1 size-1.5 rounded-full",
-	                              property.category === "Short Let"
-	                                ? "bg-[#0AA6A9]"
-	                                : property.category === "For Rent"
-	                                  ? "bg-[#FDCE05]"
-	                                  : "bg-[#D20832]",
-	                            )}
-	                          />
-	                          {property.category}
-	                        </Badge>
-	                      </div>
-	                    </div>
-	                  </div>
+                  <div className="flex w-full items-center gap-3.5">
+                    <div className="relative">
+                      <img
+                        src={coverImage || "/placeholder.svg"}
+                        alt={property.title}
+                        className="size-20 rounded-[6px] object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start gap-2">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="truncate text-[14px] leading-[17px] font-semibold text-[#41415A]">
+                            {property?.title}
+                          </h3>
+                          <div className="mt-1 flex items-center gap-1">
+                            <MapPin className="size-3 text-gray-400" />
+                            <span className="text-[12px]/3.5 text-[#71748C]">
+                              {property?.location?.city}, {property?.location?.state}
+                            </span>
+                          </div>
+                        </div>
+                        <Badge className="shrink-0 items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]">
+                          <div
+                            className={cn(
+                              "mr-1 size-1.5 rounded-full",
+                              property.category === "Short Let"
+                                ? "bg-[#0AA6A9]"
+                                : property.category === "For Rent"
+                                  ? "bg-[#FDCE05]"
+                                  : "bg-[#D20832]",
+                            )}
+                          />
+                          {property.category}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               );
             })
@@ -564,19 +569,21 @@ const PropertiesPage: React.FC = () => {
           <h1 className="text-[24px] font-semibold text-[#1F2130]">
             {selectedProperty ? "Property Details" : "No Property Selected"}
           </h1>
-          <Button
-            asChild
-            style={{
-              background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
-              boxShadow:
-                "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
-            }}
-            className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3 font-normal text-white"
-          >
-            <Link to="/properties/create">
-              <HousePlus className="mr-2 size-4" /> New Listing
-            </Link>
-          </Button>
+          {!isAdminListingPage && (
+            <Button
+              asChild
+              style={{
+                background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
+                boxShadow:
+                  "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
+              }}
+              className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3 font-normal text-white"
+            >
+              <Link to="/properties/create">
+                <HousePlus className="mr-2 size-4" /> New Listing
+              </Link>
+            </Button>
+          )}
         </div>
 
         {!selectedProperty ? (

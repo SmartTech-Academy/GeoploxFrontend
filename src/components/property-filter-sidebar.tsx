@@ -63,12 +63,14 @@ interface PropertyFilterSidebarProps {
   filters: Record<string, any>;
   onFiltersChange: (newFilters: Record<string, any>) => void;
   onClear: () => void;
+  inDash: boolean;
 }
 
 export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({
   filters,
   onFiltersChange,
   onClear,
+  inDash,
 }) => {
   const [draftFilters, setDraftFilters] = useState(filters);
 
@@ -151,7 +153,12 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({
     .filter(Boolean);
 
   return (
-    <div className="flex h-[calc(100vh-100px)] w-full shrink-0 flex-col items-start gap-[17px] overflow-y-auto border-r border-[#F1F1F4] pr-8 lg:w-[334px]">
+    <div
+      className={cn(
+        "flex h-[calc(100vh-100px)] w-full shrink-0 flex-col items-start gap-[17px] overflow-y-auto border-r border-[#F1F1F4] pt-8 pr-8 lg:w-[334px]",
+        inDash && "pl-8",
+      )}
+    >
       <div className="flex w-full flex-col gap-8">
         {/* Sort */}
         <CollapsibleSection
@@ -432,7 +439,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({
             <div className="flex items-center gap-2">
               <Input
                 value={`₦${(draftFilters.min_price || 1000000).toLocaleString()}`}
-                className="h-8 border-primary bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,175,54,0.5)]"
+                className="border-primary h-8 bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,175,54,0.5)]"
                 readOnly
               />
               <svg

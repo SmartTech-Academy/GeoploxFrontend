@@ -97,8 +97,6 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
     navigate({ to: "/login" });
   };
 
-
-
   return (
     <header className="h-[74px] border-b border-gray-200 bg-white px-6 py-4">
       <div className="flex items-center justify-between">
