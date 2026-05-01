@@ -16,8 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { propertyFeatures, propertyStatus, propertyTypes, sortOptions } from "@/data/reuseable";
-// import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-// import { Label } from '@/components/ui/label';
 
 type CollapsibleSectionProps = {
   title: React.ReactNode;
@@ -63,7 +61,7 @@ interface PropertyFilterSidebarProps {
   filters: Record<string, any>;
   onFiltersChange: (newFilters: Record<string, any>) => void;
   onClear: () => void;
-  inDash: boolean;
+  inDash?: boolean;
 }
 
 export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({
