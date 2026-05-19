@@ -80,7 +80,7 @@ const blogs = [
   },
   {
     image: assets.trendinghome6,
-    title: "Agents vs Owners: Who Should You Really Be Dealing With When Buying Property?",
+    title: "Agents/Brokers vs Owners: Who Should You Really Be Dealing With When Buying Property?",
     tags: ["Articles"],
     content:
       "While agents have traditionally played a major role in property transactions, many buyers today are questioning whether they add value or just increase complexity. With the rise of direct-to-owner platforms, buyers are gaining faster access, clearer communication, and ",
@@ -157,7 +157,7 @@ export function DiscoverSection() {
                 <h3 className="text-[36px] leading-[41px] text-[#D4AF36]">
                   {activeTab} around you
                 </h3>
-                <p className="text-[20px]/6  text-primary-foreground">
+                <p className="text-[20px]/6 text-primary-foreground">
                   Viewed and saved the most in the area over the past 24 hours
                 </p>
               </div>
@@ -218,7 +218,7 @@ export function DiscoverSection() {
                           </p>
 
                           <div className="flex items-end gap-3 self-stretch">
-                            <div className="flex items-center gap-5 text-[14px]/4  text-primary-foreground">
+                            <div className="flex items-center gap-5 text-[14px]/4 text-primary-foreground">
                               <div className="flex items-center gap-2">
                                 <BedDouble className="size-[18px] text-white" />
                                 <span>{property.bedrooms} Beds</span>

@@ -1,6 +1,6 @@
 import assets from "@/assets";
 import { Link } from "@tanstack/react-router";
-import { TbBrandFacebook, TbBrandInstagram, TbBrandLinkedin, TbBrandTwitter } from "react-icons/tb";
+import { TbBrandFacebook, TbBrandInstagram, TbBrandLinkedin } from "react-icons/tb";
 
 const Footer = () => {
   return (
@@ -54,7 +54,7 @@ const Footer = () => {
               <div className="flex flex-col gap-4 text-white md:col-span-2 md:gap-3">
                 <h6 className="text-[12px] text-gray-300 uppercase">PHONE</h6>
                 <div className="flex flex-col text-[16px] leading-relaxed">
-                  <span>08132950172</span>
+                  <span>+2348164935154</span>
                 </div>
 
                 {/* <p className="mt-2 text-[16px] leading-relaxed">
@@ -79,14 +79,7 @@ const Footer = () => {
                     <TbBrandFacebook className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36] md:size-4" />
                   </a>
                   <a
-                    href="https://www.x.com/estateinformant"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <TbBrandTwitter className="size-5 cursor-pointer text-white transition-colors hover:text-[#D4AF36] md:size-4" />
-                  </a>
-                  <a
-                    href="https://www.LinkedIn.com/geoplox"
+                    href="https://linkedin.com/company/geoplox"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

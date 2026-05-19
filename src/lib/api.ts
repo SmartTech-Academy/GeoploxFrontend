@@ -60,6 +60,12 @@ token: ${token || "No token"}
     if (!isDev) await sendTelegramError(message);
 
     if (status === 401) {
+      const requestUrl = config?.url || "";
+      const isLoginRequest = requestUrl.includes("/auth/login");
+      if (isLoginRequest) {
+        return Promise.reject(error);
+      }
+
       if (
         errorMessage ===
         "Unauthorized: You do not have the authorization to perform this action, please wait until admin verifies and approve your account"

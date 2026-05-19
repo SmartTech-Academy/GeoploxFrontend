@@ -18,7 +18,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn, formatNumberWithCommas, parseNumber } from "@/lib/utils";
-import { Upload, RotateCcw, Trash, X, Slash, Loader2 } from "lucide-react";
+import { Upload, RotateCcw, Trash, X, Slash, Loader2, ArrowLeft, ArrowRight } from "lucide-react";
 import type React from "react";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { z } from "zod/v4";
@@ -116,6 +116,9 @@ interface DocumentState extends FileState {
   type?: string;
 }
 
+const MAX_IMAGE_DIMENSION = 1920;
+const IMAGE_COMPRESSION_QUALITY = 0.8;
+
 const currencies = [
   { value: "NGN", label: "₦ Nigerian Naira" },
   { value: "USD", label: "$ US Dollar" },
@@ -146,6 +149,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const [propertyDocument, setPropertyDocument] = useState<DocumentState | null>(null);
   const [proofOfAddress, setProofOfAddress] = useState<DocumentState | null>(null);
   const [hoveredImage, setHoveredImage] = useState<number | null>(null);
+  const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
@@ -223,14 +227,75 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
     return selectedType ? selectedType.sub_types : [];
   }, [propertyType]);
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const optimizeImageBeforeUpload = (file: File): Promise<File> => {
+    if (!file.type.startsWith("image/")) {
+      return Promise.resolve(file);
+    }
+
+    return new Promise((resolve) => {
+      const image = new Image();
+      const objectUrl = URL.createObjectURL(file);
+
+      image.onload = () => {
+        const { width, height } = image;
+        const largestSide = Math.max(width, height);
+        const scale = largestSide > MAX_IMAGE_DIMENSION ? MAX_IMAGE_DIMENSION / largestSide : 1;
+        const targetWidth = Math.round(width * scale);
+        const targetHeight = Math.round(height * scale);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        const context = canvas.getContext("2d");
+        if (!context) {
+          URL.revokeObjectURL(objectUrl);
+          resolve(file);
+          return;
+        }
+
+        context.drawImage(image, 0, 0, targetWidth, targetHeight);
+
+        const outputType =
+          file.type === "image/png" || file.type === "image/webp" ? file.type : "image/jpeg";
+
+        canvas.toBlob(
+          (blob) => {
+            URL.revokeObjectURL(objectUrl);
+            if (!blob || blob.size >= file.size) {
+              resolve(file);
+              return;
+            }
+
+            const optimized = new File([blob], file.name, {
+              type: blob.type || outputType,
+              lastModified: Date.now(),
+            });
+            resolve(optimized);
+          },
+          outputType,
+          IMAGE_COMPRESSION_QUALITY,
+        );
+      };
+
+      image.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        resolve(file);
+      };
+
+      image.src = objectUrl;
+    });
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (propertyImages.length + files.length > 15) {
       toast.error("You can upload a maximum of 15 images.");
       return;
     }
     if (files.length > 0) {
-      const newImageStates: FileState[] = files.map((file) => ({
+      const optimizedFiles = await Promise.all(files.map((file) => optimizeImageBeforeUpload(file)));
+      const newImageStates: FileState[] = optimizedFiles.map((file) => ({
         file,
         preview: URL.createObjectURL(file),
         status: "uploading",
@@ -373,6 +438,25 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const handleImageReplace = (index: number) => {
     handleImageRemove(index);
     imageInputRef.current?.click();
+  };
+
+  const moveImage = (fromIndex: number, toIndex: number) => {
+    if (
+      fromIndex === toIndex ||
+      fromIndex < 0 ||
+      toIndex < 0 ||
+      fromIndex >= propertyImages.length ||
+      toIndex >= propertyImages.length
+    ) {
+      return;
+    }
+
+    setPropertyImages((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
   };
 
   const handleDocumentRemove = () => {
@@ -682,26 +766,23 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 render={({ field }) => (
                   <FormItem className="w-full gap-1.5">
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                      Area
+                      Area (Optional)
                     </FormLabel>
-                    <Select
-                      disabled={!selectedLga || areas.length === 0}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
-                          <SelectValue placeholder="Select Area" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {areas.map((area, index) => (
-                          <SelectItem key={`${area}${index}`} value={area}>
-                            {area}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value || ""}
+                        placeholder={selectedLga ? "Type area (or leave blank)" : "Select locality first"}
+                        className="h-10 rounded-lg border-[#D5D5DD]"
+                        list="area-suggestions"
+                        disabled={!selectedLga}
+                      />
+                    </FormControl>
+                    <datalist id="area-suggestions">
+                      {areas.map((area, index) => (
+                        <option key={`${area}${index}`} value={area} />
+                      ))}
+                    </datalist>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -895,10 +976,19 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {propertyImages.map((image, index) => (
                     <div
-                      key={index}
+                      key={`${image.preview}-${index}`}
                       className="relative flex w-full items-center justify-center self-stretch rounded-[6px] bg-[#E3E3E8] py-3"
                       onMouseEnter={() => setHoveredImage(index)}
                       onMouseLeave={() => setHoveredImage(null)}
+                      draggable
+                      onDragStart={() => setDraggedImageIndex(index)}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={() => {
+                        if (draggedImageIndex === null) return;
+                        moveImage(draggedImageIndex, index);
+                        setDraggedImageIndex(null);
+                      }}
+                      onDragEnd={() => setDraggedImageIndex(null)}
                     >
                       <div className="relative h-[120px] w-full bg-transparent sm:h-[108px]">
                         <img
@@ -925,7 +1015,29 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                           hoveredImage === index ? "opacity-100" : "pointer-events-none opacity-0",
                         )}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="secondary"
+                            className="h-[30px] rounded-[40px] bg-white px-3 py-2 text-[12px]/3.5 font-normal text-black"
+                            onClick={() => moveImage(index, index - 1)}
+                            disabled={index === 0}
+                          >
+                            <ArrowLeft className="size-3.5" />
+                          </Button>
+
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="secondary"
+                            className="h-[30px] rounded-[40px] bg-white px-3 py-2 text-[12px]/3.5 font-normal text-black"
+                            onClick={() => moveImage(index, index + 1)}
+                            disabled={index === propertyImages.length - 1}
+                          >
+                            <ArrowRight className="size-3.5" />
+                          </Button>
+
                           <Button
                             type="button"
                             size="sm"

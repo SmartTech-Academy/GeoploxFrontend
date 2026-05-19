@@ -15,7 +15,7 @@ const FormAccountType: React.FC<AccountTypeProps> = ({ form }) => {
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
         <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Account Type</h2>
-        <p className="text-[14px]/5 text-[#71748C]">Let us know how you intend to use Geoplux.</p>
+        <p className="text-[14px]/5 text-[#71748C]">Let us know how you intend to use Geoplox.</p>
       </div>
 
       <FormField
@@ -139,7 +139,7 @@ const FormAccountType: React.FC<AccountTypeProps> = ({ form }) => {
                           htmlFor="agent"
                           className="cursor-pointer text-[16px] leading-[19px] font-semibold text-[#41415A]"
                         >
-                          Agent
+                          Real Estate Consultant
                         </label>
                         <p className="text-[12px]/3.5 text-[#71748C]">
                           I want to reach out and connect with sellers for my clients.

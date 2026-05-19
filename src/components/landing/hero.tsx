@@ -32,7 +32,7 @@ interface Location {
 
 export function Hero() {
   const navigate = useNavigate();
-  const [listingType, setListingType] = useState("buy");
+  const [listingType, setListingType] = useState("short-let");
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
@@ -125,14 +125,14 @@ export function Hero() {
             </div>
 
             {/* Subheading */}
-            <p className="text-[20px]/7  text-primary-foreground">
+            <p className="text-[20px]/7 text-primary-foreground">
               Get direct access to listings from real owners and developers — where trust meets
               transparency.
             </p>
 
             {/* Additional tagline */}
-            <p className="text-[14px]/5  text-primary-foreground">
-              No fake agents, no hidden fees.
+            <p className="text-[14px]/5 text-primary-foreground">
+              No fake Real Estate Consultant, no hidden fees.
             </p>
           </div>
 
@@ -204,7 +204,7 @@ export function Hero() {
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="buy">Short Let</SelectItem>
+                    <SelectItem value="short-let">Short Let</SelectItem>
                     <SelectItem value="for-rent">Rent</SelectItem>
                     <SelectItem value="for-sale">Sell</SelectItem>
                     <SelectItem value="joint-venture">Joint Venture</SelectItem>

@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import * as z from "zod/v4";
 import { useState } from "react";
@@ -30,6 +31,13 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+type ApiErrorPayload = {
+  message?: string;
+  data?: {
+    error_message?: string[];
+  };
+};
+
 export const Route = createFileRoute("/_auth/login")({
   component: RouteComponent,
 });
@@ -49,6 +57,15 @@ function RouteComponent() {
     },
   });
 
+  const getErrorMessage = (error: unknown): string => {
+    const axiosError = error as AxiosError<ApiErrorPayload>;
+    const backendMessage =
+      axiosError.response?.data?.message || axiosError.response?.data?.data?.error_message?.[0];
+    if (backendMessage) return backendMessage;
+    if (error instanceof Error && error.message) return error.message;
+    return "Invalid credentials. Please try again.";
+  };
+
   const onSubmit = (values: LoginFormValues) => {
     mutate(values, {
       onSuccess: (response) => {
@@ -56,10 +73,24 @@ function RouteComponent() {
         const user = response.data?.data?.user_data;
         navigate({ to: getLoginRedirectPath(user) });
       },
-      onError: () => {
+      onError: (error) => {
+        const message = getErrorMessage(error);
+        const lowerMessage = message.toLowerCase();
+        const isNotActivatedError =
+          lowerMessage.includes("account not activated") || lowerMessage.includes("activate your account");
+
+        if (isNotActivatedError) {
+          toast.error(message);
+          navigate({
+            to: "/verify-otp",
+            search: { email: values.email_or_username },
+          });
+          return;
+        }
+
         form.setError("password", {
           type: "manual",
-          message: "Invalid credentials. Please try again.",
+          message,
         });
       },
     });

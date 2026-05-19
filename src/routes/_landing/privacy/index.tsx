@@ -128,7 +128,7 @@ function RouteComponent() {
           <p>To avoid ambiguity:</p>
           <ul className="list-inside list-disc">
             <li>Geoplox does not sell Personal Data to third parties.</li>
-            <li>Geoplox does not act as an agent, broker, or representative in transactions.</li>
+            <li>Geoplox does not act as an agent, broker,Real Estate Consultant, or representative in transactions.</li>
             <li>
               All data processed is used solely to support the platform’s neutral infrastructure
               role.
