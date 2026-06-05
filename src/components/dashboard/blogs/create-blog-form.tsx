@@ -429,7 +429,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                     <div className="min-h-[200px] rounded-b-lg border border-[#D5D5DD] p-4">
                       <EditorContent
                         editor={editor}
-                        className="prose prose-sm max-w-none focus:outline-none"
+                        className="max-w-none text-sm leading-6 text-[#41415A] focus:outline-none"
                       />
                     </div>
                   </div>
@@ -637,7 +637,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
               </div>
             )}
 
-            <div className="prose prose-lg max-w-none">
+            <div className="max-w-none text-[16px] leading-7 text-[#41415A]">
               <div dangerouslySetInnerHTML={{ __html: editor?.getHTML() || "" }} />
             </div>
           </div>

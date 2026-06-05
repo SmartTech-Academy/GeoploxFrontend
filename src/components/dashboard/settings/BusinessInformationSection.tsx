@@ -264,7 +264,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
                           className="h-10 rounded-lg border-[#D5D5DD] pr-10"
                           {...field}
                         />
-                        <Phone className="fill-[#71748C]] absolute top-1/2 right-3 size-4 -translate-y-1/2 transform text-[#71748C]" />
+                        <Phone className="absolute top-1/2 right-3 size-4 -translate-y-1/2 transform fill-[#71748C] text-[#71748C]" />
                       </div>
                     </FormControl>
                     <FormMessage />

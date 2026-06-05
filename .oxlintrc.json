@@ -41,7 +41,7 @@
           "error",
           {
             "entryPoint": "./src/index.css",
-            "ignore": ["font-aria-nova", "^style-.*"]
+            "ignore": ["font-aria-nova", "wp-content", "^style-.*"]
           }
         ],
         "better-tailwindcss/no-conflicting-classes": "error",

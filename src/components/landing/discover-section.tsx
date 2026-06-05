@@ -25,6 +25,20 @@ interface Property {
   };
 }
 
+const getPropertyBasePath = (category?: string) => {
+  switch (category?.toLowerCase()) {
+    case "for rent":
+      return "/for-rent";
+    case "short let":
+      return "/short-let";
+    case "joint venture":
+      return "/joint-venture";
+    case "for sale":
+    default:
+      return "/for-sale";
+  }
+};
+
 const formatPrice = (price: number, currency: string) => {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
@@ -108,6 +122,9 @@ export function DiscoverSection() {
   };
 
   const currentProperties = propertyData ? propertyData[tabKeyMap[activeTab]] : [];
+  const exploreListingPath = currentProperties?.[0]
+    ? getPropertyBasePath(currentProperties[0].category)
+    : "/for-sale";
 
   return (
     <div className="w-full">
@@ -123,7 +140,7 @@ export function DiscoverSection() {
 
             {/* Tabs */}
             <div className="w-full overflow-hidden rounded-xl border border-[#F1F1F4] bg-white p-1.5">
-              <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto">
+              <div className="flex w-full items-center gap-3 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 {tabs.map((tab) => (
                   <Button
                     key={tab.name}
@@ -173,7 +190,7 @@ export function DiscoverSection() {
                 <div className="grid w-full grid-cols-1 gap-x-5 gap-y-10 self-stretch md:grid-cols-2 lg:grid-cols-3">
                   {currentProperties?.map((property: Property) => (
                     <Link
-                      to={`/short-let/$id`}
+                      to={`${getPropertyBasePath(property.category)}/$id`}
                       params={{ id: property.slug }}
                       key={property.id}
                       className="flex flex-col items-start gap-6 overflow-hidden transition-shadow hover:shadow-lg"
@@ -244,9 +261,9 @@ export function DiscoverSection() {
               <div className="flex flex-col items-start gap-2 py-6 text-center">
                 <Button
                   asChild
-                  className="min-w-[181px]] h-12 rounded-[40px] bg-secondary-foreground px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800"
+                  className="h-12 min-w-[181px] rounded-[40px] bg-secondary-foreground px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800"
                 >
-                  <Link to="/short-let">
+                  <Link to={exploreListingPath}>
                     Explore Listing <ChevronRight className="size-4 fill-white" />
                   </Link>
                 </Button>
@@ -295,7 +312,7 @@ export function DiscoverSection() {
               <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07/20%)]/20" />
             </div>
 
-            <div className=";lg:pl-10 relative z-10 flex w-full flex-col items-center justify-between gap-[95px] rounded-[13px] px-5 lg:flex-row lg:pr-0">
+            <div className="relative z-10 flex w-full flex-col items-center justify-between gap-[95px] rounded-[13px] px-5 lg:flex-row lg:pr-0 lg:pl-10">
               <div className="flex h-auto flex-col items-start gap-10 lg:w-[521px] lg:shrink-0">
                 <div className="flex flex-col items-start gap-[13px]">
                   <h3 className="text-[44px] leading-[62px] text-[#1F2130]">

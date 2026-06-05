@@ -55,6 +55,20 @@ import { PropertyListingCardSkeleton } from "./property-listing-card-skeleton";
 import Map from "./google-map";
 import { useGetProfileData } from "@/lib/services/profile";
 
+const getPublicPropertyBasePath = (category?: string) => {
+  switch (category?.toLowerCase()) {
+    case "for rent":
+      return "/for-rent";
+    case "short let":
+      return "/short-let";
+    case "joint venture":
+      return "/joint-venture";
+    case "for sale":
+    default:
+      return "/for-sale";
+  }
+};
+
 const ListingDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -203,6 +217,7 @@ const ListingDetail = () => {
 
   const relatedProperties = relatedPropertiesResponse?.data.data ?? [];
   const images = property?.images.map((img: { url: string }) => img.url) ?? [];
+  const exploreListingPath = getPublicPropertyBasePath(property?.category);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -721,7 +736,7 @@ const ListingDetail = () => {
                   ))
                 : relatedProperties.slice(0, 3).map((relatedProperty: any) => (
                     <Link
-                      to={`/short-let`}
+                      to={`${getPublicPropertyBasePath(relatedProperty.category)}/$id`}
                       params={{ id: relatedProperty.slug }}
                       key={relatedProperty.id}
                       className="flex flex-col items-start gap-6 overflow-hidden"
@@ -801,11 +816,14 @@ const ListingDetail = () => {
 
             <div className="flex w-full items-center justify-center">
               <Button
+                asChild
                 variant="secondary"
                 className="h-12 rounded-[40px] bg-[#F9F9F9] px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-[#1F2130]"
               >
-                Explore Listing
-                <ChevronRight className="size-4 fill-[#1F2130]" />
+                <Link to={exploreListingPath}>
+                  Explore Listing
+                  <ChevronRight className="size-4 fill-[#1F2130]" />
+                </Link>
               </Button>
             </div>
           </div>

@@ -213,19 +213,13 @@ const GettingStarted = () => {
   const currentStepKey = stepFlow[currentStep];
 
   const handleApiSubmission = async (stepKey: string, data: any) => {
-    let toastId;
     try {
       setIsSubmitting(true);
       const kycFormData = new FormData();
       switch (stepKey) {
         case "account-type":
           await setAccountTypeMutate({ user_type: data.accountType });
-          toast.success("Account type saved!", {
-            action: {
-              label: "Dismiss",
-              onClick: () => toast.dismiss(toastId), // dismisses the toast
-            },
-          });
+          toast.success("Account type saved!");
           break;
         case "personal-info":
           await setPersonalInfoMutate({
@@ -238,12 +232,7 @@ const GettingStarted = () => {
             local_gov_area: data.localGovernment,
             base64_file: data.profilePicture,
           });
-          toast.success("Personal information saved!", {
-            action: {
-              label: "Dismiss",
-              onClick: () => toast.dismiss(toastId), // dismisses the toast
-            },
-          });
+          toast.success("Personal information saved!");
           break;
         case "business-info":
           await setBusinessInfoMutate({
@@ -258,12 +247,7 @@ const GettingStarted = () => {
             local_gov_area: data.businessLocalGovernment,
             base64_file: data.businessLogo,
           });
-          toast.success("Business information saved!", {
-            action: {
-              label: "Dismiss",
-              onClick: () => toast.dismiss(toastId), // dismisses the toast
-            },
-          });
+          toast.success("Business information saved!");
           break;
         case "kyc-documents":
           if (accountType === "owner") {
@@ -274,24 +258,14 @@ const GettingStarted = () => {
             kycFormData.append("gov_id_doc", data.govtIssuedId);
             await uploadKycMutate(kycFormData);
           }
-          toast.success("KYC documents uploaded!", {
-            action: {
-              label: "Dismiss",
-              onClick: () => toast.dismiss(toastId), // dismisses the toast
-            },
-          });
+          toast.success("KYC documents uploaded!");
           break;
         case "subscription":
           await subscribeToPlanMutate({
             plan_id: data.plan,
             duration_months: data.duration_months,
           });
-          toast.success("Subscription plan selected!", {
-            action: {
-              label: "Dismiss",
-              onClick: () => toast.dismiss(toastId), // dismisses the toast
-            },
-          });
+          toast.success("Subscription plan selected!");
 
           break;
 

@@ -56,7 +56,10 @@ const LoadingFallback = () => {
                 style={{ width: `${progress}%` }}
               >
                 {/* Shimmer effect */}
-                <div className="animate-shimmer absolute inset-0 -skew-x-12 bg-linear-to-r from-transparent via-white/30 to-transparent" />
+                <div
+                  className="absolute inset-0 -skew-x-12 bg-linear-to-r from-transparent via-white/30 to-transparent"
+                  style={{ animation: "shimmer 1.5s infinite" }}
+                />
               </div>
             </div>
             <div className="text-center text-xs text-gray-500">{Math.round(progress)}%</div>
@@ -86,9 +89,6 @@ const LoadingFallback = () => {
           100% {
             transform: translateX(200%) skewX(-12deg);
           }
-        }
-        .animate-shimmer {
-          animation: shimmer 1.5s infinite;
         }
       `}</style>
     </div>

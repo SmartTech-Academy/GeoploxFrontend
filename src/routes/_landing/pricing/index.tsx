@@ -95,7 +95,7 @@ function RouteComponent() {
           </div>
 
           <div className="overflow-hidden rounded-xl border border-[#F1F1F4] bg-white p-1.5">
-            <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto">
+            <div className="flex w-full items-center gap-3 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               {tabs.map((tab) => (
                 <Button
                   key={tab.name}
