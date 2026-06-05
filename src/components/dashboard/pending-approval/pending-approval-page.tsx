@@ -3,7 +3,7 @@ import { ChevronRight, FileText, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { PageMetaTags } from "@/components/page-meta-data";
-import { format, parseISO } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import {
   useApproveRequest,
   useDeclineRequest,
@@ -64,6 +64,15 @@ type Request = {
   avatar: string;
   details: KYCDetails | ListingDetails;
   ownerId?: string;
+};
+
+const formatApprovalDate = (value?: string | null) => {
+  if (!value) return "N/A";
+
+  const parsedDate = parseISO(value);
+  if (!isValid(parsedDate)) return "N/A";
+
+  return format(parsedDate, "dd MMM, yyyy");
 };
 
 // --- EMPTY STATE COMPONENT ---
@@ -422,7 +431,7 @@ const PendingApprovalPage = () => {
     const kycReqs: Request[] = users.map(
       (user: any): Request => ({
         id: user.codec,
-        date: format(parseISO(user.approval_request_date), "dd MMM, yyyy"),
+        date: formatApprovalDate(user.approval_request_date),
         type: "KYC",
         name: `${user.firstname} ${user.lastname}`,
         submittedBy: user.email_address,
@@ -447,7 +456,7 @@ const PendingApprovalPage = () => {
     const listingReqs: Request[] = properties.map(
       (prop: any): Request => ({
         id: prop.id,
-        date: format(parseISO(prop.approval_request_date), "dd MMM, yyyy"),
+        date: formatApprovalDate(prop.approval_request_date),
         type: "Listing",
         name: prop.title,
         submittedBy: prop.owner.name,
@@ -542,7 +551,7 @@ const PendingApprovalPage = () => {
 
       {/* Desktop View */}
       <div className="hidden size-full lg:flex">
-        <ResizablePanelGroup direction="horizontal">
+        <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel defaultSize={50} minSize={30}>
             <Tabs
               value={activeTab}

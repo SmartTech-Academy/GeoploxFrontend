@@ -223,7 +223,7 @@ const UsersPage = () => {
 
       {/* Desktop View */}
       <div className="hidden size-full lg:flex">
-        <ResizablePanelGroup direction="horizontal" className="size-full">
+        <ResizablePanelGroup orientation="horizontal" className="size-full">
           <ResizablePanel
             defaultSize={35}
             minSize={25}

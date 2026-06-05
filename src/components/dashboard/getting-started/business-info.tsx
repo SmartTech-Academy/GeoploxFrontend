@@ -32,7 +32,9 @@ interface AccountTypeProps {
 }
 
 const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(
+    () => profileData?.business?.logo_url || null,
+  );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedState, setSelectedState] = useState(form.getValues().businessState);
   const [isCropDialogOpen, setCropDialogOpen] = useState(false);
@@ -48,6 +50,8 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
 
   useEffect(() => {
     if (profileData) {
+      setLogoPreview(profileData?.business?.logo_url || null);
+      setSelectedState(profileData?.business?.state || "");
       form.setValue("businessName", profileData?.business?.name || "");
       form.setValue("businessEmail", profileData?.business?.email || "");
       form.setValue("businessPhone", profileData?.business?.phone || "");

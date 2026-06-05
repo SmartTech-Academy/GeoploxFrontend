@@ -149,7 +149,11 @@ const GettingStarted = () => {
   const { mutateAsync: uploadOwnerKycMutate } = useUploadOwnerKycDocuments();
   const { mutateAsync: subscribeToPlanMutate } = useSubscribeToPlan();
   const { mutateAsync: completeOnboardingMutate } = useCompleteOnboarding();
-  const { data: profileData, isPending: isProfileLoading } = useGetProfileData();
+  const {
+    data: profileData,
+    isPending: isProfileLoading,
+    refetch: refetchProfile,
+  } = useGetProfileData();
 
   const userName = useMemo(() => {
     if (profileData) {
@@ -168,6 +172,10 @@ const GettingStarted = () => {
     mode: "onChange",
     reValidateMode: "onChange",
   });
+
+  useEffect(() => {
+    void refetchProfile();
+  }, [refetchProfile]);
 
   useEffect(() => {
     if (profileData) {
@@ -292,11 +300,13 @@ const GettingStarted = () => {
       }
 
       await queryClient.invalidateQueries({ queryKey: ["profile"] });
+      await refetchProfile();
 
       return true;
-    } catch {
-      //   const message = error.response?.data?.message || 'An error occurred.';
-      //   toast.error(message);
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Unable to save this step.";
+      await refetchProfile();
+      toast.error(message);
       return false;
     } finally {
       setIsSubmitting(false);

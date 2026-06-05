@@ -140,7 +140,7 @@ const SettingsPage = () => {
 
       {/* Desktop View */}
       <div className="hidden size-full lg:flex">
-        <ResizablePanelGroup direction="horizontal" className="size-full">
+        <ResizablePanelGroup orientation="horizontal" className="size-full">
           {/* Sidebar Panel */}
           <ResizablePanel
             defaultSize={35}

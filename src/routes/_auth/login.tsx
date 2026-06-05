@@ -77,7 +77,8 @@ function RouteComponent() {
         const message = getErrorMessage(error);
         const lowerMessage = message.toLowerCase();
         const isNotActivatedError =
-          lowerMessage.includes("account not activated") || lowerMessage.includes("activate your account");
+          lowerMessage.includes("account not activated") ||
+          lowerMessage.includes("activate your account");
 
         if (isNotActivatedError) {
           toast.error(message);

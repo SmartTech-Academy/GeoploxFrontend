@@ -294,7 +294,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
       return;
     }
     if (files.length > 0) {
-      const optimizedFiles = await Promise.all(files.map((file) => optimizeImageBeforeUpload(file)));
+      const optimizedFiles = await Promise.all(
+        files.map((file) => optimizeImageBeforeUpload(file)),
+      );
       const newImageStates: FileState[] = optimizedFiles.map((file) => ({
         file,
         preview: URL.createObjectURL(file),
@@ -772,7 +774,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       <Input
                         {...field}
                         value={field.value || ""}
-                        placeholder={selectedLga ? "Type area (or leave blank)" : "Select locality first"}
+                        placeholder={
+                          selectedLga ? "Type area (or leave blank)" : "Select locality first"
+                        }
                         className="h-10 rounded-lg border-[#D5D5DD]"
                         list="area-suggestions"
                         disabled={!selectedLga}
