@@ -5,6 +5,27 @@ import { Link, useRouter } from "@tanstack/react-router";
 import LoadingFallback from "./loading-fallback";
 import { sendTelegramError } from "@/lib/utils";
 
+const CHUNK_RELOAD_SESSION_KEY = "chunk-reload-attempted";
+
+const getErrorMessage = (error: unknown) => {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return "Unknown error occurred";
+};
+
+const isChunkLoadError = (error: unknown) => {
+  const message = getErrorMessage(error).toLowerCase();
+
+  return (
+    message.includes("failed to fetch dynamically imported module") ||
+    message.includes("importing a module script failed") ||
+    message.includes("loading chunk") ||
+    message.includes("chunkloaderror") ||
+    message.includes("text/html") ||
+    message.includes("valid javascript mime type")
+  );
+};
+
 // NotFoundPage Component
 const NotFoundPage = () => {
   const router = useRouter();
@@ -158,14 +179,38 @@ const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({
   resetErrorBoundary,
 }) => {
   const isDev = process.env.NODE_ENV === "development";
+  const isChunkReloadError = isChunkLoadError(error);
+  const errorMessage = getErrorMessage(error);
+
+  useEffect(() => {
+    if (!isChunkReloadError) {
+      sessionStorage.removeItem(CHUNK_RELOAD_SESSION_KEY);
+      return;
+    }
+
+    const hasReloadedChunk = sessionStorage.getItem(CHUNK_RELOAD_SESSION_KEY) === "true";
+
+    if (hasReloadedChunk) {
+      sessionStorage.removeItem(CHUNK_RELOAD_SESSION_KEY);
+      return;
+    }
+
+    sessionStorage.setItem(CHUNK_RELOAD_SESSION_KEY, "true");
+    const reloadTimeout = window.setTimeout(() => {
+      window.location.reload();
+    }, 1200);
+
+    return () => window.clearTimeout(reloadTimeout);
+  }, [isChunkReloadError]);
 
   useEffect(() => {
     if (isDev) return; // 🚫 stop in development
+    if (isChunkReloadError) return;
     const token = localStorage.getItem("token");
     const message = `
 🚨 CRITICAL UI CRASH
 Path: ${window.location.pathname}
-Message: ${error.message}
+Message: ${errorMessage}
 Stack: ${error.stack}
 Time: ${new Date().toISOString()}
 UserAgent: ${navigator.userAgent}
@@ -173,45 +218,75 @@ token: ${token || "No token"}
     `;
 
     sendTelegramError(message);
-  }, [error]);
+  }, [error, errorMessage, isChunkReloadError, isDev]);
+
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-linear-to-br from-red-50 to-red-100">
+    <div
+      className={`flex min-h-screen w-full items-center justify-center ${
+        isChunkReloadError
+          ? "bg-linear-to-br from-amber-50 via-white to-amber-100"
+          : "bg-linear-to-br from-red-50 to-red-100"
+      }`}
+    >
       <div className="max-w-lg px-4 text-center">
         <div className="mx-auto size-24">
-          <svg viewBox="0 0 24 24" className="size-full text-red-600">
-            <circle cx="12" cy="12" r="11" className="fill-current opacity-20" />
-            <path
-              className="fill-current"
-              d="M12 8v5M12 16h.01"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
+          {isChunkReloadError ? (
+            <div className="relative size-full">
+              <div className="absolute inset-0 animate-spin rounded-full border-4 border-amber-200 border-t-amber-500" />
+              <div className="absolute inset-4 rounded-full bg-amber-100" />
+            </div>
+          ) : (
+            <svg viewBox="0 0 24 24" className="size-full text-red-600">
+              <circle cx="12" cy="12" r="11" className="fill-current opacity-20" />
+              <path
+                className="fill-current"
+                d="M12 8v5M12 16h.01"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          )}
         </div>
-        <h1 className="mt-6 text-2xl font-bold text-gray-900">Application Error</h1>
+        <h1 className="mt-6 text-2xl font-bold text-gray-900">
+          {isChunkReloadError ? "Refreshing application" : "Application Error"}
+        </h1>
         <p className="mt-4 text-gray-600">
-          {isDev ? error.message : "The application encountered an unexpected error."}
+          {isChunkReloadError
+            ? "A new version of this page is loading. Please wait while we refresh the missing chunk."
+            : isDev
+              ? errorMessage
+              : "The application encountered an unexpected error."}
         </p>
-        {isDev && error.stack && (
+        {isDev && !isChunkReloadError && error.stack && (
           <div className="mt-6 max-h-64 overflow-auto rounded-lg bg-red-100 p-4 text-left">
             <p className="font-mono text-sm whitespace-pre-wrap text-red-800">{error.stack}</p>
           </div>
         )}
         <div className="mt-8 flex justify-center gap-4">
           <Button
-            onClick={resetErrorBoundary}
+            onClick={() => {
+              if (isChunkReloadError) {
+                sessionStorage.setItem(CHUNK_RELOAD_SESSION_KEY, "true");
+                window.location.reload();
+                return;
+              }
+
+              resetErrorBoundary();
+            }}
             className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px]/4 font-medium tracking-[-0.02em] text-white"
           >
-            Try Again
+            {isChunkReloadError ? "Reload Now" : "Try Again"}
           </Button>
-          <Button
-            onClick={() => (window.location.href = "/dashboard")}
-            variant="outline"
-            className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px]/4 font-medium tracking-[-0.02em]"
-          >
-            Go to Dashboard
-          </Button>
+          {!isChunkReloadError && (
+            <Button
+              onClick={() => (window.location.href = "/dashboard")}
+              variant="outline"
+              className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px]/4 font-medium tracking-[-0.02em]"
+            >
+              Go to Dashboard
+            </Button>
+          )}
         </div>
       </div>
     </div>
