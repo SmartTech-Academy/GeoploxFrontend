@@ -22,6 +22,12 @@ export const useRegister = () => {
   });
 };
 
+export const useOverrideRegister = () => {
+  return useMutation({
+    mutationFn: (data: any) => api.post("/auth/override/register", data),
+  });
+};
+
 export const useVaidateRegistrationData = () => {
   return useMutation({
     mutationFn: (data: any) => api.post("/auth/validate/registration-data", data),

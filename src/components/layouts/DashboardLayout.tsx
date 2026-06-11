@@ -63,11 +63,11 @@ const DashboardLayout = () => {
         <SidebarInset>
           <TopNav setUseMaxWith={setUseMaxWith} />
           <Toaster />
-          <main className="min-h-dvh w-full flex-1 overflow-auto border-[#E1E1E6] bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.08)]">
+          <main className="min-h-dvh min-w-0 flex-1 overflow-auto border-[#E1E1E6] bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.08)]">
             <div
               className={cn(
-                "mx-auto w-full animate-in transition-all duration-300 ease-linear fade-in-0 slide-in-from-bottom-4",
-                useMaxWidth ? "max-w-[1216px] px-8" : "max-w-full px-8",
+                "mx-auto min-w-0 w-full animate-in transition-all duration-300 ease-linear fade-in-0 slide-in-from-bottom-4",
+                useMaxWidth ? "max-w-[1216px] px-4 lg:px-8" : "max-w-full px-4 lg:px-6",
               )}
             >
               <Outlet />

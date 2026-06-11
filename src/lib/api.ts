@@ -10,6 +10,8 @@ const publicPages = [
   "/pricing",
   "/login",
   "/register",
+  "/cloned/register",
+  "/cloned/set-password",
   "/forgot-password",
   "/reset-password",
   "/verify-email",

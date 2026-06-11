@@ -58,6 +58,8 @@ import { Route as DashboardPropertiesIdRouteImport } from './routes/_dashboard/p
 import { Route as DashboardListingIdRouteImport } from './routes/_dashboard/listing/$id'
 import { Route as DashboardBlogsCreateRouteImport } from './routes/_dashboard/blogs/create'
 import { Route as DashboardAdminListingIdRouteImport } from './routes/_dashboard/admin-listing/$id'
+import { Route as AuthClonedSetPasswordRouteImport } from './routes/_auth/cloned.set-password'
+import { Route as AuthClonedRegisterRouteImport } from './routes/_auth/cloned.register'
 import { Route as LandingShortLetPropertySubTypeStateLgaIdRouteImport } from './routes/_landing/short-let/$propertySubType/$state/$lga/$id'
 import { Route as LandingJointVenturePropertySubTypeStateLgaIdRouteImport } from './routes/_landing/joint-venture/$propertySubType/$state/$lga/$id'
 import { Route as LandingForSalePropertySubTypeStateLgaIdRouteImport } from './routes/_landing/for-sale/$propertySubType/$state/$lga/$id'
@@ -315,6 +317,16 @@ const DashboardAdminListingIdRoute = DashboardAdminListingIdRouteImport.update({
   path: '/admin-listing/$id',
   getParentRoute: () => DashboardRoute,
 } as any)
+const AuthClonedSetPasswordRoute = AuthClonedSetPasswordRouteImport.update({
+  id: '/cloned/set-password',
+  path: '/cloned/set-password',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthClonedRegisterRoute = AuthClonedRegisterRouteImport.update({
+  id: '/cloned/register',
+  path: '/cloned/register',
+  getParentRoute: () => AuthRoute,
+} as any)
 const LandingShortLetPropertySubTypeStateLgaIdRoute =
   LandingShortLetPropertySubTypeStateLgaIdRouteImport.update({
     id: '/short-let/$propertySubType/$state/$lga/$id',
@@ -351,6 +363,8 @@ export interface FileRoutesByFullPath {
   '/set-password': typeof AuthSetPasswordRoute
   '/unauthorized': typeof AuthUnauthorizedRoute
   '/verify-otp': typeof AuthVerifyOtpRoute
+  '/cloned/register': typeof AuthClonedRegisterRoute
+  '/cloned/set-password': typeof AuthClonedSetPasswordRoute
   '/admin-listing/$id': typeof DashboardAdminListingIdRoute
   '/blogs/create': typeof DashboardBlogsCreateRoute
   '/listing/$id': typeof DashboardListingIdRoute
@@ -403,6 +417,8 @@ export interface FileRoutesByTo {
   '/set-password': typeof AuthSetPasswordRoute
   '/unauthorized': typeof AuthUnauthorizedRoute
   '/verify-otp': typeof AuthVerifyOtpRoute
+  '/cloned/register': typeof AuthClonedRegisterRoute
+  '/cloned/set-password': typeof AuthClonedSetPasswordRoute
   '/admin-listing/$id': typeof DashboardAdminListingIdRoute
   '/blogs/create': typeof DashboardBlogsCreateRoute
   '/listing/$id': typeof DashboardListingIdRoute
@@ -459,6 +475,8 @@ export interface FileRoutesById {
   '/_auth/unauthorized': typeof AuthUnauthorizedRoute
   '/_auth/verify-otp': typeof AuthVerifyOtpRoute
   '/_landing/': typeof LandingIndexRoute
+  '/_auth/cloned/register': typeof AuthClonedRegisterRoute
+  '/_auth/cloned/set-password': typeof AuthClonedSetPasswordRoute
   '/_dashboard/admin-listing/$id': typeof DashboardAdminListingIdRoute
   '/_dashboard/blogs/create': typeof DashboardBlogsCreateRoute
   '/_dashboard/listing/$id': typeof DashboardListingIdRoute
@@ -513,6 +531,8 @@ export interface FileRouteTypes {
     | '/set-password'
     | '/unauthorized'
     | '/verify-otp'
+    | '/cloned/register'
+    | '/cloned/set-password'
     | '/admin-listing/$id'
     | '/blogs/create'
     | '/listing/$id'
@@ -565,6 +585,8 @@ export interface FileRouteTypes {
     | '/set-password'
     | '/unauthorized'
     | '/verify-otp'
+    | '/cloned/register'
+    | '/cloned/set-password'
     | '/admin-listing/$id'
     | '/blogs/create'
     | '/listing/$id'
@@ -620,6 +642,8 @@ export interface FileRouteTypes {
     | '/_auth/unauthorized'
     | '/_auth/verify-otp'
     | '/_landing/'
+    | '/_auth/cloned/register'
+    | '/_auth/cloned/set-password'
     | '/_dashboard/admin-listing/$id'
     | '/_dashboard/blogs/create'
     | '/_dashboard/listing/$id'
@@ -1013,6 +1037,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminListingIdRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_auth/cloned/set-password': {
+      id: '/_auth/cloned/set-password'
+      path: '/cloned/set-password'
+      fullPath: '/cloned/set-password'
+      preLoaderRoute: typeof AuthClonedSetPasswordRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/cloned/register': {
+      id: '/_auth/cloned/register'
+      path: '/cloned/register'
+      fullPath: '/cloned/register'
+      preLoaderRoute: typeof AuthClonedRegisterRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_landing/short-let/$propertySubType/$state/$lga/$id': {
       id: '/_landing/short-let/$propertySubType/$state/$lga/$id'
       path: '/short-let/$propertySubType/$state/$lga/$id'
@@ -1054,6 +1092,8 @@ interface AuthRouteChildren {
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
   AuthUnauthorizedRoute: typeof AuthUnauthorizedRoute
   AuthVerifyOtpRoute: typeof AuthVerifyOtpRoute
+  AuthClonedRegisterRoute: typeof AuthClonedRegisterRoute
+  AuthClonedSetPasswordRoute: typeof AuthClonedSetPasswordRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
@@ -1066,6 +1106,8 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthSetPasswordRoute: AuthSetPasswordRoute,
   AuthUnauthorizedRoute: AuthUnauthorizedRoute,
   AuthVerifyOtpRoute: AuthVerifyOtpRoute,
+  AuthClonedRegisterRoute: AuthClonedRegisterRoute,
+  AuthClonedSetPasswordRoute: AuthClonedSetPasswordRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
