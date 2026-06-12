@@ -6,7 +6,11 @@ import { cn } from "@/lib/utils";
 import assets from "@/assets";
 import { Link } from "@tanstack/react-router";
 import { useGetHomepageProperties } from "@/lib/services";
+import { useInfiniteWpPosts } from "@/lib/services/wpBlog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { excerptFromHtml } from "@/lib/utils";
+import { toAbsoluteBlogUrl } from "@/lib/wpGraphql";
+import { format } from "date-fns";
 
 interface Property {
   id: string;
@@ -75,36 +79,12 @@ const PropertyCardSkeleton = () => (
 
 const nextGen = [assets.direct, assets.deluxe, assets.adozollion, assets.cruxstone, assets.etoniru];
 
-const blogs = [
-  {
-    image: assets.herohouse,
-    title: "5 Reasons Serious Buyers Are Switching to Subscription-Based Property Platforms",
-    tags: ["Articles", "Investment"],
-    content:
-      "In a digital world full of free listings and endless browsing, serious property buyers are beginning to favor quality over quantity. Subscription-based platforms are cutting through the noise by curating only verified listings and offering exclusive access to decision-ready users.",
-    dateTime: "Dec 19, 2024 —  2 min",
-  },
-  {
-    image: assets.trendinghome3,
-    title: "Why Verified Listings Are the Future of Real Estate in Nigeria",
-    tags: ["News & Update"],
-    content:
-      "Nigeria’s real estate market has long been plagued by misinformation, duplicate listings, and unverified agents posing as owners. This has eroded trust and wasted valuable time for buyers and agents alike. As the market matures, platforms that guarantee verified listi",
-    dateTime: "Dec 19, 2024 —  2 min",
-  },
-  {
-    image: assets.trendinghome6,
-    title: "Agents/Brokers vs Owners: Who Should You Really Be Dealing With When Buying Property?",
-    tags: ["Articles"],
-    content:
-      "While agents have traditionally played a major role in property transactions, many buyers today are questioning whether they add value or just increase complexity. With the rise of direct-to-owner platforms, buyers are gaining faster access, clearer communication, and ",
-    dateTime: "Dec 19, 2024 —  2 min",
-  },
-];
+const slugFromUri = (uri: string) => uri.replace(/^\/+|\/+$/g, "");
 
 export function DiscoverSection() {
   const [activeTab, setActiveTab] = useState("Trending Homes");
   const { data: propertyResponse, isPending: isLoadingProperties } = useGetHomepageProperties();
+  const postsQuery = useInfiniteWpPosts(3);
   const tabs = [
     { name: "Trending Homes", icon: "🔥" },
     { name: "All Homes", icon: "" },
@@ -125,6 +105,7 @@ export function DiscoverSection() {
   const exploreListingPath = currentProperties?.[0]
     ? getPropertyBasePath(currentProperties[0].category)
     : "/for-sale";
+  const blogPosts = (postsQuery.data?.pages.flatMap((page) => page.nodes) ?? []).slice(0, 3);
 
   return (
     <div className="w-full">
@@ -374,49 +355,83 @@ export function DiscoverSection() {
 
           <div className="flex w-full flex-col self-stretch border-b border-[#ECECEC] bg-white py-6">
             <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
-              {blogs.map((blog, index) => (
-                <Link
-                  to="/blog/$id"
-                  params={{ id: String(index) }}
-                  key={index}
-                  className="flex grow flex-col items-start gap-[19px]"
-                >
-                  <img
-                    className="h-[229px] w-full rounded-t-xl"
-                    src={blog.image}
-                    alt="blog"
-                    width={394}
-                    height={229}
-                  />
-
-                  <div className="flex flex-col items-start gap-4 self-stretch">
-                    <div className="flex items-start gap-2">
-                      {blog.tags.map((tag, index) => (
-                        <div
-                          key={index}
-                          className="flex h-[25px] items-center justify-center rounded-sm bg-[oklch(0.7665_0.1393_91.15/5%)] px-2 py-0.5 text-[14px] leading-[21px] text-[#D4AF36]"
-                        >
-                          {tag}
+              {postsQuery.isLoading
+                ? Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="flex grow flex-col items-start gap-[19px]">
+                      <Skeleton className="h-[229px] w-full rounded-t-xl" />
+                      <div className="flex w-full flex-col items-start gap-4 self-stretch">
+                        <div className="flex items-start gap-2">
+                          <Skeleton className="h-[25px] w-24 rounded-sm" />
                         </div>
-                      ))}
+                        <div className="flex w-full flex-col items-start gap-3 self-stretch">
+                          <Skeleton className="h-6 w-full" />
+                          <Skeleton className="h-6 w-5/6" />
+                          <Skeleton className="h-5 w-full" />
+                          <Skeleton className="h-5 w-4/5" />
+                        </div>
+                        <Skeleton className="h-3 w-28" />
+                      </div>
                     </div>
+                  ))
+                : blogPosts.map((post) => {
+                    const slug = slugFromUri(post.uri);
+                    const tags =
+                      post.categories?.nodes
+                        ?.map((category) => category?.name)
+                        .filter((name): name is string => Boolean(name))
+                        .slice(0, 2) ?? [];
+                    const imageUrl =
+                      toAbsoluteBlogUrl(post.featuredImage?.node?.sourceUrl) ??
+                      toAbsoluteBlogUrl(post.featuredImage?.node?.filePath) ??
+                      assets.blog1;
+                    const dateLabel = post.date
+                      ? format(new Date(post.date), "MMM d, yyyy")
+                      : "Latest Post";
 
-                    <div className="flex flex-col items-start gap-3 self-stretch">
-                      <h5 className="self-stretch text-[16px]/6 font-semibold tracking-[-0.15px] text-[#0B0B0D]">
-                        {blog.title}
-                      </h5>
+                    return (
+                      <Link
+                        to="/blog/$id"
+                        params={{ id: slug }}
+                        key={post.uri}
+                        className="flex grow flex-col items-start gap-[19px]"
+                      >
+                        <img
+                          className="h-[229px] w-full rounded-t-xl object-cover"
+                          src={imageUrl}
+                          alt={post.featuredImage?.node?.altText || post.title || "blog"}
+                          width={394}
+                          height={229}
+                        />
 
-                      <p className="line-clamp-2 text-[14px]/6 tracking-[-0.14px] text-[#6C7574]">
-                        {blog.content}
-                      </p>
-                    </div>
+                        <div className="flex flex-col items-start gap-4 self-stretch">
+                          <div className="flex flex-wrap items-start gap-2">
+                            {(tags.length > 0 ? tags : ["Blog"]).map((tag) => (
+                              <div
+                                key={tag}
+                                className="flex h-[25px] items-center justify-center rounded-sm bg-[oklch(0.7665_0.1393_91.15/5%)] px-2 py-0.5 text-[14px] leading-[21px] text-[#D4AF36]"
+                              >
+                                {tag}
+                              </div>
+                            ))}
+                          </div>
 
-                    <span className="text-[10px] leading-[11px] tracking-[0.88px] text-[#0B0B0D] uppercase">
-                      {blog.dateTime}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+                          <div className="flex flex-col items-start gap-3 self-stretch">
+                            <h5 className="self-stretch text-[16px]/6 font-semibold tracking-[-0.15px] text-[#0B0B0D]">
+                              {post.title}
+                            </h5>
+
+                            <p className="line-clamp-2 text-[14px]/6 tracking-[-0.14px] text-[#6C7574]">
+                              {excerptFromHtml(post.content ?? "")}
+                            </p>
+                          </div>
+
+                          <span className="text-[10px] leading-[11px] tracking-[0.88px] text-[#0B0B0D] uppercase">
+                            {dateLabel}
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
             </div>
           </div>
 

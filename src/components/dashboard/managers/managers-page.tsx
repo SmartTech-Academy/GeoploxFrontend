@@ -19,6 +19,14 @@ import {
   User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -510,6 +518,7 @@ const ManagerView = ({
   conversionPeriod,
   setConversionPeriod,
 }: ManagerViewProps) => {
+  const [openAccessConfirm, setOpenAccessConfirm] = useState(false);
   const { data: assignedUsersData, isLoading: isLoadingAssignedUsers } =
     useGetManagersAssignedUsers(selectedManager?.id ?? "");
   const { mutate: toggleAccess, isPending: isTogglingAccess } = useToggleManagerAccess({
@@ -557,17 +566,12 @@ const ManagerView = ({
     ? assignedUsersData.data.data.assigned_users
     : [];
 
-  console.log("assignedUsers", assignedUsers);
-
   const handleToggleAccess = () => {
     const nextToggle: "yes" | "no" = selectedManager.status === "suspended" ? "yes" : "no";
-    const actionLabel = nextToggle === "no" ? "suspend" : "restore";
-    const ok = window.confirm(
-      `Are you sure you want to ${actionLabel} access for ${selectedManager.name}?`,
-    );
-    if (!ok) return;
     toggleAccess({ manager_codec: selectedManager.id, managers_access_toggle: nextToggle });
   };
+
+  const accessActionLabel = selectedManager.status === "suspended" ? "Restore" : "Revoke";
 
   return (
     <div className="flex h-full flex-1 flex-col rounded-[15px] border border-[#DDDDDD] lg:rounded-[15px]">
@@ -620,7 +624,7 @@ const ManagerView = ({
                   "flex items-center gap-2",
                   selectedManager.status === "suspended" ? "text-[#008A00]" : "text-red-600",
                 )}
-                onClick={handleToggleAccess}
+                onClick={() => setOpenAccessConfirm(true)}
                 disabled={isTogglingAccess}
               >
                 <Ban className="size-4" />
@@ -868,6 +872,48 @@ const ManagerView = ({
           </div>
         )}
       </div>
+      <Dialog open={openAccessConfirm} onOpenChange={setOpenAccessConfirm}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{accessActionLabel} Manager Access</DialogTitle>
+          </DialogHeader>
+
+          <div className="w-full">
+            <p className="text-[16px] leading-[22px] text-[#41415A]">
+              Are you sure you want to {accessActionLabel.toLowerCase()} access for{" "}
+              {selectedManager.name}?
+            </p>
+          </div>
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button
+                className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px]/3.5 font-semibold text-[#1F2130]"
+                variant="secondary"
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              onClick={() => {
+                handleToggleAccess();
+                setOpenAccessConfirm(false);
+              }}
+              disabled={isTogglingAccess}
+              className={cn(
+                "h-8 rounded-4xl p-4 text-[12px]/3.5 font-semibold text-white",
+                selectedManager.status === "suspended"
+                  ? "border border-[oklch(0.6402_0.1639_148.43/50%)] bg-[#008A00] hover:bg-[#0A6D0A]"
+                  : "border border-[oklch(0.5477_0.2177_21.48/50%)] bg-[#BE001E] hover:bg-[#A00018]",
+              )}
+            >
+              {isTogglingAccess
+                ? `${accessActionLabel}ing...`
+                : `Yes, ${accessActionLabel} Access`}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

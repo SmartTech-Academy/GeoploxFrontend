@@ -56,7 +56,6 @@ const TrialExpired: React.FC<Props> = ({ setOpen, open }) => {
   const currentPlanData = plans[currentPlan];
 
   const handleUpgrade = () => {
-    // console.log(`Upgrading to ${currentPlanData.title}`);
     setOpen(false);
   };
 
