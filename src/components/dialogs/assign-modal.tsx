@@ -195,7 +195,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
                 >
                   Region
                   {assignmentMode === "region" && (
-                    <div className="h-2 w-2 rounded-full bg-[#D4AF36]" />
+                    <div className="size-2 rounded-full bg-[#D4AF36]" />
                   )}
                 </button>
                 <button
@@ -209,14 +209,14 @@ const AssignModal: React.FC<AssignModalProps> = ({
                 >
                   Developer/ Owner
                   {assignmentMode === "users" && (
-                    <div className="h-2 w-2 rounded-full bg-[#D4AF36]" />
+                    <div className="size-2 rounded-full bg-[#D4AF36]" />
                   )}
                 </button>
               </div>
 
               {/* REGION MODE CONTENT */}
               {assignmentMode === "region" && (
-                <div className="animate-in fade-in slide-in-from-top-2 flex flex-col gap-4 duration-200">
+                <div className="flex animate-in flex-col gap-4 duration-200 fade-in slide-in-from-top-2">
                   <FormField
                     control={form.control}
                     name="state"
@@ -278,7 +278,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 
               {/* DEVELOPER/OWNER MODE CONTENT */}
               {assignmentMode === "users" && (
-                <div className="animate-in fade-in slide-in-from-top-2 flex flex-col gap-4 duration-200">
+                <div className="flex animate-in flex-col gap-4 duration-200 fade-in slide-in-from-top-2">
                   <div className="flex flex-col gap-2">
                     <Input
                       value={search}

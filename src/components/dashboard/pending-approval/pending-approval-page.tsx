@@ -552,7 +552,7 @@ const PendingApprovalPage = () => {
       {/* Desktop View */}
       <div className="hidden size-full lg:flex">
         <ResizablePanelGroup orientation="horizontal">
-          <ResizablePanel defaultSize={50} minSize={30}>
+          <ResizablePanel defaultSize="50%" minSize="30%">
             <Tabs
               value={activeTab}
               onValueChange={handleTabChange}
@@ -583,7 +583,7 @@ const PendingApprovalPage = () => {
             </Tabs>
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={50} minSize={30}>
+          <ResizablePanel defaultSize="50%" minSize="30%">
             <div className="size-full overflow-y-auto">
               <RequestView selectedRequest={selectedRequest} onActionComplete={onActionComplete} />
             </div>

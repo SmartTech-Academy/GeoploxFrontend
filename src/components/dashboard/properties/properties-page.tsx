@@ -1,12 +1,11 @@
 import type React from "react";
-import { useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Search,
   MapPin,
@@ -50,6 +49,7 @@ import { toast } from "sonner";
 import { PropertyFilterSidebar } from "@/components/property-filter-sidebar";
 import Map from "@/components/google-map";
 import { useGetProfileData } from "@/lib/services/profile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Updated TypeScript interfaces to match API response
 interface PropertyOwner {
@@ -118,9 +118,10 @@ const PropertiesPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(10);
   const { data: profileData } = useGetProfileData();
+  const isMobile = useIsMobile();
   const isAdminListingPage =
     typeof window !== "undefined" && window.location.pathname.includes("/admin-listing");
-  const shouldAutoSelectProperty = !isAdminListingPage;
+  const shouldAutoSelectProperty = !isAdminListingPage || !isMobile;
   const includeOwnerName =
     !isAdminListingPage &&
     (profileData?.user_role === "owner" || profileData?.user_role === "developer");
@@ -194,9 +195,7 @@ const PropertiesPage: React.FC = () => {
       setSelectedProperty((currentSelection) => {
         if (!currentSelection) return null;
 
-        return (
-          properties.find((property: Property) => property.id === currentSelection.id) ?? null
-        );
+        return properties.find((property: Property) => property.id === currentSelection.id) ?? null;
       });
       return;
     }
@@ -287,7 +286,7 @@ const PropertiesPage: React.FC = () => {
   };
 
   const PropertyList: React.FC = () => (
-    <div className="flex h-full min-w-0 flex-col gap-4 bg-white lg:px-4 xl:px-6">
+    <div className="flex h-full flex-col gap-4 bg-white lg:px-6">
       <div className="flex items-center justify-between border-b border-[#E8E8E8] pb-4">
         <h1 className="text-[24px] font-semibold text-[#1F2130]">Properties</h1>
         <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
@@ -585,7 +584,7 @@ const PropertiesPage: React.FC = () => {
     };
 
     return (
-      <div className="flex h-full min-w-0 flex-col bg-white lg:pl-4 xl:pl-6">
+      <div className="flex h-full flex-col bg-white lg:pl-6">
         {/* Header */}
         <div className="flex flex-col items-start gap-4 border-b border-[#E8E8E8] p-4 md:flex-row md:items-center md:justify-between lg:p-6">
           <h1 className="text-[24px] font-semibold text-[#1F2130]">
@@ -611,8 +610,8 @@ const PropertiesPage: React.FC = () => {
         {!selectedProperty ? (
           <EmptyState type="chat" />
         ) : (
-          <div className="flex w-full min-w-0 flex-col xl:flex-row">
-            <div className="w-full min-w-0 xl:w-[64%]">
+          <div className="flex w-full flex-col lg:flex-row">
+            <div className="w-full lg:w-2/3">
               {/* Content */}
               <div className="flex h-auto flex-1 flex-col gap-4 overflow-y-auto p-4 lg:h-[calc(100svh-150px)] lg:p-6">
                 {/* Image Gallery */}
@@ -826,7 +825,7 @@ const PropertiesPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="w-full min-w-0 border-t border-gray-200 xl:w-[36%] xl:border-t-0 xl:border-l">
+            <div className="w-full border-l border-gray-200 lg:w-1/3">
               <PropertyStats />
             </div>
           </div>
@@ -839,7 +838,7 @@ const PropertiesPage: React.FC = () => {
     if (!selectedProperty) return null;
 
     return (
-      <div className="flex min-w-0 flex-col items-start gap-4 p-4 pt-6 lg:p-6">
+      <div className="flex flex-col items-start gap-4 pt-6 pl-4">
         <div className="w-full border-b border-[#F1F1F4] pb-4">
           <div className="flex flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
             <div className="flex items-center gap-3 self-stretch">
@@ -913,7 +912,7 @@ const PropertiesPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="h-[320px] w-full lg:h-[358px]">
+        <div className="h-[358px] w-full">
           <Map
             address={selectedProperty?.location?.address || selectedProperty?.address || ""}
             city={selectedProperty?.location?.city || selectedProperty?.city || ""}
@@ -926,7 +925,7 @@ const PropertiesPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-full min-w-0 flex-col items-start gap-0 self-stretch py-6 lg:py-8">
+    <div className="flex h-screen w-full flex-col items-start gap-0 self-stretch py-8 lg:flex-row">
       <PageMetaTags
         title="Manage Properties"
         description="View and manage all your listed properties, track performance, and update details."
@@ -962,20 +961,20 @@ const PropertiesPage: React.FC = () => {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden size-full min-w-0 lg:flex">
+      <div className="hidden size-full lg:flex">
         <ResizablePanelGroup orientation="horizontal" className="size-full">
           <ResizablePanel
-            defaultSize={32}
-            minSize={24}
-            maxSize={40}
+            defaultSize="25%"
+            minSize="20%"
+            maxSize="35%"
             className="border-r border-[#F1F1F4]"
           >
             <div className="h-full">
               <PropertyList />
             </div>
           </ResizablePanel>
-          <ResizableHandle className="w-px hover:bg-gray-200" />
-          <ResizablePanel defaultSize={68} minSize={60}>
+          <ResizableHandle withHandle className="w-px hover:bg-gray-200" />
+          <ResizablePanel defaultSize="75%" minSize="60%">
             <PropertyDetails />
           </ResizablePanel>
         </ResizablePanelGroup>

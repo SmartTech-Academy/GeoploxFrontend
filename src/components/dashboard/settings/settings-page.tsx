@@ -143,19 +143,19 @@ const SettingsPage = () => {
         <ResizablePanelGroup orientation="horizontal" className="size-full">
           {/* Sidebar Panel */}
           <ResizablePanel
-            defaultSize={35}
-            minSize={25}
-            maxSize={50}
+            defaultSize="35%"
+            minSize="25%"
+            maxSize="50%"
             className="border-r border-[#F1F1F4]"
           >
             <SettingsSidebar user={user} activeTab={activeTab} handleTabChange={handleTabChange} />
           </ResizablePanel>
 
           {/* Resizable Handle */}
-          <ResizableHandle className="w-px bg-gray-200 hover:bg-gray-300" />
+          <ResizableHandle withHandle className="w-px bg-gray-200 hover:bg-gray-300" />
 
           {/* Content Panel */}
-          <ResizablePanel defaultSize={65} minSize={50}>
+          <ResizablePanel defaultSize="65%" minSize="50%">
             <div className="flex h-full overflow-y-auto p-8">{renderContent()}</div>
           </ResizablePanel>
         </ResizablePanelGroup>

@@ -91,7 +91,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
                           {...field}
                         />
                         <span
-                          className="absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px]/3.5  font-semibold text-primary hover:underline"
+                          className="absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px]/3.5 font-semibold text-primary hover:underline"
                           onClick={() => setShowOldPassword((prev) => !prev)}
                         >
                           {showOldPassword ? "Hide" : "Show"}
@@ -121,7 +121,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
                           {...field}
                         />
                         <span
-                          className="absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px]/3.5  font-semibold text-primary hover:underline"
+                          className="absolute top-6 right-4 -translate-y-1/2 transform cursor-pointer text-[12px]/3.5 font-semibold text-primary hover:underline"
                           onClick={() => setShowNewPassword((prev) => !prev)}
                         >
                           {showNewPassword ? "Hide" : "Show"}

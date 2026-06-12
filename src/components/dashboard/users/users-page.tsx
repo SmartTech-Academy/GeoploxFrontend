@@ -225,9 +225,9 @@ const UsersPage = () => {
       <div className="hidden size-full lg:flex">
         <ResizablePanelGroup orientation="horizontal" className="size-full">
           <ResizablePanel
-            defaultSize={35}
-            minSize={25}
-            maxSize={50}
+            defaultSize="35%"
+            minSize="25%"
+            maxSize="50%"
             className="border-r border-[#F1F1F4]"
           >
             <UserList
@@ -240,8 +240,8 @@ const UsersPage = () => {
               setSearchQuery={setSearchQuery}
             />
           </ResizablePanel>
-          <ResizableHandle className="w-px bg-[#F1F1F4] hover:bg-gray-200" />
-          <ResizablePanel defaultSize={65} minSize={50}>
+          <ResizableHandle withHandle className="w-px bg-[#F1F1F4] hover:bg-gray-200" />
+          <ResizablePanel defaultSize="65%" minSize="50%">
             <div className="h-[calc(100svh-150px)] w-full overflow-y-auto pl-8">
               <UserView
                 selectedUser={selectedUser}

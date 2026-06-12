@@ -47,7 +47,6 @@ function RouteComponent() {
   const [countdown, setCountdown] = useState(0);
   const [localOTP, setLocalOTP] = useState("");
 
-  console.log("email", email);
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => {

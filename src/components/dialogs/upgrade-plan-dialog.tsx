@@ -87,7 +87,7 @@ export const UpgradePlanDialog: React.FC<UpgradePlanDialogProps> = ({ open, onOp
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="mx-auto w-fit overflow-hidden rounded-xl border border-[#F1F1F4] bg-white p-1.5">
-                <div className="flex w-full items-center gap-3 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex w-full scrollbar-none items-center gap-3 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                   {["Monthly", "Annually"].map((tab) => (
                     <Button
                       key={tab}
