@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Search,
   MapPin,
@@ -131,6 +131,7 @@ const PropertiesPage: React.FC = () => {
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(10);
+  const selectedPropertyIdRef = useRef<string | null>(null);
   const { data: profileData } = useGetProfileData();
   const isMobile = useIsMobile();
   const isAdminListingPage =
@@ -210,6 +211,7 @@ const PropertiesPage: React.FC = () => {
   useEffect(() => {
     if (properties.length === 0) {
       setSelectedProperty(null);
+      setCurrentImageIndex(0);
       return;
     }
 
@@ -233,6 +235,14 @@ const PropertiesPage: React.FC = () => {
       return properties[0];
     });
   }, [properties, shouldAutoSelectProperty]);
+
+  useEffect(() => {
+    const selectedPropertyId = selectedProperty?.id ?? null;
+    if (selectedPropertyIdRef.current !== selectedPropertyId) {
+      selectedPropertyIdRef.current = selectedPropertyId;
+      setCurrentImageIndex(0);
+    }
+  }, [selectedProperty?.id]);
 
   const handleDelete = async () => {
     if (!selectedProperty) return;
@@ -608,10 +618,6 @@ const PropertiesPage: React.FC = () => {
 
       return images;
     }, [selectedProperty]);
-
-    useEffect(() => {
-      setCurrentImageIndex(0);
-    }, [allImages.length, selectedProperty?.id]);
 
     const nextImage = () => {
       setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));

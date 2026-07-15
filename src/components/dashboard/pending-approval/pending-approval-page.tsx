@@ -24,6 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import assets from "@/assets";
 import LoadingFallback from "@/components/loading-fallback";
+import { toast } from "sonner";
 
 // --- TYPE DEFINITIONS ---
 interface KYCDetails {
@@ -73,6 +74,10 @@ const formatApprovalDate = (value?: string | null) => {
   if (!isValid(parsedDate)) return "N/A";
 
   return format(parsedDate, "dd MMM, yyyy");
+};
+
+const getMutationErrorMessage = (error: any) => {
+  return error?.response?.data?.message || error?.message || "Request failed. Please try again.";
 };
 
 // --- EMPTY STATE COMPONENT ---
@@ -247,6 +252,9 @@ const RequestView: FC<{ selectedRequest: Request | null; onActionComplete: () =>
       setApproveDialogOpen(false);
       setDeclineDialogOpen(false);
       onActionComplete();
+    },
+    onError: (error: any) => {
+      toast.error(getMutationErrorMessage(error));
     },
   };
 
