@@ -59,28 +59,63 @@ const AdminInsights = () => {
 
   const { data: performanceData, isLoading } = useGetPlatformPerformance({ period, filter });
 
-  const totals = performanceData?.data?.data?.totals;
-  const kpis = performanceData?.data?.data?.kpis;
-  const listingActivities = performanceData?.data?.data?.listing_activities;
-  const conversions = performanceData?.data?.data?.conversions;
+  const normalizedData = useMemo(() => {
+    const payload = performanceData?.data?.data;
+    if (!payload) return null;
+
+    const nestedPayload = payload.data && typeof payload.data === "object" ? payload.data : payload;
+
+    return {
+      totals: payload.totals || nestedPayload.totals || nestedPayload.cards,
+      kpis: payload.kpis || nestedPayload.kpis || nestedPayload.cards,
+      listingActivities:
+        payload.listing_activities ||
+        nestedPayload.listing_activities ||
+        nestedPayload.listingActivities,
+      conversions: payload.conversions || nestedPayload.conversions,
+    };
+  }, [performanceData]);
+
+  const totals = normalizedData?.totals;
+  const kpis = normalizedData?.kpis;
+  const listingActivities = normalizedData?.listingActivities;
+  const conversions = normalizedData?.conversions;
 
   const listingActivitiesData = useMemo(() => {
     if (!listingActivities) return [];
+    if (Array.isArray(listingActivities)) {
+      return listingActivities.map((item: any) => ({
+        name: item.month,
+        "For Sale": item.forSale || item.for_sale || 0,
+        "For Rent": item.forRent || item.rent || item.for_rent || 0,
+        "Short Let": item.shortLet || item.short_let || 0,
+      }));
+    }
+
     return listingActivities.labels.map((label: any, index: number) => ({
       name: label,
-      "For Sale": listingActivities.series.for_sale[index] || 0,
-      "For Rent": listingActivities.series.for_rent[index] || 0,
-      "Short Let": listingActivities.series.short_let[index] || 0,
+      "For Sale": listingActivities.series.for_sale?.[index] || 0,
+      "For Rent": listingActivities.series.for_rent?.[index] || 0,
+      "Short Let": listingActivities.series.short_let?.[index] || 0,
     }));
   }, [listingActivities]);
 
   const conversionChartData = useMemo(() => {
     if (!conversions) return [];
+    if (Array.isArray(conversions)) {
+      return conversions.map((item: any) => ({
+        month: item.month,
+        forSale: item.forSale || item.for_sale || 0,
+        rent: item.forRent || item.rent || item.for_rent || 0,
+        shortLet: item.shortLet || item.short_let || 0,
+      }));
+    }
+
     return conversions.labels.map((label: any, index: number) => ({
       month: label,
-      forSale: conversions.series.for_sale[index] || 0,
-      rent: conversions.series.for_rent[index] || 0,
-      shortLet: conversions.series.short_let[index] || 0,
+      forSale: conversions.series.for_sale?.[index] || 0,
+      rent: conversions.series.for_rent?.[index] || 0,
+      shortLet: conversions.series.short_let?.[index] || 0,
     }));
   }, [conversions]);
 

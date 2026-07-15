@@ -125,15 +125,19 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
 
   return (
     <div className="flex w-full flex-col items-center justify-between gap-4 self-stretch border-b border-[#F1F1F4] pb-10 lg:flex-row lg:gap-[89px]">
-      <div className="grid h-[266px] grid-cols-2 gap-2 lg:w-[463px] lg:shrink-0">
+      <div className="grid w-full grid-cols-2 gap-2 lg:w-[463px] lg:shrink-0">
         {/* Large Image - spans 2 rows */}
-        <div className="row-span-2 max-h-[266px]">
-          <img src={property.cover_image} alt={property.title} className="size-full object-cover" />
+        <div className="row-span-2 aspect-[4/5] overflow-hidden rounded-[12px] bg-[#F5F5F7]">
+          <img
+            src={property.cover_image}
+            alt={property.title}
+            className="size-full object-cover"
+          />
         </div>
 
         <div className="flex flex-col gap-2">
           {/* Small Image 1 */}
-          <div className="h-[129px] w-full">
+          <div className="aspect-[4/3] overflow-hidden rounded-[12px] bg-[#F5F5F7]">
             <img
               src={
                 property?.thumbnail_images?.[1] ||
@@ -145,7 +149,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
             />
           </div>
           {/* Small Image 2 */}
-          <div className="h-[129px]">
+          <div className="aspect-[4/3] overflow-hidden rounded-[12px] bg-[#F5F5F7]">
             <img
               src={
                 property?.thumbnail_images?.[2] ||

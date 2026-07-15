@@ -139,7 +139,6 @@ const GettingStarted = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [accountType, setAccountType] = useState<AccountType | undefined>();
-  const [minStep, setMinStep] = useState(0); // This will be our "floor"
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { mutateAsync: setAccountTypeMutate } = useSetAccountType();
@@ -192,11 +191,6 @@ const GettingStarted = () => {
       const stepIndex = getStepIndexFromStatus(profileData.onboarding_status, flow);
 
       if (stepIndex !== -1) {
-        // If the user has progressed past the account type selection,
-        // the minimum step they can go back to is the next one (index 1).
-        if (stepIndex > 0) {
-          setMinStep(1);
-        }
         setCurrentStep(stepIndex);
       }
     }
@@ -308,8 +302,7 @@ const GettingStarted = () => {
   };
 
   const goToPreviousStep = () => {
-    if (currentStep > minStep) {
-      // Use minStep to prevent going back to step 0
+    if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
@@ -518,10 +511,10 @@ const GettingStarted = () => {
                       type="button"
                       variant="outline"
                       onClick={goToPreviousStep}
-                      disabled={currentStep <= minStep} // Disable if at the minimum allowed step
+                      disabled={currentStep === 0}
                       className={cn(
                         "h-12 flex-1 rounded-full border-[#E3E3E8] bg-transparent",
-                        currentStep <= minStep && "hidden", // Hide if at the minimum allowed step
+                        currentStep === 0 && "hidden",
                       )}
                     >
                       Back

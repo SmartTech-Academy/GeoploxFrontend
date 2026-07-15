@@ -134,6 +134,19 @@ const documentTypes = [
   "Others",
 ];
 
+const createExistingFileState = (url?: string): DocumentState | null => {
+  if (!url) return null;
+
+  const filename = url.split("/").pop() || "existing-file";
+
+  return {
+    file: new File([], filename),
+    preview: url,
+    status: "success",
+    url,
+  };
+};
+
 const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData }) => {
   const router = useRouter();
 
@@ -150,6 +163,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const [proofOfAddress, setProofOfAddress] = useState<DocumentState | null>(null);
   const [hoveredImage, setHoveredImage] = useState<number | null>(null);
   const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
+  const [imageReplaceIndex, setImageReplaceIndex] = useState<number | null>(null);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
@@ -289,53 +303,125 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    if (propertyImages.length + files.length > 15) {
+    const isReplacingImage = imageReplaceIndex !== null;
+    const maxAllowedImages = isReplacingImage ? propertyImages.length : propertyImages.length + files.length;
+
+    if (!isReplacingImage && propertyImages.length + files.length > 15) {
       toast.error("You can upload a maximum of 15 images.");
+      event.target.value = "";
       return;
     }
-    if (files.length > 0) {
-      const optimizedFiles = await Promise.all(
-        files.map((file) => optimizeImageBeforeUpload(file)),
-      );
-      const newImageStates: FileState[] = optimizedFiles.map((file) => ({
-        file,
-        preview: URL.createObjectURL(file),
-        status: "uploading",
-      }));
 
-      setPropertyImages((prev) => [...prev, ...newImageStates]);
-
-      const uploadPromises = newImageStates.map((imageState, index) => {
-        const formData = new FormData();
-        formData.append("property_images_data", imageState.file);
-        formData.append("image_number", String(propertyImages.length + index + 1));
-        return uploadImage(formData).then((response) => ({
-          ...imageState,
-          status: "success" as const,
-          url: response.data.data.image_url,
-        }));
-      });
-
-      Promise.all(uploadPromises)
-        .then((results) => {
-          setPropertyImages((prev) =>
-            prev.map((img) => {
-              const successUpload = results.find((r) => r.preview === img.preview);
-              return successUpload || img;
-            }),
-          );
-        })
-        .catch(() => {
-          toast.error("Some images failed to upload.");
-          setPropertyImages((prev) =>
-            prev.map((img) =>
-              newImageStates.some((s) => s.preview === img.preview)
-                ? { ...img, status: "error", error: "Upload failed" }
-                : img,
-            ),
-          );
-        });
+    if (files.length === 0) {
+      event.target.value = "";
+      return;
     }
+
+    const uploadFiles = isReplacingImage ? files.slice(0, 1) : files;
+    const optimizedFiles = await Promise.all(uploadFiles.map((file) => optimizeImageBeforeUpload(file)));
+    const newImageStates: FileState[] = optimizedFiles.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+      status: "uploading",
+    }));
+
+    if (isReplacingImage) {
+      const replacementIndex = imageReplaceIndex;
+      const imageBeingReplaced = replacementIndex !== null ? propertyImages[replacementIndex] : null;
+
+      if (replacementIndex === null || !imageBeingReplaced) {
+        setImageReplaceIndex(null);
+        event.target.value = "";
+        return;
+      }
+
+      setPropertyImages((prev) =>
+        prev.map((img, index) => (index === replacementIndex ? newImageStates[0] : img)),
+      );
+
+      try {
+        const formData = new FormData();
+        formData.append("property_images_data", newImageStates[0].file);
+        formData.append("image_number", String(replacementIndex + 1));
+        const response = await uploadImage(formData);
+
+        if (imageBeingReplaced.url) {
+          try {
+            await deletePropertyImage(imageBeingReplaced.url);
+          } catch {
+            toast.error("Image replaced, but the previous file could not be deleted.");
+          }
+        }
+
+        setPropertyImages((prev) =>
+          prev.map((img, index) =>
+            index === replacementIndex
+              ? {
+                  ...newImageStates[0],
+                  status: "success",
+                  url: response.data.data.image_url,
+                }
+              : img,
+          ),
+        );
+      } catch {
+        toast.error("Failed to replace image.");
+        setPropertyImages((prev) =>
+          prev.map((img, index) =>
+            index === replacementIndex
+              ? { ...newImageStates[0], status: "error", error: "Upload failed" }
+              : img,
+          ),
+        );
+      } finally {
+        setImageReplaceIndex(null);
+        event.target.value = "";
+      }
+
+      return;
+    }
+
+    if (maxAllowedImages > 15) {
+      toast.error("You can upload a maximum of 15 images.");
+      event.target.value = "";
+      return;
+    }
+
+    setPropertyImages((prev) => [...prev, ...newImageStates]);
+
+    const uploadPromises = newImageStates.map((imageState, index) => {
+      const formData = new FormData();
+      formData.append("property_images_data", imageState.file);
+      formData.append("image_number", String(propertyImages.length + index + 1));
+      return uploadImage(formData).then((response) => ({
+        ...imageState,
+        status: "success" as const,
+        url: response.data.data.image_url,
+      }));
+    });
+
+    Promise.all(uploadPromises)
+      .then((results) => {
+        setPropertyImages((prev) =>
+          prev.map((img) => {
+            const successUpload = results.find((r) => r.preview === img.preview);
+            return successUpload || img;
+          }),
+        );
+      })
+      .catch(() => {
+        toast.error("Some images failed to upload.");
+        setPropertyImages((prev) =>
+          prev.map((img) =>
+            newImageStates.some((s) => s.preview === img.preview)
+              ? { ...img, status: "error", error: "Upload failed" }
+              : img,
+          ),
+        );
+      })
+      .finally(() => {
+        event.target.value = "";
+      });
   };
 
   const handleDocumentUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -413,6 +499,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
     }
   }, [proofOfAddress, form]);
 
+  useEffect(() => {
+    setPropertyDocument(createExistingFileState(initialData?.propertyDocument));
+    setProofOfAddress(createExistingFileState(initialData?.proofOfAddress));
+  }, [initialData?.propertyDocument, initialData?.proofOfAddress]);
+
   const handleImageRemove = async (index: number) => {
     const imageToRemove = propertyImages[index];
 
@@ -438,7 +529,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
     }
   };
   const handleImageReplace = (index: number) => {
-    handleImageRemove(index);
+    setImageReplaceIndex(index);
     imageInputRef.current?.click();
   };
 
@@ -463,6 +554,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
   const handleDocumentRemove = () => {
     setPropertyDocument(null);
+    form.setValue("propertyDocument", "");
     if (documentInputRef.current) {
       documentInputRef.current.value = "";
     }
@@ -475,6 +567,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
   const handleProofOfAddressRemove = () => {
     setProofOfAddress(null);
+    form.setValue("proofOfAddress", "");
     if (proofOfAddressInputRef.current) {
       proofOfAddressInputRef.current.value = "";
     }
@@ -770,23 +863,27 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                       Area (Optional)
                     </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value || ""}
-                        placeholder={
-                          selectedLga ? "Type area (or leave blank)" : "Select locality first"
-                        }
-                        className="h-10 rounded-lg border-[#D5D5DD]"
-                        list="area-suggestions"
-                        disabled={!selectedLga}
-                      />
-                    </FormControl>
-                    <datalist id="area-suggestions">
-                      {areas.map((area, index) => (
-                        <option key={`${area}${index}`} value={area} />
-                      ))}
-                    </datalist>
+                    <Select
+                      disabled={!selectedLga || areas.length === 0}
+                      onValueChange={(value) => field.onChange(value === "__none__" ? "" : value)}
+                      value={field.value || "__none__"}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD] bg-white">
+                          <SelectValue
+                            placeholder={selectedLga ? "Select area" : "Select locality first"}
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-white">
+                        <SelectItem value="__none__">None</SelectItem>
+                        {areas.map((area, index) => (
+                          <SelectItem key={`${area}${index}`} value={area}>
+                            {area}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -1089,7 +1186,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                 ref={imageInputRef}
                 type="file"
                 accept=".jpg,.jpeg,.png,.webp"
-                multiple
+                multiple={imageReplaceIndex === null}
                 onChange={handleImageUpload}
                 className="hidden"
               />

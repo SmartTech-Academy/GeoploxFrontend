@@ -58,6 +58,8 @@ const PropertiesDetails = () => {
         price: property.price,
         currency: property.currency,
         images: property.images?.map((img: { url: string }) => img.url) || [],
+        propertyDocument: property.property_document || "",
+        proofOfAddress: property.proof_of_address || "",
         features: property.features || [],
         status: property.property_status || [],
       }

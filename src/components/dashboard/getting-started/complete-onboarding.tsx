@@ -94,7 +94,7 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#41415A]">Home Address</label>
+            <label className="text-[14px] font-medium text-[#41415A]">Address</label>
             <p className="text-[14px] text-[#1F2130]">
               {summary.home_address}, {summary.local_gov_area}, {summary.state}
             </p>

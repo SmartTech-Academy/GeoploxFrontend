@@ -39,7 +39,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import assets from "@/assets";
-import { cn } from "@/lib/utils";
+import { cn, slugify } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import DeleteProperty from "@/components/dialogs/delete-property";
 import { PageMetaTags } from "@/components/page-meta-data";
@@ -108,6 +108,20 @@ interface Property {
 
 type StatusFilterType = "published" | "archived" | "draft";
 
+const getPublicPropertyBasePath = (category?: string) => {
+  switch (category?.toLowerCase()) {
+    case "for rent":
+      return "/for-rent";
+    case "short let":
+      return "/short-let";
+    case "joint venture":
+      return "/joint-venture";
+    case "for sale":
+    default:
+      return "/for-sale";
+  }
+};
+
 const PropertiesPage: React.FC = () => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [statusFilter, setStatusFilter] = useState<StatusFilterType>("published");
@@ -160,7 +174,15 @@ const PropertiesPage: React.FC = () => {
 
   const handleShare = () => {
     if (!selectedProperty) return;
-    const shareUrl = `${window.location.origin}/listing/${selectedProperty.slug}`;
+    const locationData = selectedProperty.location;
+    const sharePath = [
+      getPublicPropertyBasePath(selectedProperty.category),
+      slugify(selectedProperty.property_type),
+      slugify(locationData?.state || selectedProperty.state || ""),
+      slugify(locationData?.city || selectedProperty.city || ""),
+      selectedProperty.slug || selectedProperty.id,
+    ].join("/");
+    const shareUrl = `${window.location.origin}${sharePath}`;
     if (navigator.share) {
       navigator
         .share({
@@ -225,12 +247,20 @@ const PropertiesPage: React.FC = () => {
 
   const handleArchive = (action: "archive" | "restore") => {
     if (!selectedProperty) return;
-    archiveProperty({ propertyId: selectedProperty.id, action });
+    archiveProperty(
+      { propertyId: selectedProperty.id, action, isAdminListing: isAdminListingPage },
+      {
+        onSuccess: () => {
+          setSelectedProperty(null);
+        },
+      },
+    );
   };
 
   // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    setCurrentImageIndex(0);
     // Scroll to top of list when changing page
     const listContainer = document.querySelector(".property-list-container");
     if (listContainer) {
@@ -242,6 +272,7 @@ const PropertiesPage: React.FC = () => {
   const handlePerPageChange = (newPerPage: number) => {
     setPerPage(newPerPage);
     setCurrentPage(1); // Reset to first page when changing items per page
+    setCurrentImageIndex(0);
   };
 
   const EmptyState = ({ type }: { type: "chat" | "list" }) => {
@@ -402,7 +433,10 @@ const PropertiesPage: React.FC = () => {
               return (
                 <div
                   key={property.id}
-                  onClick={() => setSelectedProperty(property)}
+                  onClick={() => {
+                    setSelectedProperty(property);
+                    setCurrentImageIndex(0);
+                  }}
                   className={`cursor-pointer border-b border-[#E3E3E8] p-4 transition-colors hover:bg-gray-50 ${
                     selectedProperty?.id === property.id ? "bg-[#FDF9ED]" : ""
                   }`}
@@ -573,7 +607,11 @@ const PropertiesPage: React.FC = () => {
       }
 
       return images;
-    }, []);
+    }, [selectedProperty]);
+
+    useEffect(() => {
+      setCurrentImageIndex(0);
+    }, [allImages.length, selectedProperty?.id]);
 
     const nextImage = () => {
       setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
@@ -626,6 +664,7 @@ const PropertiesPage: React.FC = () => {
                       {allImages.length > 1 && (
                         <>
                           <Button
+                            type="button"
                             variant="ghost"
                             size="sm"
                             onClick={prevImage}
@@ -634,6 +673,7 @@ const PropertiesPage: React.FC = () => {
                             <ChevronLeft className="size-4" />
                           </Button>
                           <Button
+                            type="button"
                             variant="ghost"
                             size="sm"
                             onClick={nextImage}
@@ -650,6 +690,7 @@ const PropertiesPage: React.FC = () => {
                       <div className="mt-4 flex gap-2 overflow-x-auto">
                         {allImages.slice(0, 4).map((image, index) => (
                           <button
+                            type="button"
                             key={index}
                             onClick={() => setCurrentImageIndex(index)}
                             className={`relative size-20 shrink-0 overflow-hidden rounded-[6px] ${

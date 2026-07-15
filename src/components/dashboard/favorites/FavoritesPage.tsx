@@ -5,7 +5,21 @@ import { EmptyState } from "@/components/empty-state";
 
 const FavoritesPage = () => {
   const { data: favoritesResponse, isLoading } = useGetFavorites();
-  const favorites = favoritesResponse?.data?.data || [];
+  const favorites =
+    favoritesResponse?.data?.data?.data?.map((property: any) => ({
+      ...property,
+      cover_image:
+        property.cover_image || property.images?.find((img: any) => img.is_cover)?.url || "",
+      excerpt: property.excerpt || property.desc || "",
+      location: {
+        city: property.location?.city || property.city || "N/A",
+        state: property.location?.state || property.state || "N/A",
+      },
+      category:
+        typeof property.category === "string"
+          ? property.category
+          : property.category?.title || property.category?.slug || "N/A",
+    })) || [];
 
   return (
     <div className="p-4">

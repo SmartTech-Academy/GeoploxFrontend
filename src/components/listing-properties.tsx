@@ -18,7 +18,7 @@ const ListingProperties = () => {
   const isAdminListingPage = location.pathname.includes("/admin-listing");
   const isProperties = location.pathname.includes("/properties");
   const pageType = location.pathname.includes("/short-let")
-    ? `buy`
+    ? `short-let`
     : location.pathname.includes("/for-rent")
       ? `for-rent`
       : location.pathname.includes("/for-sale")
@@ -31,6 +31,28 @@ const ListingProperties = () => {
     page: 1,
     sort: "newest",
   });
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const nextFilters: Record<string, any> = {
+      page: 1,
+      sort: params.get("sort") || "newest",
+    };
+
+    const state = params.get("state");
+    const city = params.get("city");
+    const area = params.get("area");
+
+    if (state) nextFilters.state = state;
+    if (city) nextFilters.city = city;
+    if (area) nextFilters.area = area;
+
+    setFilters((prev) => {
+      const prevSerialized = JSON.stringify(prev);
+      const nextSerialized = JSON.stringify(nextFilters);
+      return prevSerialized === nextSerialized ? prev : nextFilters;
+    });
+  }, [location.search]);
 
   const [debouncedFilters] = useDebounce(filters, 300);
   const shouldIncludeOwnerName =
@@ -156,7 +178,7 @@ const ListingProperties = () => {
                   ? "My Listings"
                   : `${
                       location.pathname.includes("/short-let")
-                        ? "Buy"
+                        ? "Short Let"
                         : location.pathname.includes("/for-rent")
                           ? "Rent"
                           : "Sell"

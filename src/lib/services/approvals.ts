@@ -17,52 +17,72 @@ export const useGetApprovals = (params?: any) => {
 };
 
 export const useVerifyUser = (options?: UseMutationOptions<any, any, string>) => {
+  const { onSuccess, onError, ...mutationOptions } = options ?? {};
+
   return useMutation({
     mutationFn: (userCodec: string) => {
       return api.put(`/dashboard/admin/verify?user_codec=${userCodec}`);
     },
-    onSuccess: (response: AxiosResponse<ApiResponse>) => {
+    onSuccess: async (response: AxiosResponse<ApiResponse>, variables, context) => {
       toast.success(response.data.message || "User verified successfully!");
-      queryClient.invalidateQueries({ queryKey: ["approvals"] });
+      await queryClient.invalidateQueries({ queryKey: ["approvals"] });
+      await onSuccess?.(response, variables, context, undefined as never);
     },
-
-    ...options,
+    onError: async (error, variables, context) => {
+      await onError?.(error, variables, context, undefined as never);
+    },
+    ...mutationOptions,
   });
 };
 
 export const useApproveRequest = (options?: UseMutationOptions<any, any, string>) => {
+  const { onSuccess, onError, ...mutationOptions } = options ?? {};
+
   return useMutation({
     mutationFn: (propertyId: string) => {
       const formData = new FormData();
       formData.append("property_id", propertyId);
       return api.put("/dashboard/admin/approver", formData);
     },
-    onSuccess: (response: AxiosResponse<ApiResponse>) => {
+    onSuccess: async (response: AxiosResponse<ApiResponse>, variables, context) => {
       toast.success(response.data.message || "Request approved successfully!");
-      queryClient.invalidateQueries({ queryKey: ["approvals"] });
+      await queryClient.invalidateQueries({ queryKey: ["approvals"] });
+      await onSuccess?.(response, variables, context, undefined as never);
     },
-
-    ...options,
+    onError: async (error, variables, context) => {
+      await onError?.(error, variables, context, undefined as never);
+    },
+    ...mutationOptions,
   });
 };
 
-export const useDeclineRequest = (
-  options?: UseMutationOptions<any, any, { id: string; reason: string }>,
-) => {
+type DeclineRequestPayload = {
+  id: string;
+  reason: string;
+  type: "KYC" | "Listing";
+};
+
+export const useDeclineRequest = (options?: UseMutationOptions<any, any, DeclineRequestPayload>) => {
+  const { onSuccess, onError, ...mutationOptions } = options ?? {};
+
   return useMutation({
-    mutationFn: (data: { id: string; reason: string }) => {
+    mutationFn: (data: DeclineRequestPayload) => {
+      if (data.type === "KYC") {
+        return api.put(`/dashboard/admin/decline/verify?user_codec=${data.id}`);
+      }
+
       const formData = new FormData();
-      // This endpoint is not in Postman, assuming it takes a generic 'id' and 'reason'
-      // It might need to be split like the approval endpoint if it has different routes/params
-      formData.append("id", data.id);
-      formData.append("reason", data.reason);
-      // NOTE: The endpoint '/dashboard/admin/decline' is assumed. Please update if it's different.
+      formData.append("property_id", data.id);
       return api.put("/dashboard/admin/decline", formData);
     },
-    onSuccess: (response: AxiosResponse<ApiResponse>) => {
+    onSuccess: async (response: AxiosResponse<ApiResponse>, variables, context) => {
       toast.success(response.data.message || "Request declined successfully!");
-      queryClient.invalidateQueries({ queryKey: ["approvals"] });
+      await queryClient.invalidateQueries({ queryKey: ["approvals"] });
+      await onSuccess?.(response, variables, context, undefined as never);
     },
-    ...options,
+    onError: async (error, variables, context) => {
+      await onError?.(error, variables, context, undefined as never);
+    },
+    ...mutationOptions,
   });
 };

@@ -278,7 +278,7 @@ const RequestView: FC<{ selectedRequest: Request | null; onActionComplete: () =>
 
   const handleDecline = (reason: string) => {
     if (!selectedRequest) return;
-    declineRequest({ id: String(selectedRequest.id), reason });
+    declineRequest({ id: String(selectedRequest.id), reason, type: selectedRequest.type });
   };
 
   const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
@@ -330,7 +330,7 @@ const RequestView: FC<{ selectedRequest: Request | null; onActionComplete: () =>
                 <DetailRow label="Account Type" value={details.accountType} />
                 <DetailRow label="Personal Phone" value={details.personalPhone} />
                 <DetailRow label="Personal Whatsapp" value={details.personalWhatsapp} />
-                <DetailRow label="Home Address" value={details.homeAddress} />
+                <DetailRow label="Address" value={details.homeAddress} />
                 <hr className="my-2 w-full" />
                 <DetailRow label="Business Name" value={details.businessName} />
                 <DetailRow label="Business Email" value={details.businessEmail} />

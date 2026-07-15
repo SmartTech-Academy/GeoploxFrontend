@@ -175,10 +175,21 @@ export const useBlacklistUser = () => {
 
 export const useArchiveProperty = () => {
   return useMutation({
-    mutationFn: ({ propertyId, action }: { propertyId: string; action: "archive" | "restore" }) => {
+    mutationFn: ({
+      propertyId,
+      action,
+      isAdminListing,
+    }: {
+      propertyId: string;
+      action: "archive" | "restore";
+      isAdminListing?: boolean;
+    }) => {
       const formData = new FormData();
       formData.append("action", action);
-      return api.post(`/dashboard/property/${propertyId}/archive`, formData);
+      const endpoint = isAdminListing
+        ? `/dashboard/admin/property/${propertyId}/archive`
+        : `/dashboard/property/${propertyId}/archive`;
+      return api.post(endpoint, formData);
     },
     onSuccess: () => {
       toast.success("Property status updated!");
@@ -216,6 +227,7 @@ export const useAddToFavorites = () => {
     onSuccess: (data) => {
       toast.success(data.data.message || "Property added to favorites!");
       queryClient.invalidateQueries({ queryKey: ["property"] });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to add to favorites.");
@@ -230,6 +242,7 @@ export const useRemoveFromFavorites = (queryKeyToInvalidate: string[] = ["proper
     onSuccess: (data) => {
       toast.success(data.data.message || "Property removed from favorites!");
       queryClient.invalidateQueries({ queryKey: queryKeyToInvalidate });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to remove from favorites.");

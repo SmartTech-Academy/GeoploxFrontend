@@ -108,6 +108,7 @@ const ListingDetail = () => {
   useEffect(() => {
     if (property) {
       setIsFavorited(property.is_favourited);
+      setCurrentImageIndex(0);
     }
   }, [property]);
 
@@ -228,13 +229,9 @@ const ListingDetail = () => {
   };
 
   const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = images[currentImageIndex];
-    const imageName = images[currentImageIndex].split("/").pop();
-    link.download = imageName || `property-image-${currentImageIndex + 1}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const imageUrl = images[currentImageIndex];
+    if (!imageUrl) return;
+    window.open(imageUrl, "_blank", "noopener,noreferrer");
   };
 
   if (isLoadingDetails) {
@@ -506,11 +503,11 @@ const ListingDetail = () => {
           <div className="flex w-full flex-1 flex-col gap-11 lg:max-w-[calc(100%-350px)]">
             <div className="relative flex flex-col gap-[19px]">
               {/* Main Image */}
-              <div className="relative h-[500px] w-full overflow-hidden">
+              <div className="relative flex h-[500px] w-full items-center justify-center overflow-hidden rounded-[18px] border border-[#EAEBF0] bg-[#F7F7F9] p-4 shadow-sm">
                 <img
                   src={images[currentImageIndex] || "/placeholder.svg"}
                   alt="Property image"
-                  className="size-full object-cover"
+                  className="size-full object-contain"
                 />
 
                 {/* Navigation Arrows */}
@@ -555,7 +552,7 @@ const ListingDetail = () => {
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`size-[135.2px] shrink-0 overflow-hidden border-2 ${
+                    className={`size-[135.2px] shrink-0 overflow-hidden rounded-[12px] border-2 bg-[#F7F7F9] ${
                       currentImageIndex === index ? "border-primary" : "border-gray-200"
                     }`}
                   >

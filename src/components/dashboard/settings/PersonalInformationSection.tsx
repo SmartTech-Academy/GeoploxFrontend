@@ -301,7 +301,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
               render={({ field }) => (
                 <FormItem className="w-full gap-1.5">
                   <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                    Home Address
+                    Address
                   </FormLabel>
                   <FormControl>
                     <Textarea

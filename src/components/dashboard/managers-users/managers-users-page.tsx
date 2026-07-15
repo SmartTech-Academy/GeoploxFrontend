@@ -279,7 +279,7 @@ const ManagerUserView = ({ selectedUser }: { selectedUser: ManagerUser | null })
             <DetailRow label="Phone Number" value={selectedUser.phone} />
             <DetailRow label="WhatsApp Number" value={selectedUser.whatsapp} />
             <DetailRow label="Joined On" value={selectedUser.joinedOn} />
-            <DetailRow label="Home Address" value={selectedUser.address} />
+            <DetailRow label="Address" value={selectedUser.address} />
           </div>
 
           {selectedUser.business ? (

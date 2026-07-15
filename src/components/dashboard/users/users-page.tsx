@@ -534,7 +534,7 @@ const UserView = ({ selectedUser, activeTab, setActiveTab }: UserViewProps) => {
                 <DetailRow label="Personal Phone Number" value={details.personalPhone} />
                 <DetailRow label="Personal WhatsApp Number" value={details.personalWhatsapp} />
                 <DetailRow label="Joined On" value={selectedUser.joinedOn} />
-                <DetailRow label="Home Address" value={details.homeAddress} />
+                <DetailRow label="Address" value={details.homeAddress} />
               </div>
 
               {/* Business Info — only shown if the user has a business */}
