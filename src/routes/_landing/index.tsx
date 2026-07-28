@@ -1,9 +1,9 @@
-import { DiscoverSection } from '@/components/landing/discover-section';
-import { Hero } from '@/components/landing/hero';
-import { PageMetaTags } from '@/components/page-meta-data';
-import { createFileRoute } from '@tanstack/react-router';
+import { DiscoverSection } from "@/components/landing/discover-section";
+import { Hero } from "@/components/landing/hero";
+import { PageMetaTags } from "@/components/page-meta-data";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_landing/')({
+export const Route = createFileRoute("/_landing/")({
   component: RouteComponent,
 });
 

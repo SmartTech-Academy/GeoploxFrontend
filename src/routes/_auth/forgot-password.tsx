@@ -1,23 +1,30 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod/v4';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
+import * as z from "zod/v4";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
-import assets from '@/assets';
-import { customResolver } from '@/lib/customZodResolver';
-import { PageMetaTags } from '@/components/page-meta-data';
-import { useForgotPassword } from '@/lib/services';
+import assets from "@/assets";
+import { customResolver } from "@/lib/customZodResolver";
+import { PageMetaTags } from "@/components/page-meta-data";
+import { useForgotPassword } from "@/lib/services";
 
 // Zod schema for forgot password form
 const forgotPasswordSchema = z.object({
-  email: z.email('Please enter a valid email address'),
+  email: z.email("Please enter a valid email address"),
 });
 
 type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
-export const Route = createFileRoute('/_auth/forgot-password')({
+export const Route = createFileRoute("/_auth/forgot-password")({
   component: RouteComponent,
 });
 
@@ -27,10 +34,10 @@ function RouteComponent() {
 
   const form = useForm<ForgotPasswordFormValues>({
     resolver: customResolver(forgotPasswordSchema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
-      email: '',
+      email: "",
     },
   });
 
@@ -38,7 +45,7 @@ function RouteComponent() {
     forgotPassword(values, {
       onSuccess: () => {
         navigate({
-          to: '/password-reset-sent',
+          to: "/password-reset-sent",
           search: { email: values.email },
         });
       },
@@ -46,21 +53,27 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex h-full w-full bg-white">
+    <div className="flex size-full bg-white">
       <PageMetaTags
         title="Reset Your Password"
         description="Forgot your password? Reset it securely to regain access to your Geoplox account."
         keywords="password reset, account recovery"
       />
-      <div className="flex h-full min-h-screen w-full flex-col justify-between self-stretch py-10">
+      <div className="flex size-full min-h-screen flex-col justify-between self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <Link to="/">
-            <img src={assets.logotext} alt="logo" className="h-[46px] w-[126px]" width={126} height={46} />
+            <img
+              src={assets.logotext}
+              alt="logo"
+              className="h-[46px] w-[126px]"
+              width={126}
+              height={46}
+            />
           </Link>
 
           <span className="inline-flex gap-1 text-[14px] leading-[21px] text-[#41415A]">
-            Have an Account?{' '}
+            Have an Account?{" "}
             <Link to="/login" className="font-semibold text-[#D4AF36] hover:underline">
               Sign In
             </Link>
@@ -69,8 +82,10 @@ function RouteComponent() {
 
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
-            <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Forgot Password</h1>
-            <p className="text-center text-[14px] leading-5 text-[#71748C]">
+            <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">
+              Forgot Password
+            </h1>
+            <p className="text-center text-[14px]/5 text-[#71748C]">
               Provide the email on your account and we&apos;ll send details to reset your password
             </p>
           </div>
@@ -108,8 +123,8 @@ function RouteComponent() {
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => navigate({ to: '/login' })}
-                      className="h-10 flex-1 rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px] leading-4 font-normal text-[#1F2130] hover:bg-gray-50"
+                      onClick={() => navigate({ to: "/login" })}
+                      className="h-10 flex-1 rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4 font-normal text-[#1F2130] hover:bg-gray-50"
                     >
                       Back to Login
                     </Button>
@@ -118,12 +133,13 @@ function RouteComponent() {
                       type="submit"
                       disabled={isPending}
                       style={{
-                        background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                        boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                        background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
+                        boxShadow:
+                          "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                       }}
                       className="h-10 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                     >
-                      {isPending ? 'Sending...' : 'Reset Password'}
+                      {isPending ? "Sending..." : "Reset Password"}
                     </Button>
                   </div>
                 </div>
@@ -134,7 +150,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-5 text-[#41415A]">
+          <p className="text-[14px]/5 text-[#41415A]">
             © {new Date().getFullYear()} — Geoplox, All Right Reserved.
           </p>
         </div>

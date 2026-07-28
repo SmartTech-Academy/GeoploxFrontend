@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,9 +7,9 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 interface VerifyUserDialogProps {
   open: boolean;
@@ -18,7 +18,12 @@ interface VerifyUserDialogProps {
   isPending: boolean;
 }
 
-export const VerifyUserDialog: React.FC<VerifyUserDialogProps> = ({ open, onOpenChange, onConfirm, isPending }) => {
+export const VerifyUserDialog: React.FC<VerifyUserDialogProps> = ({
+  open,
+  onOpenChange,
+  onConfirm,
+  isPending,
+}) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -34,8 +39,12 @@ export const VerifyUserDialog: React.FC<VerifyUserDialogProps> = ({ open, onOpen
               Cancel
             </Button>
           </DialogClose>
-          <Button onClick={onConfirm} disabled={isPending} className="bg-green-600 hover:bg-green-700">
-            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button
+            onClick={onConfirm}
+            disabled={isPending}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
             Yes, Verify
           </Button>
         </DialogFooter>

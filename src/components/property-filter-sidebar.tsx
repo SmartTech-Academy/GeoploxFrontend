@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Slider } from '@/components/ui/slider';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { cn } from '@/lib/utils';
-import { useGetPropertyCategories, useGetPropertyTags } from '@/lib/services';
-import statesAndLocalGov from '@/data/statesAndLocalGov.json';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { propertyFeatures, propertyStatus, propertyTypes, sortOptions } from '@/data/reuseable';
-// import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-// import { Label } from '@/components/ui/label';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
+import { useGetPropertyCategories, useGetPropertyTags } from "@/lib/services";
+import statesAndLocalGov from "@/data/statesAndLocalGov.json";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { propertyFeatures, propertyStatus, propertyTypes, sortOptions } from "@/data/reuseable";
 
 type CollapsibleSectionProps = {
   title: React.ReactNode;
@@ -20,12 +24,17 @@ type CollapsibleSectionProps = {
   children: React.ReactNode;
 };
 
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, isOpen, onToggle, children }) => {
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
+  title,
+  isOpen,
+  onToggle,
+  children,
+}) => {
   return (
     <Collapsible
       open={isOpen}
       onOpenChange={onToggle}
-      className={cn('border-b border-[#F1F1F4]', isOpen ? 'pb-6' : 'pb-0')}
+      className={cn("border-b border-[#F1F1F4]", isOpen ? "pb-6" : "pb-0")}
     >
       <CollapsibleTrigger asChild>
         <button className="group mb-4 flex w-full items-center justify-between text-left">
@@ -34,14 +43,14 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, isOpen, 
           </h3>
           <div className="transition-transform duration-200 ease-in-out">
             {isOpen ? (
-              <ChevronUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+              <ChevronUp className="size-4 text-gray-500 group-hover:text-gray-700" />
             ) : (
-              <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+              <ChevronDown className="size-4 text-gray-500 group-hover:text-gray-700" />
             )}
           </div>
         </button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden transition-all duration-300 ease-linear">
+      <CollapsibleContent className="overflow-hidden transition-all duration-300 ease-linear data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
         {children}
       </CollapsibleContent>
     </Collapsible>
@@ -52,9 +61,15 @@ interface PropertyFilterSidebarProps {
   filters: Record<string, any>;
   onFiltersChange: (newFilters: Record<string, any>) => void;
   onClear: () => void;
+  inDash?: boolean;
 }
 
-export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ filters, onFiltersChange, onClear }) => {
+export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({
+  filters,
+  onFiltersChange,
+  onClear,
+  inDash,
+}) => {
   const [draftFilters, setDraftFilters] = useState(filters);
 
   useEffect(() => {
@@ -86,10 +101,14 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
   const categories = categoriesResponse?.data.data ?? [];
   const tags = tagsResponse?.data.data ?? [];
 
-  const lgas = draftFilters.state ? statesAndLocalGov.find((s) => s.state === draftFilters.state)?.lgas || [] : [];
+  const lgas = draftFilters.state
+    ? statesAndLocalGov.find((s) => s.state === draftFilters.state)?.lgas || []
+    : [];
   const areas =
     draftFilters.state && draftFilters.city
-      ? (statesAndLocalGov.find((s) => s.state === draftFilters.state) as any)?.[draftFilters.city] || []
+      ? (statesAndLocalGov.find((s) => s.state === draftFilters.state) as any)?.[
+          draftFilters.city
+        ] || []
       : [];
 
   const handleApplyFilters = () => {
@@ -98,23 +117,23 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
     // Clean up '5+' bedrooms/bathrooms
     if (newFilters.bedrooms) {
       newFilters.bedrooms = String(newFilters.bedrooms)
-        .split(',')
-        .map((b) => (b === '5+' ? 5 : b))
-        .join(',');
+        .split(",")
+        .map((b) => (b === "5+" ? 5 : b))
+        .join(",");
     }
     if (newFilters.bathrooms) {
       newFilters.bathrooms = String(newFilters.bathrooms)
-        .split(',')
-        .map((b) => (b === '5+' ? 5 : b))
-        .join(',');
+        .split(",")
+        .map((b) => (b === "5+" ? 5 : b))
+        .join(",");
     }
 
     Object.keys(newFilters).forEach(
       (key) =>
         (newFilters[key as keyof typeof newFilters] === undefined ||
           newFilters[key as keyof typeof newFilters] === null ||
-          newFilters[key as keyof typeof newFilters] === '') &&
-        delete newFilters[key as keyof typeof newFilters]
+          newFilters[key as keyof typeof newFilters] === "") &&
+        delete newFilters[key as keyof typeof newFilters],
     );
 
     onFiltersChange(newFilters);
@@ -124,19 +143,31 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
     onClear();
   };
 
-  const selectedBedrooms = String(draftFilters.bedrooms || '')
-    .split(',')
+  const selectedBedrooms = String(draftFilters.bedrooms || "")
+    .split(",")
     .filter(Boolean);
-  const selectedBathrooms = String(draftFilters.bathrooms || '')
-    .split(',')
+  const selectedBathrooms = String(draftFilters.bathrooms || "")
+    .split(",")
     .filter(Boolean);
 
   return (
-    <div className="flex h-[calc(100vh-100px)] w-full shrink-0 flex-col items-start gap-[17px] overflow-y-auto border-r border-[#F1F1F4] pr-8 lg:w-[334px]">
+    <div
+      className={cn(
+        "flex h-[calc(100vh-100px)] w-full shrink-0 flex-col items-start gap-[17px] overflow-y-auto border-r border-[#F1F1F4] pt-8 pr-8 lg:w-[334px]",
+        inDash && "pl-8",
+      )}
+    >
       <div className="flex w-full flex-col gap-8">
         {/* Sort */}
-        <CollapsibleSection title="Sort By" isOpen={isSortOpen} onToggle={() => setIsSortOpen(!isSortOpen)}>
-          <Select value={draftFilters.sort || 'newest'} onValueChange={(val) => handleDraftChange('sort', val)}>
+        <CollapsibleSection
+          title="Sort By"
+          isOpen={isSortOpen}
+          onToggle={() => setIsSortOpen(!isSortOpen)}
+        >
+          <Select
+            value={draftFilters.sort || "newest"}
+            onValueChange={(val) => handleDraftChange("sort", val)}
+          >
             <SelectTrigger className="h-8 w-full text-sm">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -157,9 +188,14 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
         >
           <div className="flex flex-col gap-3">
             <Select
-              value={draftFilters.state || ''}
+              value={draftFilters.state || ""}
               onValueChange={(val) => {
-                setDraftFilters((prev) => ({ ...prev, state: val, city: undefined, area: undefined }));
+                setDraftFilters((prev) => ({
+                  ...prev,
+                  state: val,
+                  city: undefined,
+                  area: undefined,
+                }));
               }}
             >
               <SelectTrigger className="h-8 w-full text-sm">
@@ -176,7 +212,7 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
 
             {draftFilters.state && (
               <Select
-                value={draftFilters.city || ''}
+                value={draftFilters.city || ""}
                 onValueChange={(val) => {
                   setDraftFilters((prev) => ({ ...prev, city: val, area: undefined }));
                 }}
@@ -195,7 +231,10 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
             )}
 
             {draftFilters.city && areas.length > 0 && (
-              <Select value={draftFilters.area || ''} onValueChange={(val) => handleDraftChange('area', val)}>
+              <Select
+                value={draftFilters.area || ""}
+                onValueChange={(val) => handleDraftChange("area", val)}
+              >
                 <SelectTrigger className="h-8 w-full text-sm">
                   <SelectValue placeholder="Select Area" />
                 </SelectTrigger>
@@ -218,8 +257,8 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
           onToggle={() => setIsCategoryOpen(!isCategoryOpen)}
         >
           <Select
-            value={String(draftFilters.category_id || '')}
-            onValueChange={(val) => handleDraftChange('category_id', Number(val))}
+            value={String(draftFilters.category_id || "")}
+            onValueChange={(val) => handleDraftChange("category_id", Number(val))}
           >
             <SelectTrigger className="h-8 w-full text-sm">
               <SelectValue placeholder="Select Category" />
@@ -242,8 +281,8 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
         >
           <div className="flex w-full flex-col gap-4">
             {propertyTypes.map((type) => {
-              const isChecked = String(draftFilters.property_type || '')
-                .split(',')
+              const isChecked = String(draftFilters.property_type || "")
+                .split(",")
                 .includes(type.types);
               return (
                 <div key={type.types} className="flex flex-col gap-3">
@@ -252,16 +291,16 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
                       id={type.types}
                       checked={isChecked}
                       onCheckedChange={(checked) => {
-                        const currentTypes = String(draftFilters.property_type || '')
-                          .split(',')
+                        const currentTypes = String(draftFilters.property_type || "")
+                          .split(",")
                           .filter(Boolean);
                         const newTypes = checked
                           ? [...currentTypes, type.types]
                           : currentTypes.filter((t) => t !== type.types);
-                        handleDraftChange('property_type', newTypes.join(','));
+                        handleDraftChange("property_type", newTypes.join(","));
                       }}
                     />
-                    <label htmlFor={type.types} className="text-[14px] leading-4 text-[#41415A]">
+                    <label htmlFor={type.types} className="text-[14px]/4 text-[#41415A]">
                       {type.types}
                     </label>
                   </div>
@@ -271,18 +310,22 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
                         <div key={sub} className="flex items-center gap-3">
                           <Checkbox
                             id={sub}
-                            checked={String(draftFilters.filter_property_sub_type || '')
-                              .split(',')
+                            checked={String(draftFilters.filter_property_sub_type || "")
+                              .split(",")
                               .includes(sub)}
                             onCheckedChange={(checked) => {
-                              const currentSubs = String(draftFilters.filter_property_sub_type || '')
-                                .split(',')
+                              const currentSubs = String(
+                                draftFilters.filter_property_sub_type || "",
+                              )
+                                .split(",")
                                 .filter(Boolean);
-                              const newSubs = checked ? [...currentSubs, sub] : currentSubs.filter((s) => s !== sub);
-                              handleDraftChange('filter_property_sub_type', newSubs.join(','));
+                              const newSubs = checked
+                                ? [...currentSubs, sub]
+                                : currentSubs.filter((s) => s !== sub);
+                              handleDraftChange("filter_property_sub_type", newSubs.join(","));
                             }}
                           />
-                          <label htmlFor={sub} className="text-[13px] leading-4 text-[#6B7280]">
+                          <label htmlFor={sub} className="text-[13px]/4 text-[#6B7280]">
                             {sub}
                           </label>
                         </div>
@@ -306,18 +349,20 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
               <div key={status} className="flex items-center gap-3">
                 <Checkbox
                   id={status}
-                  checked={String(draftFilters.property_status || '')
-                    .split(',')
+                  checked={String(draftFilters.property_status || "")
+                    .split(",")
                     .includes(status)}
                   onCheckedChange={(checked) => {
-                    const currentStatus = String(draftFilters.property_status || '')
-                      .split(',')
+                    const currentStatus = String(draftFilters.property_status || "")
+                      .split(",")
                       .filter(Boolean);
-                    const newStatus = checked ? [...currentStatus, status] : currentStatus.filter((s) => s !== status);
-                    handleDraftChange('property_status', newStatus.join(','));
+                    const newStatus = checked
+                      ? [...currentStatus, status]
+                      : currentStatus.filter((s) => s !== status);
+                    handleDraftChange("property_status", newStatus.join(","));
                   }}
                 />
-                <label htmlFor={status} className="text-[14px] leading-4 text-[#41415A]">
+                <label htmlFor={status} className="text-[14px]/4 text-[#41415A]">
                   {status}
                 </label>
               </div>
@@ -336,20 +381,20 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
               <div key={feature} className="flex items-center gap-3">
                 <Checkbox
                   id={feature}
-                  checked={String(draftFilters.property_features || '')
-                    .split(',')
+                  checked={String(draftFilters.property_features || "")
+                    .split(",")
                     .includes(feature)}
                   onCheckedChange={(checked) => {
-                    const currentFeatures = String(draftFilters.property_features || '')
-                      .split(',')
+                    const currentFeatures = String(draftFilters.property_features || "")
+                      .split(",")
                       .filter(Boolean);
                     const newFeatures = checked
                       ? [...currentFeatures, feature]
                       : currentFeatures.filter((f) => f !== feature);
-                    handleDraftChange('property_features', newFeatures.join(','));
+                    handleDraftChange("property_features", newFeatures.join(","));
                   }}
                 />
-                <label htmlFor={feature} className="text-[14px] leading-4 text-[#41415A]">
+                <label htmlFor={feature} className="text-[14px]/4 text-[#41415A]">
                   {feature}
                 </label>
               </div>
@@ -358,12 +403,16 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
         </CollapsibleSection>
 
         {/* Keyword */}
-        <CollapsibleSection title="Keyword" isOpen={isKeywordOpen} onToggle={() => setIsKeywordOpen(!isKeywordOpen)}>
+        <CollapsibleSection
+          title="Keyword"
+          isOpen={isKeywordOpen}
+          onToggle={() => setIsKeywordOpen(!isKeywordOpen)}
+        >
           <Input
             placeholder="Enter keyword"
             className="h-8 w-full rounded-xl border border-[#D5D5DD] px-3"
-            value={draftFilters.q || ''}
-            onChange={(e) => handleDraftChange('q', e.target.value)}
+            value={draftFilters.q || ""}
+            onChange={(e) => handleDraftChange("q", e.target.value)}
           />
         </CollapsibleSection>
 
@@ -377,8 +426,8 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
             <Slider
               value={[draftFilters.min_price || 1000000, draftFilters.max_price || 200000000]}
               onValueChange={(value) => {
-                handleDraftChange('min_price', value[0]);
-                handleDraftChange('max_price', value[1]);
+                handleDraftChange("min_price", value[0]);
+                handleDraftChange("max_price", value[1]);
               }}
               max={200000000}
               min={1000000}
@@ -391,7 +440,13 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
                 className="border-primary h-8 bg-white px-3 text-sm shadow-[0px_0px_3px_rgba(212,175,54,0.5)]"
                 readOnly
               />
-              <svg width="20" height="2" viewBox="0 0 20 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                width="20"
+                height="2"
+                viewBox="0 0 20 2"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <rect y="0.5" width="20" height="1" fill="#D9D9D9" />
               </svg>
               <Input
@@ -411,24 +466,34 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
         >
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-4 text-[#41415A]">Min.</label>
+              <label className="text-[14px]/4 text-[#41415A]">Min.</label>
               <div className="relative">
                 <Input
                   type="number"
-                  value={draftFilters.min_area ?? ''}
-                  onChange={(e) => handleDraftChange('min_area', e.target.value === '' ? null : Number(e.target.value))}
+                  value={draftFilters.min_area ?? ""}
+                  onChange={(e) =>
+                    handleDraftChange(
+                      "min_area",
+                      e.target.value === "" ? null : Number(e.target.value),
+                    )
+                  }
                   className="h-8 border-[#D5D5DD] bg-white px-3 pr-8 text-sm"
                 />
                 <span className="absolute top-2 right-2 text-xs text-gray-400">sq m</span>
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-4 text-[#41415A]">Max.</label>
+              <label className="text-[14px]/4 text-[#41415A]">Max.</label>
               <div className="relative">
                 <Input
                   type="number"
-                  value={draftFilters.max_area ?? ''}
-                  onChange={(e) => handleDraftChange('max_area', e.target.value === '' ? null : Number(e.target.value))}
+                  value={draftFilters.max_area ?? ""}
+                  onChange={(e) =>
+                    handleDraftChange(
+                      "max_area",
+                      e.target.value === "" ? null : Number(e.target.value),
+                    )
+                  }
                   className="h-8 border-[#D5D5DD] bg-white px-3 pr-8 text-sm"
                 />
                 <span className="absolute top-2 right-2 text-xs text-gray-400">sq m</span>
@@ -445,23 +510,23 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
         >
           <div className="flex w-full flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-4 text-[#41415A]">Bedroom</label>
+              <label className="text-[14px]/4 text-[#41415A]">Bedroom</label>
               <div className="grid grid-cols-5 gap-2">
-                {[1, 2, 3, 4, '5+'].map((num) => (
+                {[1, 2, 3, 4, "5+"].map((num) => (
                   <Button
                     key={num}
-                    variant={'outline'}
+                    variant={"outline"}
                     size="sm"
-                    className={`h-8 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
+                    className={`h-8 rounded-xl px-3 text-[14px]/4 text-[#41415A] ${
                       selectedBedrooms.includes(String(num))
-                        ? 'border-primary hover:border-primary'
-                        : 'border-[#D5D5DD]'
+                        ? "border-primary hover:border-primary"
+                        : "border-[#D5D5DD]"
                     }`}
                     onClick={() => {
                       const newBedrooms = selectedBedrooms.includes(String(num))
                         ? selectedBedrooms.filter((b) => b !== String(num))
                         : [...selectedBedrooms, String(num)];
-                      handleDraftChange('bedrooms', newBedrooms.join(','));
+                      handleDraftChange("bedrooms", newBedrooms.join(","));
                     }}
                   >
                     {num}
@@ -470,23 +535,23 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] leading-4 text-[#41415A]">Bathroom</label>
+              <label className="text-[14px]/4 text-[#41415A]">Bathroom</label>
               <div className="grid grid-cols-5 gap-2">
-                {[1, 2, 3, 4, '5+'].map((num) => (
+                {[1, 2, 3, 4, "5+"].map((num) => (
                   <Button
                     key={num}
-                    variant={'outline'}
+                    variant={"outline"}
                     size="sm"
-                    className={`h-8 rounded-xl px-3 text-[14px] leading-4 text-[#41415A] ${
+                    className={`h-8 rounded-xl px-3 text-[14px]/4 text-[#41415A] ${
                       selectedBathrooms.includes(String(num))
-                        ? 'border-primary hover:border-primary'
-                        : 'border-[#D5D5DD]'
+                        ? "border-primary hover:border-primary"
+                        : "border-[#D5D5DD]"
                     }`}
                     onClick={() => {
                       const newBathrooms = selectedBathrooms.includes(String(num))
                         ? selectedBathrooms.filter((b) => b !== String(num))
                         : [...selectedBathrooms, String(num)];
-                      handleDraftChange('bathrooms', newBathrooms.join(','));
+                      handleDraftChange("bathrooms", newBathrooms.join(","));
                     }}
                   >
                     {num}
@@ -549,18 +614,22 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
             <Input
               placeholder="Search Properties by ID"
               className="h-8 w-full border-[#D5D5DD] bg-white px-3 text-sm"
-              value={draftFilters.property_id || ''}
-              onChange={(e) => handleDraftChange('property_id', e.target.value)}
+              value={draftFilters.property_id || ""}
+              onChange={(e) => handleDraftChange("property_id", e.target.value)}
             />
           </div>
         </CollapsibleSection>
 
         {/* Tags */}
-        <CollapsibleSection title="Tags" isOpen={isTagsOpen} onToggle={() => setIsTagsOpen(!isTagsOpen)}>
+        <CollapsibleSection
+          title="Tags"
+          isOpen={isTagsOpen}
+          onToggle={() => setIsTagsOpen(!isTagsOpen)}
+        >
           <div className="flex w-full flex-col gap-4">
             {tags.map((tag: { id: number; name: string }) => {
-              const selectedTags = String(draftFilters.tags || '')
-                .split(',')
+              const selectedTags = String(draftFilters.tags || "")
+                .split(",")
                 .filter(Boolean)
                 .map(Number);
               return (
@@ -569,11 +638,16 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
                     id={`tag-${tag.id}`}
                     checked={selectedTags.includes(tag.id)}
                     onCheckedChange={(checked) => {
-                      const newTags = checked ? [...selectedTags, tag.id] : selectedTags.filter((id) => id !== tag.id);
-                      handleDraftChange('tags', newTags.join(','));
+                      const newTags = checked
+                        ? [...selectedTags, tag.id]
+                        : selectedTags.filter((id) => id !== tag.id);
+                      handleDraftChange("tags", newTags.join(","));
                     }}
                   />
-                  <label htmlFor={`tag-${tag.id}`} className="text-[14px] leading-4 text-[#41415A] capitalize">
+                  <label
+                    htmlFor={`tag-${tag.id}`}
+                    className="text-[14px]/4 text-[#41415A] capitalize"
+                  >
                     {tag.name}
                   </label>
                 </div>
@@ -593,8 +667,9 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({ fi
           </Button>
           <Button
             style={{
-              background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-              boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+              background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
+              boxShadow:
+                "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
             }}
             className="h-10 grow rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
             onClick={handleApplyFilters}

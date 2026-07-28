@@ -1,5 +1,5 @@
 /* stylelint-disable selector-id-pattern */
-@import 'nprogress/nprogress.css';
+@import "nprogress/nprogress.css";
 
 #nprogress .bar {
   /* Use your Tailwind primary color variable */

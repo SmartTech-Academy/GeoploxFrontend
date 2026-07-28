@@ -1,20 +1,33 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { useContactPropertyOwner } from '@/lib/services';
-import { toast, Toaster } from 'sonner';
-import { customResolver } from '@/lib/customZodResolver';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { useContactPropertyOwner } from "@/lib/services";
+import { toast, Toaster } from "sonner";
+import { customResolver } from "@/lib/customZodResolver";
 
 const contactSchema = z.object({
-  name: z.string().min(2, 'Full name is required'),
-  email: z.string().email('Please enter a valid email'),
-  phone: z.string().min(10, 'Please enter a valid phone number'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
+  name: z.string().min(2, "Full name is required"),
+  email: z.string().email("Please enter a valid email"),
+  phone: z.string().min(10, "Please enter a valid phone number"),
+  message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -26,16 +39,21 @@ interface ContactOwnerDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const ContactOwnerDialog: React.FC<ContactOwnerDialogProps> = ({ propertyId, open, onOpenChange }) => {
+export const ContactOwnerDialog: React.FC<ContactOwnerDialogProps> = ({
+  propertyId,
+  open,
+  onOpenChange,
+}) => {
   const { mutate: contactOwner, isPending } = useContactPropertyOwner();
 
   const form = useForm<ContactFormData>({
     resolver: customResolver(contactSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      message: 'I am interested in this property and would like to know more details. Please contact me.',
+      name: "",
+      email: "",
+      phone: "",
+      message:
+        "I am interested in this property and would like to know more details. Please contact me.",
     },
   });
 
@@ -44,11 +62,11 @@ export const ContactOwnerDialog: React.FC<ContactOwnerDialogProps> = ({ property
       { propertyId, data },
       {
         onSuccess: () => {
-          toast.success('Your message has been sent to the property owner.');
+          toast.success("Your message has been sent to the property owner.");
           onOpenChange(false);
           form.reset();
         },
-      }
+      },
     );
   };
 
@@ -58,7 +76,9 @@ export const ContactOwnerDialog: React.FC<ContactOwnerDialogProps> = ({ property
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Contact Property Owner</DialogTitle>
-          <DialogDescription>Fill out the form below to send a message to the owner.</DialogDescription>
+          <DialogDescription>
+            Fill out the form below to send a message to the owner.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -115,7 +135,7 @@ export const ContactOwnerDialog: React.FC<ContactOwnerDialogProps> = ({ property
               )}
             />
             <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? 'Sending...' : 'Send Message'}
+              {isPending ? "Sending..." : "Send Message"}
             </Button>
           </form>
         </Form>

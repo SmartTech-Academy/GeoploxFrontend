@@ -1,17 +1,28 @@
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Phone, Upload, XIcon } from 'lucide-react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Phone, Upload, XIcon } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
-import { UseFormReturn } from 'react-hook-form';
-import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import assets from '@/assets';
-import { UserProfile } from '@/lib/types';
-import statesAndLgasData from '@/data/statesAndLocalGov.json';
+import { UseFormReturn } from "react-hook-form";
+import {
+  ImageCrop,
+  ImageCropApply,
+  ImageCropContent,
+  ImageCropReset,
+} from "@/components/ui/kibo-ui/image-crop";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import assets from "@/assets";
+import { UserProfile } from "@/lib/types";
+import statesAndLgasData from "@/data/statesAndLocalGov.json";
 
 interface AccountTypeProps {
   form: UseFormReturn<any>;
@@ -19,7 +30,9 @@ interface AccountTypeProps {
 }
 
 const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
-  const [picturePreview, setPicturePreview] = useState<string | null>(() => profileData?.display_picture_url || null);
+  const [picturePreview, setPicturePreview] = useState<string | null>(
+    () => profileData?.display_picture_url || null,
+  );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCropDialogOpen, setCropDialogOpen] = useState(false);
   const [selectedState, setSelectedState] = useState(form.getValues().state);
@@ -35,13 +48,13 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
 
   useEffect(() => {
     if (profileData) {
-      form.setValue('firstName', profileData.firstname || '');
-      form.setValue('lastName', profileData.lastname || '');
-      form.setValue('phoneNumber', profileData.phone_number || '');
-      form.setValue('whatsappNumber', profileData.whatsapp_number || '');
-      form.setValue('homeAddress', profileData.home_address || '');
-      form.setValue('state', profileData.state || '');
-      form.setValue('localGovernment', profileData.local_gov_area || '');
+      form.setValue("firstName", profileData.firstname || "");
+      form.setValue("lastName", profileData.lastname || "");
+      form.setValue("phoneNumber", profileData.phone_number || "");
+      form.setValue("whatsappNumber", profileData.whatsapp_number || "");
+      form.setValue("homeAddress", profileData.home_address || "");
+      form.setValue("state", profileData.state || "");
+      form.setValue("localGovernment", profileData.local_gov_area || "");
     }
   }, [profileData, form]);
 
@@ -55,7 +68,7 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
 
   const handleCrop = (croppedImage: string) => {
     setPicturePreview(croppedImage);
-    form.setValue('profilePicture', croppedImage);
+    form.setValue("profilePicture", croppedImage);
     setCropDialogOpen(false);
     setSelectedFile(null);
   };
@@ -72,8 +85,10 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
   return (
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
-        <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Personal Information</h2>
-        <p className="text-[14px] leading-5 text-[#71748C]">Let us know more about you</p>
+        <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">
+          Personal Information
+        </h2>
+        <p className="text-[14px]/5 text-[#71748C]">Let us know more about you</p>
       </div>
 
       <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
@@ -83,7 +98,7 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             className="relative mx-auto flex size-16 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
           >
             {picturePreview ? (
-              <img src={picturePreview} alt="Profile Preview" className="h-full w-full object-cover" />
+              <img src={picturePreview} alt="Profile Preview" className="size-full object-cover" />
             ) : (
               <Upload className="size-4 text-[#71748C]" />
             )}
@@ -97,8 +112,8 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
           </div>
 
           <div className="flex flex-col gap-1">
-            <p className="text-[14px] leading-6 text-[#1F2130]">Profile Picture</p>
-            <p className="text-[14px] leading-6 text-[#71748C]">
+            <p className="text-[14px]/6 text-[#1F2130]">Profile Picture</p>
+            <p className="text-[14px]/6 text-[#71748C]">
               Upload a profile picture. Only .JPG and .PNG supported.
             </p>
           </div>
@@ -139,9 +154,15 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="firstName"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">First Name</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  First Name
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Rene" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                  <Input
+                    placeholder="Rene"
+                    className="h-10 rounded-lg border-[#D5D5DD]"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -153,9 +174,15 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="lastName"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Last Name</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  Last Name
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Forbes" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                  <Input
+                    placeholder="Forbes"
+                    className="h-10 rounded-lg border-[#D5D5DD]"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -169,11 +196,17 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="phoneNumber"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Phone Number</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  Phone Number
+                </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input placeholder="0805-555-3323" className="h-10 rounded-lg border-[#D5D5DD] pr-10" {...field} />
-                    <Phone className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transform fill-[#71748C] text-[#71748C]" />
+                    <Input
+                      placeholder="0805-555-3323"
+                      className="h-10 rounded-lg border-[#D5D5DD] pr-10"
+                      {...field}
+                    />
+                    <Phone className="absolute top-1/2 right-3 size-4 -translate-y-1/2 transform fill-[#71748C] text-[#71748C]" />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -186,11 +219,20 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="whatsappNumber"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Whatsapp Number</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  Whatsapp Number
+                </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input placeholder="0805-555-3323" className="h-10 rounded-lg border-[#D5D5DD] pr-10" {...field} />
-                    <img src={assets.whatsapp} className="absolute top-1/2 right-3 size-5 -translate-y-1/2 transform" />
+                    <Input
+                      placeholder="0805-555-3323"
+                      className="h-10 rounded-lg border-[#D5D5DD] pr-10"
+                      {...field}
+                    />
+                    <img
+                      src={assets.whatsapp}
+                      className="absolute top-1/2 right-3 size-5 -translate-y-1/2 transform"
+                    />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -204,7 +246,9 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
           name="homeAddress"
           render={({ field }) => (
             <FormItem className="w-full gap-1.5">
-              <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Home Address</FormLabel>
+              <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                Address
+              </FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="12, Oba Akinjobi Road, Ikeja GRA"
@@ -224,12 +268,14 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="state"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">State</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  State
+                </FormLabel>
                 <Select
                   onValueChange={(value) => {
                     field.onChange(value);
                     setSelectedState(value);
-                    form.setValue('localGovernment', ''); // Reset LGA on state change
+                    form.setValue("localGovernment", ""); // Reset LGA on state change
                   }}
                   value={field.value}
                 >
@@ -256,7 +302,9 @@ const PersonalInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="localGovernment"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Locality/Area</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  Locality/Area
+                </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   value={field.value}

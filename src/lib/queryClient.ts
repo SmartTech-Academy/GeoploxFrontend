@@ -1,5 +1,5 @@
-import { QueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { QueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -8,9 +8,9 @@ export const queryClient = new QueryClient({
       retry: (failureCount, error) => {
         // Don't retry on 4xx errors (client errors)
         // Check if error has a status property (e.g., AxiosError or custom error)
-        if (typeof error === 'object' && error !== null && 'status' in error) {
+        if (typeof error === "object" && error !== null && "status" in error) {
           const status = (error as { status?: number }).status;
-          if (typeof status === 'number' && status >= 400 && status < 500) {
+          if (typeof status === "number" && status >= 400 && status < 500) {
             return false;
           }
         }
@@ -30,7 +30,7 @@ export const queryClient = new QueryClient({
       gcTime: 1000 * 60 * 30, // 30 minutes - cache garbage collection (formerly cacheTime)
 
       // Network and error handling
-      networkMode: 'online', // Only run queries when online
+      networkMode: "online", // Only run queries when online
 
       // Performance
       structuralSharing: true, // Optimize re-renders by sharing unchanged data structures
@@ -45,32 +45,30 @@ export const queryClient = new QueryClient({
       retryDelay: 1000,
 
       // Network behavior for mutations
-      networkMode: 'online',
+      networkMode: "online",
 
       // Global mutation error handling
       onError: (error: any) => {
-console.log('mutation error',error)
-        const title = error.response?.data?.message || error.message || 'An error occurred';
-       let description = '';
+        console.log("mutation error", error);
+        const title = error.response?.data?.message || error.message || "An error occurred";
+        let description = "";
 
-const errorData = error.response?.data?.errors || error.response?.data?.data;
+        const errorData = error.response?.data?.errors || error.response?.data?.data;
 
-if (errorData) {
-  description = Object.entries(errorData)
-    .map(([field, messages]) => {
-      const fieldName = field.replace(/_/g, ' ');
-      const messageStr = Array.isArray(messages)
-        ? messages.join(', ')
-        : String(messages);
-      return `${fieldName}: ${messageStr}`;
-    })
-    .join('; ');
-}
-console.log('description', description)
+        if (errorData) {
+          description = Object.entries(errorData)
+            .map(([field, messages]) => {
+              const fieldName = field.replace(/_/g, " ");
+              const messageStr = Array.isArray(messages) ? messages.join(", ") : String(messages);
+              return `${fieldName}: ${messageStr}`;
+            })
+            .join("; ");
+        }
+        console.log("description", description);
         const toastId = toast.error(title, {
           description: description,
           action: {
-            label: 'Dismiss',
+            label: "Dismiss",
             onClick: () => toast.dismiss(toastId), // dismisses the toast
           },
         });

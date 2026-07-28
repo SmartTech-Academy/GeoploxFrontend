@@ -1,19 +1,30 @@
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
-import { Phone, Upload, XIcon } from 'lucide-react';
-import type React from 'react';
-import { useState, useRef, useMemo, useEffect } from 'react';
+import { Phone, Upload, XIcon } from "lucide-react";
+import type React from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 
-import type { UseFormReturn } from 'react-hook-form';
-import assets from '@/assets';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/ui/kibo-ui/image-crop';
-import { Button } from '@/components/ui/button';
-import statesAndLgasData from '@/data/statesAndLocalGov.json';
-import { UserProfile } from '@/lib/types';
+import type { UseFormReturn } from "react-hook-form";
+import assets from "@/assets";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  ImageCrop,
+  ImageCropApply,
+  ImageCropContent,
+  ImageCropReset,
+} from "@/components/ui/kibo-ui/image-crop";
+import { Button } from "@/components/ui/button";
+import statesAndLgasData from "@/data/statesAndLocalGov.json";
+import { UserProfile } from "@/lib/types";
 
 interface AccountTypeProps {
   form: UseFormReturn<any>;
@@ -21,7 +32,9 @@ interface AccountTypeProps {
 }
 
 const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(
+    () => profileData?.business?.logo_url || null,
+  );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedState, setSelectedState] = useState(form.getValues().businessState);
   const [isCropDialogOpen, setCropDialogOpen] = useState(false);
@@ -37,15 +50,17 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
 
   useEffect(() => {
     if (profileData) {
-      form.setValue('businessName', profileData?.business?.name || '');
-      form.setValue('businessEmail', profileData?.business?.email || '');
-      form.setValue('businessPhone', profileData?.business?.phone || '');
-      form.setValue('businessWhatsapp', profileData?.business?.whatsapp || '');
-      form.setValue('website', profileData?.business?.website || '');
-      form.setValue('instagram', profileData?.business?.instagram || '');
-      form.setValue('businessAddress', profileData?.business?.address || '');
-      form.setValue('businessState', profileData?.business?.state || '');
-      form.setValue('businessLocalGovernment', profileData?.business?.lga || '');
+      setLogoPreview(profileData?.business?.logo_url || null);
+      setSelectedState(profileData?.business?.state || "");
+      form.setValue("businessName", profileData?.business?.name || "");
+      form.setValue("businessEmail", profileData?.business?.email || "");
+      form.setValue("businessPhone", profileData?.business?.phone || "");
+      form.setValue("businessWhatsapp", profileData?.business?.whatsapp || "");
+      form.setValue("website", profileData?.business?.website || "");
+      form.setValue("instagram", profileData?.business?.instagram || "");
+      form.setValue("businessAddress", profileData?.business?.address || "");
+      form.setValue("businessState", profileData?.business?.state || "");
+      form.setValue("businessLocalGovernment", profileData?.business?.lga || "");
     }
   }, [profileData, form]);
 
@@ -59,7 +74,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
 
   const handleCrop = (croppedImage: string) => {
     setLogoPreview(croppedImage);
-    form.setValue('businessLogo', croppedImage);
+    form.setValue("businessLogo", croppedImage);
     setCropDialogOpen(false);
     setSelectedFile(null);
   };
@@ -85,8 +100,10 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
   return (
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
       <div className="flex flex-col items-center gap-3 self-stretch text-center">
-        <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Business Information</h2>
-        <p className="text-[14px] leading-5 text-[#71748C]">Let us know more about your business.</p>
+        <h2 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">
+          Business Information
+        </h2>
+        <p className="text-[14px]/5 text-[#71748C]">Let us know more about your business.</p>
       </div>
 
       <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
@@ -96,7 +113,11 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             className="relative mx-auto flex size-16 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
           >
             {logoPreview ? (
-              <img src={logoPreview || '/placeholder.svg'} alt="Business Logo" className="h-full w-full object-cover" />
+              <img
+                src={logoPreview || "/placeholder.svg"}
+                alt="Business Logo"
+                className="size-full object-cover"
+              />
             ) : (
               <Upload className="size-4 text-[#71748C]" />
             )}
@@ -110,8 +131,8 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
           </div>
 
           <div className="flex flex-col gap-1">
-            <p className="text-[14px] leading-6 text-[#1F2130]">Business Logo</p>
-            <p className="text-[14px] leading-6 text-[#71748C]">
+            <p className="text-[14px]/6 text-[#1F2130]">Business Logo</p>
+            <p className="text-[14px]/6 text-[#71748C]">
               Upload a profile picture. Only .JPG and .PNG supported.
             </p>
           </div>
@@ -152,9 +173,15 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="businessName"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Business Name</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  Business Name
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Forbes Realty" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                  <Input
+                    placeholder="Forbes Realty"
+                    className="h-10 rounded-lg border-[#D5D5DD]"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -166,7 +193,9 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="businessEmail"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Email Address</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  Email Address
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="email"
@@ -192,8 +221,12 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input placeholder="0805-555-3323" className="h-10 rounded-lg border-[#D5D5DD] pr-10" {...field} />
-                    <Phone className="fill-[#71748C]] absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transform text-[#71748C]" />
+                    <Input
+                      placeholder="0805-555-3323"
+                      className="h-10 rounded-lg border-[#D5D5DD] pr-10"
+                      {...field}
+                    />
+                    <Phone className="absolute top-1/2 right-3 size-4 -translate-y-1/2 transform fill-[#71748C] text-[#71748C]" />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -211,8 +244,15 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input placeholder="0805-555-3323" className="h-10 rounded-lg border-[#D5D5DD] pr-10" {...field} />
-                    <img src={assets.whatsapp} className="absolute top-1/2 right-3 size-5 -translate-y-1/2 transform" />
+                    <Input
+                      placeholder="0805-555-3323"
+                      className="h-10 rounded-lg border-[#D5D5DD] pr-10"
+                      {...field}
+                    />
+                    <img
+                      src={assets.whatsapp}
+                      className="absolute top-1/2 right-3 size-5 -translate-y-1/2 transform"
+                    />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -227,9 +267,15 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="website"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Website</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  Website
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="www.forbesrealty.com" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                  <Input
+                    placeholder="www.forbesrealty.com"
+                    className="h-10 rounded-lg border-[#D5D5DD]"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -241,9 +287,15 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="instagram"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Instagram</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  Instagram
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="http://" className="h-10 rounded-lg border-[#D5D5DD]" {...field} />
+                  <Input
+                    placeholder="http://"
+                    className="h-10 rounded-lg border-[#D5D5DD]"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -256,7 +308,9 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
           name="businessAddress"
           render={({ field }) => (
             <FormItem className="w-full gap-1.5">
-              <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Business Address</FormLabel>
+              <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                Business Address
+              </FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="12, Oba Akinjobi Road, Ikeja GRA"
@@ -276,12 +330,14 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="businessState"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">State</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  State
+                </FormLabel>
                 <Select
                   onValueChange={(value) => {
                     field.onChange(value);
                     setSelectedState(value);
-                    form.setValue('businessLocalGovernment', ''); // Reset LGA on state change
+                    form.setValue("businessLocalGovernment", ""); // Reset LGA on state change
                   }}
                   value={field.value}
                 >
@@ -308,7 +364,9 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
             name="businessLocalGovernment"
             render={({ field }) => (
               <FormItem className="w-full gap-1.5">
-                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">Locality/Area</FormLabel>
+                <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
+                  Locality/Area
+                </FormLabel>
                 <Select
                   disabled={!selectedState || lgas.length === 0}
                   onValueChange={field.onChange}

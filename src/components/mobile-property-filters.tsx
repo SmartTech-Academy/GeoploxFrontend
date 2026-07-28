@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { PropertyFilterSidebar } from './property-filter-sidebar';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { PropertyFilterSidebar } from "./property-filter-sidebar";
 
 interface MobilePropertyFiltersProps {
   filters: Record<string, any>;
@@ -22,16 +22,20 @@ export const MobilePropertyFilters: React.FC<MobilePropertyFiltersProps> = ({
       <Button
         variant="link"
         onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-        className="text-primary text-[14px] leading-[17px] font-semibold tracking-[0.01em]"
+        className="text-[14px] leading-[17px] font-semibold tracking-[0.01em] text-primary"
       >
-        {showAdvancedFilters ? 'Hide Filter' : 'Advance Filter'}
+        {showAdvancedFilters ? "Hide Filter" : "Advance Filter"}
       </Button>
 
       <Sheet open={showAdvancedFilters} onOpenChange={setShowAdvancedFilters}>
         <SheetContent className="w-full border-r-0 border-none sm:max-w-sm">
           <SheetHeader>
             <SheetTitle>Advanced Filters</SheetTitle>
-            <PropertyFilterSidebar filters={filters} onFiltersChange={onFiltersChange} onClear={onClear} />
+            <PropertyFilterSidebar
+              filters={filters}
+              onFiltersChange={onFiltersChange}
+              onClear={onClear}
+            />
           </SheetHeader>
         </SheetContent>
       </Sheet>

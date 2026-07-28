@@ -1,12 +1,16 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Heart, BedDouble, ShowerHead, Square, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import assets from '@/assets';
-import { Link } from '@tanstack/react-router';
-import { useGetHomepageProperties } from '@/lib/services';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Heart, BedDouble, ShowerHead, Square, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import assets from "@/assets";
+import { Link } from "@tanstack/react-router";
+import { useGetHomepageProperties } from "@/lib/services";
+import { useInfiniteWpPosts } from "@/lib/services/wpBlog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { excerptFromHtml } from "@/lib/utils";
+import { toAbsoluteBlogUrl } from "@/lib/wpGraphql";
+import { format } from "date-fns";
 
 interface Property {
   id: string;
@@ -25,9 +29,23 @@ interface Property {
   };
 }
 
+const getPropertyBasePath = (category?: string) => {
+  switch (category?.toLowerCase()) {
+    case "for rent":
+      return "/for-rent";
+    case "short let":
+      return "/short-let";
+    case "joint venture":
+      return "/joint-venture";
+    case "for sale":
+    default:
+      return "/for-sale";
+  }
+};
+
 const formatPrice = (price: number, currency: string) => {
-  return new Intl.NumberFormat('en-NG', {
-    style: 'currency',
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
     currency: currency,
     minimumFractionDigits: 0,
   }).format(price);
@@ -35,14 +53,14 @@ const formatPrice = (price: number, currency: string) => {
 
 const getStatusDotColor = (status: string) => {
   switch (status) {
-    case 'For Sale':
-      return 'bg-[#D20832]';
-    case 'For Rent':
-      return 'bg-[#0CBA65]';
-    case 'Short Let':
-      return 'bg-[#1893DD]';
+    case "For Sale":
+      return "bg-[#D20832]";
+    case "For Rent":
+      return "bg-[#0CBA65]";
+    case "Short Let":
+      return "bg-[#1893DD]";
     default:
-      return 'bg-gray-400';
+      return "bg-gray-400";
   }
 };
 
@@ -61,53 +79,33 @@ const PropertyCardSkeleton = () => (
 
 const nextGen = [assets.direct, assets.deluxe, assets.adozollion, assets.cruxstone, assets.etoniru];
 
-const blogs = [
-  {
-    image: assets.herohouse,
-    title: '5 Reasons Serious Buyers Are Switching to Subscription-Based Property Platforms',
-    tags: ['Articles', 'Investment'],
-    content:
-      'In a digital world full of free listings and endless browsing, serious property buyers are beginning to favor quality over quantity. Subscription-based platforms are cutting through the noise by curating only verified listings and offering exclusive access to decision-ready users.',
-    dateTime: 'Dec 19, 2024 —  2 min',
-  },
-  {
-    image: assets.trendinghome3,
-    title: 'Why Verified Listings Are the Future of Real Estate in Nigeria',
-    tags: ['News & Update'],
-    content:
-      'Nigeria’s real estate market has long been plagued by misinformation, duplicate listings, and unverified agents posing as owners. This has eroded trust and wasted valuable time for buyers and agents alike. As the market matures, platforms that guarantee verified listi',
-    dateTime: 'Dec 19, 2024 —  2 min',
-  },
-  {
-    image: assets.trendinghome6,
-    title: 'Agents vs Owners: Who Should You Really Be Dealing With When Buying Property?',
-    tags: ['Articles'],
-    content:
-      'While agents have traditionally played a major role in property transactions, many buyers today are questioning whether they add value or just increase complexity. With the rise of direct-to-owner platforms, buyers are gaining faster access, clearer communication, and ',
-    dateTime: 'Dec 19, 2024 —  2 min',
-  },
-];
+const slugFromUri = (uri: string) => uri.replace(/^\/+|\/+$/g, "");
 
 export function DiscoverSection() {
-  const [activeTab, setActiveTab] = useState('Trending Homes');
+  const [activeTab, setActiveTab] = useState("Trending Homes");
   const { data: propertyResponse, isPending: isLoadingProperties } = useGetHomepageProperties();
+  const postsQuery = useInfiniteWpPosts(3);
   const tabs = [
-    { name: 'Trending Homes', icon: '🔥' },
-    { name: 'All Homes', icon: '' },
-    { name: 'Duplexes', icon: '' },
-    { name: 'Luxury Villas', icon: '' },
+    { name: "Trending Homes", icon: "🔥" },
+    { name: "All Homes", icon: "" },
+    { name: "Duplexes", icon: "" },
+    { name: "Luxury Villas", icon: "" },
   ];
 
   const propertyData = propertyResponse?.data.data;
 
   const tabKeyMap: { [key: string]: keyof typeof propertyData } = {
-    'Trending Homes': 'trending_homes',
-    'All Homes': 'all_homes',
-    Duplexes: 'duplexes',
-    'Luxury Villas': 'luxury_villas',
+    "Trending Homes": "trending_homes",
+    "All Homes": "all_homes",
+    Duplexes: "duplexes",
+    "Luxury Villas": "luxury_villas",
   };
 
   const currentProperties = propertyData ? propertyData[tabKeyMap[activeTab]] : [];
+  const exploreListingPath = currentProperties?.[0]
+    ? getPropertyBasePath(currentProperties[0].category)
+    : "/for-sale";
+  const blogPosts = (postsQuery.data?.pages.flatMap((page) => page.nodes) ?? []).slice(0, 3);
 
   return (
     <div className="w-full">
@@ -123,21 +121,21 @@ export function DiscoverSection() {
 
             {/* Tabs */}
             <div className="w-full overflow-hidden rounded-xl border border-[#F1F1F4] bg-white p-1.5">
-              <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto">
+              <div className="flex w-full items-center gap-3 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 {tabs.map((tab) => (
                   <Button
                     key={tab.name}
                     style={{
                       boxShadow:
                         activeTab === tab.name
-                          ? '0px 0px 10px rgba(31, 33, 48, 0.06), 0px 1px 1px rgba(31, 33, 48, 0.25), inset 0px 2px 1px rgba(255, 255, 255, 0.7)'
-                          : 'none',
+                          ? "0px 0px 10px rgba(31, 33, 48, 0.06), 0px 1px 1px rgba(31, 33, 48, 0.25), inset 0px 2px 1px rgba(255, 255, 255, 0.7)"
+                          : "none",
                     }}
-                    variant={activeTab === tab.name ? 'default' : 'outline'}
+                    variant={activeTab === tab.name ? "default" : "outline"}
                     className={`h-[33px] shrink-0 rounded-[6px] px-3 py-[11px] text-[18px] leading-[21px] whitespace-nowrap text-[#41415A] transition-all duration-300 ease-in-out ${
                       activeTab === tab.name
-                        ? 'border border-[#D5D5DD] bg-white font-semibold hover:bg-gray-100'
-                        : 'border-none bg-[#F9F9FB] font-normal hover:bg-white hover:text-black'
+                        ? "border border-[#D5D5DD] bg-white font-semibold hover:bg-gray-100"
+                        : "border-none bg-[#F9F9FB] font-normal hover:bg-white hover:text-black"
                     }`}
                     onClick={() => setActiveTab(tab.name)}
                   >
@@ -154,8 +152,10 @@ export function DiscoverSection() {
           <div className="landing-container flex flex-col items-center gap-20 self-stretch">
             <div className="flex w-full flex-col items-center gap-12 self-stretch">
               <div className="flex flex-col items-center gap-3 text-center">
-                <h3 className="text-[36px] leading-[41px] text-[#D4AF36]">{activeTab} around you</h3>
-                <p className="text-primary-foreground text-[20px] leading-6">
+                <h3 className="text-[36px] leading-[41px] text-[#D4AF36]">
+                  {activeTab} around you
+                </h3>
+                <p className="text-[20px]/6 text-primary-foreground">
                   Viewed and saved the most in the area over the past 24 hours
                 </p>
               </div>
@@ -171,14 +171,14 @@ export function DiscoverSection() {
                 <div className="grid w-full grid-cols-1 gap-x-5 gap-y-10 self-stretch md:grid-cols-2 lg:grid-cols-3">
                   {currentProperties?.map((property: Property) => (
                     <Link
-                      to={`/buy/$id`}
+                      to={`${getPropertyBasePath(property.category)}/$id`}
                       params={{ id: property.slug }}
                       key={property.id}
                       className="flex flex-col items-start gap-6 overflow-hidden transition-shadow hover:shadow-lg"
                     >
                       <div className="relative">
                         <img
-                          src={property.cover_image || '/placeholder.png'}
+                          src={property.cover_image || "/placeholder.png"}
                           alt={property.title}
                           width={397}
                           height={284}
@@ -187,10 +187,15 @@ export function DiscoverSection() {
 
                         <Badge
                           className={cn(
-                            'absolute top-4 left-4 h-[25px] rounded border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]'
+                            "absolute top-4 left-4 h-[25px] rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white px-2 py-0.5 text-[14px] leading-[21px] font-normal text-[#0B0B0D]",
                           )}
                         >
-                          <div className={cn('size-1.5 rounded-full', getStatusDotColor(property.category))} />
+                          <div
+                            className={cn(
+                              "size-1.5 rounded-full",
+                              getStatusDotColor(property.category),
+                            )}
+                          />
                           {property.category}
                         </Badge>
                         <Button
@@ -206,12 +211,12 @@ export function DiscoverSection() {
                           {formatPrice(property.price, property.currency)}
                         </h4>
                         <div className="flex flex-col items-start gap-[11px] self-stretch">
-                          <p className="text-primary-foreground text-[16px] leading-[18px]">
+                          <p className="text-[16px] leading-[18px] text-primary-foreground">
                             {property.location.city}, {property.location.state}
                           </p>
 
                           <div className="flex items-end gap-3 self-stretch">
-                            <div className="text-primary-foreground flex items-center gap-5 text-[14px] leading-4">
+                            <div className="flex items-center gap-5 text-[14px]/4 text-primary-foreground">
                               <div className="flex items-center gap-2">
                                 <BedDouble className="size-[18px] text-white" />
                                 <span>{property.bedrooms} Beds</span>
@@ -237,9 +242,9 @@ export function DiscoverSection() {
               <div className="flex flex-col items-start gap-2 py-6 text-center">
                 <Button
                   asChild
-                  className="min-w-[181px]] bg-secondary-foreground h-12 rounded-[40px] px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800"
+                  className="h-12 min-w-[181px] rounded-[40px] bg-secondary-foreground px-6 py-[15px] text-[16px] leading-[19px] font-semibold text-white hover:bg-gray-800"
                 >
-                  <Link to="/buy">
+                  <Link to={exploreListingPath}>
                     Explore Listing <ChevronRight className="size-4 fill-white" />
                   </Link>
                 </Button>
@@ -251,13 +256,15 @@ export function DiscoverSection() {
 
       {/* next gen */}
       <section className="w-full bg-white py-16">
-        <div className="lg:landing-container flex flex-col items-center lg:gap-[104px]">
+        <div className="flex flex-col items-center lg:landing-container lg:gap-[104px]">
           <div className="mx-auto flex w-full max-w-[849px] flex-col gap-[23px] px-5 text-center lg:px-0">
-            <h2 className="text-[42px] leading-[59px] text-[#1F2130]">Next-Gen Data for Next Level Deals</h2>
+            <h2 className="text-[42px] leading-[59px] text-[#1F2130]">
+              Next-Gen Data for Next Level Deals
+            </h2>
 
-            <p className="text-[20px] leading-7 text-[#41415A]">
-              Whether you’re looking for your next home, scouting investment properties, or sourcing deals for clients —
-              this platform gives you the edge.
+            <p className="text-[20px]/7 text-[#41415A]">
+              Whether you’re looking for your next home, scouting investment properties, or sourcing
+              deals for clients — this platform gives you the edge.
             </p>
           </div>
 
@@ -286,29 +293,33 @@ export function DiscoverSection() {
               <div className="absolute inset-0 bg-[oklch(0.7898_0.1514_90.07/20%)]/20" />
             </div>
 
-            <div className=";lg:pl-10 relative z-10 flex w-full flex-col items-center justify-between gap-[95px] rounded-[13px] pr-5 pl-5 lg:flex-row lg:pr-0">
+            <div className="relative z-10 flex w-full flex-col items-center justify-between gap-[95px] rounded-[13px] px-5 lg:flex-row lg:pr-0 lg:pl-10">
               <div className="flex h-auto flex-col items-start gap-10 lg:w-[521px] lg:shrink-0">
                 <div className="flex flex-col items-start gap-[13px]">
-                  <h3 className="text-[44px] leading-[62px] text-[#1F2130]">Ready to Find Real Property?</h3>
+                  <h3 className="text-[44px] leading-[62px] text-[#1F2130]">
+                    Ready to Find Real Property?
+                  </h3>
 
-                  <p className="self-stretch text-[20px] leading-7 text-[#41415A]">
-                    Start your 7-day free trial and access Nigeria’s most trusted real estate listings — full property
-                    details, high-quality photos, direct contact info, and more
+                  <p className="self-stretch text-[20px]/7 text-[#41415A]">
+                    Start your 7-day free trial and access Nigeria’s most trusted real estate
+                    listings — full property details, high-quality photos, direct contact info, and
+                    more
                   </p>
                 </div>
 
                 <div className="flex flex-col items-start gap-6 self-stretch">
                   <Button
                     style={{
-                      background: ' linear-gradient(180deg, #787878 0%, #1E1E1E 60%)',
-                      boxShadow: ' 0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                      background: " linear-gradient(180deg, #787878 0%, #1E1E1E 60%)",
+                      boxShadow:
+                        " 0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                     }}
                     className="h-12 rounded-[40px] border border-[oklch(0.235_0_0/50%)] px-6 py-4 text-[16px] leading-[19px] font-semibold text-white"
                   >
                     Start Trial Now
                   </Button>
 
-                  <span className="self-stretch text-[14px] leading-5 text-[#41415A]">
+                  <span className="self-stretch text-[14px]/5 text-[#41415A]">
                     No card required. Cancel any time.
                   </span>
                 </div>
@@ -344,43 +355,83 @@ export function DiscoverSection() {
 
           <div className="flex w-full flex-col self-stretch border-b border-[#ECECEC] bg-white py-6">
             <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
-              {blogs.map((blog, index) => (
-                <Link
-                  to="/blog/$id"
-                  params={{ id: String(index) }}
-                  key={index}
-                  className="flex grow flex-col items-start gap-[19px]"
-                >
-                  <img className="h-[229px] w-full rounded-t-xl" src={blog.image} alt="blog" width={394} height={229} />
-
-                  <div className="flex flex-col items-start gap-4 self-stretch">
-                    <div className="flex items-start gap-2">
-                      {blog.tags.map((tag, index) => (
-                        <div
-                          key={index}
-                          className="flex h-[25px] items-center justify-center rounded bg-[oklch(0.7665_0.1393_91.15/5%)] px-2 py-0.5 text-[14px] leading-[21px] text-[#D4AF36]"
-                        >
-                          {tag}
+              {postsQuery.isLoading
+                ? Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="flex grow flex-col items-start gap-[19px]">
+                      <Skeleton className="h-[229px] w-full rounded-t-xl" />
+                      <div className="flex w-full flex-col items-start gap-4 self-stretch">
+                        <div className="flex items-start gap-2">
+                          <Skeleton className="h-[25px] w-24 rounded-sm" />
                         </div>
-                      ))}
+                        <div className="flex w-full flex-col items-start gap-3 self-stretch">
+                          <Skeleton className="h-6 w-full" />
+                          <Skeleton className="h-6 w-5/6" />
+                          <Skeleton className="h-5 w-full" />
+                          <Skeleton className="h-5 w-4/5" />
+                        </div>
+                        <Skeleton className="h-3 w-28" />
+                      </div>
                     </div>
+                  ))
+                : blogPosts.map((post) => {
+                    const slug = slugFromUri(post.uri);
+                    const tags =
+                      post.categories?.nodes
+                        ?.map((category) => category?.name)
+                        .filter((name): name is string => Boolean(name))
+                        .slice(0, 2) ?? [];
+                    const imageUrl =
+                      toAbsoluteBlogUrl(post.featuredImage?.node?.sourceUrl) ??
+                      toAbsoluteBlogUrl(post.featuredImage?.node?.filePath) ??
+                      assets.blog1;
+                    const dateLabel = post.date
+                      ? format(new Date(post.date), "MMM d, yyyy")
+                      : "Latest Post";
 
-                    <div className="flex flex-col items-start gap-3 self-stretch">
-                      <h5 className="self-stretch text-[16px] leading-6 font-semibold tracking-[-0.15px] text-[#0B0B0D]">
-                        {blog.title}
-                      </h5>
+                    return (
+                      <Link
+                        to="/blog/$id"
+                        params={{ id: slug }}
+                        key={post.uri}
+                        className="flex grow flex-col items-start gap-[19px]"
+                      >
+                        <img
+                          className="h-[229px] w-full rounded-t-xl object-cover"
+                          src={imageUrl}
+                          alt={post.featuredImage?.node?.altText || post.title || "blog"}
+                          width={394}
+                          height={229}
+                        />
 
-                      <p className="line-clamp-2 text-[14px] leading-6 tracking-[-0.14px] text-[#6C7574]">
-                        {blog.content}
-                      </p>
-                    </div>
+                        <div className="flex flex-col items-start gap-4 self-stretch">
+                          <div className="flex flex-wrap items-start gap-2">
+                            {(tags.length > 0 ? tags : ["Blog"]).map((tag) => (
+                              <div
+                                key={tag}
+                                className="flex h-[25px] items-center justify-center rounded-sm bg-[oklch(0.7665_0.1393_91.15/5%)] px-2 py-0.5 text-[14px] leading-[21px] text-[#D4AF36]"
+                              >
+                                {tag}
+                              </div>
+                            ))}
+                          </div>
 
-                    <span className="text-[10px] leading-[11px] tracking-[0.88px] text-[#0B0B0D] uppercase">
-                      {blog.dateTime}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+                          <div className="flex flex-col items-start gap-3 self-stretch">
+                            <h5 className="self-stretch text-[16px]/6 font-semibold tracking-[-0.15px] text-[#0B0B0D]">
+                              {post.title}
+                            </h5>
+
+                            <p className="line-clamp-2 text-[14px]/6 tracking-[-0.14px] text-[#6C7574]">
+                              {excerptFromHtml(post.content ?? "")}
+                            </p>
+                          </div>
+
+                          <span className="text-[10px] leading-[11px] tracking-[0.88px] text-[#0B0B0D] uppercase">
+                            {dateLabel}
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
             </div>
           </div>
 

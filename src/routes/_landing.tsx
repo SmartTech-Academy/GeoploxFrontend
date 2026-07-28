@@ -1,6 +1,6 @@
-import LandingLayout from '@/components/layouts/LandingLayout';
-import { createFileRoute } from '@tanstack/react-router';
+import LandingLayout from "@/components/layouts/LandingLayout";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_landing')({
+export const Route = createFileRoute("/_landing")({
   component: LandingLayout,
 });

@@ -1,5 +1,5 @@
-import CreateBlogForm from './create-blog-form';
-import { PageMetaTags } from '@/components/page-meta-data';
+import CreateBlogForm from "./create-blog-form";
+import { PageMetaTags } from "@/components/page-meta-data";
 
 const CreateBlogs = () => {
   return (

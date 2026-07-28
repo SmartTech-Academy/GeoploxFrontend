@@ -28,7 +28,7 @@ export interface LastMessage {
 export interface Conversation {
   id: number;
   subject: string;
-  type: 'private' | 'group';
+  type: "private" | "group";
   participants_count: number;
   participants: Participant[];
   last_message: LastMessage | null;

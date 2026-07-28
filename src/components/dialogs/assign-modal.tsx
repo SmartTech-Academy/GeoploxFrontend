@@ -1,238 +1,361 @@
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import type React from 'react';
-import type { Dispatch, SetStateAction } from 'react';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { customResolver } from '@/lib/customZodResolver';
-import z from 'zod/v4';
-import { useForm } from 'react-hook-form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { ChevronDown } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useState } from 'react';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type { Dispatch, SetStateAction } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { customResolver } from "@/lib/customZodResolver";
+import z from "zod/v4";
+import { useForm } from "react-hook-form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  useAssignUsersToManager,
+  useAssignRegionToManager,
+  useGetOwnersDevelopers,
+} from "@/lib/services/managers";
+
+import { toast } from "sonner";
+import React, { useId, useState, useEffect } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
+import statesAndLocalGov from "@/data/statesAndLocalGov.json";
 
 interface AssignModalProps {
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   open: boolean;
+  managerId?: string;
+  managerName?: string;
 }
 
+interface User {
+  id: string;
+  fname: string;
+  lname: string;
+}
+
+// Schema handles both modes.
 const assignSchema = z.object({
-  assignType: z.enum(['region', 'developer'], {
-    error: 'Please select an assignment type',
-  }),
-  state: z.string().min(1, 'Please select a state'),
-  selectedRegions: z.array(z.string()).min(1, 'Please select at least one region'),
+  user_ids: z.array(z.string()).optional(),
+  state: z.string().optional(),
+  city: z.string().optional(),
 });
 
-const AssignModal: React.FC<AssignModalProps> = ({ open, onOpenChange }) => {
-  const [regionDropdownOpen, setRegionDropdownOpen] = useState(false);
+type AssignFormValues = z.infer<typeof assignSchema>;
 
-  const form = useForm({
+const AssignModal: React.FC<AssignModalProps> = ({
+  open,
+  onOpenChange,
+  managerId,
+  // managerName,
+}) => {
+  const formId = useId();
+  const [search, setSearch] = useState("");
+  const [assignmentMode, setAssignmentMode] = useState<"region" | "users">("region");
+  const debouncedSearch = useDebounce(search, 500);
+
+  const {
+    data: usersData,
+    isPending: isLoadingUserData,
+    isFetching,
+  } = useGetOwnersDevelopers(
+    {
+      status: "all",
+      search_user: debouncedSearch || undefined,
+    },
+    { enabled: open && assignmentMode === "users" },
+  );
+  const users: User[] = usersData?.data?.data ?? [];
+
+  const form = useForm<AssignFormValues>({
     resolver: customResolver(assignSchema),
     defaultValues: {
-      assignType: 'region' as const,
-      state: 'lagos',
-      selectedRegions: ['lagos-mainland'],
+      user_ids: [],
+      state: "",
+      city: "",
     },
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
   });
 
-  // Mock data - replace with actual data
-  const states = [
-    { value: 'lagos', label: 'Lagos State' },
-    { value: 'abuja', label: 'FCT Abuja' },
-    { value: 'rivers', label: 'Rivers State' },
-  ];
+  // Hooks for API calls
+  const { mutate: assignUsers, isPending: isAssigningUsers } = useAssignUsersToManager();
+  const { mutate: assignRegion, isPending: isAssigningRegion } = useAssignRegionToManager();
 
-  const regions = [
-    { value: 'lekki-ajah', label: 'Lekki–Ajah Axis' },
-    { value: 'lagos-island', label: 'Lagos Island' },
-    { value: 'lagos-mainland', label: 'Lagos Mainland' },
-  ];
+  const isPending = isAssigningUsers || isAssigningRegion;
 
-  function onSubmit(values: z.infer<typeof assignSchema>) {
-    toast.success(values.assignType);
-    onOpenChange(false);
+  function onSubmit(values: AssignFormValues) {
+    if (!managerId) {
+      toast.error("Select a manager first.");
+      return;
+    }
+
+    if (assignmentMode === "region") {
+      if (!values.state || !values.city) {
+        toast.error("Please select both State and Region.");
+        return;
+      }
+      assignRegion(
+        { manager_id: managerId, state: values.state, city: values.city },
+        {
+          onSuccess: () => {
+            onOpenChange(false);
+            form.reset();
+          },
+        },
+      );
+    } else {
+      if (!values.user_ids || values.user_ids.length === 0) {
+        toast.error("Please select at least one user.");
+        return;
+      }
+      assignUsers(
+        { manager_id: managerId, user_ids: values.user_ids },
+        {
+          onSuccess: () => {
+            onOpenChange(false);
+            form.reset();
+            setSearch("");
+          },
+        },
+      );
+    }
   }
 
-  const handleRegionToggle = (regionValue: string) => {
-    const currentRegions = form.getValues('selectedRegions');
-    const updatedRegions = currentRegions.includes(regionValue)
-      ? currentRegions.filter((r) => r !== regionValue)
-      : [...currentRegions, regionValue];
-
-    form.setValue('selectedRegions', updatedRegions);
+  const toggleUser = (userId: string) => {
+    const current = form.getValues("user_ids") || [];
+    const next = current.includes(userId)
+      ? current.filter((id) => id !== userId)
+      : [...current, userId];
+    form.setValue("user_ids", next, { shouldValidate: true });
   };
 
-  const getSelectedRegionsText = () => {
-    const selectedRegions = form.getValues('selectedRegions');
-    if (selectedRegions.length === 0) return 'Select regions';
-    if (selectedRegions.length === 1) {
-      const region = regions.find((r) => r.value === selectedRegions[0]);
-      return region?.label || 'Select regions';
+  // Reset form when modal opens/closes or mode changes
+  useEffect(() => {
+    if (!open) {
+      form.reset();
+      setSearch("");
+      setAssignmentMode("region");
     }
-    return `${selectedRegions.length} regions selected`;
-  };
+  }, [open, form]);
+
+  // Get LGAs for selected state
+  const selectedStateValue = form.watch("state");
+  const selectedStateData = statesAndLocalGov.find((s) => s.state === selectedStateValue);
+  // Adjust based on your JSON structure (usually .lgas or similar)
+  const availableLgas = selectedStateData ? (selectedStateData as any).lgas : [];
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        onOpenChange(nextOpen);
+        if (!nextOpen) {
+          form.reset();
+          setSearch("");
+        }
+      }}
+    >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-          <DialogContent className="sm:max-w-[450px]">
+        <form id={formId} onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle> Assign By</DialogTitle>
+              <DialogTitle>Assign By</DialogTitle>
             </DialogHeader>
 
-            <div className="flex w-full flex-col gap-5">
-              <FormField
-                control={form.control}
-                name="assignType"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormControl>
-                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
-                        <div
-                          className={cn(
-                            `flex w-full grow items-center justify-between gap-4 rounded-[5px] px-4 py-6`,
-                            field.value === 'region' ? 'bg-[#FBF7EB]' : 'border border-[#F1F1F4] bg-white'
-                          )}
+            <div className="flex w-full flex-col gap-6">
+              {/* Mode Toggles */}
+              <div className="grid grid-cols-2 gap-2 rounded-lg bg-[#F8F8F8] p-1">
+                <button
+                  type="button"
+                  onClick={() => setAssignmentMode("region")}
+                  className={`flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all ${
+                    assignmentMode === "region"
+                      ? "bg-white text-[#D4AF36] shadow-sm"
+                      : "text-[#71748C] hover:text-[#1F2130]"
+                  }`}
+                >
+                  Region
+                  {assignmentMode === "region" && (
+                    <div className="size-2 rounded-full bg-[#D4AF36]" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAssignmentMode("users")}
+                  className={`flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all ${
+                    assignmentMode === "users"
+                      ? "bg-white text-[#D4AF36] shadow-sm"
+                      : "text-[#71748C] hover:text-[#1F2130]"
+                  }`}
+                >
+                  Developer/ Owner
+                  {assignmentMode === "users" && (
+                    <div className="size-2 rounded-full bg-[#D4AF36]" />
+                  )}
+                </button>
+              </div>
+
+              {/* REGION MODE CONTENT */}
+              {assignmentMode === "region" && (
+                <div className="flex animate-in flex-col gap-4 duration-200 fade-in slide-in-from-top-2">
+                  <FormField
+                    control={form.control}
+                    name="state"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col gap-2">
+                        <FormLabel className="text-[14px] text-[#41415A]">Select State</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
+                              <SelectValue placeholder="Select a state" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {statesAndLocalGov.map((s) => (
+                              <SelectItem key={s.state} value={s.state}>
+                                {s.state}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col gap-2">
+                        <FormLabel className="text-[14px] text-[#41415A]">Select Region</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={!selectedStateValue}
                         >
-                          <Label
-                            htmlFor="region"
-                            className="cursor-pointer text-[14px] leading-[17px] font-semibold text-[#4E4E4E]"
-                          >
-                            Region
-                          </Label>
+                          <FormControl>
+                            <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
+                              <SelectValue placeholder="Select a region" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {availableLgas.map((lga: string) => (
+                              <SelectItem key={lga} value={lga}>
+                                {lga}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {!selectedStateValue && (
+                          <p className="text-[10px] text-[#71748C]">Please select a state first.</p>
+                        )}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
 
-                          <RadioGroupItem value="region" id="region" />
-                        </div>
+              {/* DEVELOPER/OWNER MODE CONTENT */}
+              {assignmentMode === "users" && (
+                <div className="flex animate-in flex-col gap-4 duration-200 fade-in slide-in-from-top-2">
+                  <div className="flex flex-col gap-2">
+                    <Input
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Search by name..."
+                      className="h-10 rounded-lg border-[#D5D5DD]"
+                    />
+                  </div>
 
-                        <div
-                          className={cn(
-                            `flex w-full grow items-center justify-between gap-4 rounded-[5px] px-4 py-6`,
-                            field.value === 'developer' ? 'bg-[#FBF7EB]' : 'border border-[#F1F1F4] bg-white'
-                          )}
-                        >
-                          <Label
-                            htmlFor="developer"
-                            className="cursor-pointer text-[14px] leading-[17px] font-semibold text-[#4E4E4E]"
-                          >
-                            Developer/ Owner
-                          </Label>
-                          <RadioGroupItem value="developer" id="developer" />
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="state"
-                render={({ field }) => (
-                  <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                      Select State
-                    </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="h-10 w-full rounded-lg border-[#D5D5DD]">
-                          <SelectValue placeholder="Select..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {states.map((state) => (
-                          <SelectItem key={state.value} value={state.value}>
-                            {state.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="selectedRegions"
-                render={() => (
-                  <FormItem className="w-full gap-1.5">
-                    <FormLabel className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                      Select Region
-                    </FormLabel>
-                    <FormControl>
-                      <Popover open={regionDropdownOpen} onOpenChange={setRegionDropdownOpen}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={regionDropdownOpen}
-                            className="h-10 w-full justify-between rounded-xl border-gray-300 bg-white text-base font-medium text-gray-800 hover:bg-white"
-                          >
-                            {getSelectedRegionsText()}
-                            <ChevronDown className="size-4 fill-[#41415A] opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-96 p-0" align="start">
-                          <div className="flex w-full flex-col gap-4 p-4">
-                            {regions.map((region) => {
-                              const isChecked = form.getValues('selectedRegions').includes(region.value);
-                              return (
-                                <div key={region.value} className="flex items-center space-x-3">
-                                  <Checkbox
-                                    id={region.value}
-                                    checked={isChecked}
-                                    onCheckedChange={() => handleRegionToggle(region.value)}
-                                  />
-                                  <Label
-                                    htmlFor={region.value}
-                                    className={`cursor-pointer text-base font-medium ${
-                                      isChecked ? 'text-gray-800' : 'text-gray-500'
-                                    }`}
-                                  >
-                                    {region.label}
-                                  </Label>
-                                </div>
-                              );
-                            })}
+                  <FormField
+                    control={form.control}
+                    name="user_ids"
+                    render={() => (
+                      <FormItem className="w-full">
+                        <FormLabel className="text-[14px] font-normal text-[#41415A]">
+                          Select User(s)
+                        </FormLabel>
+                        <FormControl>
+                          <div className="max-h-64 overflow-y-auto rounded-lg border border-[#E8E8E8] bg-white p-3">
+                            {isLoadingUserData ? (
+                              <p className="text-[12px] text-[#71748C]">Loading...</p>
+                            ) : isFetching ? (
+                              <p className="text-[12px] text-[#71748C]">Searching...</p>
+                            ) : users.length === 0 ? (
+                              <p className="text-[12px] text-[#71748C]">No users found.</p>
+                            ) : (
+                              <div className="flex flex-col gap-2">
+                                {users.map((u: User) => {
+                                  const checked = (form.getValues("user_ids") || []).includes(u.id);
+                                  return (
+                                    <div
+                                      key={u.id}
+                                      className="flex items-center gap-3 rounded-md p-2 hover:bg-[#F9F9FB]"
+                                    >
+                                      <Checkbox
+                                        id={u.id}
+                                        checked={checked}
+                                        onCheckedChange={() => toggleUser(u.id)}
+                                      />
+                                      <Label
+                                        htmlFor={u.id}
+                                        className="cursor-pointer text-[14px] text-[#1F2130]"
+                                      >
+                                        {`${u.lname} ${u.fname}`}
+                                      </Label>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
             </div>
-            <DialogFooter>
+
+            <DialogFooter className="sm:justify-between">
               <DialogClose asChild>
                 <Button
-                  className="h-8 rounded-4xl bg-[#F1F1F4] px-4 py-[15px] text-[12px] leading-3.5 font-semibold text-[#1F2130]"
+                  type="button"
                   variant="secondary"
+                  className="h-9 rounded-4xl bg-[#F1F1F4] px-6 text-[12px] font-semibold text-[#1F2130]"
                 >
                   Cancel
                 </Button>
               </DialogClose>
               <Button
                 type="submit"
-                variant="default"
-                style={{
-                  background: 'linear-gradient(180deg, #505050 0%, #1E1E1E 60%)',
-                  boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
-                }}
-                className="h-8 rounded-4xl border border-[oklch(0.235_0_0/50%)] p-4 text-[12px] leading-3.5 font-semibold text-white"
+                form={formId}
+                disabled={isPending || !managerId}
+                className="h-9 rounded-4xl bg-[#1F2130] px-6 text-[12px] font-semibold text-white hover:bg-[#1F2130]/90"
               >
-                Assign
+                {isPending ? "Assigning..." : "Assign"}
               </Button>
             </DialogFooter>
           </DialogContent>

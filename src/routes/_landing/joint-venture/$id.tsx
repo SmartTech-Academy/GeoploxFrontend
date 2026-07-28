@@ -1,7 +1,7 @@
-import ListingDetail from '@/components/listing-detail';
+import ListingDetail from "@/components/listing-detail";
 
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_landing/joint-venture/$id')({
+export const Route = createFileRoute("/_landing/joint-venture/$id")({
   component: ListingDetail,
 });

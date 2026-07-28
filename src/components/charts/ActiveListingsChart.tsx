@@ -1,19 +1,30 @@
-import { Line, LineChart, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Line, LineChart, XAxis, YAxis, CartesianGrid } from "recharts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
 const chartConfig = {
   rent: {
-    label: 'Rent',
-    color: '#EAB308', // Yellow
+    label: "Rent",
+    color: "#EAB308", // Yellow
   },
   forSale: {
-    label: 'For Sale',
-    color: '#DC2626', // Red
+    label: "For Sale",
+    color: "#DC2626", // Red
   },
   shortLet: {
-    label: 'Short Let',
-    color: '#0891B2', // Teal
+    label: "Short Let",
+    color: "#0891B2", // Teal
   },
 } satisfies ChartConfig;
 
@@ -29,7 +40,9 @@ export function ActiveListingsChart({ data, period, onPeriodChange }: ActiveList
     <div className="flex items-start gap-12 self-stretch rounded-xl border border-[#E3E3E8] bg-white p-6">
       <div className="flex w-full grow flex-col items-start gap-6">
         <header className="flex w-full items-center justify-between gap-6">
-          <h3 className="text-[12px] leading-3.5 tracking-[0.02em] text-[#7F7F7F] uppercase">Active Listings</h3>
+          <h3 className="text-[12px]/3.5 tracking-[0.02em] text-[#7F7F7F] uppercase">
+            Active Listings
+          </h3>
 
           <Select value={period} onValueChange={onPeriodChange}>
             <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-[#F9F9F9] text-[#41415A] focus:ring-0">
@@ -49,15 +62,15 @@ export function ActiveListingsChart({ data, period, onPeriodChange }: ActiveList
         {/* Legend */}
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-sm bg-[#EAB308]"></div>
+            <div className="size-3 rounded-sm bg-[#EAB308]"></div>
             <span className="text-sm text-gray-600">Rent</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-sm bg-[#DC2626]"></div>
+            <div className="size-3 rounded-sm bg-[#DC2626]"></div>
             <span className="text-sm text-gray-600">For Sale</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-sm bg-[#0891B2]"></div>
+            <div className="size-3 rounded-sm bg-[#0891B2]"></div>
             <span className="text-sm text-gray-600">Short Let</span>
           </div>
         </div>
@@ -77,15 +90,25 @@ export function ActiveListingsChart({ data, period, onPeriodChange }: ActiveList
                     bottom: 12,
                   }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" horizontal={true} vertical={false} />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="#E5E7EB"
+                    horizontal={true}
+                    vertical={false}
+                  />
                   <XAxis
                     dataKey="month"
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
-                    tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                    tick={{ fontSize: 12, fill: "#9CA3AF" }}
                   />
-                  <YAxis tickLine={false} axisLine={false} tickMargin={8} tick={{ fontSize: 12, fill: '#9CA3AF' }} />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tick={{ fontSize: 12, fill: "#9CA3AF" }}
+                  />
                   <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                   <Line
                     dataKey="rent"
@@ -93,7 +116,7 @@ export function ActiveListingsChart({ data, period, onPeriodChange }: ActiveList
                     stroke="var(--color-rent)"
                     strokeWidth={2}
                     dot={false}
-                    activeDot={{ r: 4, stroke: 'var(--color-for-rent)', strokeWidth: 2 }}
+                    activeDot={{ r: 4, stroke: "var(--color-for-rent)", strokeWidth: 2 }}
                   />
                   <Line
                     dataKey="forSale"
@@ -101,7 +124,7 @@ export function ActiveListingsChart({ data, period, onPeriodChange }: ActiveList
                     stroke="var(--color-forSale)"
                     strokeWidth={2}
                     dot={false}
-                    activeDot={{ r: 4, stroke: 'var(--color-forSale)', strokeWidth: 2 }}
+                    activeDot={{ r: 4, stroke: "var(--color-forSale)", strokeWidth: 2 }}
                   />
                   <Line
                     dataKey="shortLet"
@@ -109,7 +132,7 @@ export function ActiveListingsChart({ data, period, onPeriodChange }: ActiveList
                     stroke="var(--color-shortLet)"
                     strokeWidth={2}
                     dot={false}
-                    activeDot={{ r: 4, stroke: 'var(--color-shortLet)', strokeWidth: 2 }}
+                    activeDot={{ r: 4, stroke: "var(--color-shortLet)", strokeWidth: 2 }}
                   />
                 </LineChart>
               </ChartContainer>

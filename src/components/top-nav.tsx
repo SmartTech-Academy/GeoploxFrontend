@@ -1,9 +1,9 @@
-import { CheckCircle2, Home, Loader2, LogOut, RulerDimensionLine, Settings, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Link, useLocation, useNavigate } from '@tanstack/react-router';
-import React from 'react';
+import { Home, LogOut, RulerDimensionLine, Settings, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,45 +12,45 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import { useAdminVerifyUser, useGetProfileData } from '@/lib/services/profile';
-import { NotificationPopover } from '@/components/notification-popover';
-import { queryClient } from '@/lib/queryClient';
-import { toast } from 'sonner';
+} from "./ui/dropdown-menu";
+import { useGetProfileData } from "@/lib/services/profile";
+import { NotificationPopover } from "@/components/notification-popover";
+import { queryClient } from "@/lib/queryClient";
 
 // Route title mapping for dashboard pages
 const routeTitleMap: Record<string, string> = {
-  '/dashboard': 'Dashboard',
-  '/properties': 'Properties',
-  '/properties/create': 'Create Property',
-  '/listing': 'Listings',
-  '/messages': 'Messages',
-  '/users': 'Users',
-  '/managers': 'Property Managers',
-  '/performance': 'Performance',
-  '/insights': 'Market Insights',
-  '/settings': 'Settings',
-  '/pending-approvals': 'Pending Approvals',
-  '/getting-started': 'Getting Started',
-  '/blogs': 'Blog Posts',
-  '/favorites': 'My Favorites',
-  '/blogs/create': 'Create Blog Post',
-  '/notifications': 'Notifications',
+  "/dashboard": "Dashboard",
+  "/properties": "Properties",
+  "/properties/create": "Create Property",
+  "/listing": "Listings",
+  "/messages": "Messages",
+  "/users": "Users",
+  "/managers-users": "Users",
+  "/managers": "Property Managers",
+  "/performance": "Performance",
+  "/insights": "Market Insights",
+  "/settings": "Settings",
+  "/pending-approvals": "Pending Approvals",
+  "/getting-started": "Getting Started",
+  "/blogs": "Blog Posts",
+  "/favorites": "My Favorites",
+  "/blogs/create": "Create Blog Post",
+  "/notifications": "Notifications",
 };
 
 // Function to get page title based on current route
 function getPageTitle(pathname: string): string {
   // Handle dynamic routes (with IDs)
-  if (pathname.startsWith('/properties/') && pathname !== '/properties/create') {
-    return 'Property Details';
+  if (pathname.startsWith("/properties/") && pathname !== "/properties/create") {
+    return "Property Details";
   }
 
-  if (pathname.startsWith('/listing/')) {
-    return 'Listing Details';
+  if (pathname.startsWith("/listing/")) {
+    return "Listing Details";
   }
 
   // Handle static routes
-  return routeTitleMap[pathname] || 'Dashboard';
+  return routeTitleMap[pathname] || "Dashboard";
 }
 
 interface TopNavProps {
@@ -60,14 +60,12 @@ interface TopNavProps {
 export function TopNav({ setUseMaxWith }: TopNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { mutateAsync: adminVerifyUser, isPending: isVerifying } = useAdminVerifyUser();
+  //   const { mutateAsync: adminVerifyUser, isPending: isVerifying } = useAdminVerifyUser();
 
   const pageTitle = getPageTitle(location.pathname);
   const { data: user } = useGetProfileData();
-
-  console.log('user', user);
   const getInitials = (firstName?: string, lastName?: string) => {
-    if (!firstName || !lastName) return '';
+    if (!firstName || !lastName) return "";
     return `${firstName[0]}${lastName[0]}`.toUpperCase();
   };
 
@@ -75,36 +73,28 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
     if (!status) return null;
 
     switch (status) {
-      case 'active':
+      case "active":
         return null; // Don't show anything if active
-      case 'newly_registered':
-        return 'Account under review';
-      case 'inactive':
-        return 'Account suspended';
-      case 'onboarding_account_type':
-      case 'onboarding_personal_information':
-      case 'onboarding_business_information':
-      case 'onboarding_kyc_documents':
-      case 'onboarding_subscription_selection':
-      case 'onboarding_completion':
-        return 'Onboarding in progress';
+      case "newly_registered":
+        return "Account under review";
+      case "inactive":
+        return "Account suspended";
+      case "onboarding_account_type":
+      case "onboarding_personal_information":
+      case "onboarding_business_information":
+      case "onboarding_kyc_documents":
+      case "onboarding_subscription_selection":
+      case "onboarding_completion":
+        return "Onboarding in progress";
       default:
-        return 'Pending status';
+        return "Pending status";
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     queryClient.invalidateQueries();
-    navigate({ to: '/login' });
-  };
-
-  const handleAdminVerify = async () => {
-    if (user?.codec) {
-      await adminVerifyUser(user.codec);
-      queryClient.invalidateQueries();
-      toast.success('User verified successfully!');
-    }
+    navigate({ to: "/login" });
   };
 
   return (
@@ -130,7 +120,7 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Button variant="ghost" className="relative size-8 rounded-full">
                 <Avatar className="size-8">
                   <AvatarImage src={user?.display_picture_url} alt={user?.username} />
                   <AvatarFallback className="bg-[#D4AF36] text-sm font-medium text-white">
@@ -140,16 +130,16 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
-              {user?.onboarding_status === 'newly_registered' && (
+              {user?.onboarding_status === "newly_registered" && (
                 <>
-                  <DropdownMenuItem onClick={handleAdminVerify} className="cursor-pointer" disabled={isVerifying}>
+                  {/* <DropdownMenuItem onClick={handleAdminVerify} className="cursor-pointer" disabled={isVerifying}>
                     {isVerifying ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     ) : (
                       <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
                     )}
                     <span>{isVerifying ? 'Verifying...' : 'Verify User'}</span>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuSeparator />
                 </>
               )}
@@ -159,12 +149,14 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
                   <p className="text-sm leading-none font-medium">
                     {user?.firstname} {user?.lastname}
                   </p>
-                  <p className="text-muted-foreground truncate text-xs leading-none">{user?.email_address}</p>
-                  <p className="text-muted-foreground text-xs leading-none capitalize">
-                    {user?.user_role?.replace('_', ' ')}
+                  <p className="truncate text-xs leading-none text-muted-foreground">
+                    {user?.email_address}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground capitalize">
+                    {user?.user_role?.replace("_", " ")}
                   </p>
                   {getOnboardingStatus(user?.onboarding_status) && (
-                    <p className="text-warning-foreground text-xs leading-none font-semibold">
+                    <p className="text-xs leading-none font-semibold">
                       {getOnboardingStatus(user?.onboarding_status)}
                     </p>
                   )}
@@ -174,28 +166,28 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                   <Link to="/">
-                    <Home className="mr-2 h-4 w-4" />
+                    <Home className="mr-2 size-4" />
                     <span>Homepage</span>
                   </Link>
                 </DropdownMenuItem>
                 {user?.plan && (
                   <DropdownMenuItem asChild>
-                    <Link to="/settings" search={{ tab: 'subscriptions' }}>
-                      <Star className="mr-2 h-4 w-4" />
+                    <Link to="/settings" search={{ tab: "subscriptions" }}>
+                      <Star className="mr-2 size-4" />
                       <span>{user.plan.plan.name} Plan</span>
                     </Link>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem asChild>
                   <Link to="/settings">
-                    <Settings className="mr-2 h-4 w-4" />
+                    <Settings className="mr-2 size-4" />
                     <span>Settings</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="mr-2 size-4" />
                 <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>

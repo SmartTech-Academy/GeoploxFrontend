@@ -1,8 +1,30 @@
-import React from 'react';
+import React, { useEffect } from "react";
 
-import { Button } from './ui/button';
-import { Link, useRouter } from '@tanstack/react-router';
-import LoadingFallback from './loading-fallback';
+import { Button } from "./ui/button";
+import { Link, useRouter } from "@tanstack/react-router";
+import LoadingFallback from "./loading-fallback";
+import { sendTelegramError } from "@/lib/utils";
+
+const CHUNK_RELOAD_SESSION_KEY = "chunk-reload-attempted";
+
+const getErrorMessage = (error: unknown) => {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return "Unknown error occurred";
+};
+
+const isChunkLoadError = (error: unknown) => {
+  const message = getErrorMessage(error).toLowerCase();
+
+  return (
+    message.includes("failed to fetch dynamically imported module") ||
+    message.includes("importing a module script failed") ||
+    message.includes("loading chunk") ||
+    message.includes("chunkloaderror") ||
+    message.includes("text/html") ||
+    message.includes("valid javascript mime type")
+  );
+};
 
 // NotFoundPage Component
 const NotFoundPage = () => {
@@ -12,7 +34,13 @@ const NotFoundPage = () => {
     <div className="flex min-h-[500px] w-full items-center justify-center bg-white py-12">
       <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-8 px-4 text-center">
         {/* Icon */}
-        <svg width="32" height="41" viewBox="0 0 32 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width="32"
+          height="41"
+          viewBox="0 0 32 41"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             d="M8.2793 10.16C8.2793 9.94306 8.45514 9.76721 8.67206 9.76721H10.6754C10.8923 9.76721 11.0681 9.94306 11.0681 10.16V16.0036H8.2793V10.16Z"
             fill="#D4AF36"
@@ -63,17 +91,35 @@ interface ErrorPageProps {
 
 const ErrorPage: React.FC<ErrorPageProps> = ({ error }) => {
   const router = useRouter();
-  const isDev = process.env.NODE_ENV === 'development';
+  const isDev = process.env.NODE_ENV === "development";
 
   // Get error from the current route match
 
-  const errorMessage = error instanceof Error ? error?.message : 'Unknown error occurred';
+  const errorMessage = error instanceof Error ? error?.message : "Unknown error occurred";
+
+  useEffect(() => {
+    const message = `
+🚨 UI Error (Route)
+Path: ${window.location.pathname}
+Message: ${errorMessage}
+Time: ${new Date().toISOString()}
+UserAgent: ${navigator.userAgent}
+    `;
+
+    sendTelegramError(message);
+  }, [errorMessage]);
 
   return (
     <div className="flex min-h-[500px] w-full items-center justify-center bg-white py-12">
       <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-8 px-4 text-center">
         {/* Icon */}
-        <svg width="32" height="41" viewBox="0 0 32 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width="32"
+          height="41"
+          viewBox="0 0 32 41"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             d="M8.2793 10.16C8.2793 9.94306 8.45514 9.76721 8.67206 9.76721H10.6754C10.8923 9.76721 11.0681 9.94306 11.0681 10.16V16.0036H8.2793V10.16Z"
             fill="#D4AF36"
@@ -90,7 +136,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error }) => {
             Something went wrong
           </h1>
           <p className="text-[16px] leading-[22px] tracking-[-0.01em] text-[#41415A]">
-            {isDev ? errorMessage : 'An unexpected error occurred. Please try again later.'}
+            {isDev ? errorMessage : "An unexpected error occurred. Please try again later."}
           </p>
         </div>
 
@@ -128,47 +174,119 @@ interface ErrorBoundaryFallbackProps {
   resetErrorBoundary: () => void;
 }
 
-const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ error, resetErrorBoundary }) => {
-  const isDev = process.env.NODE_ENV === 'development';
+const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({
+  error,
+  resetErrorBoundary,
+}) => {
+  const isDev = process.env.NODE_ENV === "development";
+  const isChunkReloadError = isChunkLoadError(error);
+  const errorMessage = getErrorMessage(error);
+
+  useEffect(() => {
+    if (!isChunkReloadError) {
+      sessionStorage.removeItem(CHUNK_RELOAD_SESSION_KEY);
+      return;
+    }
+
+    const hasReloadedChunk = sessionStorage.getItem(CHUNK_RELOAD_SESSION_KEY) === "true";
+
+    if (hasReloadedChunk) {
+      sessionStorage.removeItem(CHUNK_RELOAD_SESSION_KEY);
+      return;
+    }
+
+    sessionStorage.setItem(CHUNK_RELOAD_SESSION_KEY, "true");
+    const reloadTimeout = window.setTimeout(() => {
+      window.location.reload();
+    }, 1200);
+
+    return () => window.clearTimeout(reloadTimeout);
+  }, [isChunkReloadError]);
+
+  useEffect(() => {
+    if (isDev) return; // 🚫 stop in development
+    if (isChunkReloadError) return;
+    const token = localStorage.getItem("token");
+    const message = `
+🚨 CRITICAL UI CRASH
+Path: ${window.location.pathname}
+Message: ${errorMessage}
+Stack: ${error.stack}
+Time: ${new Date().toISOString()}
+UserAgent: ${navigator.userAgent}
+token: ${token || "No token"}
+    `;
+
+    sendTelegramError(message);
+  }, [error, errorMessage, isChunkReloadError, isDev]);
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-red-50 to-red-100">
+    <div
+      className={`flex min-h-screen w-full items-center justify-center ${
+        isChunkReloadError
+          ? "bg-linear-to-br from-amber-50 via-white to-amber-100"
+          : "bg-linear-to-br from-red-50 to-red-100"
+      }`}
+    >
       <div className="max-w-lg px-4 text-center">
-        <div className="mx-auto h-24 w-24">
-          <svg viewBox="0 0 24 24" className="h-full w-full text-red-600">
-            <circle cx="12" cy="12" r="11" className="fill-current opacity-20" />
-            <path
-              className="fill-current"
-              d="M12 8v5M12 16h.01"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
+        <div className="mx-auto size-24">
+          {isChunkReloadError ? (
+            <div className="relative size-full">
+              <div className="absolute inset-0 animate-spin rounded-full border-4 border-amber-200 border-t-amber-500" />
+              <div className="absolute inset-4 rounded-full bg-amber-100" />
+            </div>
+          ) : (
+            <svg viewBox="0 0 24 24" className="size-full text-red-600">
+              <circle cx="12" cy="12" r="11" className="fill-current opacity-20" />
+              <path
+                className="fill-current"
+                d="M12 8v5M12 16h.01"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          )}
         </div>
-        <h1 className="mt-6 text-2xl font-bold text-gray-900">Application Error</h1>
+        <h1 className="mt-6 text-2xl font-bold text-gray-900">
+          {isChunkReloadError ? "Refreshing application" : "Application Error"}
+        </h1>
         <p className="mt-4 text-gray-600">
-          {isDev ? error.message : 'The application encountered an unexpected error.'}
+          {isChunkReloadError
+            ? "A new version of this page is loading. Please wait while we refresh the missing chunk."
+            : isDev
+              ? errorMessage
+              : "The application encountered an unexpected error."}
         </p>
-        {isDev && error.stack && (
+        {isDev && !isChunkReloadError && error.stack && (
           <div className="mt-6 max-h-64 overflow-auto rounded-lg bg-red-100 p-4 text-left">
             <p className="font-mono text-sm whitespace-pre-wrap text-red-800">{error.stack}</p>
           </div>
         )}
         <div className="mt-8 flex justify-center gap-4">
           <Button
-            onClick={resetErrorBoundary}
-            className="border-primary h-11 gap-11 rounded-full border px-5 py-2.5 text-[16px] leading-4 font-medium tracking-[-0.02em] text-white"
+            onClick={() => {
+              if (isChunkReloadError) {
+                sessionStorage.setItem(CHUNK_RELOAD_SESSION_KEY, "true");
+                window.location.reload();
+                return;
+              }
+
+              resetErrorBoundary();
+            }}
+            className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px]/4 font-medium tracking-[-0.02em] text-white"
           >
-            Try Again
+            {isChunkReloadError ? "Reload Now" : "Try Again"}
           </Button>
-          <Button
-            onClick={() => (window.location.href = '/dashboard')}
-            variant="outline"
-            className="border-primary h-11 gap-11 rounded-full border px-5 py-2.5 text-[16px] leading-4 font-medium tracking-[-0.02em]"
-          >
-            Go to Dashboard
-          </Button>
+          {!isChunkReloadError && (
+            <Button
+              onClick={() => (window.location.href = "/dashboard")}
+              variant="outline"
+              className="h-11 gap-11 rounded-full border border-primary px-5 py-2.5 text-[16px]/4 font-medium tracking-[-0.02em]"
+            >
+              Go to Dashboard
+            </Button>
+          )}
         </div>
       </div>
     </div>
@@ -178,37 +296,37 @@ const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ error, re
 // Loader Component - Mind-blowing design
 const Loader = () => {
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="flex min-h-screen w-full items-center justify-center bg-linear-to-br from-slate-50 via-white to-slate-100">
       <div className="relative flex flex-col items-center">
         {/* Main loader container with multiple spinning elements */}
-        <div className="relative h-32 w-32">
+        <div className="relative size-32">
           {/* Outer ring with gradient */}
-          <div className="from-primary via-primary/60 to-primary/30 before:from-primary before:via-primary/60 before:to-primary/30 absolute inset-0 h-32 w-32 animate-spin rounded-full border-4 border-transparent bg-gradient-to-r [background-clip:padding-box] before:absolute before:inset-[-4px] before:rounded-full before:bg-gradient-to-r before:opacity-70 before:blur-sm before:content-['']"></div>
+          <div className="absolute inset-0 size-32 animate-spin rounded-full border-4 border-transparent bg-linear-to-r from-primary via-primary/60 to-primary/30 bg-clip-padding before:absolute before:inset-[-4px] before:rounded-full before:bg-linear-to-r before:from-primary before:via-primary/60 before:to-primary/30 before:opacity-70 before:blur-sm before:content-['']"></div>
 
           {/* Middle ring - counter rotating */}
-          <div className="from-primary/80 via-primary/40 absolute inset-4 h-24 w-24 animate-spin rounded-full border-4 border-transparent bg-gradient-to-l to-transparent [animation-direction:reverse] [animation-duration:1.5s]"></div>
+          <div className="absolute inset-4 size-24 animate-spin rounded-full border-4 border-transparent bg-linear-to-l from-primary/80 via-primary/40 to-transparent animation-duration-[1.5s] direction-[reverse]"></div>
 
           {/* Inner pulsing core */}
-          <div className="from-primary to-primary/70 shadow-primary/30 absolute inset-8 h-16 w-16 animate-pulse rounded-full bg-gradient-to-br shadow-2xl"></div>
+          <div className="absolute inset-8 size-16 animate-pulse rounded-full bg-linear-to-br from-primary to-primary/70 shadow-2xl shadow-primary/30"></div>
 
           {/* Floating dots around the loader */}
-          <div className="bg-primary absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-4 transform animate-bounce rounded-full [animation-delay:-0.5s]"></div>
-          <div className="bg-primary absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 translate-y-4 transform animate-bounce rounded-full [animation-delay:-0.3s]"></div>
-          <div className="bg-primary absolute top-1/2 right-0 h-2 w-2 translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full [animation-delay:-0.7s]"></div>
-          <div className="bg-primary absolute top-1/2 left-0 h-2 w-2 -translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full [animation-delay:-0.1s]"></div>
+          <div className="absolute top-0 left-1/2 size-2 -translate-x-1/2 -translate-y-4 transform animate-bounce rounded-full bg-primary [animation-delay:-0.5s]"></div>
+          <div className="absolute bottom-0 left-1/2 size-2 -translate-x-1/2 translate-y-4 transform animate-bounce rounded-full bg-primary [animation-delay:-0.3s]"></div>
+          <div className="absolute top-1/2 right-0 size-2 translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full bg-primary [animation-delay:-0.7s]"></div>
+          <div className="absolute top-1/2 left-0 size-2 -translate-x-4 -translate-y-1/2 transform animate-bounce rounded-full bg-primary [animation-delay:-0.1s]"></div>
         </div>
 
         {/* Particle effects */}
-        <div className="pointer-events-none absolute inset-0 h-full w-full">
+        <div className="pointer-events-none absolute inset-0 size-full">
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
-              className={`bg-primary/40 absolute h-1 w-1 animate-ping rounded-full`}
+              className={`absolute size-1 animate-ping rounded-full bg-primary/40`}
               style={{
                 top: `${30 + Math.sin(i * 0.785) * 20}%`,
                 left: `${50 + Math.cos(i * 0.785) * 20}%`,
                 animationDelay: `${i * 0.2}s`,
-                animationDuration: '2s',
+                animationDuration: "2s",
               }}
             />
           ))}
@@ -216,24 +334,24 @@ const Loader = () => {
 
         {/* Glowing text with typewriter effect */}
         <div className="relative mt-12">
-          <div className="from-primary to-primary/70 absolute inset-0 bg-gradient-to-r bg-clip-text text-transparent blur-sm">
+          <div className="absolute inset-0 bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent blur-sm">
             <p className="text-xl font-bold tracking-wider">LOADING</p>
           </div>
-          <p className="from-primary to-primary/70 relative animate-pulse bg-gradient-to-r bg-clip-text text-xl font-bold tracking-wider text-transparent">
+          <p className="relative animate-pulse bg-linear-to-r from-primary to-primary/70 bg-clip-text text-xl font-bold tracking-wider text-transparent">
             LOADING
           </p>
 
           {/* Animated dots */}
           <div className="mt-2 flex justify-center space-x-1">
-            <div className="bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:0s]"></div>
-            <div className="bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:0.2s]"></div>
-            <div className="bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:0.4s]"></div>
+            <div className="size-2 animate-bounce rounded-full bg-primary [animation-delay:0s]"></div>
+            <div className="size-2 animate-bounce rounded-full bg-primary [animation-delay:0.2s]"></div>
+            <div className="size-2 animate-bounce rounded-full bg-primary [animation-delay:0.4s]"></div>
           </div>
         </div>
 
         {/* Subtle progress indication */}
         <div className="mt-8 h-1 w-64 overflow-hidden rounded-full bg-gray-200">
-          <div className="from-primary via-primary/80 to-primary h-full animate-pulse rounded-full bg-gradient-to-r bg-[length:200%_100%]"></div>
+          <div className="h-full animate-pulse rounded-full bg-linear-to-r from-primary via-primary/80 to-primary bg-size-[200%_100%]"></div>
         </div>
       </div>
     </div>

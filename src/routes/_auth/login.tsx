@@ -1,29 +1,44 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod/v4';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Eye, EyeOff } from 'lucide-react';
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import type { AxiosError } from "axios";
+import { useForm } from "react-hook-form";
+import * as z from "zod/v4";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Eye, EyeOff } from "lucide-react";
 
-import assets from '@/assets';
-import { customResolver } from '@/lib/customZodResolver';
-import { useLogin } from '@/lib/services';
-import { PageMetaTags } from '@/components/page-meta-data';
+import assets from "@/assets";
+import { customResolver } from "@/lib/customZodResolver";
+import { useLogin } from "@/lib/services";
+import { PageMetaTags } from "@/components/page-meta-data";
 
-import { toast } from 'sonner';
-import { getLoginRedirectPath } from '@/lib/navigation';
+import { toast } from "sonner";
+import { getLoginRedirectPath } from "@/lib/navigation";
 
 // Zod schema for login form
 const loginSchema = z.object({
-  email_or_username: z.string().min(1, 'Email or Username is required'),
-  password: z.string().min(1, 'Password is required'),
+  email_or_username: z.string().min(1, "Email or Username is required"),
+  password: z.string().min(1, "Password is required"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export const Route = createFileRoute('/_auth/login')({
+type ApiErrorPayload = {
+  message?: string;
+  data?: {
+    error_message?: string[];
+  };
+};
+
+export const Route = createFileRoute("/_auth/login")({
   component: RouteComponent,
 });
 
@@ -34,25 +49,49 @@ function RouteComponent() {
 
   const form = useForm<LoginFormValues>({
     resolver: customResolver(loginSchema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
-      email_or_username: '',
-      password: '',
+      email_or_username: "",
+      password: "",
     },
   });
+
+  const getErrorMessage = (error: unknown): string => {
+    const axiosError = error as AxiosError<ApiErrorPayload>;
+    const backendMessage =
+      axiosError.response?.data?.message || axiosError.response?.data?.data?.error_message?.[0];
+    if (backendMessage) return backendMessage;
+    if (error instanceof Error && error.message) return error.message;
+    return "Invalid credentials. Please try again.";
+  };
 
   const onSubmit = (values: LoginFormValues) => {
     mutate(values, {
       onSuccess: (response) => {
-        toast.success('Login successful!');
+        toast.success("Login successful!");
         const user = response.data?.data?.user_data;
         navigate({ to: getLoginRedirectPath(user) });
       },
-      onError: () => {
-        form.setError('password', {
-          type: 'manual',
-          message: 'Invalid credentials. Please try again.',
+      onError: (error) => {
+        const message = getErrorMessage(error);
+        const lowerMessage = message.toLowerCase();
+        const isNotActivatedError =
+          lowerMessage.includes("account not activated") ||
+          lowerMessage.includes("activate your account");
+
+        if (isNotActivatedError) {
+          toast.error(message);
+          navigate({
+            to: "/verify-otp",
+            search: { email: values.email_or_username },
+          });
+          return;
+        }
+
+        form.setError("password", {
+          type: "manual",
+          message,
         });
       },
     });
@@ -67,22 +106,28 @@ function RouteComponent() {
   //   };
 
   return (
-    <div className="flex h-full w-full bg-white">
+    <div className="flex size-full bg-white">
       <PageMetaTags
         title="Login to Your Account"
         description="Access your Geoplox account to manage properties, view saved listings, and connect with buyers or sellers."
         keywords="geoplox login, property account access"
       />
 
-      <div className="flex h-full min-h-screen w-full flex-col justify-between self-stretch py-10">
+      <div className="flex size-full min-h-screen flex-col justify-between self-stretch py-10">
         {/* Header */}
         <div className="flex w-full items-center justify-between gap-6 px-4 lg:px-12">
           <Link to="/">
-            <img src={assets.logotext} alt="logo" className="h-[46px] w-[126px]" width={126} height={46} />
+            <img
+              src={assets.logotext}
+              alt="logo"
+              className="h-[46px] w-[126px]"
+              width={126}
+              height={46}
+            />
           </Link>
 
           <span className="inline-flex gap-1 text-[14px] leading-[21px] text-[#41415A]">
-            New User?{' '}
+            New User?{" "}
             <Link to="/register" className="font-semibold text-[#D4AF36] hover:underline">
               Create Account
             </Link>
@@ -91,8 +136,10 @@ function RouteComponent() {
 
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 px-4 lg:px-0">
           <div className="flex w-full flex-col items-center gap-4 self-stretch">
-            <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">Welcome Back</h1>
-            <p className="text-[14px] leading-5 text-[#71748C]">Enter your details below to login</p>
+            <h1 className="text-[28px] leading-[39px] font-semibold text-[#1F2130]">
+              Welcome Back
+            </h1>
+            <p className="text-[14px]/5 text-[#71748C]">Enter your details below to login</p>
           </div>
 
           <div className="flex w-full flex-col gap-10">
@@ -133,7 +180,7 @@ function RouteComponent() {
                         <FormControl>
                           <div className="relative">
                             <Input
-                              type={showPassword ? 'text' : 'password'}
+                              type={showPassword ? "text" : "password"}
                               placeholder="G13p@7v#92LmZxQ"
                               className="h-10 w-full self-stretch rounded-xl border-[#D5D5DD] px-6 pr-12"
                               {...field}
@@ -143,7 +190,11 @@ function RouteComponent() {
                               onClick={() => setShowPassword(!showPassword)}
                               className="absolute top-1/2 right-3 -translate-y-1/2 transform text-[#D4AF36] hover:text-[#B69118]"
                             >
-                              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              {showPassword ? (
+                                <EyeOff className="size-4" />
+                              ) : (
+                                <Eye className="size-4" />
+                              )}
                             </button>
                           </div>
                         </FormControl>
@@ -154,7 +205,10 @@ function RouteComponent() {
 
                   {/* Forgot Password Link */}
                   <div className="flex justify-end">
-                    <Link to="/forgot-password" className="text-[14px] leading-5 text-[#D4AF36] hover:underline">
+                    <Link
+                      to="/forgot-password"
+                      className="text-[14px]/5 text-[#D4AF36] hover:underline"
+                    >
                       Forgot Password?
                     </Link>
                   </div>
@@ -166,12 +220,13 @@ function RouteComponent() {
                     type="submit"
                     disabled={isPending}
                     style={{
-                      background: 'linear-gradient(180deg, #D4AF36 0%, #B69118 60%)',
-                      boxShadow: '0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)',
+                      background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
+                      boxShadow:
+                        "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                     }}
                     className="h-10 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
                   >
-                    {isPending ? 'Signing In...' : 'Login'}
+                    {isPending ? "Signing In..." : "Login"}
                   </Button>
 
                   {/* <div className="flex w-full flex-col items-start gap-7">
@@ -216,7 +271,7 @@ function RouteComponent() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-[14px] leading-5 text-[#41415A]">
+          <p className="text-[14px]/5 text-[#41415A]">
             © {new Date().getFullYear()} — Geoplox, All Right Reserved.
           </p>
         </div>

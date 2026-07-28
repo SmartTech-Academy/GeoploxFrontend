@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import api from '../api';
+import { useMutation, useQuery } from "@tanstack/react-query";
+import api from "../api";
 // import { queryClient } from "../queryClient";
-import { UserProfile } from '../types';
-import { AxiosResponse } from 'axios';
-import { queryClient } from '../queryClient';
+import { UserProfile } from "../types";
+import { AxiosResponse } from "axios";
+import { queryClient } from "../queryClient";
 
 interface ProfileResponse {
   status: string;
@@ -35,42 +35,43 @@ interface BillingResponse {
 
 export const useGetBillingInfo = () => {
   return useQuery<BillingData>({
-    queryKey: ['billing-info'],
+    queryKey: ["billing-info"],
     queryFn: async () => {
-      const response: AxiosResponse<BillingResponse> = await api.get('/dashboard/billing/subscriptions');
+      const response: AxiosResponse<BillingResponse> = await api.get(
+        "/dashboard/billing/subscriptions",
+      );
       return response.data.data;
     },
     retry: false,
   });
-}
+};
 
 export const useGetProfileData = () => {
+  const token = localStorage.getItem("token");
   return useQuery({
-    queryKey: ['profile'],
+    queryKey: ["profile"],
     queryFn: async (): Promise<UserProfile> => {
-      const response: AxiosResponse<ProfileResponse> = await api.get('/dashboard/profile-datas');
+      const response: AxiosResponse<ProfileResponse> = await api.get("/dashboard/profile-datas");
       return response.data.data;
     },
     retry: false, // Optional: prevent retrying on auth errors
+    enabled: !!token,
   });
 };
-
 
 export const useUpdatePersonalInformation = () => {
   return useMutation({
     mutationFn: (data: any) => {
-      const headers = data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
-      const imageType = data instanceof FormData ? 'file' : 'binary';
+      const headers = data instanceof FormData ? { "Content-Type": "multipart/form-data" } : {};
+      const imageType = data instanceof FormData ? "file" : "binary";
       const url = `/dashboard/profile-settings/update-personal-info?dimension=300by300&edit_image=resize-only&image_type=${imageType}`;
-
-
 
       return api.put(url, data, {
         headers,
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
   });
 };
@@ -84,10 +85,10 @@ export const useAdminVerifyUser = () => {
 export const useUpdateBusinessInformation = () => {
   return useMutation({
     mutationFn: (data: any) => {
-          const headers = data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
+      const headers = data instanceof FormData ? { "Content-Type": "multipart/form-data" } : {};
       // If base64_file is present, we are sending a binary (base64) image.
       // Otherwise, no image is being updated.
-      const imageType = data.base64_file ? 'binary' : 'file';
+      const imageType = data.base64_file ? "binary" : "file";
       const url = `/dashboard/profile-settings/update-business-info?dimension=300by300&edit_image=resize-only&image_type=${imageType}`;
 
       return api.put(url, data, {
@@ -95,7 +96,7 @@ export const useUpdateBusinessInformation = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
   });
 };

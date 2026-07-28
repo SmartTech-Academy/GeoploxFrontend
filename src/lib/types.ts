@@ -6,7 +6,15 @@ export interface UserProfile {
   lastname: string;
   phone_number: string;
   whatsapp_number: string | null;
-  user_role: 'admin' | 'developer' | 'owner' | 'account_officer' | 'content_manager' | 'agent' | 'client';
+  user_role:
+    | "admin"
+    | "developer"
+    | "owner"
+    | "account_officer"
+    | "content_manager"
+    | "agent"
+    | "client"
+    | "manager";
   onboarding_status: string;
   country: string;
   state: string | null;
@@ -30,16 +38,13 @@ export interface UserProfile {
     starts_at: string;
     expires_at: string;
     plan: {
-      id: string
-      name: 'Basic';
+      id: string;
+      name: "Basic";
       monthly_price: 0;
       monthly_price_display: string;
       features: string[];
     };
   };
-
-
-
 }
 
 export interface Business {

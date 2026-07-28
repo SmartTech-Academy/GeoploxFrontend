@@ -1,8 +1,8 @@
-import { Outlet, useRouterState } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { Outlet, useRouterState } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import { useEffect } from 'react';
-import NProgress from 'nprogress';
+import { useEffect } from "react";
+import NProgress from "nprogress";
 
 // Configure NProgress once
 NProgress.configure({
@@ -14,7 +14,7 @@ function RouteLoader() {
   const { status } = useRouterState();
 
   useEffect(() => {
-    if (status === 'pending') {
+    if (status === "pending") {
       NProgress.start();
     } else {
       NProgress.done();
@@ -26,7 +26,7 @@ function RouteLoader() {
 
 const RootLayout = () => {
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen bg-background">
       {/* Main content */}
       <div className="h-full">
         <RouteLoader />

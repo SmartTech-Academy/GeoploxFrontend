@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { PageMetaTags } from '@/components/page-meta-data';
-import { useGetConversations } from '@/lib/services/chat';
-import { useGetProfileData } from '@/lib/services/profile';
-import assets from '@/assets';
-import { Conversation } from './chat';
-import { ChatList } from './chat-list';
-import { ChatView } from './chat-view';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { PageMetaTags } from "@/components/page-meta-data";
+import { useGetConversations } from "@/lib/services/chat";
+import { useGetProfileData } from "@/lib/services/profile";
+import assets from "@/assets";
+import { Conversation } from "./chat";
+import { ChatList } from "./chat-list";
+import { ChatView } from "./chat-view";
 
 const MessagingPage = () => {
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
-  const [filter, setFilter] = useState<'all' | 'unread'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const { data: profileData } = useGetProfileData();
 
   const {
@@ -21,16 +21,20 @@ const MessagingPage = () => {
     hasNextPage: hasNextConversations,
     isFetchingNextPage: isFetchingNextConversations,
     isLoading: isLoadingConversations,
-  } = useGetConversations({ per_page: 15, q: searchQuery, ...(filter === 'unread' && { unread: 1 }) });
+  } = useGetConversations({
+    per_page: 15,
+    q: searchQuery,
+    ...(filter === "unread" && { unread: 1 }),
+  });
 
   const handleSelectChat = (chat: Conversation) => {
     setSelectedChat(chat);
   };
 
-  const EmptyState = ({ type }: { type: 'chat' | 'list' }) => {
-    if (type === 'chat') {
+  const EmptyState = ({ type }: { type: "chat" | "list" }) => {
+    if (type === "chat") {
       return (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-[#F9F9F9]">
+        <div className="flex size-full flex-col items-center justify-center gap-4 bg-[#F9F9F9]">
           <div className="flex flex-col items-center justify-center gap-6">
             <img
               src={assets.messagingloading}
@@ -40,9 +44,9 @@ const MessagingPage = () => {
               height={84}
             />
             <div className="flex flex-col items-center justify-center gap-3">
-              <h5 className="text-[20px] leading-7 font-normal text-[#1F2130]">No message yet</h5>
+              <h5 className="text-[20px]/7 font-normal text-[#1F2130]">No message yet</h5>
 
-              <p className="text-center text-[14px] leading-5 tracking-[-0.02em] text-[#71748C]">
+              <p className="text-center text-[14px]/5 tracking-[-0.02em] text-[#71748C]">
                 Once you start a new conversation,
                 <br /> you’ll see it here.
               </p>
@@ -53,9 +57,14 @@ const MessagingPage = () => {
     }
     return (
       <div className="flex w-full flex-col items-center justify-center gap-8 self-stretch py-14">
-        <img src={assets.chatloading} className="h-[112px] w-[211px] animate-pulse" width={211} height={112} />
+        <img
+          src={assets.chatloading}
+          className="h-[112px] w-[211px] animate-pulse"
+          width={211}
+          height={112}
+        />
         <div className="flex flex-col items-center justify-center gap-3">
-          <h5 className="text-[20px] leading-7 font-semibold text-[#1F2130]">Your chat is empty</h5>
+          <h5 className="text-[20px]/7 font-semibold text-[#1F2130]">Your chat is empty</h5>
           <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
             It looks like you haven’t had a chat yet.
           </p>
@@ -64,7 +73,9 @@ const MessagingPage = () => {
     );
   };
 
-  const allConversations = conversationsData?.pages.flatMap((page) => page.data) ?? [];
+  const allConversations = (conversationsData?.pages.flatMap((page) => page.data) ?? []).filter(
+    (conversation: any) => conversation.participant?.codec !== profileData?.codec,
+  );
 
   return (
     <div className="flex h-screen w-full flex-col items-start gap-0 self-stretch py-8 lg:flex-row">
@@ -75,9 +86,9 @@ const MessagingPage = () => {
       />
 
       {/* Mobile View */}
-      <div className="w-full lg:hidden">
+      <div className="h-[calc(100svh-150px)] w-full overflow-y-auto lg:hidden">
         {!selectedChat ? (
-          <div className="px-4">
+          <div className="w-full bg-red-500">
             <ChatList
               conversations={allConversations}
               selectedChat={selectedChat}
@@ -98,15 +109,24 @@ const MessagingPage = () => {
             <Button variant="link" onClick={() => setSelectedChat(null)} className="mb-4 px-4">
               &larr; Back to list
             </Button>
-            <ChatView selectedChat={selectedChat} setSelectedChat={setSelectedChat} profileData={profileData} />
+            <ChatView
+              selectedChat={selectedChat}
+              setSelectedChat={setSelectedChat}
+              profileData={profileData}
+            />
           </>
         )}
       </div>
 
       {/* Desktop View */}
-      <div className="hidden h-full w-full lg:flex">
-        <ResizablePanelGroup direction="horizontal" className="h-full w-full">
-          <ResizablePanel defaultSize={35} minSize={25} maxSize={50} className="border-r border-[#F1F1F4]">
+      <div className="hidden size-full lg:flex">
+        <ResizablePanelGroup orientation="horizontal" className="size-full">
+          <ResizablePanel
+            defaultSize="35%"
+            minSize="25%"
+            maxSize="50%"
+            className="border-r border-[#F1F1F4]"
+          >
             <div className="h-full">
               <ChatList
                 conversations={allConversations}
@@ -124,11 +144,15 @@ const MessagingPage = () => {
               />
             </div>
           </ResizablePanel>
-          <ResizableHandle className="w-px hover:bg-gray-200" />
-          <ResizablePanel defaultSize={65} minSize={50}>
+          <ResizableHandle withHandle className="w-px hover:bg-gray-200" />
+          <ResizablePanel defaultSize="65%" minSize="50%">
             <div className="h-[calc(100svh-150px)] w-full">
               {selectedChat ? (
-                <ChatView selectedChat={selectedChat} setSelectedChat={setSelectedChat} profileData={profileData} />
+                <ChatView
+                  selectedChat={selectedChat}
+                  setSelectedChat={setSelectedChat}
+                  profileData={profileData}
+                />
               ) : (
                 <EmptyState type="chat" />
               )}
