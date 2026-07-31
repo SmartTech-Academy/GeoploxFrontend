@@ -8,6 +8,7 @@ import { Link } from "@tanstack/react-router";
 import { useGetHomepageProperties } from "@/lib/services";
 import { useInfiniteWpPosts } from "@/lib/services/wpBlog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LazyImage } from "@/components/ui/lazy-image";
 import { excerptFromHtml } from "@/lib/utils";
 import { toAbsoluteBlogUrl } from "@/lib/wpGraphql";
 import { format } from "date-fns";
@@ -179,12 +180,13 @@ export function DiscoverSection() {
                       className="flex w-full flex-col items-start gap-6 overflow-hidden transition-shadow hover:shadow-lg"
                     >
                       <div className="relative w-full">
-                        <img
+                        <LazyImage
                           src={property.cover_image || "/placeholder.png"}
                           alt={property.title}
                           width={397}
                           height={284}
-                          className="h-[284.42px] w-full rounded-xl object-cover"
+                          containerClassName="h-[284.42px] w-full"
+                          className="size-full rounded-xl object-cover"
                         />
 
                         <Badge

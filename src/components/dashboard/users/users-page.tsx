@@ -418,7 +418,7 @@ interface UserViewProps {
 const UserView = ({ selectedUser, activeTab, setActiveTab }: UserViewProps) => {
   const [isVerifyOpen, setVerifyOpen] = useState(false);
   const [isBlacklistOpen, setBlacklistOpen] = useState(false);
-  const [period] = useState("this_month");
+  const [period, setPeriod] = useState("this_month");
   const [filter] = useState("all");
 
   const { mutate: verifyUser, isPending: isVerifying } = useVerifyUser();
@@ -437,6 +437,30 @@ const UserView = ({ selectedUser, activeTab, setActiveTab }: UserViewProps) => {
   const handleBlacklist = () => {
     if (selectedUser) blacklistUser(selectedUser.id, { onSuccess: () => setBlacklistOpen(false) });
   };
+
+  // UserPerformance() returns one series per category ({slug, label, points:[{x,y}]}) rather than
+  // ListingActivities' flat per-period-row shape - flatten it here rather than changing the
+  // backend contract, since other consumers (e.g. the raw series shown elsewhere) still expect it.
+  // Placed before the early return below so this hook is always called, never conditionally.
+  const listingActivitiesData = useMemo(() => {
+    const series = performanceData?.data?.data?.series as
+      | { slug: string; points: { x: string; y: number }[] }[]
+      | undefined;
+    if (!series || series.length === 0) return [];
+
+    const rentSeries = series.find((s) => s.slug === "for-rent");
+    const saleSeries = series.find((s) => s.slug === "for-sale");
+    const shortletSeries = series.find((s) => s.slug === "shortlet");
+    const anchor = rentSeries || saleSeries || shortletSeries;
+    if (!anchor) return [];
+
+    return anchor.points.map((point, index) => ({
+      name: point.x,
+      "For Rent": rentSeries?.points[index]?.y ?? 0,
+      "For Sale": saleSeries?.points[index]?.y ?? 0,
+      "Short Let": shortletSeries?.points[index]?.y ?? 0,
+    }));
+  }, [performanceData]);
 
   if (!selectedUser) {
     return <EmptyState type="user" />;
@@ -643,8 +667,10 @@ const UserView = ({ selectedUser, activeTab, setActiveTab }: UserViewProps) => {
 
               <section className="grid w-full grid-cols-1 gap-6 rounded-xl">
                 <ListingActivities
-                  data={performanceData?.data?.data?.series || []}
+                  data={listingActivitiesData}
                   isLoading={isLoadingPerformance}
+                  period={period}
+                  onPeriodChange={setPeriod}
                 />
                 {/* <ConversionsChart
                   data={conversionChartData}

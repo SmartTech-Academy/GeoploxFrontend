@@ -24,10 +24,9 @@ export function ConversionsChart({ data, period, onPeriodChange }: ConversionsCh
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="today">Today</SelectItem>
               <SelectItem value="this_month">This month</SelectItem>
-              <SelectItem value="last_3_months">Last 3 months</SelectItem>
               <SelectItem value="last_6_months">Last 6 months</SelectItem>
+              <SelectItem value="last_12_months">Last 12 months</SelectItem>
             </SelectContent>
           </Select>
         </header>
@@ -36,7 +35,7 @@ export function ConversionsChart({ data, period, onPeriodChange }: ConversionsCh
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-sm bg-[#60A5FA]"></div>
-            <span className="text-sm text-gray-600">Rent</span>
+            <span className="text-sm text-gray-600">For Rent</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-sm bg-[#3B82F6]"></div>
@@ -53,7 +52,7 @@ export function ConversionsChart({ data, period, onPeriodChange }: ConversionsCh
             <ChartContainer
               config={{
                 rent: {
-                  label: "Rent",
+                  label: "For Rent",
                   color: "#60A5FA",
                 },
                 forSale: {

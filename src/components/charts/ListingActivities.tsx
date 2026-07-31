@@ -13,13 +13,12 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { format, parseISO } from "date-fns";
 import { Skeleton } from "../ui/skeleton";
 import { EmptyState } from "../empty-state";
 
 const chartConfig = {
   rent: {
-    label: "Rent",
+    label: "For Rent",
     color: "#EAB308", // Yellow
   },
   forSale: {
@@ -32,37 +31,38 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface Point {
-  x: string;
-  y: number;
-}
-
-interface Series {
-  slug: "for-for-rent" | "for-sale" | "shortlet";
-  label: string;
-  points: Point[];
+// Matches exactly what admin-insights.tsx (and every other caller) builds from the backend's
+// {labels, series} payload - one flat row per period label, already keyed by display name. No
+// separate per-category "series" array with its own slug/points shape - that contract never
+// matched what any caller actually produced, which is why this chart always rendered empty.
+interface ListingActivityPoint {
+  name: string;
+  "For Sale": number;
+  "For Rent": number;
+  "Short Let": number;
 }
 
 interface ListingActivitiesProps {
-  data: Series[];
+  data: ListingActivityPoint[];
   isLoading: boolean;
+  period: string;
+  onPeriodChange: (period: string) => void;
 }
 
-const ListingActivities = ({ data, isLoading }: ListingActivitiesProps) => {
+const ListingActivities = ({
+  data,
+  isLoading,
+  period,
+  onPeriodChange,
+}: ListingActivitiesProps) => {
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return [];
 
-    const rentSeries = data.find((s) => s.slug === "for-for-rent");
-    const saleSeries = data.find((s) => s.slug === "for-sale");
-    const shortletSeries = data.find((s) => s.slug === "shortlet");
-
-    if (!rentSeries) return [];
-
-    return rentSeries.points.map((point, index) => ({
-      month: format(parseISO(point.x), "MMM"),
-      rent: point.y,
-      forSale: saleSeries?.points[index]?.y ?? 0,
-      shortLet: shortletSeries?.points[index]?.y ?? 0,
+    return data.map((point) => ({
+      month: point.name,
+      rent: point["For Rent"] ?? 0,
+      forSale: point["For Sale"] ?? 0,
+      shortLet: point["Short Let"] ?? 0,
     }));
   }, [data]);
 
@@ -83,16 +83,16 @@ const ListingActivities = ({ data, isLoading }: ListingActivitiesProps) => {
             Listing Activities
           </h3>
 
-          <Select defaultValue="this_month">
+          <Select value={period} onValueChange={onPeriodChange}>
             <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-[#F9F9F9] text-[#41415A] focus:ring-0">
               <div className="flex items-center gap-2">
                 <SelectValue />
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="this_week">This week</SelectItem>
               <SelectItem value="this_month">This month</SelectItem>
+              <SelectItem value="last_6_months">Last 6 months</SelectItem>
+              <SelectItem value="last_12_months">Last 12 months</SelectItem>
             </SelectContent>
           </Select>
         </header>
@@ -101,7 +101,7 @@ const ListingActivities = ({ data, isLoading }: ListingActivitiesProps) => {
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-sm bg-[#EAB308]"></div>
-            <span className="text-sm text-gray-600">Rent</span>
+            <span className="text-sm text-gray-600">For Rent</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-sm bg-[#DC2626]"></div>

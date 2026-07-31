@@ -12,7 +12,6 @@ import {
   Ban,
   MoreVertical,
   UserPlus2,
-  MoveUpRight,
   Download,
   Trash2,
   CircleCheck,
@@ -50,6 +49,8 @@ import {
   useGetManagersAssignedUsers,
   useToggleManagerAccess,
 } from "@/lib/services/managers";
+import { useGetUserPerformance } from "@/lib/services/users";
+import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -67,80 +68,6 @@ interface Manager {
   status: "active" | "suspended" | "unknown";
 }
 
-interface OverviewMetric {
-  title: string;
-  value: string;
-}
-
-interface PerformanceMetric {
-  title: string;
-  value: string;
-  change?: {
-    percentage: string;
-    trend: "up" | "down";
-  };
-}
-
-const OVERVIEW: OverviewMetric[] = [
-  { title: "Total Listings", value: "45" },
-  { title: "Active Listing", value: "10" },
-  { title: "Archived Listing", value: "30" },
-];
-
-const TOTALS: PerformanceMetric[] = [
-  { title: "Total Clicks", value: "2.04K" },
-  { title: "Total Leads", value: "140" },
-  { title: "Total Views", value: "5.15K" },
-  { title: "Total Saves & shares", value: "565" },
-];
-
-const conversionChartData = [
-  { month: "Jan", rent: 186, forSale: 80, shortLet: 200 },
-  { month: "Feb", rent: 305, forSale: 200, shortLet: 100 },
-  { month: "Mar", rent: 237, forSale: 120, shortLet: 150 },
-  { month: "Apr", rent: 73, forSale: 190, shortLet: 50 },
-  { month: "May", rent: 209, forSale: 130, shortLet: 180 },
-  { month: "Jun", rent: 214, forSale: 140, shortLet: 220 },
-];
-
-const listingActivitiesData = [
-  {
-    slug: "for-for-rent" as const,
-    label: "Rent",
-    points: [
-      { x: "2025-01-01", y: 18 },
-      { x: "2025-02-01", y: 22 },
-      { x: "2025-03-01", y: 19 },
-      { x: "2025-04-01", y: 35 },
-      { x: "2025-05-01", y: 29 },
-      { x: "2025-06-01", y: 42 },
-    ],
-  },
-  {
-    slug: "for-sale" as const,
-    label: "For Sale",
-    points: [
-      { x: "2025-01-01", y: 12 },
-      { x: "2025-02-01", y: 19 },
-      { x: "2025-03-01", y: 14 },
-      { x: "2025-04-01", y: 28 },
-      { x: "2025-05-01", y: 24 },
-      { x: "2025-06-01", y: 38 },
-    ],
-  },
-  {
-    slug: "shortlet" as const,
-    label: "Short Let",
-    points: [
-      { x: "2025-01-01", y: 15 },
-      { x: "2025-02-01", y: 10 },
-      { x: "2025-03-01", y: 25 },
-      { x: "2025-04-01", y: 20 },
-      { x: "2025-05-01", y: 33 },
-      { x: "2025-06-01", y: 24 },
-    ],
-  },
-];
 
 const ManagersPage = () => {
   const [selectedManager, setSelectedManager] = useState<Manager | null>(null);
@@ -522,6 +449,7 @@ const ManagerView = ({
   setConversionPeriod,
 }: ManagerViewProps) => {
   const [openAccessConfirm, setOpenAccessConfirm] = useState(false);
+  const [performanceFilter, setPerformanceFilter] = useState("all");
   const { data: assignedUsersData, isLoading: isLoadingAssignedUsers } =
     useGetManagersAssignedUsers(selectedManager?.id ?? "");
   const { mutate: toggleAccess, isPending: isTogglingAccess } = useToggleManagerAccess({
@@ -532,6 +460,58 @@ const ManagerView = ({
       setSelectedManager({ ...selectedManager, status: nextStatus });
     },
   });
+
+  // The Performance tab previously rendered hardcoded mock numbers - wire it to the same
+  // per-owner performance endpoint the admin Users page uses (UsersController::UserPerformance),
+  // passing the selected manager's own codec as user_codec so this reflects properties owned by
+  // this manager's account (mirrors how manager access/assignment already scope by the same id).
+  const { data: performanceData, isLoading: isLoadingPerformance } = useGetUserPerformance({
+    period: conversionPeriod,
+    filter: performanceFilter,
+    user_codec: selectedManager?.id ?? "",
+  });
+
+  const performanceTotals = performanceData?.data?.data?.totals;
+
+  const listingActivitiesData = useMemo(() => {
+    const series = performanceData?.data?.data?.series as
+      | { slug: string; points: { x: string; y: number }[] }[]
+      | undefined;
+    if (!series || series.length === 0) return [];
+
+    const rentSeries = series.find((s) => s.slug === "for-rent");
+    const saleSeries = series.find((s) => s.slug === "for-sale");
+    const shortletSeries = series.find((s) => s.slug === "shortlet");
+    const anchor = rentSeries || saleSeries || shortletSeries;
+    if (!anchor) return [];
+
+    return anchor.points.map((point, index) => ({
+      name: point.x,
+      "For Rent": rentSeries?.points[index]?.y ?? 0,
+      "For Sale": saleSeries?.points[index]?.y ?? 0,
+      "Short Let": shortletSeries?.points[index]?.y ?? 0,
+    }));
+  }, [performanceData]);
+
+  const conversionChartData = useMemo(() => {
+    const series = performanceData?.data?.data?.series as
+      | { slug: string; points: { x: string; y: number }[] }[]
+      | undefined;
+    if (!series || series.length === 0) return [];
+
+    const rentSeries = series.find((s) => s.slug === "for-rent");
+    const saleSeries = series.find((s) => s.slug === "for-sale");
+    const shortletSeries = series.find((s) => s.slug === "shortlet");
+    const anchor = rentSeries || saleSeries || shortletSeries;
+    if (!anchor) return [];
+
+    return anchor.points.map((point, index) => ({
+      month: point.x,
+      rent: rentSeries?.points[index]?.y ?? 0,
+      forSale: saleSeries?.points[index]?.y ?? 0,
+      shortLet: shortletSeries?.points[index]?.y ?? 0,
+    }));
+  }, [performanceData]);
 
   if (!selectedManager) {
     return <EmptyState type="manager" />;
@@ -762,7 +742,7 @@ const ManagerView = ({
         ) : (
           <div className="flex w-full flex-col items-start gap-5 py-8">
             <header className="flex w-full items-center justify-between gap-2 self-stretch">
-              <Select defaultValue="all">
+              <Select value={performanceFilter} onValueChange={setPerformanceFilter}>
                 <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-[#F9F9F9] text-[#41415A] focus:ring-0">
                   <div className="flex items-center gap-2">
                     <SelectValue />
@@ -770,7 +750,9 @@ const ManagerView = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Properties</SelectItem>
-                  <SelectItem value="rent">For Rent</SelectItem>
+                  <SelectItem value="for-sale">For Sale</SelectItem>
+                  <SelectItem value="for-rent">For Rent</SelectItem>
+                  <SelectItem value="shortlet">Short Let</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -784,7 +766,11 @@ const ManagerView = ({
             </header>
 
             <section className="grid grid-cols-3 gap-5 self-stretch">
-              {OVERVIEW.map((item, index) => (
+              {[
+                { title: "Total Listings", value: performanceTotals?.total_listings ?? 0 },
+                { title: "Active Listing", value: performanceTotals?.active_listings ?? 0 },
+                { title: "Archived Listing", value: performanceTotals?.archived_listings ?? 0 },
+              ].map((item, index) => (
                 <div
                   key={index}
                   className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
@@ -795,9 +781,13 @@ const ManagerView = ({
                     </h6>
                   </div>
                   <div className="flex items-baseline gap-2 px-6 pb-6">
-                    <p className="text-[48px]/12 font-semibold tracking-[-1px] text-[#1F2130]">
-                      {item.value}
-                    </p>
+                    {isLoadingPerformance ? (
+                      <Skeleton className="h-12 w-16" />
+                    ) : (
+                      <p className="text-[48px]/12 font-semibold tracking-[-1px] text-[#1F2130]">
+                        {item.value}
+                      </p>
+                    )}
                     <span className="text-[16px] leading-[22px] text-[#1F2130]">Properties</span>
                   </div>
                 </div>
@@ -805,41 +795,17 @@ const ManagerView = ({
             </section>
 
             <section className="grid w-full grid-cols-1 gap-6 rounded-lg">
-              <ListingActivities data={listingActivitiesData} isLoading={false} />
+              <ListingActivities
+                data={listingActivitiesData}
+                isLoading={isLoadingPerformance}
+                period={conversionPeriod}
+                onPeriodChange={setConversionPeriod}
+              />
               <ConversionsChart
                 data={conversionChartData}
                 period={conversionPeriod}
                 onPeriodChange={setConversionPeriod}
               />
-            </section>
-
-            <section className="grid w-full grid-cols-2 gap-5 self-stretch">
-              {TOTALS.map((item, index) => (
-                <div
-                  key={index}
-                  className="isolate box-border flex grow flex-col items-start gap-5 rounded-[10px] border border-[#E2E2E2] bg-white"
-                >
-                  <div className="box-border w-full border-b border-[#ECECEC] bg-[#F9F9F9] px-6 pt-6 pb-3">
-                    <h6 className="text-[12px]/3.5 tracking-[-0.02em] text-[#7F7F7F] uppercase">
-                      {item.title}
-                    </h6>
-                  </div>
-                  <div className="flex items-baseline gap-2 px-6 pb-6">
-                    <p className="text-[48px]/12 font-semibold tracking-[-1px] text-[#1F2130]">
-                      {item.value}
-                    </p>
-                    <div className="flex items-center gap-1.5">
-                      <MoveUpRight className="size-3 text-[#008A00]" />
-                      <span className="text-[14px]/4 tracking-[-0.02em] text-[#008A00D2]">
-                        3.36
-                      </span>
-                      <span className="text-[14px]/4 tracking-[-0.02em] text-[#71748C]">
-                        Last mth.
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </section>
           </div>
         )}

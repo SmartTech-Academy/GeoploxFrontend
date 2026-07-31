@@ -54,6 +54,7 @@ import Map from "./google-map";
 import { useGetProfileData } from "@/lib/services/profile";
 import { FavoriteButton } from "./favorite-button";
 import { ImageLightbox } from "./image-lightbox";
+import { LazyImage } from "./ui/lazy-image";
 
 const getPublicPropertyBasePath = (category?: string) => {
   switch (category?.toLowerCase()) {
@@ -553,11 +554,12 @@ const ListingDetail = () => {
                       currentImageIndex === index ? "border-primary" : "border-gray-200"
                     }`}
                   >
-                    <img
+                    <LazyImage
                       src={image || "/placeholder.svg"}
                       alt={`Thumbnail ${index + 1}`}
                       width={135.2}
                       height={135.2}
+                      containerClassName="size-full"
                       className="size-full object-cover"
                     />
                   </button>
@@ -745,12 +747,13 @@ const ListingDetail = () => {
                       className="flex w-full flex-col items-start gap-6 overflow-hidden"
                     >
                       <div className="relative w-full">
-                        <img
+                        <LazyImage
                           src={relatedProperty.cover_image || "/placeholder.png"}
                           alt="Property"
                           width={397}
                           height={284}
-                          className="h-[284.42px] w-full rounded-xl object-cover"
+                          containerClassName="h-[284.42px] w-full"
+                          className="size-full rounded-xl object-cover"
                         />
 
                         {relatedProperty?.tags?.slice(0, 1)?.map((tag: string) => (

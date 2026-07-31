@@ -7,6 +7,7 @@ import { formatPrice, slugify } from "@/lib/utils";
 import { useRemoveFromFavorites, useCreateConversation } from "@/lib/services";
 import { toast } from "sonner";
 import { FavoriteButton } from "./favorite-button";
+import { LazyImage } from "./ui/lazy-image";
 
 export interface Property {
   id: string;
@@ -153,10 +154,11 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
             its own natural aspect ratio never influences that height (otherwise a tall
             source photo's intrinsic proportions can win out over the flex stretch). */}
         <div className="relative w-1/2 overflow-hidden rounded-[12px] bg-[#F5F5F7]">
-          <img
+          <LazyImage
             src={property.cover_image}
             alt={property.title}
-            className="absolute inset-0 size-full object-cover"
+            containerClassName="absolute inset-0 size-full"
+            className="size-full object-cover"
           />
           {!isFavoritesPage && (
             <FavoriteButton
@@ -170,25 +172,27 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
         <div className="flex w-1/2 flex-col gap-2">
           {/* Small Image 1 */}
           <div className="aspect-[4/3] overflow-hidden rounded-[12px] bg-[#F5F5F7]">
-            <img
+            <LazyImage
               src={
                 property?.thumbnail_images?.[1] ||
                 property?.images?.[1]?.url ||
                 property.cover_image
               }
               alt={`${property.title} - view 1`}
+              containerClassName="size-full"
               className="size-full object-cover"
             />
           </div>
           {/* Small Image 2 */}
           <div className="aspect-[4/3] overflow-hidden rounded-[12px] bg-[#F5F5F7]">
-            <img
+            <LazyImage
               src={
                 property?.thumbnail_images?.[2] ||
                 property?.images?.[2]?.url ||
                 property.cover_image
               }
               alt={`${property.title} - view 2`}
+              containerClassName="size-full"
               className="size-full object-cover"
             />
           </div>

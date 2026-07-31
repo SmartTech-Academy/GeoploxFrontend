@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "../ui/sonner";
 import { useGetProfileData } from "@/lib/services/profile";
 import PermissionDenied from "../permission-denied";
-import { getPrimaryNavigation } from "@/lib/navigation";
+import { allDashboardPaths, getPrimaryNavigation } from "@/lib/navigation";
 
 const DashboardLayout = () => {
   const [useMaxWidth, setUseMaxWith] = useState(false);
@@ -71,6 +71,19 @@ const DashboardLayout = () => {
   const isAllowed = allowedPaths.some((p) => location.pathname.startsWith(p));
 
   if (!isAllowed) {
+    // Not every "not in my allowed list" is a real permission problem: clicking the sidebar logo
+    // (or anything else that navigates outside the dashboard entirely, e.g. back to "/") changes
+    // `location.pathname` to a route this layout was never going to serve in the first place,
+    // and for a brief instant afterward - before the router finishes unmounting this layout and
+    // mounting the destination route - DashboardLayout re-renders with that new pathname. Only
+    // treat it as a genuine permission problem if the path actually belongs to SOME dashboard
+    // role's nav (e.g. an owner hitting an admin-only page); otherwise this is just mid-navigation
+    // to somewhere outside the dashboard, and should show a neutral loading state instead of
+    // flashing "Permission Denied" on the way out.
+    const isKnownDashboardPath = allDashboardPaths.some((p) => location.pathname.startsWith(p));
+    if (!isKnownDashboardPath) {
+      return <LoadingFallback />;
+    }
     return <PermissionDenied />; // ⬅️ Genuinely disallowed - show it and let it stay.
   }
 

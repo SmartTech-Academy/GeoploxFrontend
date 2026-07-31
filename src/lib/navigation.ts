@@ -97,6 +97,21 @@ export const getPrimaryNavigation = (user: UserProfile | null | undefined) => {
   }
 };
 
+// Every dashboard-area path that exists for ANY role, combined. Used by DashboardLayout to tell
+// "this pathname belongs to the dashboard, but not this user's role" (a genuine permission
+// problem) apart from "this pathname isn't a dashboard path at all" (e.g. mid-navigation away to
+// the public site) - the latter should never render a Permission Denied screen.
+export const allDashboardPaths: string[] = [
+  "/getting-started",
+  "/notifications",
+  ...adminNavigation.map((item) => item.href),
+  ...contentManagerNavigation.map((item) => item.href),
+  ...accountOfficerNavigation.map((item) => item.href),
+  ...managerNavigation.map((item) => item.href),
+  ...agentClientNavigation.map((item) => item.href),
+  ...propertyOwnerNavigation.map((item) => item.href),
+];
+
 export const getLoginRedirectPath = (user: UserProfile | null | undefined): string => {
   const navigation = getPrimaryNavigation(user);
 

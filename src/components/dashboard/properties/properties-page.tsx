@@ -42,6 +42,7 @@ import Map from "@/components/google-map";
 import { useGetProfileData } from "@/lib/services/profile";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ImageLightbox } from "@/components/image-lightbox";
+import { LazyImage } from "@/components/ui/lazy-image";
 
 // Updated TypeScript interfaces to match API response
 interface PropertyOwner {
@@ -388,9 +389,10 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                             currentImageIndex === index ? "ring-2 ring-[#D4AF36]" : ""
                           }`}
                         >
-                          <img
+                          <LazyImage
                             src={image || "/placeholder.svg"}
                             alt={`${selectedProperty.title} ${index + 1}`}
+                            containerClassName="size-full"
                             className="size-full object-cover"
                           />
                         </button>
@@ -845,9 +847,10 @@ const PropertiesPage: React.FC = () => {
                 >
                   <div className="flex w-full items-center gap-3.5">
                     <div className="relative">
-                      <img
+                      <LazyImage
                         src={coverImage || "/placeholder.svg"}
                         alt={property.title}
+                        containerClassName="size-20"
                         className="size-20 rounded-[6px] object-cover"
                       />
                     </div>

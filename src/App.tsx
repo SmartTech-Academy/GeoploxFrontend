@@ -1,8 +1,18 @@
 // Import the generated route tree
+import { Suspense, lazy } from "react";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { queryClient } from "./lib/queryClient";
+
+// Dynamically imported (and only in dev) so the devtools panel never ends up in the production
+// bundle at all, rather than just being present-but-unrendered.
+const TanStackRouterDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import("@tanstack/react-router-devtools").then((m) => ({
+        default: m.TanStackRouterDevtools,
+      })),
+    )
+  : null;
 
 // Create a new router instance
 const router = createRouter({
@@ -29,7 +39,11 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
-      <TanStackRouterDevtools router={router} />
+      {TanStackRouterDevtools && (
+        <Suspense fallback={null}>
+          <TanStackRouterDevtools router={router} />
+        </Suspense>
+      )}
     </>
   );
 }

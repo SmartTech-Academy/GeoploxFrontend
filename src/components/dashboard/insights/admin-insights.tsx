@@ -4,6 +4,13 @@ import { ConversionsChart } from "@/components/charts/ConversionsChart";
 import { useMemo, useState } from "react";
 import { useGetPlatformPerformance } from "@/lib/services/admin";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const OverviewCard = ({
   title,
@@ -55,7 +62,7 @@ const KpiCard = ({
 
 const AdminInsights = () => {
   const [period, setPeriod] = useState("last_6_months");
-  const [filter] = useState("all");
+  const [filter, setFilter] = useState("all");
 
   const {
     data: performanceData,
@@ -136,7 +143,7 @@ const AdminInsights = () => {
         </div>
       )}
       <header className="flex w-full items-center justify-between gap-2 self-stretch">
-        {/* <Select defaultValue={filter} onValueChange={setFilter}>
+        <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-[#F9F9F9] text-[#41415A] focus:ring-0">
             <div className="flex items-center gap-2">
               <SelectValue />
@@ -146,16 +153,9 @@ const AdminInsights = () => {
             <SelectItem value="all">All Properties</SelectItem>
             <SelectItem value="for-sale">For Sale</SelectItem>
             <SelectItem value="for-rent">For Rent</SelectItem>
+            <SelectItem value="shortlet">Short Let</SelectItem>
           </SelectContent>
-        </Select> */}
-
-        {/* <Button
-          variant="secondary"
-          className="h-8 rounded-[40px] bg-[#F9F9FB] p-4 text-[14px]/5 font-normal text-[#1F2130]"
-        >
-          Export
-          <Download className="size-4" />
-        </Button> */}
+        </Select>
       </header>
 
       <section className="grid grid-cols-1 gap-5 self-stretch lg:grid-cols-3">
@@ -177,7 +177,12 @@ const AdminInsights = () => {
       </section>
 
       <section className="grid w-full grid-cols-1 gap-6 rounded-lg lg:grid-cols-2">
-        <ListingActivities data={listingActivitiesData} isLoading={isLoading} />
+        <ListingActivities
+          data={listingActivitiesData}
+          isLoading={isLoading}
+          period={period}
+          onPeriodChange={setPeriod}
+        />
         <ConversionsChart data={conversionChartData} period={period} onPeriodChange={setPeriod} />
       </section>
 

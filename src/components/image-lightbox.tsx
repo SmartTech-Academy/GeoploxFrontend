@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Download, X } from "lucide-react";
 import { Dialog, DialogClose, DialogOverlay, DialogPortal, DialogTitle } from "@/components/ui/dialog";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn, downloadImage } from "@/lib/utils";
+import { LazyImage } from "@/components/ui/lazy-image";
 
 interface ImageLightboxProps {
   images: string[];
@@ -140,7 +141,12 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
                       : "border-transparent opacity-60 hover:opacity-90",
                   )}
                 >
-                  <img src={img} alt="" className="size-full object-cover" />
+                  <LazyImage
+                    src={img}
+                    alt=""
+                    containerClassName="size-full"
+                    className="size-full object-cover"
+                  />
                 </button>
               ))}
             </div>
