@@ -21,8 +21,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Slash, Trash, RotateCcw, CircleX } from "lucide-react";
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod/v4";
+import { toast } from "sonner";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -77,7 +78,20 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
   const [customTagInput, setCustomTagInput] = useState("");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [hoveredDocument, setHoveredDocument] = useState<string | null>(null);
+  const [headerImageUrl, setHeaderImageUrl] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+
+  // Create the header image preview URL once per file, and revoke it on change/unmount
+  // instead of calling URL.createObjectURL() directly in JSX on every render.
+  useEffect(() => {
+    if (!headerImage) {
+      setHeaderImageUrl(null);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(headerImage);
+    setHeaderImageUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [headerImage]);
 
   const form = useForm<BlogFormValues>({
     resolver: customResolver(BlogFormSchema),
@@ -151,8 +165,12 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
     );
   };
 
-  const onSubmit = (data: BlogFormValues) => {
-    console.log(data);
+  const onSubmit = (_data: BlogFormValues) => {
+    toast.info("Blog publishing isn't connected yet. Your changes have not been saved.");
+  };
+
+  const handleSaveDraft = () => {
+    toast.info("Saving drafts isn't connected yet. Your changes have not been saved.");
   };
 
   const generateSlug = (title: string) => {
@@ -208,6 +226,7 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                   <Button
                     type="button"
                     variant="secondary"
+                    onClick={handleSaveDraft}
                     className="h-8 self-stretch rounded-4xl bg-[#F1F1F4] px-8 py-[15px] text-[14px] leading-[17px] font-semibold text-[#1F2130]"
                   >
                     Save Draft
@@ -289,14 +308,16 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                       onMouseEnter={() => setHoveredDocument("headerImage")}
                       onMouseLeave={() => setHoveredDocument(null)}
                     >
-                      <div className="h-48 w-[250px] bg-transparent">
-                        <img
-                          src={URL.createObjectURL(headerImage)}
-                          alt=""
-                          className="size-full object-contain"
-                          width={250}
-                          height={192}
-                        />
+                      <div className="h-48 w-full max-w-[250px] bg-transparent">
+                        {headerImageUrl && (
+                          <img
+                            src={headerImageUrl}
+                            alt={headerImage.name}
+                            className="size-full object-contain"
+                            width={250}
+                            height={192}
+                          />
+                        )}
                       </div>
 
                       <div
@@ -416,11 +437,27 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
                         <Quote className="size-4" />
                       </Button>
 
-                      <Button type="button" variant="ghost" size="sm" className="size-8 p-0">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        disabled
+                        aria-label="Insert link (coming soon)"
+                        title="Coming soon"
+                        className="size-8 p-0 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
                         <LinkIcon className="size-4" />
                       </Button>
 
-                      <Button type="button" variant="ghost" size="sm" className="size-8 p-0">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        disabled
+                        aria-label="Insert image (coming soon)"
+                        title="Coming soon"
+                        className="size-8 p-0 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
                         <ImageIcon className="size-4" />
                       </Button>
                     </div>
@@ -627,10 +664,10 @@ const CreateBlogForm: React.FC<BlogFormProps> = ({ isEdit = false, initialData }
               {form.watch("listingTitle") || "How to position your team for success"}
             </DialogTitle>
 
-            {headerImage && (
+            {headerImageUrl && (
               <div className="w-full">
                 <img
-                  src={URL.createObjectURL(headerImage) || "/placeholder.svg"}
+                  src={headerImageUrl}
                   alt="Header"
                   className="h-64 w-full rounded-lg object-cover"
                 />

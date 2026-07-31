@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -38,6 +39,19 @@ export const parseNumber = (value: string) => {
 };
 export const NIGERIAN_PHONE_REGEX = /^(070|080|081|090|091)\d{8}$/;
 
+/**
+ * Normalizes a Nigerian phone number into the digits-only, country-code-prefixed format
+ * WhatsApp's click-to-chat links require (e.g. "08012345678" -> "2348012345678"). Numbers
+ * already in international format (with or without a leading "+") pass through unchanged.
+ */
+export const toWhatsAppNumber = (phone?: string | null): string | null => {
+  if (!phone) return null;
+  const digits = phone.replace(/\D/g, "");
+  if (!digits) return null;
+  if (digits.startsWith("0")) return `234${digits.slice(1)}`;
+  return digits;
+};
+
 export function slugify(text: string): string {
   return text
     .toString()
@@ -69,6 +83,34 @@ export function excerptFromHtml(html: string, maxLen: number = 180): string {
   const lastSpace = clipped.lastIndexOf(" ");
   return `${(lastSpace > 50 ? clipped.slice(0, lastSpace) : clipped).trim()}…`;
 }
+
+/**
+ * Forces an immediate download of an image straight to the user's computer instead of
+ * opening it in a new tab and relying on them to use the browser's own save action.
+ * Cross-origin images (e.g. Cloudinary) don't reliably honor a plain `<a download>`
+ * attribute, so the file is fetched as a blob first, downloaded from a same-origin
+ * blob URL (which browsers always honor), and that URL is revoked immediately after.
+ */
+export const downloadImage = async (url: string, filename: string) => {
+  toast.info("Your download will begin shortly...");
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch image");
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
+  } catch {
+    toast.error("Failed to download image. Please try again.");
+  }
+};
 
 export const sendTelegramError = async (message: string) => {
   try {

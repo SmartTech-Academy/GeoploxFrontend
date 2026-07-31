@@ -2,36 +2,78 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { FileText, RotateCcw, Trash } from "lucide-react";
 import type React from "react";
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
 
 interface KYCDocumentsProps {
   form: UseFormReturn<any>;
   isOwner?: boolean;
 }
 
+const MAX_FILE_SIZE = 1024 * 1024; // 1MB
+const ACCEPTED_TYPES = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
+
+const validateFile = (file: File): string | null => {
+  if (!ACCEPTED_TYPES.includes(file.type)) {
+    return "Unsupported file type. Please upload a PDF, JPEG, or PNG file.";
+  }
+  if (file.size > MAX_FILE_SIZE) {
+    return "File is too large. Please upload a file smaller than 1 MB.";
+  }
+  return null;
+};
+
+/** Creates an object URL for image previews and revokes it on file change/unmount. */
+const useFilePreviewUrl = (file: File | null) => {
+  const [url, setUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!file || !file.type.startsWith("image/")) {
+      setUrl(null);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(file);
+    setUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [file]);
+
+  return url;
+};
+
 const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) => {
   const [cacDocument, setCacDocument] = useState<File | null>(null);
   const [govtId, setGovtId] = useState<File | null>(null);
   const [hoveredDocument, setHoveredDocument] = useState<string | null>(null);
+  const [draggingOver, setDraggingOver] = useState<string | null>(null);
+
+  const cacPreviewUrl = useFilePreviewUrl(cacDocument);
+  const govtIdPreviewUrl = useFilePreviewUrl(govtId);
 
   const cacInputRef = useRef<HTMLInputElement>(null);
   const govtIdInputRef = useRef<HTMLInputElement>(null);
 
-  const handleCacUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setCacDocument(file);
-      form.setValue("cacDocument", file);
+  const acceptFile = (
+    file: File | undefined,
+    setFile: (file: File) => void,
+    formField: string,
+  ) => {
+    if (!file) return;
+    const error = validateFile(file);
+    if (error) {
+      toast.error(error);
+      return;
     }
+    setFile(file);
+    form.setValue(formField, file);
+  };
+
+  const handleCacUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    acceptFile(event.target.files?.[0], setCacDocument, "cacDocument");
   };
 
   const handleGovtIdUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setGovtId(file);
-      form.setValue("govtIssuedId", file);
-    }
+    acceptFile(event.target.files?.[0], setGovtId, "govtIssuedId");
   };
 
   const handleCacRemove = () => {
@@ -58,11 +100,28 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
     govtIdInputRef.current?.click();
   };
 
-  const renderFilePreview = (file: File) => {
+  const makeDropHandlers = (
+    zone: string,
+    setFile: (file: File) => void,
+    formField: string,
+  ) => ({
+    onDragOver: (e: React.DragEvent) => {
+      e.preventDefault();
+      setDraggingOver(zone);
+    },
+    onDragLeave: () => setDraggingOver((current) => (current === zone ? null : current)),
+    onDrop: (e: React.DragEvent) => {
+      e.preventDefault();
+      setDraggingOver(null);
+      acceptFile(e.dataTransfer.files?.[0], setFile, formField);
+    },
+  });
+
+  const renderFilePreview = (file: File, previewUrl: string | null) => {
     if (file.type.startsWith("image/")) {
-      return (
-        <img src={URL.createObjectURL(file)} alt={file.name} className="size-full object-contain" />
-      );
+      return previewUrl ? (
+        <img src={previewUrl} alt={file.name} className="size-full object-contain" />
+      ) : null;
     }
 
     if (file.type === "application/pdf") {
@@ -76,6 +135,9 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
 
     return <p className="text-sm text-gray-500">Preview not available</p>;
   };
+
+  const cacDropHandlers = makeDropHandlers("cac", setCacDocument, "cacDocument");
+  const govtIdDropHandlers = makeDropHandlers("govtId", setGovtId, "govtIssuedId");
 
   return (
     <div className="flex w-full flex-col gap-10 bg-white pt-10">
@@ -93,8 +155,12 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
 
             {!cacDocument ? (
               <div
-                className="cursor-pointer rounded-[2px] border border-dashed border-[#D5D5DD] px-3 py-6 text-center transition-colors hover:border-[#D4AF36]"
+                className={cn(
+                  "cursor-pointer rounded-[2px] border border-dashed border-[#D5D5DD] px-3 py-6 text-center transition-colors hover:border-[#D4AF36]",
+                  draggingOver === "cac" && "border-[#D4AF36] bg-[#FDF9ED]",
+                )}
                 onClick={() => cacInputRef.current?.click()}
+                {...cacDropHandlers}
               >
                 <div className="flex flex-col items-center gap-3">
                   <p className="text-[14px] leading-[17px] text-[#71748C]">
@@ -114,8 +180,8 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
                 onMouseEnter={() => setHoveredDocument("cac")}
                 onMouseLeave={() => setHoveredDocument(null)}
               >
-                <div className="h-28 w-[250px] bg-transparent">
-                  {renderFilePreview(cacDocument)}
+                <div className="h-28 w-full max-w-[250px] bg-transparent">
+                  {renderFilePreview(cacDocument, cacPreviewUrl)}
                 </div>
 
                 <div
@@ -166,8 +232,12 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
           </label>
           {!govtId ? (
             <div
-              className="cursor-pointer rounded-[2px] border border-dashed border-[#D5D5DD] px-3 py-6 text-center transition-colors hover:border-[#D4AF36]"
+              className={cn(
+                "cursor-pointer rounded-[2px] border border-dashed border-[#D5D5DD] px-3 py-6 text-center transition-colors hover:border-[#D4AF36]",
+                draggingOver === "govtId" && "border-[#D4AF36] bg-[#FDF9ED]",
+              )}
               onClick={() => govtIdInputRef.current?.click()}
+              {...govtIdDropHandlers}
             >
               <div className="flex flex-col items-center gap-3">
                 <p className="text-[14px] leading-[17px] text-[#71748C]">
@@ -187,7 +257,9 @@ const KYCDocuments: React.FC<KYCDocumentsProps> = ({ form, isOwner = false }) =>
               onMouseEnter={() => setHoveredDocument("govtId")}
               onMouseLeave={() => setHoveredDocument(null)}
             >
-              <div className="h-28 w-[250px] bg-transparent">{renderFilePreview(govtId)}</div>
+              <div className="h-28 w-full max-w-[250px] bg-transparent">
+                {renderFilePreview(govtId, govtIdPreviewUrl)}
+              </div>
 
               <div
                 className={cn(

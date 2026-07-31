@@ -8,10 +8,13 @@ export const useLogin = () => {
     onSuccess: (data) => {
       const responseData = data.data?.data;
       const token = responseData?.access_token;
-      queryClient.invalidateQueries(); // Invalidate all queries to force a refetch
+      // Token must be stored before invalidating queries: any query (like the profile fetch)
+      // that re-runs as a result of the invalidation needs to see the new token immediately,
+      // not fire disabled/unauthenticated because it read localStorage a moment too early.
       if (token) {
         localStorage.setItem("token", token);
       }
+      queryClient.invalidateQueries();
     },
   });
 };

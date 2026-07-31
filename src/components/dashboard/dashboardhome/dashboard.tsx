@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronRight, HousePlus } from "lucide-react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 
@@ -11,6 +12,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useMemo, useState } from "react";
 import { useGetDashboardOverview } from "@/lib/services/dashboard";
 import { toast } from "sonner";
+
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good Morning";
+  if (hour < 17) return "Good Afternoon";
+  return "Good Evening";
+};
 
 interface RecentMessage {
   conversation_id: number;
@@ -30,7 +38,11 @@ interface RecentMessage {
 const Dashboard = () => {
   const { data: profileData, isLoading: isProfileLoading } = useGetProfileData();
   const [period, setPeriod] = useState("last_6_months");
-  const { data: dashboardData, isLoading: isDashboardLoading } = useGetDashboardOverview(period);
+  const {
+    data: dashboardData,
+    isLoading: isDashboardLoading,
+    isError: isDashboardError,
+  } = useGetDashboardOverview(period);
 
   const userName = useMemo(() => {
     if (profileData) {
@@ -87,10 +99,16 @@ const Dashboard = () => {
         keywords="property dashboard, real estate management"
       />
 
+      {isDashboardError && (
+        <div className="w-full rounded-lg border border-red-200 bg-red-50 p-3 text-center text-sm text-red-600">
+          Failed to load dashboard data. Please refresh the page.
+        </div>
+      )}
+
       <header className="flex w-full flex-wrap items-center justify-between gap-2 self-stretch">
         <div className="flex flex-col items-baseline gap-2">
           <h1 className="flex items-center gap-2 text-[18px] leading-[18px] font-semibold text-[#1F2130]">
-            <span>Good Afternoon,</span>
+            <span>{getGreeting()},</span>
             {isLoading ? <Skeleton className="h-5 w-32" /> : <span>{userName}</span>}
           </h1>
 
@@ -132,7 +150,7 @@ const Dashboard = () => {
 
                 <div className="flex items-baseline gap-2 px-6 pb-6">
                   <p className="text-[48px]/12 font-semibold tracking-[-1px] text-[#1F2130]">
-                    {item.value}
+                    {item.value.toLocaleString()}
                   </p>
                   <span className="text-[16px] leading-[22px] text-[#1F2130]">Properties</span>
                 </div>
@@ -180,13 +198,15 @@ const Dashboard = () => {
                     className="flex w-full items-center justify-between gap-3.5 self-stretch border-b border-[#E3E3E8] pb-4 last:border-b-0"
                   >
                     <div className="flex w-full items-center gap-3.5">
-                      <img
-                        src={item.last_message.sender.avatar}
-                        alt=""
-                        className="size-11"
-                        width={44}
-                        height={44}
-                      />
+                      <Avatar className="size-11">
+                        <AvatarImage
+                          src={item.last_message.sender.avatar}
+                          alt={item.last_message.sender.name}
+                        />
+                        <AvatarFallback className="bg-[#D4AF36] text-sm font-medium text-white">
+                          {item.last_message.sender.name?.[0] ?? "?"}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="flex w-full flex-col items-start justify-center gap-2.5">
                         <div className="flex w-full items-center justify-between">
                           <h5 className="text-[14px] leading-[17px] font-semibold text-[#41415A]">
@@ -232,7 +252,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex items-baseline gap-2 px-6 pb-6">
                   <p className="text-[48px]/12 font-semibold tracking-[-1px] text-[#1F2130]">
-                    {item.value}
+                    {item.value.toLocaleString()}
                   </p>
                 </div>
               </div>

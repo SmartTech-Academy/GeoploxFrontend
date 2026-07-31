@@ -54,7 +54,9 @@ const Topnav = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    queryClient.invalidateQueries({ queryKey: ["profile"] });
+    // Clear (not just invalidate one key) so no stale cached data from this session - profile,
+    // chat, notifications, etc. - can linger and flash for whoever logs in next on this browser.
+    queryClient.clear();
     navigate({ to: "/login" });
   };
 
@@ -81,14 +83,14 @@ const Topnav = () => {
           <img
             src={assets.logotext}
             alt="logo"
-            className="h-8 w-auto md:h-10 md:w-[126px]"
+            className="h-8 w-auto lg:h-10 lg:w-[126px]"
             width={126}
             height={40}
           />
         </Link>
 
         {/* Desktop Navigation */}
-        <ul className="hidden md:flex md:items-center">
+        <ul className="hidden lg:flex lg:items-center">
           {navigationLinks.map((link, index) => (
             <React.Fragment key={link.to}>
               <li key={link.to} className="isolate flex h-12 items-center justify-center px-4">
@@ -103,7 +105,7 @@ const Topnav = () => {
 
         {/* Desktop Auth Buttons */}
         {isLoggedIn ? (
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             <NotificationPopover />
             <div className="h-8 w-px bg-[#E2E2E2]" />
             <DropdownMenu>
@@ -166,7 +168,7 @@ const Topnav = () => {
             </DropdownMenu>
           </div>
         ) : (
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-3 lg:flex">
             <Button
               asChild
               className="h-10 rounded-[40px] bg-[#F1F1F4] px-4 py-[15px] text-[14px] leading-[17px] font-semibold text-[#1F2130] transition-colors hover:bg-[#1F2130] hover:text-white"
@@ -189,7 +191,7 @@ const Topnav = () => {
         )}
 
         {/* Mobile Menu */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
           {/* Mobile Menu Trigger */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>

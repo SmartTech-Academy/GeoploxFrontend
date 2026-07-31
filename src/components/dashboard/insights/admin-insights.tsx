@@ -57,7 +57,11 @@ const AdminInsights = () => {
   const [period, setPeriod] = useState("last_6_months");
   const [filter] = useState("all");
 
-  const { data: performanceData, isLoading } = useGetPlatformPerformance({ period, filter });
+  const {
+    data: performanceData,
+    isLoading,
+    isError,
+  } = useGetPlatformPerformance({ period, filter });
 
   const normalizedData = useMemo(() => {
     const payload = performanceData?.data?.data;
@@ -126,6 +130,11 @@ const AdminInsights = () => {
         description="Get a comprehensive overview of platform performance, user metrics, and listing activities."
         keywords="admin dashboard, platform analytics, user insights, property trends"
       />
+      {isError && (
+        <div className="w-full rounded-lg border border-red-200 bg-red-50 p-3 text-center text-sm text-red-600">
+          Failed to load platform performance data. Please refresh the page.
+        </div>
+      )}
       <header className="flex w-full items-center justify-between gap-2 self-stretch">
         {/* <Select defaultValue={filter} onValueChange={setFilter}>
           <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-[#F9F9F9] text-[#41415A] focus:ring-0">

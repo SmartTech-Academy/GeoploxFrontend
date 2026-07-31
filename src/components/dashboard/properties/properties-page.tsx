@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Search,
   MapPin,
@@ -29,15 +29,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import assets from "@/assets";
 import { cn, slugify } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
@@ -50,6 +41,7 @@ import { PropertyFilterSidebar } from "@/components/property-filter-sidebar";
 import Map from "@/components/google-map";
 import { useGetProfileData } from "@/lib/services/profile";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ImageLightbox } from "@/components/image-lightbox";
 
 // Updated TypeScript interfaces to match API response
 interface PropertyOwner {
@@ -122,16 +114,468 @@ const getPublicPropertyBasePath = (category?: string) => {
   }
 };
 
+const EmptyState = ({ type }: { type: "chat" | "list" }) => {
+  if (type === "chat") {
+    return (
+      <div className="flex size-full flex-col items-center justify-center gap-4 bg-[#F9F9F9]">
+        <div className="flex flex-col items-center justify-center gap-6">
+          <img
+            src={assets.messagingloading}
+            alt="No properties"
+            className="h-[84px] w-56 animate-pulse"
+            width={224}
+            height={84}
+          />
+          <div className="flex flex-col items-center justify-center gap-3">
+            <h5 className="text-[20px]/7 font-normal text-[#1F2130]">No property selected</h5>
+            <p className="text-center text-[14px]/5 tracking-[-0.02em] text-[#71748C]">
+              Select a property from the list <br />
+              to view its details.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="flex w-full flex-col items-center justify-center gap-8 self-stretch py-14">
+      <img
+        src={assets.chatloading}
+        className="h-28 w-[211px] animate-pulse"
+        width={211}
+        height={112}
+      />
+      <div className="flex flex-col items-center justify-center gap-3">
+        <h5 className="text-[20px]/7 font-semibold text-[#1F2130]">Your property is empty</h5>
+        <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
+          It looks like you haven&apos;t created a property yet.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const PropertyStats: React.FC<{ selectedProperty: Property | null }> = ({ selectedProperty }) => {
+  if (!selectedProperty) return null;
+
+  return (
+    <div className="flex flex-col items-start gap-4 pt-6 pl-4">
+      <div className="w-full border-b border-[#F1F1F4] pb-4">
+        <div className="flex flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
+          <div className="flex items-center gap-3 self-stretch">
+            <Avatar className="size-[43px] rounded-[5px]">
+              <AvatarImage src={selectedProperty.owner.image_url || "/placeholder.svg"} />
+              <AvatarFallback>{selectedProperty.owner.name?.charAt(0) || "U"}</AvatarFallback>
+            </Avatar>
+
+            <div className="flex flex-col gap-1.5">
+              <h3 className="text-[13px]/4 font-semibold text-[#1F2130]">
+                {selectedProperty.owner.name}
+              </h3>
+
+              {selectedProperty.is_verified ? (
+                <div className="flex items-center gap-2">
+                  <BadgeCheck className="size-4 shrink-0 fill-primary text-white" />
+                  <span className="text-[12px] leading-[18px] font-semibold text-primary">
+                    Verified Owner
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <BadgeCheck className="size-4 shrink-0 text-gray-400" />
+                  <span className="text-[12px] leading-[18px] font-medium text-gray-500">
+                    Not Verified
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Property Stats */}
+      <div className="flex w-full border-b border-[#F1F1F4] pb-4">
+        <div className="box-border flex w-full flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
+          <div className="flex flex-col items-start gap-2 self-stretch">
+            <div className="flex w-full items-center justify-between gap-2">
+              <span className="text-[12px]/3 text-[#71748C]">Status</span>
+              <span className="text-[12px]/3 text-[#1F2130] capitalize">
+                {selectedProperty.status}
+              </span>
+            </div>
+            <div className="flex w-full items-center justify-between gap-2">
+              <span className="text-[12px]/3 text-[#71748C]">Property ID</span>
+              <span className="text-[12px]/3 text-[#1F2130]">{selectedProperty.id}</span>
+            </div>
+            <div className="flex w-full items-center justify-between gap-2">
+              <span className="text-[12px]/3 text-[#71748C]">Added</span>
+              <span className="text-[12px]/3 text-[#1F2130]">
+                {new Date(selectedProperty.created_at).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </span>
+            </div>
+            <div className="flex w-full items-center justify-between gap-2">
+              <span className="text-[12px]/3 text-[#71748C]">Property Type</span>
+              <span className="text-[12px]/3 text-[#1F2130]">
+                {selectedProperty.property_type}
+              </span>
+            </div>
+            <div className="flex w-full items-center justify-between gap-2">
+              <span className="text-[12px]/3 text-[#71748C]">Sub Type</span>
+              <span className="text-[12px]/3 text-[#1F2130]">
+                {selectedProperty.property_sub_type}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-[358px] w-full">
+        <Map
+          address={selectedProperty?.location?.address || selectedProperty?.address || ""}
+          city={selectedProperty?.location?.city || selectedProperty?.city || ""}
+          state={selectedProperty?.location?.state || selectedProperty?.state || ""}
+          country={selectedProperty?.location?.country || selectedProperty?.country || ""}
+        />
+      </div>
+    </div>
+  );
+};
+
+interface PropertyDetailsProps {
+  selectedProperty: Property | null;
+  isAdminListingPage: boolean;
+  handleShare: () => void;
+  isArchiving: boolean;
+  handleArchive: (action: "archive" | "restore") => void;
+  setOpenDeleteModal: (open: boolean) => void;
+}
+
+/**
+ * Hoisted to module scope (rather than declared inside `PropertiesPage`) so it is a
+ * stable component type across renders. It owns its own gallery state (current image +
+ * lightbox open/closed) locally; the parent resets that state between properties simply
+ * by changing this component's `key`, rather than by lifting the state up — lifting it
+ * caused two bugs: sharing one `isLightboxOpen` value across the mobile/desktop duplicate
+ * render of this component made both open at once, and re-declaring the whole component
+ * inline on every parent render (e.g. on every image-index change) remounted it and reset
+ * that state right back to closed.
+ */
+const PropertyDetails: React.FC<PropertyDetailsProps> = ({
+  selectedProperty,
+  isAdminListingPage,
+  handleShare,
+  isArchiving,
+  handleArchive,
+  setOpenDeleteModal,
+}) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  // Get all images from thumbnail_images and cover_image
+  const allImages = useMemo(() => {
+    if (!selectedProperty) return [];
+
+    // New API format: images array with objects
+    if (selectedProperty.images?.length) {
+      return [...selectedProperty.images]
+        .sort((a, b) => {
+          // Ensure cover image is always first
+          if (a.is_cover) return -1;
+          if (b.is_cover) return 1;
+
+          // Then sort by position
+          return a.position - b.position;
+        })
+        .map((img) => img.url);
+    }
+
+    // Old format: thumbnail_images + cover_image
+    const images = [...(selectedProperty.thumbnail_images || [])];
+
+    if (selectedProperty.cover_image && !images.includes(selectedProperty.cover_image)) {
+      images.unshift(selectedProperty.cover_image);
+    }
+
+    return images;
+  }, [selectedProperty]);
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
+
+  return (
+    <div className="flex h-full flex-col bg-white lg:pl-6">
+      {/* Header */}
+      <div className="flex flex-col items-start gap-4 border-b border-[#E8E8E8] p-4 md:flex-row md:items-center md:justify-between lg:p-6">
+        <h1 className="text-[24px] font-semibold text-[#1F2130]">
+          {selectedProperty ? "Property Details" : "No Property Selected"}
+        </h1>
+        {!isAdminListingPage && (
+          <Button
+            asChild
+            style={{
+              background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
+              boxShadow:
+                "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
+            }}
+            className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3 font-normal text-white"
+          >
+            <Link to="/properties/create">
+              <HousePlus className="mr-2 size-4" /> New Listing
+            </Link>
+          </Button>
+        )}
+      </div>
+
+      {!selectedProperty ? (
+        <EmptyState type="chat" />
+      ) : (
+        <div className="flex w-full flex-col lg:flex-row">
+          <div className="w-full lg:w-2/3">
+            {/* Content */}
+            <div className="flex h-auto flex-1 flex-col gap-4 overflow-y-auto p-4 lg:h-[calc(100svh-150px)] lg:p-6">
+              {/* Image Gallery */}
+              {allImages.length > 0 && (
+                <div className="relative border-b border-[#F1F1F4] pb-6">
+                  <div className="relative h-[380px] overflow-hidden rounded-[10px]">
+                    <img
+                      src={allImages[currentImageIndex] || "/placeholder.svg"}
+                      alt={selectedProperty.title}
+                      onClick={() => setIsLightboxOpen(true)}
+                      className="size-full cursor-zoom-in object-cover"
+                    />
+                    {allImages.length > 1 && (
+                      <>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={prevImage}
+                          className="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-white/80 p-2 hover:bg-white"
+                        >
+                          <ChevronLeft className="size-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={nextImage}
+                          className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-white/80 p-2 hover:bg-white"
+                        >
+                          <ChevronRight className="size-4" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Thumbnail Gallery */}
+                  {allImages.length > 1 && (
+                    <div className="mt-4 flex gap-2 overflow-x-auto">
+                      {allImages.slice(0, 4).map((image, index) => (
+                        <button
+                          type="button"
+                          key={index}
+                          onClick={() => setCurrentImageIndex(index)}
+                          className={`relative size-20 shrink-0 overflow-hidden rounded-[6px] ${
+                            currentImageIndex === index ? "ring-2 ring-[#D4AF36]" : ""
+                          }`}
+                        >
+                          <img
+                            src={image || "/placeholder.svg"}
+                            alt={`${selectedProperty.title} ${index + 1}`}
+                            className="size-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  <ImageLightbox
+                    images={allImages}
+                    initialIndex={currentImageIndex}
+                    open={isLightboxOpen}
+                    onOpenChange={setIsLightboxOpen}
+                    onIndexChange={setCurrentImageIndex}
+                    alt={selectedProperty.title}
+                  />
+                </div>
+              )}
+
+              {/* Property Info */}
+              <div className="flex w-full flex-col gap-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        className={`items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
+                      >
+                        <div
+                          className={cn(
+                            "mr-1 size-1.5 rounded-full",
+                            selectedProperty.category === "Short Let"
+                              ? "bg-[#0AA6A9]"
+                              : selectedProperty.category === "For Rent"
+                                ? "bg-[#FDCE05]"
+                                : "bg-[#D20832]",
+                          )}
+                        />
+                        {selectedProperty.category}
+                      </Badge>
+                      <Badge
+                        className={`items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
+                      >
+                        {selectedProperty.property_type}
+                      </Badge>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <h2 className="text-[14px]/4 font-semibold text-[#1F2130]">
+                        {selectedProperty.title}
+                      </h2>
+                      <h3 className="text-[16px] leading-[21px] font-bold text-[#1F2130]">
+                        {new Intl.NumberFormat("en-NG", {
+                          style: "currency",
+                          currency: selectedProperty.currency,
+                        }).format(selectedProperty.price)}
+                      </h3>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <MapPin className="size-4 text-gray-400" />
+                      <span className="text-[12px]/3.5 text-[#41415A]">
+                        {`${selectedProperty?.location?.address || selectedProperty?.address}  ${selectedProperty?.location?.city || selectedProperty?.city}, ${selectedProperty?.location?.state || selectedProperty?.state}`}
+                      </span>
+                    </div>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="rounded-full p-2 text-[14px] leading-[17px] font-semibold text-primary hover:bg-gray-100"
+                      >
+                        <Edit3 className="mr-2 size-4" />
+                        Manage
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      {!isAdminListingPage && (
+                        <DropdownMenuItem
+                          onClick={handleShare}
+                          className="flex items-center space-x-3"
+                        >
+                          <Crown className="size-4 text-gray-600" />
+                          <span>Promote </span>
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem onClick={handleShare} className="flex items-center space-x-3">
+                        <Share2 className="size-4" />
+                        <span>Share</span>
+                      </DropdownMenuItem>
+                      {!isAdminListingPage && (
+                        <DropdownMenuItem
+                          asChild
+                          className="flex cursor-pointer items-center space-x-3"
+                        >
+                          <Link to="/properties/$id" params={{ id: selectedProperty.id }}>
+                            <Edit3 className="size-4 text-gray-600" />
+                            <span>Edit Details</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem
+                        onClick={() =>
+                          handleArchive(selectedProperty.status === "archived" ? "restore" : "archive")
+                        }
+                        className="flex cursor-pointer items-center space-x-3"
+                        disabled={isArchiving}
+                      >
+                        <ArchiveRestore className="size-4 text-gray-600" />
+                        <span>{selectedProperty.status === "archived" ? "Restore" : "Archive"}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setOpenDeleteModal(true)}
+                        className="flex cursor-pointer items-center space-x-3 text-red-600"
+                      >
+                        <Trash2 className="size-4 text-gray-600" />
+                        <span>Delete</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                {/* Property Stats */}
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <BedDouble className="size-4 text-primary" />
+                    <span className="text-[14px] text-[#71748C]">{selectedProperty.bedrooms} Beds</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ShowerHead className="size-4 text-primary" />
+                    <span className="text-[14px] text-[#71748C]">
+                      {selectedProperty.bathrooms} Baths
+                    </span>
+                  </div>
+                  {!!selectedProperty.area_sqft && (
+                    <div className="flex items-center gap-2">
+                      <Square className="size-4 text-primary" />
+                      <span className="text-[14px] text-[#71748C]">
+                        {selectedProperty.area_sqft.toLocaleString()} sq ft
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="mb-6">
+                <h4 className="mb-3 text-[18px] font-semibold text-[#1F2130]">Property Details</h4>
+                <p className="text-[14px]/5 text-[#71748C]">
+                  {selectedProperty.desc || selectedProperty.excerpt}
+                </p>
+              </div>
+
+              {/* Features */}
+              {selectedProperty.features && selectedProperty.features.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="mb-3 text-[18px] font-semibold text-[#1F2130]">Features include:</h4>
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                    {selectedProperty.features.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <div className="size-1.5 rounded-full bg-primary" />
+                        <span className="text-[14px]/5 text-[#71748C]">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="w-full border-l border-gray-200 lg:w-1/3">
+            <PropertyStats selectedProperty={selectedProperty} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const PropertiesPage: React.FC = () => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [statusFilter, setStatusFilter] = useState<StatusFilterType>("published");
-  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(10);
-  const selectedPropertyIdRef = useRef<string | null>(null);
   const { data: profileData } = useGetProfileData();
   const isMobile = useIsMobile();
   const isAdminListingPage =
@@ -211,7 +655,6 @@ const PropertiesPage: React.FC = () => {
   useEffect(() => {
     if (properties.length === 0) {
       setSelectedProperty(null);
-      setCurrentImageIndex(0);
       return;
     }
 
@@ -236,23 +679,18 @@ const PropertiesPage: React.FC = () => {
     });
   }, [properties, shouldAutoSelectProperty]);
 
-  useEffect(() => {
-    const selectedPropertyId = selectedProperty?.id ?? null;
-    if (selectedPropertyIdRef.current !== selectedPropertyId) {
-      selectedPropertyIdRef.current = selectedPropertyId;
-      setCurrentImageIndex(0);
-    }
-  }, [selectedProperty?.id]);
-
   const handleDelete = async () => {
     if (!selectedProperty) return;
-    deleteProperty(selectedProperty.id, {
-      onSuccess: () => {
-        toast.success("Property deleted successfully.");
-        setOpenDeleteModal(false);
-        setSelectedProperty(null);
+    deleteProperty(
+      { propertyId: selectedProperty.id, isAdminListing: isAdminListingPage },
+      {
+        onSuccess: () => {
+          toast.success("Property deleted successfully.");
+          setOpenDeleteModal(false);
+          setSelectedProperty(null);
+        },
       },
-    });
+    );
   };
 
   const handleArchive = (action: "archive" | "restore") => {
@@ -270,7 +708,6 @@ const PropertiesPage: React.FC = () => {
   // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    setCurrentImageIndex(0);
     // Scroll to top of list when changing page
     const listContainer = document.querySelector(".property-list-container");
     if (listContainer) {
@@ -282,48 +719,6 @@ const PropertiesPage: React.FC = () => {
   const handlePerPageChange = (newPerPage: number) => {
     setPerPage(newPerPage);
     setCurrentPage(1); // Reset to first page when changing items per page
-    setCurrentImageIndex(0);
-  };
-
-  const EmptyState = ({ type }: { type: "chat" | "list" }) => {
-    if (type === "chat") {
-      return (
-        <div className="flex size-full flex-col items-center justify-center gap-4 bg-[#F9F9F9]">
-          <div className="flex flex-col items-center justify-center gap-6">
-            <img
-              src={assets.messagingloading}
-              alt="No properties"
-              className="h-[84px] w-56 animate-pulse"
-              width={224}
-              height={84}
-            />
-            <div className="flex flex-col items-center justify-center gap-3">
-              <h5 className="text-[20px]/7 font-normal text-[#1F2130]">No property selected</h5>
-              <p className="text-center text-[14px]/5 tracking-[-0.02em] text-[#71748C]">
-                Select a property from the list <br />
-                to view its details.
-              </p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className="flex w-full flex-col items-center justify-center gap-8 self-stretch py-14">
-        <img
-          src={assets.chatloading}
-          className="h-28 w-[211px] animate-pulse"
-          width={211}
-          height={112}
-        />
-        <div className="flex flex-col items-center justify-center gap-3">
-          <h5 className="text-[20px]/7 font-semibold text-[#1F2130]">Your property is empty</h5>
-          <p className="text-[14px] leading-[17px] tracking-[-0.02em] text-[#71748C]">
-            It looks like you haven&apos;t created a property yet.
-          </p>
-        </div>
-      </div>
-    );
   };
 
   const PropertyList: React.FC = () => (
@@ -443,10 +838,7 @@ const PropertiesPage: React.FC = () => {
               return (
                 <div
                   key={property.id}
-                  onClick={() => {
-                    setSelectedProperty(property);
-                    setCurrentImageIndex(0);
-                  }}
+                  onClick={() => setSelectedProperty(property)}
                   className={`cursor-pointer border-b border-[#E3E3E8] p-4 transition-colors hover:bg-gray-50 ${
                     selectedProperty?.id === property.id ? "bg-[#FDF9ED]" : ""
                   }`}
@@ -494,89 +886,53 @@ const PropertiesPage: React.FC = () => {
           )}
         </div>
 
-        {/* Pagination Component */}
+        {/* Pagination Component — this list panel is often quite narrow (it's the left
+            column of a resizable split view), so this stays a single compact row rather
+            than a list of individual page-number buttons, which wraps badly at that width. */}
         {!isLoading && !isError && properties.length > 0 && paginationMeta.last_page > 1 && (
-          <div className="border-t border-[#E8E8E8] px-4 py-3">
-            <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-              <div className="text-sm text-gray-600">
-                Showing {paginationMeta.from || 0} to {paginationMeta.to || 0} of{" "}
-                {paginationMeta.total || 0} properties
-              </div>
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      className={
-                        currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
-                      }
-                    />
-                  </PaginationItem>
+          <div className="flex flex-col gap-3 border-t border-[#E8E8E8] px-4 py-3">
+            <p className="text-xs text-gray-600 sm:text-sm">
+              Showing {paginationMeta.from || 0}–{paginationMeta.to || 0} of{" "}
+              {paginationMeta.total || 0} properties
+            </p>
 
-                  {(() => {
-                    const { current_page, last_page } = paginationMeta;
-                    const pages = [];
-                    const maxVisible = 5;
+            <div className="flex items-center justify-between gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="gap-1"
+              >
+                <ChevronLeft className="size-4" />
+                <span className="hidden sm:inline">Previous</span>
+              </Button>
 
-                    if (last_page <= maxVisible) {
-                      for (let i = 1; i <= last_page; i++) {
-                        pages.push(i);
-                      }
-                    } else {
-                      if (current_page <= 3) {
-                        for (let i = 1; i <= 4; i++) pages.push(i);
-                        pages.push("ellipsis");
-                        pages.push(last_page);
-                      } else if (current_page >= last_page - 2) {
-                        pages.push(1);
-                        pages.push("ellipsis");
-                        for (let i = last_page - 3; i <= last_page; i++) pages.push(i);
-                      } else {
-                        pages.push(1);
-                        pages.push("ellipsis");
-                        for (let i = current_page - 1; i <= current_page + 1; i++) pages.push(i);
-                        pages.push("ellipsis");
-                        pages.push(last_page);
-                      }
-                    }
+              <span className="text-xs font-medium whitespace-nowrap text-[#41415A] sm:text-sm">
+                Page {paginationMeta.current_page} of {paginationMeta.last_page}
+              </span>
 
-                    return pages.map((page, index) => (
-                      <PaginationItem key={index}>
-                        {page === "ellipsis" ? (
-                          <PaginationEllipsis />
-                        ) : (
-                          <PaginationLink
-                            onClick={() => handlePageChange(page as number)}
-                            isActive={current_page === page}
-                            className="cursor-pointer"
-                          >
-                            {page}
-                          </PaginationLink>
-                        )}
-                      </PaginationItem>
-                    ));
-                  })()}
-
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      className={
-                        currentPage === paginationMeta.last_page
-                          ? "pointer-events-none opacity-50"
-                          : "cursor-pointer"
-                      }
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === paginationMeta.last_page}
+                className="gap-1"
+              >
+                <span className="hidden sm:inline">Next</span>
+                <ChevronRight className="size-4" />
+              </Button>
             </div>
+
             {/* Per Page Selector */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Show:</span>
+              <span className="text-xs text-gray-500 sm:text-sm">Show:</span>
               <select
                 value={perPage}
                 onChange={(e) => handlePerPageChange(Number(e.target.value))}
-                className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm"
+                className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs sm:text-sm"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -589,387 +945,6 @@ const PropertiesPage: React.FC = () => {
       </div>
     </div>
   );
-
-  const PropertyDetails: React.FC = () => {
-    // Get all images from thumbnail_images and cover_image
-    const allImages = useMemo(() => {
-      if (!selectedProperty) return [];
-
-      // New API format: images array with objects
-      if (selectedProperty.images?.length) {
-        return [...selectedProperty.images]
-          .sort((a, b) => {
-            // Ensure cover image is always first
-            if (a.is_cover) return -1;
-            if (b.is_cover) return 1;
-
-            // Then sort by position
-            return a.position - b.position;
-          })
-          .map((img) => img.url);
-      }
-
-      // Old format: thumbnail_images + cover_image
-      const images = [...(selectedProperty.thumbnail_images || [])];
-
-      if (selectedProperty.cover_image && !images.includes(selectedProperty.cover_image)) {
-        images.unshift(selectedProperty.cover_image);
-      }
-
-      return images;
-    }, [selectedProperty]);
-
-    const nextImage = () => {
-      setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
-    };
-
-    const prevImage = () => {
-      setCurrentImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
-    };
-
-    return (
-      <div className="flex h-full flex-col bg-white lg:pl-6">
-        {/* Header */}
-        <div className="flex flex-col items-start gap-4 border-b border-[#E8E8E8] p-4 md:flex-row md:items-center md:justify-between lg:p-6">
-          <h1 className="text-[24px] font-semibold text-[#1F2130]">
-            {selectedProperty ? "Property Details" : "No Property Selected"}
-          </h1>
-          {!isAdminListingPage && (
-            <Button
-              asChild
-              style={{
-                background: "linear-gradient(180deg, #505050 0%, #1E1E1E 60%)",
-                boxShadow:
-                  "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
-              }}
-              className="h-10 rounded-[40px] border border-[oklch(0.235_0_0/50%)] p-4 text-[12px]/3 font-normal text-white"
-            >
-              <Link to="/properties/create">
-                <HousePlus className="mr-2 size-4" /> New Listing
-              </Link>
-            </Button>
-          )}
-        </div>
-
-        {!selectedProperty ? (
-          <EmptyState type="chat" />
-        ) : (
-          <div className="flex w-full flex-col lg:flex-row">
-            <div className="w-full lg:w-2/3">
-              {/* Content */}
-              <div className="flex h-auto flex-1 flex-col gap-4 overflow-y-auto p-4 lg:h-[calc(100svh-150px)] lg:p-6">
-                {/* Image Gallery */}
-                {allImages.length > 0 && (
-                  <div className="relative border-b border-[#F1F1F4] pb-6">
-                    <div className="relative h-[300px] overflow-hidden rounded-[10px]">
-                      <img
-                        src={allImages[currentImageIndex] || "/placeholder.svg"}
-                        alt={selectedProperty.title}
-                        className="size-full object-cover"
-                      />
-                      {allImages.length > 1 && (
-                        <>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={prevImage}
-                            className="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-white/80 p-2 hover:bg-white"
-                          >
-                            <ChevronLeft className="size-4" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={nextImage}
-                            className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-white/80 p-2 hover:bg-white"
-                          >
-                            <ChevronRight className="size-4" />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Thumbnail Gallery */}
-                    {allImages.length > 1 && (
-                      <div className="mt-4 flex gap-2 overflow-x-auto">
-                        {allImages.slice(0, 4).map((image, index) => (
-                          <button
-                            type="button"
-                            key={index}
-                            onClick={() => setCurrentImageIndex(index)}
-                            className={`relative size-20 shrink-0 overflow-hidden rounded-[6px] ${
-                              currentImageIndex === index ? "ring-2 ring-[#D4AF36]" : ""
-                            }`}
-                          >
-                            <img
-                              src={image || "/placeholder.svg"}
-                              alt={`${selectedProperty.title} ${index + 1}`}
-                              className="size-full object-cover"
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Property Info */}
-                <div className="flex w-full flex-col gap-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex flex-col gap-3">
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          className={`items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
-                        >
-                          <div
-                            className={cn(
-                              "mr-1 size-1.5 rounded-full",
-                              selectedProperty.category === "Short Let"
-                                ? "bg-[#0AA6A9]"
-                                : selectedProperty.category === "For Rent"
-                                  ? "bg-[#FDCE05]"
-                                  : "bg-[#D20832]",
-                            )}
-                          />
-                          {selectedProperty.category}
-                        </Badge>
-                        <Badge
-                          className={`items-center rounded-sm border border-[oklch(0.5931_0_0/30%)] bg-white text-[12px] leading-[21px] text-[#0B0B0D]`}
-                        >
-                          {selectedProperty.property_type}
-                        </Badge>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <h2 className="text-[14px]/4 font-semibold text-[#1F2130]">
-                          {selectedProperty.title}
-                        </h2>
-                        <h3 className="text-[16px] leading-[21px] font-bold text-[#1F2130]">
-                          {new Intl.NumberFormat("en-NG", {
-                            style: "currency",
-                            currency: selectedProperty.currency,
-                          }).format(selectedProperty.price)}
-                        </h3>
-                      </div>
-
-                      <div className="flex items-center gap-1">
-                        <MapPin className="size-4 text-gray-400" />
-                        <span className="text-[12px]/3.5 text-[#41415A]">
-                          {`${selectedProperty?.location?.address || selectedProperty?.address}  ${selectedProperty?.location?.city || selectedProperty?.city}, ${selectedProperty?.location?.state || selectedProperty?.state}`}
-                        </span>
-                      </div>
-                    </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="rounded-full p-2 text-[14px] leading-[17px] font-semibold text-primary hover:bg-gray-100"
-                        >
-                          <Edit3 className="mr-2 size-4" />
-                          Manage
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem
-                          onClick={handleShare}
-                          className="flex items-center space-x-3"
-                        >
-                          <Crown className="size-4 text-gray-600" />
-                          <span>Promote </span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={handleShare}
-                          className="flex items-center space-x-3"
-                        >
-                          <Share2 className="size-4" />
-                          <span>Share</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          asChild
-                          className="flex cursor-pointer items-center space-x-3"
-                        >
-                          <Link to="/properties/$id" params={{ id: selectedProperty.id }}>
-                            <Edit3 className="size-4 text-gray-600" />
-                            <span>Edit Details</span>
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleArchive(
-                              selectedProperty.status === "archived" ? "restore" : "archive",
-                            )
-                          }
-                          className="flex cursor-pointer items-center space-x-3"
-                          disabled={isArchiving}
-                        >
-                          <ArchiveRestore className="size-4 text-gray-600" />
-                          <span>
-                            {selectedProperty.status === "archived" ? "Restore" : "Archive"}
-                          </span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setOpenDeleteModal(true)}
-                          className="flex cursor-pointer items-center space-x-3 text-red-600"
-                        >
-                          <Trash2 className="size-4 text-gray-600" />
-                          <span>Delete</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-
-                  {/* Property Stats */}
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-2">
-                      <BedDouble className="size-4 text-primary" />
-                      <span className="text-[14px] text-[#71748C]">
-                        {selectedProperty.bedrooms} Beds
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ShowerHead className="size-4 text-primary" />
-                      <span className="text-[14px] text-[#71748C]">
-                        {selectedProperty.bathrooms} Baths
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Square className="size-4 text-primary" />
-                      <span className="text-[14px] text-[#71748C]">
-                        {selectedProperty.area_sqft?.toLocaleString() || "N/A"} sq ft
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <div className="mb-6">
-                  <h4 className="mb-3 text-[18px] font-semibold text-[#1F2130]">
-                    Property Details
-                  </h4>
-                  <p className="text-[14px]/5 text-[#71748C]">
-                    {selectedProperty.desc || selectedProperty.excerpt}
-                  </p>
-                </div>
-
-                {/* Features */}
-                {selectedProperty.features && selectedProperty.features.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="mb-3 text-[18px] font-semibold text-[#1F2130]">
-                      Features include:
-                    </h4>
-                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                      {selectedProperty.features.map((feature, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <div className="size-1.5 rounded-full bg-primary" />
-                          <span className="text-[14px]/5 text-[#71748C]">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="w-full border-l border-gray-200 lg:w-1/3">
-              <PropertyStats />
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const PropertyStats: React.FC = () => {
-    if (!selectedProperty) return null;
-
-    return (
-      <div className="flex flex-col items-start gap-4 pt-6 pl-4">
-        <div className="w-full border-b border-[#F1F1F4] pb-4">
-          <div className="flex flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
-            <div className="flex items-center gap-3 self-stretch">
-              <Avatar className="size-[43px] rounded-[5px]">
-                <AvatarImage src={selectedProperty.owner.image_url || "/placeholder.svg"} />
-                <AvatarFallback>{selectedProperty.owner.name?.charAt(0) || "U"}</AvatarFallback>
-              </Avatar>
-
-              <div className="flex flex-col gap-1.5">
-                <h3 className="text-[13px]/4 font-semibold text-[#1F2130]">
-                  {selectedProperty.owner.name}
-                </h3>
-
-                {selectedProperty.is_verified ? (
-                  <div className="flex items-center gap-2">
-                    <BadgeCheck className="size-4 shrink-0 fill-primary text-white" />
-                    <span className="text-[12px] leading-[18px] font-semibold text-primary">
-                      Verified Owner
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <BadgeCheck className="size-4 shrink-0 text-gray-400" />
-                    <span className="text-[12px] leading-[18px] font-medium text-gray-500">
-                      Not Verified
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Property Stats */}
-        <div className="flex w-full border-b border-[#F1F1F4] pb-4">
-          <div className="box-border flex w-full flex-col items-start gap-5 self-stretch rounded-[5px] border border-[#E5E5E5] p-4">
-            <div className="flex flex-col items-start gap-2 self-stretch">
-              <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px]/3 text-[#71748C]">Status</span>
-                <span className="text-[12px]/3 text-[#1F2130] capitalize">
-                  {selectedProperty.status}
-                </span>
-              </div>
-              <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px]/3 text-[#71748C]">Property ID</span>
-                <span className="text-[12px]/3 text-[#1F2130]">{selectedProperty.id}</span>
-              </div>
-              <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px]/3 text-[#71748C]">Added</span>
-                <span className="text-[12px]/3 text-[#1F2130]">
-                  {new Date(selectedProperty.created_at).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
-              <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px]/3 text-[#71748C]">Property Type</span>
-                <span className="text-[12px]/3 text-[#1F2130]">
-                  {selectedProperty.property_type}
-                </span>
-              </div>
-              <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-[12px]/3 text-[#71748C]">Sub Type</span>
-                <span className="text-[12px]/3 text-[#1F2130]">
-                  {selectedProperty.property_sub_type}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="h-[358px] w-full">
-          <Map
-            address={selectedProperty?.location?.address || selectedProperty?.address || ""}
-            city={selectedProperty?.location?.city || selectedProperty?.city || ""}
-            state={selectedProperty?.location?.state || selectedProperty?.state || ""}
-            country={selectedProperty?.location?.country || selectedProperty?.country || ""}
-          />
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="flex h-screen w-full flex-col items-start gap-0 self-stretch py-8 lg:flex-row">
@@ -990,10 +965,7 @@ const PropertiesPage: React.FC = () => {
             <div className="sticky top-0 z-10 border-b border-[#E8E8E8] bg-white px-4 py-2">
               <Button
                 variant="ghost"
-                onClick={() => {
-                  setSelectedProperty(null);
-                  setCurrentImageIndex(0);
-                }}
+                onClick={() => setSelectedProperty(null)}
                 className="p-0 text-[#71748C] hover:bg-transparent"
               >
                 <ChevronLeft className="mr-1 size-5" />
@@ -1001,7 +973,15 @@ const PropertiesPage: React.FC = () => {
               </Button>
             </div>
             <div className="flex-1 overflow-y-auto">
-              <PropertyDetails />
+              <PropertyDetails
+                key={selectedProperty?.id ?? "none"}
+                selectedProperty={selectedProperty}
+                isAdminListingPage={isAdminListingPage}
+                handleShare={handleShare}
+                isArchiving={isArchiving}
+                handleArchive={handleArchive}
+                setOpenDeleteModal={setOpenDeleteModal}
+              />
             </div>
           </div>
         )}
@@ -1022,7 +1002,15 @@ const PropertiesPage: React.FC = () => {
           </ResizablePanel>
           <ResizableHandle withHandle className="w-px hover:bg-gray-200" />
           <ResizablePanel defaultSize="75%" minSize="60%">
-            <PropertyDetails />
+            <PropertyDetails
+              key={selectedProperty?.id ?? "none"}
+              selectedProperty={selectedProperty}
+              isAdminListingPage={isAdminListingPage}
+              handleShare={handleShare}
+              isArchiving={isArchiving}
+              handleArchive={handleArchive}
+              setOpenDeleteModal={setOpenDeleteModal}
+            />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

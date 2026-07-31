@@ -89,15 +89,20 @@ const Subscription: React.FC<SubscriptionProps> = ({ form }) => {
                         >
                           <div className="mb-4 flex items-start justify-between">
                             <div className="flex flex-col gap-2">
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-2">
                                 <h3 className="text-[20px]/7 font-semibold text-[#1F2130]">
                                   {plan.name}
                                 </h3>
+                                {isDisabled && (
+                                  <span className="rounded-full bg-[#E3E3E8] px-2 py-0.5 text-[11px] font-medium text-[#71748C]">
+                                    Coming Soon
+                                  </span>
+                                )}
                               </div>
                             </div>
                             <div className="text-right">
                               <span className="text-[28px] leading-[40px] font-semibold text-[#1F2130]">
-                                {plan.price}
+                                {plan.price ?? "N/A"}
                               </span>
                             </div>
                           </div>

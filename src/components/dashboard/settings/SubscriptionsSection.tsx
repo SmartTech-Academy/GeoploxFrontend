@@ -31,7 +31,7 @@ const SubscriptionsSection = () => {
                 <div className="flex grow flex-col items-start gap-2">
                   <div className="flex items-center gap-3">
                     <h3 className="text-[16px]/4 font-semibold tracking-[-0.02em] text-[#282828]">
-                      {currentPlan.name} Plan
+                      {currentPlan.name ?? "Unknown"} Plan
                     </h3>
                     {subscription?.next_renewal && (
                       <span className="rounded-sm bg-[oklch(0.7665_0.1393_91.15/5%)] px-2 py-1 text-[12px]/3 text-[#D4AF36]">
@@ -81,25 +81,31 @@ const SubscriptionsSection = () => {
             </div>
 
             {/* Table Rows */}
-            {billHistory.map((item, index) => (
-              <div
-                key={item.id}
-                className={`grid w-full grid-cols-3 ${index % 2 === 0 ? "bg-[#F8F8F8]" : ""}`}
-              >
-                <span className="px-4 py-[18px] text-[14px]/4 text-[#41415A]">
-                  {format(new Date(item.paid_at), "dd MMM, yyyy")}
-                </span>
-                <span className="px-4 py-[18px] text-[14px]/4 text-[#41415A]">
-                  {item.plan_name} Plan
-                </span>
-                <span className="px-4 py-[18px] text-right text-[14px]/4 text-[#41415A]">
-                  {new Intl.NumberFormat("en-NG", {
-                    style: "currency",
-                    currency: item.currency,
-                  }).format(item.amount)}
-                </span>
-              </div>
-            ))}
+            {billHistory.length === 0 ? (
+              <p className="px-4 py-8 text-center text-[14px]/5 text-[#71748C]">
+                No billing history yet.
+              </p>
+            ) : (
+              billHistory.map((item, index) => (
+                <div
+                  key={item.id}
+                  className={`grid w-full grid-cols-3 ${index % 2 === 0 ? "bg-[#F8F8F8]" : ""}`}
+                >
+                  <span className="px-4 py-[18px] text-[14px]/4 text-[#41415A]">
+                    {format(new Date(item.paid_at), "dd MMM, yyyy")}
+                  </span>
+                  <span className="px-4 py-[18px] text-[14px]/4 text-[#41415A]">
+                    {item.plan_name} Plan
+                  </span>
+                  <span className="px-4 py-[18px] text-right text-[14px]/4 text-[#41415A]">
+                    {new Intl.NumberFormat("en-NG", {
+                      style: "currency",
+                      currency: item.currency || "NGN",
+                    }).format(item.amount ?? 0)}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

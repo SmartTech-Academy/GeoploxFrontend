@@ -93,7 +93,9 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    queryClient.invalidateQueries();
+    // Clear (not just invalidate) so no stale cached data from this session - profile, chat,
+    // notifications, etc. - can linger and flash for whoever logs in next on this browser.
+    queryClient.clear();
     navigate({ to: "/login" });
   };
 

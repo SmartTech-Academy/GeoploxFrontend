@@ -6,6 +6,7 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { formatPrice, slugify } from "@/lib/utils";
 import { useRemoveFromFavorites, useCreateConversation } from "@/lib/services";
 import { toast } from "sonner";
+import { FavoriteButton } from "./favorite-button";
 
 export interface Property {
   id: string;
@@ -30,6 +31,7 @@ export interface Property {
   }[];
   category: string;
   property_type: string;
+  is_favourited?: boolean;
   owner?: {
     id: string;
     name: string;
@@ -39,6 +41,20 @@ export interface Property {
     role?: string;
   };
 }
+
+const getPropertyBasePath = (category?: string) => {
+  switch (category?.toLowerCase()) {
+    case "for rent":
+      return "/for-rent";
+    case "short let":
+      return "/short-let";
+    case "joint venture":
+      return "/joint-venture";
+    case "for sale":
+    default:
+      return undefined;
+  }
+};
 
 interface PropertyListingCardProps {
   property: Property;
@@ -103,13 +119,19 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
       lga: slugify(city),
     };
 
-    let basePath = "/for-sale";
-    if (pathname.includes("/short-let")) {
-      basePath = "/short-let";
-    } else if (pathname.includes("/for-rent")) {
-      basePath = "/for-rent";
-    } else if (pathname.includes("/joint-venture")) {
-      basePath = "/joint-venture";
+    // Prefer the property's own category (correct even in mixed-category contexts like
+    // /favorites); fall back to the current section's path only when category is missing.
+    let basePath = getPropertyBasePath(category);
+    if (!basePath) {
+      if (pathname.includes("/short-let")) {
+        basePath = "/short-let";
+      } else if (pathname.includes("/for-rent")) {
+        basePath = "/for-rent";
+      } else if (pathname.includes("/joint-venture")) {
+        basePath = "/joint-venture";
+      } else {
+        basePath = "/for-sale";
+      }
     }
 
     return `${basePath}/${slugifiedParams.propertyType}/${slugifiedParams.state}/${slugifiedParams.lga}/${identifier}`;
@@ -125,17 +147,27 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
 
   return (
     <div className="flex w-full flex-col items-center justify-between gap-4 self-stretch border-b border-[#F1F1F4] pb-10 lg:flex-row lg:gap-[89px]">
-      <div className="grid w-full grid-cols-2 gap-2 lg:w-[463px] lg:shrink-0">
-        {/* Large Image - spans 2 rows */}
-        <div className="row-span-2 aspect-[4/5] overflow-hidden rounded-[12px] bg-[#F5F5F7]">
+      <div className="flex w-full gap-2 lg:w-[463px] lg:shrink-0">
+        {/* Large Image - a flex row stretches this to exactly match the rendered height
+            of the two stacked thumbnails beside it. The image is absolutely positioned so
+            its own natural aspect ratio never influences that height (otherwise a tall
+            source photo's intrinsic proportions can win out over the flex stretch). */}
+        <div className="relative w-1/2 overflow-hidden rounded-[12px] bg-[#F5F5F7]">
           <img
             src={property.cover_image}
             alt={property.title}
-            className="size-full object-cover"
+            className="absolute inset-0 size-full object-cover"
           />
+          {!isFavoritesPage && (
+            <FavoriteButton
+              propertyId={property.id}
+              isFavorited={property.is_favourited}
+              className="absolute top-3 right-3"
+            />
+          )}
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex w-1/2 flex-col gap-2">
           {/* Small Image 1 */}
           <div className="aspect-[4/3] overflow-hidden rounded-[12px] bg-[#F5F5F7]">
             <img
@@ -193,10 +225,12 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
                 <ShowerHead className="size-[18px] text-primary" />
                 <span>{property.bathrooms} Baths</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Square className="size-[18px] text-primary" />
-                <span>{property.area_sqft.toLocaleString()} sq ft</span>
-              </div>
+              {!!property.area_sqft && (
+                <div className="flex items-center gap-2">
+                  <Square className="size-[18px] text-primary" />
+                  <span>{property.area_sqft.toLocaleString()} sq ft</span>
+                </div>
+              )}
             </div>
 
             <p className="mb-4 line-clamp-2 text-sm text-gray-600">{property.excerpt}</p>

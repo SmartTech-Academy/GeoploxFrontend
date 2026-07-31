@@ -24,6 +24,12 @@ const api = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    // Note: browsers treat "User-Agent" as a forbidden header and always send their own
+    // actual UA instead, ignoring this value. This has no effect on requests made from a
+    // real browser — it only takes effect in non-browser HTTP clients (e.g. tests using
+    // this same axios instance under Node).
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
   },
 });
 

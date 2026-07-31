@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "../api";
 // import { queryClient } from "../queryClient";
 import { UserProfile } from "../types";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { queryClient } from "../queryClient";
 
 interface ProfileResponse {
@@ -54,8 +54,18 @@ export const useGetProfileData = () => {
       const response: AxiosResponse<ProfileResponse> = await api.get("/dashboard/profile-datas");
       return response.data.data;
     },
-    retry: false, // Optional: prevent retrying on auth errors
     enabled: !!token,
+    // Genuine auth failures (401/403) should fail fast so the dashboard can redirect to login
+    // right away. Anything else (a transient network blip, or the WAF in front of the
+    // production API occasionally blocking a request) gets a couple of quick retries first -
+    // otherwise a single flaky response leaves `user` undefined and gets misread by
+    // DashboardLayout as "not allowed here" instead of "still loading".
+    retry: (failureCount, error) => {
+      const status = (error as AxiosError)?.response?.status;
+      if (status === 401 || status === 403) return false;
+      return failureCount < 2;
+    },
+    retryDelay: 500,
   });
 };
 

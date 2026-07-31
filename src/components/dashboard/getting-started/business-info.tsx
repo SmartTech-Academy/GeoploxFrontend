@@ -109,7 +109,16 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
       <div className="flex items-center justify-between self-stretch border-b border-[#F1F1F4] pb-8 text-center">
         <div className="mx-auto flex flex-col gap-6">
           <div
+            role="button"
+            tabIndex={0}
+            aria-label="Upload business logo"
             onClick={handleLogoClick}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleLogoClick();
+              }
+            }}
             className="relative mx-auto flex size-16 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#D5D5DD]"
           >
             {logoPreview ? (
@@ -167,7 +176,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
       )}
 
       <div className="flex w-full flex-col gap-5">
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="businessName"
@@ -210,7 +219,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
           />
         </div>
 
-        <div className="grid w-full grid-cols-2 gap-5">
+        <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="businessPhone"
@@ -251,6 +260,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
                     />
                     <img
                       src={assets.whatsapp}
+                      alt=""
                       className="absolute top-1/2 right-3 size-5 -translate-y-1/2 transform"
                     />
                   </div>
@@ -261,7 +271,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="website"
@@ -324,7 +334,7 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
           )}
         />
 
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="businessState"

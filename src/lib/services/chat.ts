@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import api from "../api";
 import { queryClient } from "../queryClient";
+import { LastMessage } from "@/components/dashboard/messaging/chat";
 
 export const useGetConversations = (params: { per_page?: number; [key: string]: any }) => {
   return useInfiniteQuery({
@@ -91,7 +92,47 @@ export const useGetMessages = (
     },
     enabled: !!conversationId,
     initialPageParam: 1,
-    refetchInterval: 5000,
+  });
+};
+
+interface PollMessagesResponse {
+  status: string;
+  message: string;
+  data: {
+    messages: LastMessage[];
+    last_id: number;
+  };
+}
+
+/**
+ * Lightweight real-time-ish polling for an open conversation. Hits a dedicated cheap backend
+ * endpoint (indexed `id > after_id` lookup, capped at 50 rows) instead of re-fetching the full
+ * paginated message list on a timer - keeps per-poll payload near-empty on the common case of
+ * "nothing new yet", which matters on shared hosting where we want polling to look and cost like
+ * ordinary browser traffic, not a heavy repeated query.
+ *
+ * The query key intentionally excludes `afterId` so this stays ONE continuous polling query
+ * (stable interval) rather than restarting - to say nothing of racing to refetch - every time the
+ * cursor advances; `afterId` is simply read fresh from the latest render on each tick.
+ */
+export const useGetNewMessages = (
+  conversationId: string | number | null,
+  afterId: number,
+  enabled: boolean,
+) => {
+  // afterId is deliberately left out of the key; see the function doc comment above for why.
+  // oxlint-disable-next-line @tanstack/query/exhaustive-deps
+  return useQuery({
+    queryKey: ["messages-poll", conversationId],
+    queryFn: async (): Promise<PollMessagesResponse["data"]> => {
+      const response = await api.get<PollMessagesResponse>(
+        `/dashboard/chat/conversations/${conversationId}/messages/poll`,
+        { params: { after_id: afterId } },
+      );
+      return response.data.data;
+    },
+    enabled: enabled && !!conversationId,
+    refetchInterval: 3000,
     refetchIntervalInBackground: false,
   });
 };

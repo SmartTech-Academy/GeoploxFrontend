@@ -214,6 +214,53 @@ img {
   text-indent: -9999px;
 }
 
+/* Page transitions. Uses the browser's native View Transitions API (already
+   turned on via TanStack Router's `defaultViewTransition`), so the animation
+   runs on the compositor over already-rendered snapshots - no extra JS, no
+   extra network requests, and no impact on page load/download speed. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation-duration: 1000ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+    animation-name: geoplox-page-out;
+  }
+
+  ::view-transition-new(root) {
+    animation-duration: 1700ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-name: geoplox-page-in;
+  }
+
+  @keyframes geoplox-page-out {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-72px) scale(0.94);
+    }
+  }
+
+  @keyframes geoplox-page-in {
+    from {
+      opacity: 0;
+      transform: translateY(96px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
 @layer components {
   .wp-content {
     @apply text-[#060809];

@@ -23,17 +23,21 @@ const FavoritesPage = () => {
 
   return (
     <div className="p-4">
-      {/* <h1 className="mb-4 text-2xl font-bold">My Favorites</h1> */}
+      {/* PropertyListingCard is a horizontal row layout (fixed-width image block at
+          lg: breakpoint) designed to be stacked one-per-row — the same way every other
+          listing page in the app (For Sale, For Rent, dashboard Listing, etc.) renders
+          it. A multi-column grid here squeezed that fixed-width image block into cells
+          too narrow for it, causing images/text to overlap. */}
       {isLoading ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
             <PropertyListingCardSkeleton key={i} />
           ))}
         </div>
       ) : favorites.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-col gap-4">
           {favorites.map((property: any) => (
-            <PropertyListingCard key={property.id} property={property} />
+            <PropertyListingCard key={property.id} property={property} identifier={property.slug} />
           ))}
         </div>
       ) : (

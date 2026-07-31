@@ -9,6 +9,7 @@ export interface NotificationSender {
 export interface NotificationData {
   message_id?: number;
   conversation_id?: number;
+  property_id?: string;
   body?: string;
   sender_id?: string;
   title?: string;

@@ -2,9 +2,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const PropertyListingCardSkeleton = () => {
   return (
-    <div className="flex w-full items-center justify-between gap-[89px] self-stretch border-b border-[#F1F1F4] pb-10">
-      <Skeleton className="h-[266px] w-[463px]" />
-      <div className="flex flex-1 flex-col items-start gap-9">
+    <div className="flex w-full flex-col items-center justify-between gap-4 self-stretch border-b border-[#F1F1F4] pb-10 lg:flex-row lg:gap-[89px]">
+      <div className="flex w-full gap-2 lg:w-[463px] lg:shrink-0">
+        <Skeleton className="w-1/2 rounded-[12px]" />
+        <div className="flex w-1/2 flex-col gap-2">
+          <Skeleton className="aspect-[4/3] rounded-[12px]" />
+          <Skeleton className="aspect-[4/3] rounded-[12px]" />
+        </div>
+      </div>
+      <div className="flex w-full flex-1 flex-col items-start gap-9">
         <div className="flex w-full flex-col gap-4 self-stretch">
           <div className="flex flex-col items-start gap-2.5">
             <Skeleton className="h-6 w-24" />

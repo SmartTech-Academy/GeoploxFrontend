@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, BedDouble, ShowerHead, Square, ChevronRight } from "lucide-react";
+import { BedDouble, ShowerHead, Square, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import assets from "@/assets";
 import { Link } from "@tanstack/react-router";
@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { excerptFromHtml } from "@/lib/utils";
 import { toAbsoluteBlogUrl } from "@/lib/wpGraphql";
 import { format } from "date-fns";
+import { FavoriteButton } from "@/components/favorite-button";
 
 interface Property {
   id: string;
@@ -23,6 +24,7 @@ interface Property {
   bathrooms: number;
   area_sqft: number;
   cover_image: string;
+  is_favourited?: boolean;
   location: {
     city: string;
     state: string;
@@ -174,15 +176,15 @@ export function DiscoverSection() {
                       to={`${getPropertyBasePath(property.category)}/$id`}
                       params={{ id: property.slug }}
                       key={property.id}
-                      className="flex flex-col items-start gap-6 overflow-hidden transition-shadow hover:shadow-lg"
+                      className="flex w-full flex-col items-start gap-6 overflow-hidden transition-shadow hover:shadow-lg"
                     >
-                      <div className="relative">
+                      <div className="relative w-full">
                         <img
                           src={property.cover_image || "/placeholder.png"}
                           alt={property.title}
                           width={397}
                           height={284}
-                          className="h-[284.42px] w-full object-cover"
+                          className="h-[284.42px] w-full rounded-xl object-cover"
                         />
 
                         <Badge
@@ -198,13 +200,11 @@ export function DiscoverSection() {
                           />
                           {property.category}
                         </Badge>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="absolute top-4 right-4 bg-transparent hover:bg-transparent"
-                        >
-                          <Heart className="size-6 text-white" />
-                        </Button>
+                        <FavoriteButton
+                          propertyId={property.id}
+                          isFavorited={property.is_favourited}
+                          className="absolute top-4 right-4"
+                        />
                       </div>
                       <div className="flex flex-col items-start gap-3">
                         <h4 className="font-dm_sans text-[24px] leading-[31px] font-semibold text-white">
@@ -225,10 +225,12 @@ export function DiscoverSection() {
                                 <ShowerHead className="size-[18px] text-white" />
                                 <span>{property.bathrooms} Baths</span>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <Square className="size-[18px] text-white" />
-                                <span>{property.area_sqft.toLocaleString()} sqft</span>
-                              </div>
+                              {!!property.area_sqft && (
+                                <div className="flex items-center gap-2">
+                                  <Square className="size-[18px] text-white" />
+                                  <span>{property.area_sqft.toLocaleString()} sqft</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>

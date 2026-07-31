@@ -15,14 +15,21 @@ import {
 import {
   useDeleteConversation,
   useGetMessages,
+  useGetNewMessages,
   useMarkConversationAsRead,
   useReportConversation,
   useSendMessage,
 } from "@/lib/services/chat";
+import { queryClient } from "@/lib/queryClient";
 import { UserProfile } from "@/lib/types";
 import LoadingFallback from "@/components/loading-fallback";
 import { cn } from "@/lib/utils";
-import { Conversation } from "./chat";
+import { Conversation, LastMessage } from "./chat";
+
+interface MessagesInfiniteData {
+  pages: { data: LastMessage[]; [key: string]: any }[];
+  pageParams: unknown[];
+}
 
 interface ChatViewProps {
   selectedChat: Conversation;
@@ -88,6 +95,54 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const otherParticipant = selectedChat.participants.find((p) => p.codec !== profileData?.codec);
   const allMessages = messagesData?.pages.flatMap((page) => page.data).reverse() ?? [];
 
+  // Cursor for the lightweight real-time poll below: the newest message id currently in view.
+  // Never starts from 0 once history exists, and isn't its own separate state - it's derived
+  // fresh from the same cache the poll writes back into, so it can't drift out of sync with what
+  // the user is actually looking at.
+  const latestMessageId = allMessages.length > 0 ? allMessages[allMessages.length - 1].id : 0;
+
+  const { data: pollData } = useGetNewMessages(
+    selectedChat.id,
+    latestMessageId,
+    !isLoadingMessages,
+  );
+
+  // Merge newly-polled messages into the same query cache useGetMessages reads from, instead of
+  // maintaining a second parallel copy of the message list.
+  useEffect(() => {
+    if (!pollData || pollData.messages.length === 0) return;
+
+    const queryKey = ["messages", selectedChat.id, { per_page: 30 }];
+    queryClient.setQueryData(queryKey, (old: MessagesInfiniteData | undefined) => {
+      if (!old) return old;
+      const firstPage = old.pages[0];
+      if (!firstPage) return old;
+
+      // poll returns oldest-of-the-new-batch first; firstPage.data is newest-first, so reverse
+      // before prepending - and drop anything already present (e.g. a message the user just sent
+      // themselves, which the send mutation's own refetch already placed in the cache).
+      const existingIds = new Set(firstPage.data.map((m) => m.id));
+      const toPrepend = [...pollData.messages].reverse().filter((m) => !existingIds.has(m.id));
+      if (toPrepend.length === 0) return old;
+
+      const pages = [...old.pages];
+      pages[0] = { ...firstPage, data: [...toPrepend, ...firstPage.data] };
+      return { ...old, pages };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pollData, selectedChat.id]);
+
+  // Auto-scroll to the newest message - but only when the newest message actually changes (a
+  // message arrived or was sent), never when older history loads in from scrolling up, which
+  // would otherwise yank the user back down mid-read.
+  const latestSeenIdRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (latestMessageId && latestMessageId !== latestSeenIdRef.current) {
+      latestSeenIdRef.current = latestMessageId;
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [latestMessageId]);
+
   return (
     <div className="flex h-full flex-1 flex-col rounded-b-[10px] border-y border-r border-[#E8E8E8] lg:rounded-[10px]">
       <div className="rounded-t-[10px] border-b border-[#E8E8E8] bg-white p-4">
@@ -97,12 +152,16 @@ export const ChatView: React.FC<ChatViewProps> = ({
               <Avatar className="size-16 rounded-[6px]">
                 <AvatarImage src={otherParticipant?.display_picture_url} />
                 <AvatarFallback className="bg-gray-200">
-                  {`${otherParticipant?.firstname[0] ?? ""}${otherParticipant?.lastname[0] ?? ""}`}
+                  {`${otherParticipant?.firstname?.[0] ?? ""}${otherParticipant?.lastname?.[0] ?? ""}`}
                 </AvatarFallback>
               </Avatar>
             </div>
             <div>
-              <h2 className="font-semibold text-gray-900">{`${otherParticipant?.firstname} ${otherParticipant?.lastname}`}</h2>
+              <h2 className="font-semibold text-gray-900">
+                {otherParticipant
+                  ? `${otherParticipant.firstname} ${otherParticipant.lastname}`
+                  : "Unknown User"}
+              </h2>
               <p className="text-sm text-gray-500">
                 {otherParticipant?.username ? `@${otherParticipant.username}` : "Online"}
               </p>
@@ -110,7 +169,12 @@ export const ChatView: React.FC<ChatViewProps> = ({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="rounded-full p-2 hover:bg-gray-100">
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-label="Chat options"
+                className="rounded-full p-2 hover:bg-gray-100"
+              >
                 <MoreHorizontal className="size-6 text-[#646474]" />
               </Button>
             </DropdownMenuTrigger>
@@ -170,7 +234,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                       <Avatar className="size-10 rounded-[10px]">
                         <AvatarImage src={msg.sender.display_picture_url} />
                         <AvatarFallback className="bg-gray-200">
-                          {`${msg.sender.firstname[0]}${msg.sender.lastname[0]}`}
+                          {`${msg.sender.firstname?.[0] ?? ""}${msg.sender.lastname?.[0] ?? ""}`}
                         </AvatarFallback>
                       </Avatar>
                     )}
@@ -217,7 +281,10 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-auto rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+                disabled
+                aria-label="Emoji picker (coming soon)"
+                title="Coming soon"
+                className="h-auto rounded-full p-1 text-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Smile className="size-4" />
               </Button>
@@ -225,7 +292,10 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 type="button"
                 size="sm"
                 variant="ghost"
-                className="h-auto rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+                disabled
+                aria-label="Attach file (coming soon)"
+                title="Coming soon"
+                className="h-auto rounded-full p-1 text-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Paperclip className="size-4" />
               </Button>

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearch } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { PageMetaTags } from "@/components/page-meta-data";
@@ -10,6 +11,7 @@ import { ChatList } from "./chat-list";
 import { ChatView } from "./chat-view";
 
 const MessagingPage = () => {
+  const { conversationId } = useSearch({ from: "/_dashboard/messages/" });
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
   const [filter, setFilter] = useState<"all" | "unread">("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,8 +76,19 @@ const MessagingPage = () => {
   };
 
   const allConversations = (conversationsData?.pages.flatMap((page) => page.data) ?? []).filter(
-    (conversation: any) => conversation.participant?.codec !== profileData?.codec,
+    (conversation: Conversation) =>
+      conversation.participants.some((p) => p.codec !== profileData?.codec),
   );
+
+  // Deep-link support: arriving at /messages?conversationId=X (from the notification
+  // popover, or from messaging a property owner) auto-opens that specific conversation
+  // once it shows up in the loaded list, instead of leaving the user on the plain inbox.
+  useEffect(() => {
+    if (!conversationId || selectedChat) return;
+    const match = allConversations.find((c) => String(c.id) === conversationId);
+    if (match) setSelectedChat(match);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversationId, allConversations]);
 
   return (
     <div className="flex h-screen w-full flex-col items-start gap-0 self-stretch py-8 lg:flex-row">
@@ -88,7 +101,7 @@ const MessagingPage = () => {
       {/* Mobile View */}
       <div className="h-[calc(100svh-150px)] w-full overflow-y-auto lg:hidden">
         {!selectedChat ? (
-          <div className="w-full bg-red-500">
+          <div className="w-full">
             <ChatList
               conversations={allConversations}
               selectedChat={selectedChat}

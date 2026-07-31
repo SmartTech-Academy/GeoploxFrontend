@@ -285,6 +285,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                         />
                         <img
                           src={assets.whatsapp}
+                          alt=""
                           className="absolute top-1/2 right-3 size-5 -translate-y-1/2 transform"
                         />
                       </div>
@@ -410,11 +411,12 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
           <Button
             type="button"
             variant="secondary"
+            onClick={() => form.reset()}
             className={cn(
               "h-10 flex-1 rounded-full bg-[#F1F1F4] text-[14px] font-semibold text-[#1F2130]",
             )}
           >
-            Back
+            Cancel
           </Button>
           <Button
             style={{

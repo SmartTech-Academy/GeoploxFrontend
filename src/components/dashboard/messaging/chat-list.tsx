@@ -141,7 +141,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                     <Avatar className="size-16 rounded-[6px]">
                       <AvatarImage src={otherParticipant.display_picture_url} />
                       <AvatarFallback className="bg-gray-200">
-                        {`${otherParticipant.firstname[0]}${otherParticipant.lastname[0]}`}
+                        {`${otherParticipant.firstname?.[0] ?? ""}${otherParticipant.lastname?.[0] ?? ""}`}
                       </AvatarFallback>
                     </Avatar>
                   </div>

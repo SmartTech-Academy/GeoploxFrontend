@@ -17,7 +17,11 @@ import { ActiveListingsChart } from "@/components/charts/ActiveListingsChart";
 const PerformancePage = () => {
   const [period, setPeriod] = useState("last_6_months");
   const [filter, setFilter] = useState("all");
-  const { data: performanceData, isPending } = useGetPerformance({ period, filter });
+  const {
+    data: performanceData,
+    isPending,
+    isError,
+  } = useGetPerformance({ period, filter });
 
   const cards = performanceData?.data?.data?.data?.cards;
   const deltas = performanceData?.data?.data?.data?.deltas;
@@ -50,6 +54,11 @@ const PerformancePage = () => {
         description="Track your property portfolio performance with detailed analytics and insights."
         keywords="property analytics, real estate performance, listing metrics"
       />
+      {isError && (
+        <div className="w-full rounded-lg border border-red-200 bg-red-50 p-3 text-center text-sm text-red-600">
+          Failed to load performance data. Please refresh the page.
+        </div>
+      )}
       <header className="flex w-full items-center justify-between gap-2 self-stretch">
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="h-10 min-w-[138px] rounded-[45px] border-0 border-[oklch(0.8754_0.0109_286.17)] bg-[#F9F9F9] text-[#41415A] focus:ring-0">

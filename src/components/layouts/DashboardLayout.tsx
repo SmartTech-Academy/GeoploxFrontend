@@ -19,14 +19,20 @@ const DashboardLayout = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    // If there's no token OR the profile fetch fails, the session is invalid.
-    // Log the user out and redirect to the login page.
-
+    // No token at all: there's nothing to authenticate, so go straight to login instead of
+    // waiting on a disabled query that will never resolve.
     if (!token) {
-      localStorage.removeItem("token");
+      navigate({ to: "/login" });
+      return;
     }
 
-    if (!token && isError) {
+    // A genuine fetch failure on this authenticated endpoint (after the query's own retries
+    // are exhausted) means the session/token itself is invalid - expired, revoked, etc. - not
+    // that the user lacks permission for this particular route. Treat it as an auth failure
+    // and send them to login, rather than falling through to the permission check below with
+    // an undefined user (which used to render "Permission Denied" for what was really just an
+    // expired session or a transient failed request).
+    if (isError) {
       localStorage.removeItem("token");
       navigate({ to: "/login" });
       return;
@@ -43,17 +49,29 @@ const DashboardLayout = () => {
     }
   }, [navigate, location.pathname, user, isError]);
 
-  if (isPending) return <LoadingFallback />;
+  const token = localStorage.getItem("token");
 
-  // 🔹 Permission check happens here
+  // While there's no token, the profile is still loading, or it just failed, the effect above
+  // is already handling the redirect to login - show the loading state during that brief
+  // window instead of ever computing (and flashing) the permission check against an undefined
+  // user.
+  if (!token || isPending || isError) return <LoadingFallback />;
+
+  // 🔹 Permission check happens here - only once we have a confirmed, successfully-loaded user.
   const allowedNav = getPrimaryNavigation(user);
-  // Always allow access to the getting-started page during onboarding
-  const allowedPaths = ["/getting-started", ...allowedNav.map((item) => item.href)];
+  // Always allow access to getting-started (onboarding) and notifications (the bell icon in the
+  // shared TopNav links here for every role, but no role's nav array lists it as a sidebar item -
+  // without this it would 404 into Permission Denied for every single user).
+  const allowedPaths = [
+    "/getting-started",
+    "/notifications",
+    ...allowedNav.map((item) => item.href),
+  ];
 
   const isAllowed = allowedPaths.some((p) => location.pathname.startsWith(p));
 
   if (!isAllowed) {
-    return <PermissionDenied />; // ⬅️ Show the PermissionDenied component
+    return <PermissionDenied />; // ⬅️ Genuinely disallowed - show it and let it stay.
   }
 
   return (

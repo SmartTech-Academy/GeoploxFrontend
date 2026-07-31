@@ -16,6 +16,13 @@ export const useGetApprovals = (params?: any) => {
   });
 };
 
+export const useGetDeclinedItems = (params?: any) => {
+  return useQuery({
+    queryKey: ["declined-approvals", params],
+    queryFn: () => api.get("/dashboard/admin/fetch/declined", { params }),
+  });
+};
+
 export const useVerifyUser = (options?: UseMutationOptions<any, any, string>) => {
   const { onSuccess, onError, ...mutationOptions } = options ?? {};
 
@@ -68,11 +75,14 @@ export const useDeclineRequest = (options?: UseMutationOptions<any, any, Decline
   return useMutation({
     mutationFn: (data: DeclineRequestPayload) => {
       if (data.type === "KYC") {
-        return api.put(`/dashboard/admin/decline/verify?user_codec=${data.id}`);
+        return api.put("/dashboard/admin/decline/verify", null, {
+          params: { user_codec: data.id, reason: data.reason },
+        });
       }
 
       const formData = new FormData();
       formData.append("property_id", data.id);
+      formData.append("reason", data.reason);
       return api.put("/dashboard/admin/decline", formData);
     },
     onSuccess: async (response: AxiosResponse<ApiResponse>, variables, context) => {

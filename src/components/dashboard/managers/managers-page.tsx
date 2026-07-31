@@ -146,7 +146,6 @@ const ManagersPage = () => {
   const [selectedManager, setSelectedManager] = useState<Manager | null>(null);
   const [filter, setFilter] = useState<ManagerFilterType>("all");
   const [activeTab, setActiveTab] = useState<TabType>("profile");
-  const [showRegionActions, setShowRegionActions] = useState(false);
   const [showDeveloperActions, setShowDeveloperActions] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [openCreateManager, setOpenCreateManager] = useState(false);
@@ -154,7 +153,11 @@ const ManagersPage = () => {
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [conversionPeriod, setConversionPeriod] = useState("last_6_months");
 
-  const { data: managersData, isLoading: isLoadingManagers } = useGetManagers({
+  const {
+    data: managersData,
+    isLoading: isLoadingManagers,
+    isError: isManagersError,
+  } = useGetManagers({
     users_per_page: 20,
     users_page: 1,
     search_user: debouncedSearchQuery || undefined,
@@ -211,6 +214,7 @@ const ManagersPage = () => {
             setFilter={setFilter}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            isError={isManagersError}
             isLoading={isLoadingManagers}
             onCreate={() => setOpenCreateManager(true)}
           />
@@ -224,8 +228,6 @@ const ManagersPage = () => {
             setSelectedManager={setSelectedManager}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            showRegionActions={showRegionActions}
-            setShowRegionActions={setShowRegionActions}
             showDeveloperActions={showDeveloperActions}
             setShowDeveloperActions={setShowDeveloperActions}
             setOpenModal={setOpenModal}
@@ -259,6 +261,7 @@ const ManagersPage = () => {
                 setFilter={setFilter}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
+                isError={isManagersError}
                 isLoading={isLoadingManagers}
                 onCreate={() => setOpenCreateManager(true)}
               />
@@ -272,8 +275,6 @@ const ManagersPage = () => {
                 setSelectedManager={setSelectedManager}
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
-                showRegionActions={showRegionActions}
-                setShowRegionActions={setShowRegionActions}
                 showDeveloperActions={showDeveloperActions}
                 setShowDeveloperActions={setShowDeveloperActions}
                 setOpenModal={setOpenModal}
@@ -347,6 +348,7 @@ interface ManagerListProps {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
   isLoading: boolean;
+  isError?: boolean;
   onCreate: () => void;
 }
 
@@ -358,6 +360,7 @@ const ManagerList = ({
   setFilter,
   searchQuery,
   setSearchQuery,
+  isError,
   isLoading,
   onCreate,
 }: ManagerListProps) => (
@@ -434,6 +437,10 @@ const ManagerList = ({
     <div className="flex-1 overflow-y-auto pr-6 lg:pr-0">
       {isLoading ? (
         <div className="p-4 text-[12px] text-[#71748C]">Loading managers...</div>
+      ) : isError ? (
+        <div className="p-4 text-[12px] text-red-500">
+          Failed to load managers. Please try again.
+        </div>
       ) : managers.length === 0 ? (
         <EmptyState type="list" />
       ) : (
@@ -496,8 +503,6 @@ interface ManagerViewProps {
   setSelectedManager: (manager: Manager | null) => void;
   activeTab: TabType;
   setActiveTab: (tab: TabType) => void;
-  showRegionActions: boolean;
-  setShowRegionActions: (show: boolean) => void;
   showDeveloperActions: boolean;
   setShowDeveloperActions: (show: boolean) => void;
   setOpenModal: (open: boolean) => void;
@@ -510,10 +515,8 @@ const ManagerView = ({
   setSelectedManager,
   activeTab,
   setActiveTab,
-  // showRegionActions,
-  // setShowRegionActions,
   showDeveloperActions,
-  // setShowDeveloperActions,
+  setShowDeveloperActions,
   setOpenModal,
   conversionPeriod,
   setConversionPeriod,
@@ -599,6 +602,7 @@ const ManagerView = ({
               <Button
                 size="icon"
                 variant="secondary"
+                aria-label="Manager actions"
                 className="size-10 rounded-[6px] bg-white text-[#41415A]"
               >
                 <MoreVertical className="size-4" />
@@ -664,16 +668,6 @@ const ManagerView = ({
           >
             Profile
           </button>
-          {/*<button*/}
-          {/*  onClick={() => setActiveTab('performance')}*/}
-          {/*  className={`border-b-2 pb-2 text-[16px] transition-colors ${*/}
-          {/*    activeTab === 'performance'*/}
-          {/*      ? 'border-[#D4AF36] font-semibold text-[#D4AF36]'*/}
-          {/*      : 'border-transparent text-[#71748C] hover:text-[#1F2130]'*/}
-          {/*  }`}*/}
-          {/*>*/}
-          {/*  Performance*/}
-          {/*</button>*/}
         </div>
       </div>
 
@@ -693,29 +687,13 @@ const ManagerView = ({
               <p className="text-[14px]/3.5 text-[#1F2130]">{selectedManager.createdOn || "—"}</p>
             </div>
 
-            {/*<div>*/}
-            {/*  <div className="mb-2 flex items-center justify-between">*/}
-            {/*    <h3 className="text-lg font-medium text-gray-900">Assigned Listings (by Region)</h3>*/}
-            {/*    <button*/}
-            {/*      onClick={() => setShowRegionActions(!showRegionActions)}*/}
-            {/*      className="flex items-center gap-2 px-4 py-2 text-sm text-[#71748C] hover:text-[#41415A]"*/}
-            {/*    >*/}
-            {/*      <Settings className="size-4" />*/}
-            {/*      {showRegionActions ? 'Hide' : 'Info'}*/}
-            {/*    </button>*/}
-            {/*  </div>*/}
-            {/*  <div className="rounded-lg bg-gray-50 p-4 text-[12px] text-[#71748C]">*/}
-            {/*    Region-based assignments are not available from the current API.*/}
-            {/*  </div>*/}
-            {/*</div>*/}
-
             <div>
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-lg font-medium text-gray-900">
                   Assigned Users (Developer / Owner)
                 </h3>
                 <button
-                  onClick={() => setOpenModal(true)}
+                  onClick={() => setShowDeveloperActions(!showDeveloperActions)}
                   className={cn(
                     "flex items-center gap-2 px-4 py-2 text-sm",
                     showDeveloperActions ? "text-[#008A00]" : "text-[#D4AF36]",
@@ -742,9 +720,6 @@ const ManagerView = ({
                 ) : (
                   assignedUsers.map((u: AssignedUser) => {
                     const name = `${u?.firstname || ""} ${u?.lastname || ""}`.trim() || "User";
-                    // const assignedOn = u?.pivot?.created_at
-                    //   ? format(new Date(u.pivot.created_at), "MMMM d, yyyy")
-                    //   : "—";
                     return (
                       <div key={u?.codec} className="rounded-lg bg-gray-50 p-4">
                         <div className="flex items-center justify-between">
@@ -766,13 +741,10 @@ const ManagerView = ({
                               <label className="text-sm text-gray-500">Phone</label>
                               <p className="text-sm text-gray-900">{u?.phone_number || "—"}</p>
                             </div>
-                            {/*<div className="flex items-center justify-between py-1">*/}
-                            {/*  <label className="text-sm text-gray-500">Assigned on</label>*/}
-                            {/*  <p className="text-sm text-gray-900">{assignedOn}</p>*/}
-                            {/*</div>*/}
                           </div>
                           {showDeveloperActions && (
                             <button
+                              aria-label="Unassign user"
                               className="ml-4 rounded-lg p-2 text-red-500 hover:bg-red-50 hover:text-red-700"
                               onClick={() => toast.info("Unassign is not available yet.")}
                             >

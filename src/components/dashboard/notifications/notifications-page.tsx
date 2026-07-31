@@ -38,7 +38,10 @@ const NotificationItem = ({
       markAsRead(notification.id);
     }
     if (notification.type.includes("NewMessageNotification")) {
-      navigate({ to: "/messages", search: { conversationId: notification.data.conversation_id } });
+      navigate({
+        to: "/messages",
+        search: { conversationId: String(notification.data.conversation_id) },
+      });
     }
   };
 
@@ -60,7 +63,7 @@ const NotificationItem = ({
               src={notification.sender?.display_picture}
               alt={notification.sender?.username}
             />
-            <AvatarFallback>{notification.sender?.firstname[0]}</AvatarFallback>
+            <AvatarFallback>{notification.sender?.firstname?.[0] ?? "?"}</AvatarFallback>
           </Avatar>
           <div className="flex-1 space-y-1">
             <p className="text-sm">
@@ -83,6 +86,7 @@ const NotificationItem = ({
       <Button
         variant="ghost"
         size="icon"
+        aria-label="Delete notification"
         className="size-8"
         onClick={(e) => {
           e.stopPropagation();
@@ -96,9 +100,10 @@ const NotificationItem = ({
 };
 
 export default function NotificationsPage() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } = useGetNotifications({
-    per_page: 20,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending, isError } =
+    useGetNotifications({
+      per_page: 20,
+    });
   const { mutate: markAllAsRead } = useMarkAllNotificationsAsRead();
   const { mutate: bulkDelete } = useBulkDeleteNotifications();
   const [selected, setSelected] = useState<string[]>([]);
@@ -150,6 +155,10 @@ export default function NotificationsPage() {
         </div>
         {isPending ? (
           <LoadingFallback />
+        ) : isError ? (
+          <div className="p-8 text-center text-sm text-red-500">
+            Failed to load notifications. Please refresh the page.
+          </div>
         ) : (
           allNotifications.map((notification) => (
             <NotificationItem

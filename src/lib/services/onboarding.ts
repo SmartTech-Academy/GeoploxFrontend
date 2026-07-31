@@ -4,7 +4,7 @@ import { queryClient } from "../queryClient";
 
 export const useSetAccountType = () => {
   return useMutation({
-    mutationFn: (data: any) => api.post("/dashboard/onboarding/account-type", data),
+    mutationFn: (data: any) => api.post("/dashboard/onboarding/account-type?update=update", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["onboarding-summary"] });
     },
@@ -49,7 +49,7 @@ export const useUploadOwnerKycDocuments = () => {
   return useMutation({
     mutationFn: (data: any) =>
       api.post(
-        "/dashboard/onboarding/owner_kycUpload", // Endpoint for property owner
+        "/dashboard/onboarding/owner_kycUpload?update=update", // Endpoint for property owner
         data,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -95,7 +95,7 @@ export const useCompleteOnboarding = () => {
 
 export const useSubscribeToPlan = () => {
   return useMutation({
-    mutationFn: (data: any) => api.post("/dashboard/onboarding/subscribe", data),
+    mutationFn: (data: any) => api.post("/dashboard/onboarding/subscribe?update=update", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["onboarding-summary"] });
     },

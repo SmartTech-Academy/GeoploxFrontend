@@ -1,18 +1,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   MoreVertical,
-  Heart,
   Share2,
   ChevronLeft,
   ChevronRight,
   Download,
   BadgeCheck,
-  Lock,
+  MessageCircle,
   Images,
   BedDouble,
   ShowerHead,
   Square,
   Slash,
+  MapPin,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -31,7 +31,7 @@ import {
   DropdownMenuSeparator as DropdownMenuSeparatorAction,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn, downloadImage, formatPrice, toWhatsAppNumber } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import { PageMetaTags } from "./page-meta-data";
@@ -42,8 +42,6 @@ import {
   useGetPropertyDetails,
   useGetRelatedProperties,
   useRevokeUserVerification,
-  useAddToFavorites,
-  useRemoveFromFavorites,
   useCreateConversation,
 } from "@/lib/services";
 import { toast } from "sonner";
@@ -54,6 +52,8 @@ import assets from "@/assets";
 import { PropertyListingCardSkeleton } from "./property-listing-card-skeleton";
 import Map from "./google-map";
 import { useGetProfileData } from "@/lib/services/profile";
+import { FavoriteButton } from "./favorite-button";
+import { ImageLightbox } from "./image-lightbox";
 
 const getPublicPropertyBasePath = (category?: string) => {
   switch (category?.toLowerCase()) {
@@ -79,6 +79,7 @@ const ListingDetail = () => {
   const isDashboard = location.pathname.includes("/listing/");
   const isAdminListing = location.pathname.includes("/admin-listing/");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
@@ -86,9 +87,6 @@ const ListingDetail = () => {
   const { mutate: deleteProperty, isPending: isDeleting } = useDeleteProperty();
   const { mutate: blacklistUser, isPending: isBlacklisting } = useBlacklistUser();
   const { mutate: revokeVerification, isPending: isRevoking } = useRevokeUserVerification();
-  const { mutate: addToFavorites, isPending: isAddingToFavorites } = useAddToFavorites();
-  const { mutate: removeFromFavorites, isPending: isRemovingFromFavorites } =
-    useRemoveFromFavorites(["property", slug]);
   const { mutate: createConversation } = useCreateConversation();
 
   const { data: propertyDetailsResponse, isPending: isLoadingDetails } = useGetPropertyDetails(
@@ -99,40 +97,16 @@ const ListingDetail = () => {
     useGetRelatedProperties(slug);
 
   const { data: user } = useGetProfileData();
+  const isLoggedIn = !!user;
   const property = isDashboard
     ? propertyDetailsResponse?.data?.data?.data
     : propertyDetailsResponse?.data?.data;
 
-  const [isFavorited, setIsFavorited] = useState(property?.is_favourited || false);
-
   useEffect(() => {
     if (property) {
-      setIsFavorited(property.is_favourited);
       setCurrentImageIndex(0);
     }
   }, [property]);
-
-  const handleFavoriteToggle = () => {
-    if (!user?.firstname) {
-      toast.error("Please log in to add to favorite");
-      navigate({ to: "/login" });
-      return;
-    }
-    if (!property) return;
-    if (isFavorited) {
-      removeFromFavorites(property.id, {
-        onSuccess: () => {
-          setIsFavorited(false);
-        },
-      });
-    } else {
-      addToFavorites(property.id, {
-        onSuccess: () => {
-          setIsFavorited(true);
-        },
-      });
-    }
-  };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -167,12 +141,17 @@ const ListingDetail = () => {
 
   const handleDelete = () => {
     if (!property) return;
-    deleteProperty(property.id, {
-      onSuccess: () => {
-        setDeleteModalOpen(false);
-        navigate({ to: "/admin-listing" });
+    // This delete action only exists on the admin listing detail view (it navigates back to
+    // /admin-listing on success), so it always goes through the admin-specific endpoint.
+    deleteProperty(
+      { propertyId: property.id, isAdminListing: true },
+      {
+        onSuccess: () => {
+          setDeleteModalOpen(false);
+          navigate({ to: "/admin-listing" });
+        },
       },
-    });
+    );
   };
 
   const handleBlacklist = () => {
@@ -186,13 +165,21 @@ const ListingDetail = () => {
   };
 
   const handleContactClick = () => {
-    if (!user?.firstname) {
-      toast.error("Please log in to contact the property owner");
+    if (!isLoggedIn) {
+      toast.error("Please log in to message the property owner");
       navigate({ to: "/login" });
+      return;
+    }
+    if (user?.user_role === "admin") {
+      toast.error("Admins can't message platform members.");
       return;
     }
     if (!property?.owner?.id) {
       toast.error("Owner information is unavailable.");
+      return;
+    }
+    if (user?.codec === property.owner.id) {
+      toast.error("You can't message yourself — you own this property.");
       return;
     }
 
@@ -203,10 +190,14 @@ const ListingDetail = () => {
         subject: `Enquiry about ${property.property_type} in ${property.city}, ${property.state}`,
       },
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
           setIsCreatingConversation(false);
           toast.success("Chat opened successfully!");
-          navigate({ to: "/messages" });
+          const conversationId = response?.data?.data?.id;
+          navigate({
+            to: "/messages",
+            search: conversationId ? { conversationId: String(conversationId) } : undefined,
+          });
         },
         onError: () => {
           setIsCreatingConversation(false);
@@ -231,7 +222,7 @@ const ListingDetail = () => {
   const handleDownload = () => {
     const imageUrl = images[currentImageIndex];
     if (!imageUrl) return;
-    window.open(imageUrl, "_blank", "noopener,noreferrer");
+    downloadImage(imageUrl, `geoplox-${slug}-${currentImageIndex + 1}.jpg`);
   };
 
   if (isLoadingDetails) {
@@ -290,7 +281,8 @@ const ListingDetail = () => {
           }}
           className="h-8 self-stretch rounded-[40px] border-[oklch(0.7665_0.1393_91.15/50%)] p-4 text-[14px] leading-[17px] font-semibold text-white"
         >
-          {isCreatingConversation ? "Opening Chat..." : "Contact"} <Lock className="size-3" />
+          {isCreatingConversation ? "Opening Chat..." : "Message"}{" "}
+          <MessageCircle className="size-4" />
         </Button>
 
         <Button
@@ -309,7 +301,7 @@ const ListingDetail = () => {
           className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4 font-normal text-[#1F2130]"
         >
           <a
-            href={`https://wa.me/${property.owner?.phone_number}`}
+            href={`https://wa.me/${toWhatsAppNumber(property.owner?.whatsapp_number || property.owner?.phone_number)}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -429,23 +421,27 @@ const ListingDetail = () => {
             </div>
 
             <h1 className="text-[26px]/10 font-semibold text-[#1A2258]">{displayTitle}</h1>
+
+            {(property.address || property.city || property.state) && (
+              <p className="mt-2 flex items-center gap-1.5 text-[14px]/5 text-[#4D5462]">
+                <MapPin className="size-4 shrink-0 text-primary" />
+                {[property.address, property.city, property.state, property.country]
+                  .filter(Boolean)
+                  .join(", ")}
+              </p>
+            )}
           </div>
 
           <div className="flex items-start justify-end self-stretch">
             <div className="flex w-full items-center justify-between gap-2 self-stretch lg:justify-start">
               {!isAdminListing && (
                 <>
-                  <Button
-                    variant="ghost"
-                    className="text-[14px] leading-[21px] font-semibold text-[#1A2258]"
-                    onClick={handleFavoriteToggle}
-                    disabled={isAddingToFavorites || isRemovingFromFavorites}
-                  >
-                    <Heart
-                      className={cn("mr-2 size-4", isFavorited && "fill-red-500 text-red-500")}
-                    />
-                    {isFavorited ? "Saved" : "Save to Favourites"}
-                  </Button>
+                  <FavoriteButton
+                    propertyId={property.id}
+                    isFavorited={property.is_favourited}
+                    variant="inline"
+                    className="rounded-md px-3 py-2 text-[14px] leading-[21px] font-semibold text-[#1A2258] hover:bg-[#F1F1F4]"
+                  />
 
                   <Button
                     variant="ghost"
@@ -503,11 +499,12 @@ const ListingDetail = () => {
           <div className="flex w-full flex-1 flex-col gap-11 lg:max-w-[calc(100%-350px)]">
             <div className="relative flex flex-col gap-[19px]">
               {/* Main Image */}
-              <div className="relative flex h-[500px] w-full items-center justify-center overflow-hidden rounded-[18px] border border-[#EAEBF0] bg-[#F7F7F9] p-4 shadow-sm">
+              <div className="relative flex h-[500px] w-full items-center justify-center overflow-hidden rounded-[18px] border border-[#EAEBF0] bg-[#F7F7F9] shadow-sm">
                 <img
                   src={images[currentImageIndex] || "/placeholder.svg"}
                   alt="Property image"
-                  className="size-full object-contain"
+                  onClick={() => setLightboxOpen(true)}
+                  className="size-full cursor-zoom-in object-cover"
                 />
 
                 {/* Navigation Arrows */}
@@ -540,9 +537,9 @@ const ListingDetail = () => {
                   </div>
                 </div>
 
-                {/* Heart icon */}
+                {/* Favorite */}
                 <div className="absolute top-4 right-2">
-                  <Heart className="size-6 fill-white text-white" />
+                  <FavoriteButton propertyId={property.id} isFavorited={property.is_favourited} />
                 </div>
               </div>
 
@@ -567,6 +564,15 @@ const ListingDetail = () => {
                 ))}
               </div>
             </div>
+
+            <ImageLightbox
+              images={images}
+              initialIndex={currentImageIndex}
+              open={lightboxOpen}
+              onOpenChange={setLightboxOpen}
+              onIndexChange={setCurrentImageIndex}
+              alt={displayTitle}
+            />
 
             {/* Property info section */}
             <div className="flex w-full flex-col gap-11">
@@ -599,14 +605,14 @@ const ListingDetail = () => {
                       <ShowerHead className="size-6 text-primary" />
                       <span className="text-black">{property.bathrooms} Baths</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-[18px] leading-[21px]">
-                      <Square className="size-6 text-primary" />
-                      <span className="text-black">
-                        {property.area_sqft
-                          ? `${property.area_sqft.toLocaleString()} sq ft`
-                          : "N/A"}
-                      </span>
-                    </div>
+                    {!!property.area_sqft && (
+                      <div className="flex items-center gap-2.5 text-[18px] leading-[21px]">
+                        <Square className="size-6 text-primary" />
+                        <span className="text-black">
+                          {property.area_sqft.toLocaleString()} sq ft
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -691,7 +697,7 @@ const ListingDetail = () => {
             <div className="flex w-full flex-col items-end gap-4 lg:w-[325px] lg:shrink-0">
               <OwnerContactCard />
             </div>
-          ) : user ? (
+          ) : isLoggedIn ? (
             <div className="flex w-full flex-col items-end gap-4 lg:w-[325px] lg:shrink-0">
               <OwnerContactCard />
             </div>
@@ -736,15 +742,15 @@ const ListingDetail = () => {
                       to={`${getPublicPropertyBasePath(relatedProperty.category)}/$id`}
                       params={{ id: relatedProperty.slug }}
                       key={relatedProperty.id}
-                      className="flex flex-col items-start gap-6 overflow-hidden"
+                      className="flex w-full flex-col items-start gap-6 overflow-hidden"
                     >
-                      <div className="relative">
+                      <div className="relative w-full">
                         <img
                           src={relatedProperty.cover_image || "/placeholder.png"}
                           alt="Property"
                           width={397}
                           height={284}
-                          className="h-[284.42px] w-full object-cover"
+                          className="h-[284.42px] w-full rounded-xl object-cover"
                         />
 
                         {relatedProperty?.tags?.slice(0, 1)?.map((tag: string) => (
@@ -766,13 +772,11 @@ const ListingDetail = () => {
                           </Badge>
                         ))}
 
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="absolute top-4 right-4 bg-transparent hover:bg-transparent"
-                        >
-                          <Heart className="size-6 text-white" />
-                        </Button>
+                        <FavoriteButton
+                          propertyId={relatedProperty.id}
+                          isFavorited={relatedProperty.is_favourited}
+                          className="absolute top-4 right-4"
+                        />
                       </div>
 
                       <div className="flex flex-col items-start gap-3">
@@ -794,15 +798,12 @@ const ListingDetail = () => {
                                 <ShowerHead className="size-[18px] text-[#1F2130]" />
                                 <span>{relatedProperty.bathrooms} Baths</span>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <Square className="size-[18px] text-[#1F2130]" />
-                                <span>
-                                  {relatedProperty.area_sqft
-                                    ? relatedProperty.area_sqft.toLocaleString()
-                                    : "N/A"}{" "}
-                                  sqft
-                                </span>
-                              </div>
+                              {!!relatedProperty.area_sqft && (
+                                <div className="flex items-center gap-2">
+                                  <Square className="size-[18px] text-[#1F2130]" />
+                                  <span>{relatedProperty.area_sqft.toLocaleString()} sqft</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>

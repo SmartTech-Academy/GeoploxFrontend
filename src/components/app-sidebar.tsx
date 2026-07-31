@@ -43,7 +43,15 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r-0" style={{ backgroundColor: "#F8F8F8" }}>
       <SidebarHeader className="p-6">
-        <img src={assets.logotext} alt="logo" width={126} height={40} className="h-10 w-[126px]" />
+        <Link to="/">
+          <img
+            src={assets.logotext}
+            alt="logo"
+            width={126}
+            height={40}
+            className="h-10 w-[126px]"
+          />
+        </Link>
       </SidebarHeader>
 
       <SidebarContent className="w-full px-[14px]">

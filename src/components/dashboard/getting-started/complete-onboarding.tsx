@@ -11,7 +11,7 @@ interface CompleteOnboardingProps {
   goToPreviousStep: () => void;
 }
 
-const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
+const CompleteOnboarding: React.FC<CompleteOnboardingProps> = ({ goToPreviousStep }) => {
   const { data: profileData } = useGetProfileData();
   const isCompleted = useMemo(() => profileData?.onboarding_status === "completed", [profileData]);
 
@@ -63,7 +63,7 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
       <div className="flex w-full flex-col gap-6">
         {/* Personal Information Section */}
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <label className="text-[14px] font-medium text-[#41415A]">Account Type</label>
               <p className="text-[14px] text-[#1F2130] capitalize">
@@ -78,18 +78,20 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <label className="text-[14px] font-medium text-[#41415A]">
                 Personal Phone Number
               </label>
-              <p className="text-[14px] text-[#1F2130]">{summary.phone_number}</p>
+              <p className="text-[14px] text-[#1F2130]">{summary.phone_number || "Not provided"}</p>
             </div>
             <div className="space-y-1">
               <label className="text-[14px] font-medium text-[#41415A]">
                 Personal Whatsapp Number
               </label>
-              <p className="text-[14px] text-[#1F2130]">{summary.whatsapp_number}</p>
+              <p className="text-[14px] text-[#1F2130]">
+                {summary.whatsapp_number || "Not provided"}
+              </p>
             </div>
           </div>
 
@@ -105,7 +107,7 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
         {(summary.user_role === "developer" || summary.user_role === "owner") &&
           summary.business && (
             <div className="space-y-4 border-t border-[#F1F1F4] pt-6">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
                   <label className="text-[14px] font-medium text-[#41415A]">Business Name</label>
                   <p className="text-[14px] text-[#1F2130]">{summary.business.name}</p>
@@ -118,7 +120,7 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
                   <label className="text-[14px] font-medium text-[#41415A]">
                     Business Phone Number
@@ -189,7 +191,15 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
       </div>
 
       {/* Submit Button */}
-      <div className="pt-6">
+      <div className="flex gap-4 pt-6">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={goToPreviousStep}
+          className="h-12 flex-1 rounded-full border-[#E3E3E8] bg-transparent"
+        >
+          Back
+        </Button>
         <Button
           style={{
             background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
@@ -197,7 +207,7 @@ const CompleteOnboarding: React.FC<CompleteOnboardingProps> = () => {
               "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
           }}
           type="submit"
-          className="h-12 w-full rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] font-semibold text-white"
+          className="h-12 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] font-semibold text-white"
         >
           Submit
         </Button>

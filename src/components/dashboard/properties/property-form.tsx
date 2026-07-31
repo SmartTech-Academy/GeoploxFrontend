@@ -304,7 +304,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     const isReplacingImage = imageReplaceIndex !== null;
-    const maxAllowedImages = isReplacingImage ? propertyImages.length : propertyImages.length + files.length;
+    const maxAllowedImages = isReplacingImage
+      ? propertyImages.length
+      : propertyImages.length + files.length;
 
     if (!isReplacingImage && propertyImages.length + files.length > 15) {
       toast.error("You can upload a maximum of 15 images.");
@@ -318,7 +320,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
     }
 
     const uploadFiles = isReplacingImage ? files.slice(0, 1) : files;
-    const optimizedFiles = await Promise.all(uploadFiles.map((file) => optimizeImageBeforeUpload(file)));
+    const optimizedFiles = await Promise.all(
+      uploadFiles.map((file) => optimizeImageBeforeUpload(file)),
+    );
     const newImageStates: FileState[] = optimizedFiles.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
@@ -327,7 +331,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
     if (isReplacingImage) {
       const replacementIndex = imageReplaceIndex;
-      const imageBeingReplaced = replacementIndex !== null ? propertyImages[replacementIndex] : null;
+      const imageBeingReplaced =
+        replacementIndex !== null ? propertyImages[replacementIndex] : null;
 
       if (replacementIndex === null || !imageBeingReplaced) {
         setImageReplaceIndex(null);
@@ -1378,34 +1383,36 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     Status
                   </FormLabel>
                   <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {propertyStatus.map((status) => (
-                      <FormField
-                        key={status}
-                        control={form.control}
-                        name="status"
-                        render={({ field }) => {
-                          const value = field.value ?? [];
-                          return (
-                            <FormItem
-                              key={status}
-                              className="flex flex-row items-start space-y-0 space-x-3"
-                            >
-                              <FormControl>
-                                <Checkbox
-                                  checked={value.includes(status)}
-                                  onCheckedChange={(checked) => {
-                                    return checked
-                                      ? field.onChange([...value, status])
-                                      : field.onChange(value.filter((v) => v !== status));
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="text-sm/5 font-normal">{status}</FormLabel>
-                            </FormItem>
-                          );
-                        }}
-                      />
-                    ))}
+                    {propertyStatus
+                      .filter((status) => status !== "New")
+                      .map((status) => (
+                        <FormField
+                          key={status}
+                          control={form.control}
+                          name="status"
+                          render={({ field }) => {
+                            const value = field.value ?? [];
+                            return (
+                              <FormItem
+                                key={status}
+                                className="flex flex-row items-start space-y-0 space-x-3"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={value.includes(status)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...value, status])
+                                        : field.onChange(value.filter((v) => v !== status));
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="text-sm/5 font-normal">{status}</FormLabel>
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      ))}
                   </div>
                   <FormMessage />
                 </FormItem>

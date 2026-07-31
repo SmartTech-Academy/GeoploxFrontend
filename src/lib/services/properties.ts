@@ -200,7 +200,18 @@ export const useArchiveProperty = () => {
 
 export const useDeleteProperty = () => {
   return useMutation({
-    mutationFn: (propertyId: string) => api.delete(`/dashboard/property/${propertyId}/delete`),
+    mutationFn: ({
+      propertyId,
+      isAdminListing,
+    }: {
+      propertyId: string;
+      isAdminListing?: boolean;
+    }) => {
+      const endpoint = isAdminListing
+        ? `/dashboard/admin/property/${propertyId}/delete`
+        : `/dashboard/property/${propertyId}/delete`;
+      return api.delete(endpoint);
+    },
     onSuccess: (data) => {
       toast.success(data.data.message || "Property deleted successfully!");
       queryClient.invalidateQueries({ queryKey: ["properties"] });
@@ -221,13 +232,28 @@ export const useDeletePropertyImage = () => {
   });
 };
 
+// Every surface that renders a property's favourited state, invalidated together so a
+// heart toggled from any one of them (grid, detail page, related list) is reflected in all.
+const FAVORITABLE_QUERY_KEYS = [
+  "property",
+  "properties",
+  "related-properties",
+  "homepage-properties",
+  "favorites",
+];
+
+const invalidateFavoritableQueries = () => {
+  FAVORITABLE_QUERY_KEYS.forEach((queryKey) => {
+    queryClient.invalidateQueries({ queryKey: [queryKey] });
+  });
+};
+
 export const useAddToFavorites = () => {
   return useMutation({
     mutationFn: (propertyId: string) => api.post(`/dashboard/favorite/property/${propertyId}`),
     onSuccess: (data) => {
       toast.success(data.data.message || "Property added to favorites!");
-      queryClient.invalidateQueries({ queryKey: ["property"] });
-      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      invalidateFavoritableQueries();
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to add to favorites.");
@@ -242,7 +268,7 @@ export const useRemoveFromFavorites = (queryKeyToInvalidate: string[] = ["proper
     onSuccess: (data) => {
       toast.success(data.data.message || "Property removed from favorites!");
       queryClient.invalidateQueries({ queryKey: queryKeyToInvalidate });
-      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      invalidateFavoritableQueries();
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to remove from favorites.");

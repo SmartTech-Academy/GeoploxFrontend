@@ -114,7 +114,7 @@ const DocumentPreview = ({ url, label }: { url?: string; label: string }) => {
       <img
         src={url}
         alt={label}
-        className="h-auto max-h-48 w-full rounded-lg border border-[#E8E8E8] object-cover"
+        className="h-48 w-full rounded-lg border border-[#E8E8E8] object-cover"
       />
       <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/0 transition-colors group-hover:bg-black/10">
         <ExternalLink className="size-5 text-white opacity-0 drop-shadow-sm transition-opacity group-hover:opacity-100" />
@@ -152,7 +152,11 @@ const UsersPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const { data: usersData, isLoading: isLoadingUsers } = useGetUsers({
+  const {
+    data: usersData,
+    isLoading: isLoadingUsers,
+    isError: isUsersError,
+  } = useGetUsers({
     status: filter,
     search_user: debouncedSearchQuery,
   });
@@ -204,7 +208,9 @@ const UsersPage = () => {
             setSelectedUser={setSelectedUser}
             filter={filter}
             setFilter={setFilter}
+            isError={isUsersError}
             isLoading={isLoadingUsers}
+            searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
           />
         ) : (
@@ -236,7 +242,9 @@ const UsersPage = () => {
               setSelectedUser={setSelectedUser}
               filter={filter}
               setFilter={setFilter}
+              isError={isUsersError}
               isLoading={isLoadingUsers}
+              searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
             />
           </ResizablePanel>
@@ -263,6 +271,8 @@ interface UserListProps {
   filter: FilterType;
   setFilter: (filter: FilterType) => void;
   isLoading: boolean;
+  isError?: boolean;
+  searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
 
@@ -273,6 +283,8 @@ const UserList = ({
   filter,
   setFilter,
   isLoading,
+  isError,
+  searchQuery,
   setSearchQuery,
 }: UserListProps) => (
   <div className="flex h-full flex-col gap-4 bg-white">
@@ -283,6 +295,7 @@ const UserList = ({
           <Input
             type="text"
             placeholder="Search users"
+            value={searchQuery}
             className="h-10 self-stretch rounded-xl border border-[#D5D5DD] px-3 pl-10"
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -336,6 +349,8 @@ const UserList = ({
             </div>
           ))}
         </div>
+      ) : isError ? (
+        <div className="p-4 text-[12px] text-red-500">Failed to load users. Please try again.</div>
       ) : users.length === 0 ? (
         <EmptyState type="list" />
       ) : (
@@ -460,6 +475,7 @@ const UserView = ({ selectedUser, activeTab, setActiveTab }: UserViewProps) => {
                 <Button
                   size="icon"
                   variant="secondary"
+                  aria-label="User actions"
                   className="size-10 rounded-[6px] bg-white text-[#41415A]"
                 >
                   <MoreVertical className="size-4" />

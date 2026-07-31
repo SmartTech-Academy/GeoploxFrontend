@@ -22,7 +22,7 @@ import { Notification } from "@/lib/notifications";
 
 export function NotificationPopover() {
   const navigate = useNavigate();
-  const { data: notificationsResponse, isLoading } = useGetNotifications();
+  const { data: notificationsResponse, isLoading, isError } = useGetNotifications();
   const { mutate: markAllAsRead } = useMarkAllNotificationsAsRead();
   const { mutate: deleteNotification } = useDeleteNotification();
   const { mutate: markAsRead } = useMarkNotificationAsRead();
@@ -35,7 +35,10 @@ export function NotificationPopover() {
       markAsRead(notification.id);
     }
     if (notification.type.includes("NewMessageNotification")) {
-      navigate({ to: "/messages", search: { conversationId: notification.data.conversation_id } });
+      navigate({
+        to: "/messages",
+        search: { conversationId: String(notification.data.conversation_id) },
+      });
     }
   };
 
@@ -45,6 +48,7 @@ export function NotificationPopover() {
         <Button
           variant="ghost"
           size="icon"
+          aria-label="Notifications"
           className="relative size-8 rounded-full border-[0.5px] border-[#D5D5DD]"
         >
           <Bell className="size-4" />
@@ -68,6 +72,10 @@ export function NotificationPopover() {
         <div className="max-h-80 overflow-y-auto">
           {isLoading ? (
             <DropdownMenuItem disabled>Loading...</DropdownMenuItem>
+          ) : isError ? (
+            <DropdownMenuItem disabled className="text-red-500">
+              Failed to load notifications.
+            </DropdownMenuItem>
           ) : notifications.length === 0 ? (
             <DropdownMenuItem disabled>No notifications yet.</DropdownMenuItem>
           ) : (
@@ -85,7 +93,7 @@ export function NotificationPopover() {
                     src={notification.sender?.display_picture}
                     alt={notification.sender?.username}
                   />
-                  <AvatarFallback>{notification.sender?.firstname[0]}</AvatarFallback>
+                  <AvatarFallback>{notification.sender?.firstname?.[0] ?? "?"}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-1">
                   <p className="text-sm">
@@ -110,6 +118,7 @@ export function NotificationPopover() {
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="Delete notification"
                     className="size-6"
                     onClick={(e) => {
                       e.stopPropagation();
