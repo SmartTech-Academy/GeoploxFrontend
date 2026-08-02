@@ -1,5 +1,16 @@
 import { useMemo, useState } from "react";
-import { Search, Settings, Ban, MoreVertical, MapPin, FileText, ExternalLink } from "lucide-react";
+import {
+  Search,
+  Settings,
+  Ban,
+  MoreVertical,
+  MapPin,
+  FileText,
+  ExternalLink,
+  Download,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,6 +21,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import assets from "@/assets";
 import { cn } from "@/lib/utils";
@@ -21,6 +39,7 @@ import {
   useGetUsers,
   useGetUserPerformance,
   useVerifyUser,
+  useExportUserEmails,
 } from "@/lib/services/users";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
@@ -61,6 +80,16 @@ interface OverviewMetricProps {
 }
 
 type FilterType = "all" | "verified" | "unverified" | "blacklisted";
+
+type RoleFilterType = "all" | "owner" | "developer" | "agent" | "client";
+
+const ROLE_FILTER_LABELS: Record<RoleFilterType, string> = {
+  all: "All User Types",
+  owner: "Home Owner",
+  developer: "Developer",
+  agent: "Agent",
+  client: "Client",
+};
 
 type TabType = "profile" | "performance";
 
@@ -145,11 +174,15 @@ const DetailRow = ({
   );
 };
 
+const USERS_PER_PAGE = 20;
+
 const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [filter, setFilter] = useState<FilterType>("all");
+  const [roleFilter, setRoleFilter] = useState<RoleFilterType>("all");
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   const {
@@ -158,8 +191,38 @@ const UsersPage = () => {
     isError: isUsersError,
   } = useGetUsers({
     status: filter,
+    role: roleFilter,
     search_user: debouncedSearchQuery,
+    users_page: currentPage,
+    users_per_page: USERS_PER_PAGE,
   });
+
+  const { mutate: exportEmails, isPending: isExporting } = useExportUserEmails();
+
+  const handleFilterChange = (f: FilterType) => {
+    setFilter(f);
+    setCurrentPage(1);
+  };
+
+  const handleRoleFilterChange = (r: RoleFilterType) => {
+    setRoleFilter(r);
+    setCurrentPage(1);
+  };
+
+  const handleExport = () => {
+    exportEmails({ status: filter, role: roleFilter, search_user: debouncedSearchQuery });
+  };
+
+  const usersMeta = useMemo(
+    () =>
+      usersData?.data?.data?.users_meta || {
+        total: 0,
+        per_page: USERS_PER_PAGE,
+        current_page: 1,
+        last_page: 1,
+      },
+    [usersData],
+  );
 
   const users = useMemo(() => {
     if (!usersData?.data?.data?.users) return [];
@@ -207,11 +270,18 @@ const UsersPage = () => {
             selectedUser={selectedUser}
             setSelectedUser={setSelectedUser}
             filter={filter}
-            setFilter={setFilter}
+            setFilter={handleFilterChange}
+            roleFilter={roleFilter}
+            setRoleFilter={handleRoleFilterChange}
             isError={isUsersError}
             isLoading={isLoadingUsers}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            usersMeta={usersMeta}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            onExport={handleExport}
+            isExporting={isExporting}
           />
         ) : (
           <>
@@ -241,11 +311,18 @@ const UsersPage = () => {
               selectedUser={selectedUser}
               setSelectedUser={setSelectedUser}
               filter={filter}
-              setFilter={setFilter}
+              setFilter={handleFilterChange}
+              roleFilter={roleFilter}
+              setRoleFilter={handleRoleFilterChange}
               isError={isUsersError}
               isLoading={isLoadingUsers}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
+              usersMeta={usersMeta}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              onExport={handleExport}
+              isExporting={isExporting}
             />
           </ResizablePanel>
           <ResizableHandle withHandle className="w-px bg-[#F1F1F4] hover:bg-gray-200" />
@@ -264,16 +341,30 @@ const UsersPage = () => {
   );
 };
 
+interface UsersMeta {
+  total: number;
+  per_page: number;
+  current_page: number;
+  last_page: number;
+}
+
 interface UserListProps {
   users: User[];
   selectedUser: User | null;
   setSelectedUser: (user: User | null) => void;
   filter: FilterType;
   setFilter: (filter: FilterType) => void;
+  roleFilter: RoleFilterType;
+  setRoleFilter: (roleFilter: RoleFilterType) => void;
   isLoading: boolean;
   isError?: boolean;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  usersMeta: UsersMeta;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  onExport: () => void;
+  isExporting: boolean;
 }
 
 const UserList = ({
@@ -282,10 +373,17 @@ const UserList = ({
   setSelectedUser,
   filter,
   setFilter,
+  roleFilter,
+  setRoleFilter,
   isLoading,
   isError,
   searchQuery,
   setSearchQuery,
+  usersMeta,
+  currentPage,
+  setCurrentPage,
+  onExport,
+  isExporting,
 }: UserListProps) => (
   <div className="flex h-full flex-col gap-4 bg-white">
     <div className="w-full pr-6">
@@ -301,7 +399,7 @@ const UserList = ({
           />
         </div>
 
-        <div className="w-full">
+        <div className="flex w-full flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
             {(["all", "verified", "unverified"] as FilterType[]).map((f) => (
               <Button
@@ -332,7 +430,34 @@ const UserList = ({
               blacklisted
             </Button> */}
           </div>
+
+          <Select
+            value={roleFilter}
+            onValueChange={(v) => setRoleFilter(v as RoleFilterType)}
+          >
+            <SelectTrigger className="h-8 min-w-[150px] rounded-full border-0 bg-[#ECECEC] text-[12px] font-semibold text-[#41415C] focus:ring-0">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {(Object.keys(ROLE_FILTER_LABELS) as RoleFilterType[]).map((r) => (
+                <SelectItem key={r} value={r}>
+                  {ROLE_FILTER_LABELS[r]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
+
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onExport}
+          disabled={isExporting}
+          className="h-8 w-fit rounded-full bg-[#F9F9FB] text-[12px] font-semibold text-[#1F2130]"
+        >
+          {isExporting ? "Exporting..." : "Export Emails"}
+          <Download className="size-3.5" />
+        </Button>
       </div>
     </div>
 
@@ -406,6 +531,36 @@ const UserList = ({
         </div>
       )}
     </div>
+
+    {!isLoading && !isError && users.length > 0 && usersMeta.last_page > 1 && (
+      <div className="flex flex-col gap-2 border-t border-[#E8E8E8] px-4 py-3 pr-6 lg:pr-4">
+        <p className="text-[11px] text-[#71748C]">
+          Page {usersMeta.current_page} of {usersMeta.last_page} · {usersMeta.total} users
+        </p>
+        <div className="flex items-center justify-between gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="h-8 gap-1 text-[12px]"
+          >
+            <ChevronLeft className="size-4" />
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === usersMeta.last_page}
+            className="h-8 gap-1 text-[12px]"
+          >
+            Next
+            <ChevronRight className="size-4" />
+          </Button>
+        </div>
+      </div>
+    )}
   </div>
 );
 

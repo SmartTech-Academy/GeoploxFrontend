@@ -83,8 +83,16 @@ const MessagingPage = () => {
   // Deep-link support: arriving at /messages?conversationId=X (from the notification
   // popover, or from messaging a property owner) auto-opens that specific conversation
   // once it shows up in the loaded list, instead of leaving the user on the plain inbox.
+  //
+  // Guards on whether the ALREADY-selected chat matches conversationId, not just on whether
+  // *some* chat is already selected - the previous version bailed out the moment ANY chat was
+  // selected, so navigating to /messages?conversationId=B while chat A was still open (e.g.
+  // clicking "Message" on a second property without leaving /messages first) never switched to
+  // B: this component doesn't remount on a same-route search-param-only navigation, so
+  // `selectedChat` stayed stuck on A and the user saw the wrong conversation.
   useEffect(() => {
-    if (!conversationId || selectedChat) return;
+    if (!conversationId) return;
+    if (selectedChat && String(selectedChat.id) === conversationId) return;
     const match = allConversations.find((c) => String(c.id) === conversationId);
     if (match) setSelectedChat(match);
     // eslint-disable-next-line react-hooks/exhaustive-deps

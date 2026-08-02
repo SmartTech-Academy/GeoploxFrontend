@@ -61,3 +61,25 @@ export const useGetUserPerformance = (params: {
     enabled: !!params.user_codec, // Only run query if user_codec is available
   });
 };
+
+export const useExportUserEmails = (options?: UseMutationOptions<any, any, any>) => {
+  return useMutation({
+    mutationFn: (params?: any) =>
+      api.get("/dashboard/admin/users/export-emails", { params, responseType: "blob" }),
+    onSuccess: (response: AxiosResponse<Blob>) => {
+      const blobUrl = URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `users-export-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+      toast.success("User emails exported successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to export user emails. Please try again.");
+    },
+    ...options,
+  });
+};

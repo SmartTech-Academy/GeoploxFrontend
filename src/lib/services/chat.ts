@@ -1,4 +1,5 @@
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 import api from "../api";
 import { queryClient } from "../queryClient";
 import { LastMessage } from "@/components/dashboard/messaging/chat";
@@ -42,7 +43,35 @@ export const useCreateConversation = () => {
 export const useDeleteConversation = () => {
   return useMutation({
     mutationFn: (id: string) => api.delete(`/dashboard/chat/conversations/${id}`),
-    onSuccess: () => {
+    // Optimistically strip the conversation out of every cached conversations list the moment
+    // delete is clicked, instead of waiting on a server round-trip + refetch - that round-trip
+    // was also hitting a backend cache (10s TTL) that a mismatched cache key meant never actually
+    // got invalidated, so the deleted chat could visibly linger for up to 10s. Rolls back on
+    // failure, and still refetches on settle so the list is eventually fully authoritative.
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: ["conversations"] });
+      const previous = queryClient.getQueriesData({ queryKey: ["conversations"] });
+
+      queryClient.setQueriesData({ queryKey: ["conversations"] }, (old: any) => {
+        if (!old?.pages) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            data: (page.data ?? []).filter((c: any) => String(c.id) !== String(id)),
+          })),
+        };
+      });
+
+      return { previous };
+    },
+    onError: (_err, _id, context) => {
+      context?.previous?.forEach(([key, data]: any) => {
+        queryClient.setQueryData(key, data);
+      });
+      toast.error("Failed to delete conversation. Please try again.");
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },
   });

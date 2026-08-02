@@ -1,8 +1,8 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import * as z from "zod/v4";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -38,14 +38,33 @@ type ApiErrorPayload = {
   };
 };
 
+interface LoginSearch {
+  redirect?: string;
+  resetSuccess?: string;
+}
+
 export const Route = createFileRoute("/_auth/login")({
+  validateSearch: (search: Record<string, unknown>): LoginSearch => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+    resetSuccess: typeof search.resetSuccess === "string" ? search.resetSuccess : undefined,
+  }),
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const navigate = useNavigate();
+  const { redirect, resetSuccess } = useSearch({ from: "/_auth/login" });
   const [showPassword, setShowPassword] = useState(false);
   const { mutate, isPending } = useLogin();
+
+  // reset-password.tsx sends ?resetSuccess=true after a successful password reset; this was
+  // previously sent but never actually read/displayed here.
+  useEffect(() => {
+    if (resetSuccess === "true") {
+      toast.success("Password reset successful. Please log in with your new password.");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const form = useForm<LoginFormValues>({
     resolver: customResolver(loginSchema),
@@ -71,6 +90,15 @@ function RouteComponent() {
       onSuccess: (response) => {
         toast.success("Login successful!");
         const user = response.data?.data?.user_data;
+        // If the user was sent here from a specific page (e.g. "Sign in to see contact
+        // details" or a "Contact" button on a listing they weren't logged in to use), send
+        // them right back there instead of the generic role-based dashboard landing page. A
+        // full navigation (rather than the router's typed `navigate`) is used here since
+        // `redirect` is an arbitrary path outside the router's known route table.
+        if (redirect) {
+          window.location.href = redirect;
+          return;
+        }
         navigate({ to: getLoginRedirectPath(user) });
       },
       onError: (error) => {

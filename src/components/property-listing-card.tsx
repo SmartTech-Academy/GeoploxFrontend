@@ -5,6 +5,7 @@ import { BedDouble, ShowerHead, Square, Trash2 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { formatPrice, slugify } from "@/lib/utils";
 import { useRemoveFromFavorites, useCreateConversation } from "@/lib/services";
+import { useGetProfileData } from "@/lib/services/profile";
 import { toast } from "sonner";
 import { FavoriteButton } from "./favorite-button";
 import { LazyImage } from "./ui/lazy-image";
@@ -74,14 +75,32 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
 
   const { mutate: createConversation } = useCreateConversation();
   const { mutate: removeFromFavorites, isPending } = useRemoveFromFavorites(["favorites"]);
+  const { data: user } = useGetProfileData();
+  const isLoggedIn = !!user;
 
   const pathname = location?.pathname || "";
   const isAdminListing = pathname.includes("/admin-listing");
   const isFavoritesPage = pathname.includes("/favorites");
 
   const handleContactClick = () => {
+    if (!isLoggedIn) {
+      toast.error("Please log in to message the property owner");
+      navigate({
+        to: "/login",
+        search: { redirect: `${window.location.pathname}${window.location.search}` },
+      });
+      return;
+    }
+    if (user?.user_role === "admin") {
+      toast.error("Admins can't message platform members.");
+      return;
+    }
     if (!property.owner?.id) {
       toast.error("Owner information is unavailable.");
+      return;
+    }
+    if (user?.codec === property.owner.id) {
+      toast.error("You can't message yourself — you own this property.");
       return;
     }
 
@@ -92,10 +111,14 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
         subject: `Enquiry about ${property.title || property.property_type} in ${property.location.city}`,
       },
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
           setIsCreatingConversation(false);
-          toast.success("Chat opened successfully!");
-          navigate({ to: "/messages" });
+          toast.success("Chat opened successfully!", { duration: 3000 });
+          const conversationId = response?.data?.data?.id;
+          navigate({
+            to: "/messages",
+            search: conversationId ? { conversationId: String(conversationId) } : undefined,
+          });
         },
         onError: () => {
           setIsCreatingConversation(false);

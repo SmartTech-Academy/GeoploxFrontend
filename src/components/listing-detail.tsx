@@ -11,18 +11,12 @@ import {
   BedDouble,
   ShowerHead,
   Square,
-  Slash,
   MapPin,
+  Phone,
+  Lock,
+  CalendarDays,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -55,6 +49,7 @@ import { useGetProfileData } from "@/lib/services/profile";
 import { FavoriteButton } from "./favorite-button";
 import { ImageLightbox } from "./image-lightbox";
 import { LazyImage } from "./ui/lazy-image";
+import { format, parseISO } from "date-fns";
 
 const getPublicPropertyBasePath = (category?: string) => {
   switch (category?.toLowerCase()) {
@@ -124,21 +119,10 @@ const ListingDetail = () => {
     }
   };
 
-  const displayTitle = property
-    ? `${property.property_type} ${
-        property.category && typeof property.category === "string"
-          ? property.category.toLowerCase().startsWith("for")
-            ? property.category
-            : `for ${property.category}`
-          : ""
-      } in ${property.state} | ${property.city}${
-        property.bedrooms
-          ? ` | ${property.bedrooms} Bedrooms`
-          : property.features && property.features.length > 0
-            ? ` | ${property.features[0]}`
-            : ""
-      }`
-    : "";
+  // Use the property's own title from the API rather than reconstructing one client-side -
+  // the reconstructed version could disagree with the property's actual category/details
+  // (e.g. showing "For Rent" for a listing that's really "For Sale").
+  const displayTitle = property?.title || "";
 
   const handleDelete = () => {
     if (!property) return;
@@ -168,7 +152,10 @@ const ListingDetail = () => {
   const handleContactClick = () => {
     if (!isLoggedIn) {
       toast.error("Please log in to message the property owner");
-      navigate({ to: "/login" });
+      navigate({
+        to: "/login",
+        search: { redirect: `${window.location.pathname}${window.location.search}` },
+      });
       return;
     }
     if (user?.user_role === "admin") {
@@ -193,7 +180,7 @@ const ListingDetail = () => {
       {
         onSuccess: (response) => {
           setIsCreatingConversation(false);
-          toast.success("Chat opened successfully!");
+          toast.success("Chat opened successfully!", { duration: 3000 });
           const conversationId = response?.data?.data?.id;
           navigate({
             to: "/messages",
@@ -291,8 +278,8 @@ const ListingDetail = () => {
           variant="outline"
           className="h-8 self-stretch rounded-[40px] border border-[#E3E3E8] px-4 py-[15px] text-[14px]/4 font-normal text-[#1F2130]"
         >
-          <a href={`mailto:${property.owner?.email_address}`}>
-            Email <img src={assets.gmail} alt="" className="size-4" width={16} height={16} />
+          <a href={`tel:${property.owner?.phone_number}`}>
+            Call <Phone className="size-4" />
           </a>
         </Button>
 
@@ -306,7 +293,7 @@ const ListingDetail = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Whatsapp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
+            WhatsApp <img src={assets.whatsapp} alt="" className="size-4" width={16} height={16} />
           </a>
         </Button>
       </div>
@@ -346,89 +333,24 @@ const ListingDetail = () => {
         )}
       >
         <header className="flex w-full flex-col items-center justify-between lg:flex-row">
-          <div className="flex flex-col items-start self-stretch">
-            <div className="flex flex-col gap-3 self-stretch py-[15px] lg:flex-row">
-              {isAdminListing ? (
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        <Link to="/admin-listing">Admin Listing</Link>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator>
-                      <Slash />
-                    </BreadcrumbSeparator>
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{displayTitle}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-              ) : isDashboard ? (
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        <Link to="/listing">Listing</Link>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator>
-                      <Slash />
-                    </BreadcrumbSeparator>
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{displayTitle}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-              ) : (
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        <Link to="/">Home</Link>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator>
-                      <Slash />
-                    </BreadcrumbSeparator>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        <Link
-                          to={
-                            location.pathname.includes("/short-let")
-                              ? "/short-let"
-                              : location.pathname.includes("/for-rent")
-                                ? "/for-rent"
-                                : "/for-sale"
-                          }
-                        >
-                          {location.pathname.includes("/short-let")
-                            ? "Buy"
-                            : location.pathname.includes("/for-rent")
-                              ? "Rent"
-                              : "Sell"}
-                        </Link>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator>
-                      <Slash />
-                    </BreadcrumbSeparator>
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{displayTitle}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-              )}
-            </div>
-
+          <div className="flex flex-col items-start self-stretch py-[15px]">
             <h1 className="text-[26px]/10 font-semibold text-[#1A2258]">{displayTitle}</h1>
 
-            {(property.address || property.city || property.state) && (
+            {/* Exact address is only shown once we know who's asking - it stays hidden from
+                logged-out visitors on the public site. */}
+            {isLoggedIn && (property.address || property.city || property.state) && (
               <p className="mt-2 flex items-center gap-1.5 text-[14px]/5 text-[#4D5462]">
                 <MapPin className="size-4 shrink-0 text-primary" />
                 {[property.address, property.city, property.state, property.country]
                   .filter(Boolean)
                   .join(", ")}
+              </p>
+            )}
+
+            {property.created_at && (
+              <p className="mt-2 flex items-center gap-1.5 text-[13px]/5 text-[#71748C]">
+                <CalendarDays className="size-4 shrink-0 text-primary" />
+                Posted on: {format(parseISO(property.created_at), "d MMMM, yyyy")}
               </p>
             )}
           </div>
@@ -658,23 +580,56 @@ const ListingDetail = () => {
                 </div>
 
                 <div className="relative h-[385.37px] w-full overflow-hidden rounded-lg bg-gray-100">
-                  <Map
-                    address={property.address}
-                    city={property.city}
-                    state={property.state}
-                    country={property.country}
-                  />
-
-                  <button className="absolute top-4 right-4 rounded-sm bg-white p-2 shadow-md hover:bg-gray-50">
-                    <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                  {isLoggedIn ? (
+                    <>
+                      <Map
+                        address={property.address}
+                        city={property.city}
+                        state={property.state}
+                        country={property.country}
                       />
-                    </svg>
-                  </button>
+
+                      <button className="absolute top-4 right-4 rounded-sm bg-white p-2 shadow-md hover:bg-gray-50">
+                        <svg
+                          className="size-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                          />
+                        </svg>
+                      </button>
+                    </>
+                  ) : (
+                    // Same reasoning as the address line above: the exact pin location isn't
+                    // shown to logged-out visitors either, so this doesn't quietly leak what
+                    // hiding the address text was meant to hide.
+                    <div className="flex size-full flex-col items-center justify-center gap-3 text-center">
+                      <Lock className="size-8 text-[#4D5462]" />
+                      <p className="max-w-xs text-[14px]/5 text-[#4D5462]">
+                        Sign in to view this property's exact location on the map.
+                      </p>
+                      <Button
+                        onClick={() =>
+                          navigate({
+                            to: "/login",
+                            search: {
+                              redirect: `${window.location.pathname}${window.location.search}`,
+                            },
+                          })
+                        }
+                        size="sm"
+                        className="rounded-full"
+                      >
+                        Sign In
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-3 self-stretch bg-[oklch(0.5477_0.2177_21.48/5%)] p-3">
@@ -711,7 +666,14 @@ const ListingDetail = () => {
                     Want to connect with the owner?
                   </p>
                   <Button
-                    onClick={() => navigate({ to: "/login" })}
+                    onClick={() =>
+                      navigate({
+                        to: "/login",
+                        search: {
+                          redirect: `${window.location.pathname}${window.location.search}`,
+                        },
+                      })
+                    }
                     style={{
                       background: "linear-gradient(180deg, #D4AF36 0%, #B69118 60%)",
                       boxShadow:

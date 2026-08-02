@@ -312,7 +312,14 @@ const ListingProperties = () => {
                         )}
                       </div>
                     )}
-                    <div className="flex flex-wrap items-center gap-1">
+                    {/* Capped + scrollable: some LGAs (e.g. Lekki) have 150+ areas, and with no
+                        limit here that list used to balloon this box's height and shove every
+                        section below it (sort tabs, property cards, pagination) far down the
+                        page the moment that LGA was selected via the sidebar filter (both read
+                        the same `filters.state`/`filters.city` state, so selecting Lekki there
+                        drives this same list). Capping the height and scrolling within it keeps
+                        the rest of the page layout stable regardless of list length. */}
+                    <div className="flex max-h-32 flex-wrap items-center gap-1 overflow-y-auto pr-1">
                       {displayedLocations.map((location, index) => (
                         <React.Fragment key={location}>
                           <span
@@ -469,7 +476,13 @@ const ListingProperties = () => {
                     )}
                   </div>
                 )}
-                <div className="flex flex-wrap items-center gap-1">
+                {/* Capped + scrollable - see the desktop copy of this list above for why
+                    (unbounded height blowing out the page layout for LGAs with long area lists
+                    like Lekki). Also fixes a trailing-separator bug: this copy compared
+                    `index < displayedLocations.length` (always true, since index only ever
+                    reaches length - 1) instead of `- 1`, so a stray "|" always rendered after
+                    the very last item. */}
+                <div className="flex max-h-32 flex-wrap items-center gap-1 overflow-y-auto pr-1">
                   {displayedLocations.map((location, index) => (
                     <React.Fragment key={location}>
                       <span
@@ -487,7 +500,7 @@ const ListingProperties = () => {
                       >
                         {location}
                       </span>
-                      {index < displayedLocations.length && (
+                      {index < displayedLocations.length - 1 && (
                         <span className="mx-2 text-gray-300">|</span>
                       )}
                     </React.Fragment>

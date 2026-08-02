@@ -79,6 +79,7 @@ const AdminInsights = () => {
     return {
       totals: payload.totals || nestedPayload.totals || nestedPayload.cards,
       kpis: payload.kpis || nestedPayload.kpis || nestedPayload.cards,
+      userStats: payload.user_stats || nestedPayload.user_stats,
       listingActivities:
         payload.listing_activities ||
         nestedPayload.listing_activities ||
@@ -89,6 +90,7 @@ const AdminInsights = () => {
 
   const totals = normalizedData?.totals;
   const kpis = normalizedData?.kpis;
+  const userStats = normalizedData?.userStats;
   const listingActivities = normalizedData?.listingActivities;
   const conversions = normalizedData?.conversions;
 
@@ -195,6 +197,16 @@ const AdminInsights = () => {
           value={kpis?.total_saves_shares ?? 0}
           isLoading={isLoading}
         />
+      </section>
+
+      <h6 className="text-[14px] font-semibold tracking-[-0.02em] text-[#1F2130]">
+        Registered Users by Type
+      </h6>
+      <section className="grid w-full grid-cols-1 gap-5 self-stretch md:grid-cols-2 lg:grid-cols-4">
+        <KpiCard title="Home Owners" value={userStats?.home_owners ?? 0} isLoading={isLoading} />
+        <KpiCard title="Developers" value={userStats?.developers ?? 0} isLoading={isLoading} />
+        <KpiCard title="Agents" value={userStats?.agents ?? 0} isLoading={isLoading} />
+        <KpiCard title="Clients" value={userStats?.clients ?? 0} isLoading={isLoading} />
       </section>
     </div>
   );
