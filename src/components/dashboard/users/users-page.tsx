@@ -174,7 +174,7 @@ const DetailRow = ({
   );
 };
 
-const USERS_PER_PAGE = 20;
+const USERS_PER_PAGE = 100;
 
 const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
