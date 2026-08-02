@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { sendTelegramError } from "./utils";
+import { clearStoredToken } from "./auth-token";
 
 const BASE_URL = "https://api.geoplox.com/api/v1";
 const publicPages = [
@@ -81,7 +82,7 @@ token: ${token || "No token"}
         return Promise.reject(error);
       }
 
-      localStorage.removeItem("token");
+      clearStoredToken();
       const currentLocation = window.location.pathname;
 
       const isPublicPage = publicPages.some(

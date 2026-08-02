@@ -4,6 +4,7 @@ import api from "../api";
 import { UserProfile } from "../types";
 import { AxiosError, AxiosResponse } from "axios";
 import { queryClient } from "../queryClient";
+import { useAuthToken } from "../auth-token";
 
 interface ProfileResponse {
   status: string;
@@ -47,7 +48,11 @@ export const useGetBillingInfo = () => {
 };
 
 export const useGetProfileData = () => {
-  const token = localStorage.getItem("token");
+  // Reactive, not a one-off localStorage read - so logging in through an in-place modal
+  // (no navigation/reload) still flips `enabled` to true and triggers a fetch here, instead
+  // of every already-mounted consumer (header/nav) staying stuck showing "logged out" until
+  // something else forces them to re-render.
+  const token = useAuthToken();
   return useQuery({
     queryKey: ["profile"],
     queryFn: async (): Promise<UserProfile> => {

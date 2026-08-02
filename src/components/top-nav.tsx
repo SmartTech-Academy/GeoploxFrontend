@@ -16,6 +16,7 @@ import {
 import { useGetProfileData } from "@/lib/services/profile";
 import { NotificationPopover } from "@/components/notification-popover";
 import { queryClient } from "@/lib/queryClient";
+import { clearStoredToken } from "@/lib/auth-token";
 
 // Route title mapping for dashboard pages
 const routeTitleMap: Record<string, string> = {
@@ -92,7 +93,7 @@ export function TopNav({ setUseMaxWith }: TopNavProps) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    clearStoredToken();
     // Clear (not just invalidate) so no stale cached data from this session - profile, chat,
     // notifications, etc. - can linger and flash for whoever logs in next on this browser.
     queryClient.clear();

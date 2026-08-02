@@ -17,6 +17,7 @@ import { useGetProfileData } from "@/lib/services/profile";
 import { Skeleton } from "./ui/skeleton";
 import { getPrimaryNavigation } from "@/lib/navigation";
 import { queryClient } from "@/lib/queryClient";
+import { clearStoredToken } from "@/lib/auth-token";
 
 const bottomNavigation = [
   { name: "Help", href: "/contact", icon: HelpCircle },
@@ -31,7 +32,7 @@ export function AppSidebar() {
   const mainNavigation = getPrimaryNavigation(user);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    clearStoredToken();
     // Invalidate all queries to clear cached data
     queryClient.cancelQueries();
     queryClient.clear(); // start fresh

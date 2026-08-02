@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { queryClient } from "@/lib/queryClient";
+import { clearStoredToken } from "@/lib/auth-token";
 import { NotificationPopover } from "./notification-popover";
 import { getLoginRedirectPath } from "@/lib/navigation";
 
@@ -53,7 +54,7 @@ const Topnav = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    clearStoredToken();
     // Clear (not just invalidate one key) so no stale cached data from this session - profile,
     // chat, notifications, etc. - can linger and flash for whoever logs in next on this browser.
     queryClient.clear();

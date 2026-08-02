@@ -12,6 +12,7 @@ import { customResolver } from "@/lib/customZodResolver";
 import { PageMetaTags } from "@/components/page-meta-data";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
+import { setStoredToken } from "@/lib/auth-token";
 
 // Zod schema for OTP verification
 const otpSchema = z.object({
@@ -80,7 +81,7 @@ function RouteComponent() {
         const token = responseData?.access_token;
         const user = responseData?.user_data;
         if (token) {
-          localStorage.setItem("token", token);
+          setStoredToken(token);
         }
         const userEmail = user?.email_address;
         navigate({
