@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearch } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -75,27 +75,35 @@ const MessagingPage = () => {
     );
   };
 
-  const allConversations = (conversationsData?.pages.flatMap((page) => page.data) ?? []).filter(
-    (conversation: Conversation) =>
-      conversation.participants.some((p) => p.codec !== profileData?.codec),
+  const allConversations = useMemo(
+    () =>
+      (conversationsData?.pages.flatMap((page) => page.data) ?? []).filter((conversation: Conversation) =>
+        conversation.participants.some((p) => p.codec !== profileData?.codec),
+      ),
+    [conversationsData, profileData?.codec],
   );
 
   // Deep-link support: arriving at /messages?conversationId=X (from the notification
   // popover, or from messaging a property owner) auto-opens that specific conversation
   // once it shows up in the loaded list, instead of leaving the user on the plain inbox.
   //
-  // Guards on whether the ALREADY-selected chat matches conversationId, not just on whether
-  // *some* chat is already selected - the previous version bailed out the moment ANY chat was
-  // selected, so navigating to /messages?conversationId=B while chat A was still open (e.g.
-  // clicking "Message" on a second property without leaving /messages first) never switched to
-  // B: this component doesn't remount on a same-route search-param-only navigation, so
-  // `selectedChat` stayed stuck on A and the user saw the wrong conversation.
+  // Tracks which conversationId value has already been auto-applied (rather than comparing
+  // against the currently selected chat) so this only fires once per distinct deep-link value.
+  // Comparing against selectedChat instead caused a freeze: conversationId stays in the URL
+  // after the initial auto-select (nothing clears it), so the moment the user manually picked
+  // a DIFFERENT chat from the list, selectedChat no longer matched conversationId and this
+  // effect - re-running on every render because the old inline `allConversations` array got a
+  // new reference each time - kept snapping the selection back to the original deep-linked chat.
+  const appliedConversationIdRef = useRef<string | undefined>(undefined);
+
   useEffect(() => {
     if (!conversationId) return;
-    if (selectedChat && String(selectedChat.id) === conversationId) return;
+    if (appliedConversationIdRef.current === conversationId) return;
     const match = allConversations.find((c) => String(c.id) === conversationId);
-    if (match) setSelectedChat(match);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (match) {
+      setSelectedChat(match);
+      appliedConversationIdRef.current = conversationId;
+    }
   }, [conversationId, allConversations]);
 
   return (
