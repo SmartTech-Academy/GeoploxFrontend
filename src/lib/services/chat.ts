@@ -27,11 +27,12 @@ export const useGetConversations = (params: { per_page?: number; [key: string]: 
 
 export const useCreateConversation = () => {
   return useMutation({
-    mutationFn: (data: { participant_user_id: string; subject?: string }) => {
+    mutationFn: (data: { participant_user_id: string; subject?: string; property_id?: string }) => {
       const formData = new FormData();
       formData.append("participant_user_id", data.participant_user_id);
       formData.append("subject", data.subject || "Chat");
       formData.append("type", "private");
+      if (data.property_id) formData.append("property_id", data.property_id);
       return api.post("/dashboard/chat/conversations", formData);
     },
     onSuccess: () => {

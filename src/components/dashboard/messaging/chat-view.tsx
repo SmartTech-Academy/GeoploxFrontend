@@ -1,5 +1,17 @@
 import React, { useState, useEffect, useRef, Fragment } from "react";
-import { MoreHorizontal, Smile, Paperclip, Flag, Trash2, X, SendHorizonal } from "lucide-react";
+import {
+  MoreHorizontal,
+  Smile,
+  Paperclip,
+  Flag,
+  Trash2,
+  X,
+  SendHorizonal,
+  BadgeCheck,
+  Home,
+  Check,
+  CheckCheck,
+} from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { format, parseISO } from "date-fns";
 
@@ -30,6 +42,15 @@ interface MessagesInfiniteData {
   pages: { data: LastMessage[]; [key: string]: any }[];
   pageParams: unknown[];
 }
+
+// Same friendly labels used for the role selector at sign-up (form-account-type.tsx) -
+// the stored role value stays "client" etc., only the displayed label changed there.
+const ROLE_LABELS: Record<string, string> = {
+  owner: "Property Owner",
+  developer: "Developer",
+  agent: "Real Estate Consultant",
+  client: "Investor",
+};
 
 interface ChatViewProps {
   selectedChat: Conversation;
@@ -157,14 +178,33 @@ export const ChatView: React.FC<ChatViewProps> = ({
               </Avatar>
             </div>
             <div>
-              <h2 className="font-semibold text-gray-900">
+              <h2 className="flex items-center gap-1.5 font-semibold text-gray-900">
                 {otherParticipant
                   ? `${otherParticipant.firstname} ${otherParticipant.lastname}`
                   : "Unknown User"}
+                {otherParticipant?.is_verified && (
+                  <BadgeCheck
+                    className="size-4 shrink-0 text-[#0AA6A9]"
+                    aria-label="Verified account"
+                  />
+                )}
               </h2>
               <p className="text-sm text-gray-500">
-                {otherParticipant?.username ? `@${otherParticipant.username}` : "Online"}
+                {otherParticipant?.role
+                  ? ROLE_LABELS[otherParticipant.role] || otherParticipant.role
+                  : otherParticipant?.username
+                    ? `@${otherParticipant.username}`
+                    : "Online"}
               </p>
+              {selectedChat.property && selectedChat.property.category_slug && (
+                <a
+                  href={`/${selectedChat.property.category_slug}/${selectedChat.property.slug}`}
+                  className="mt-1 flex items-center gap-1 text-xs text-[#D4AF36] hover:underline"
+                >
+                  <Home className="size-3" />
+                  <span className="max-w-[220px] truncate">{selectedChat.property.title}</span>
+                </a>
+              )}
             </div>
           </div>
           <DropdownMenu>
@@ -240,13 +280,27 @@ export const ChatView: React.FC<ChatViewProps> = ({
                     )}
                     <div
                       className={cn(
-                        "rounded-2xl px-4 py-3",
+                        "flex flex-col gap-1 rounded-2xl px-4 py-3",
                         isMe
                           ? "rounded-br-md bg-[#D4AF36] text-white shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.04),0px_4px_6px_-2px_rgba(16,24,40,0.02)]"
                           : "rounded-bl-md border border-[#ECECEC] bg-white text-[#2E2E3E]",
                       )}
                     >
                       <p className="text-sm">{msg.body}</p>
+                      <div
+                        className={cn(
+                          "flex items-center justify-end gap-1 text-[10px]",
+                          isMe ? "text-white/70" : "text-gray-400",
+                        )}
+                      >
+                        <span>{format(parseISO(msg.created_at), "h:mm a")}</span>
+                        {isMe &&
+                          (msg.read_at ? (
+                            <CheckCheck className="size-3" aria-label="Read" />
+                          ) : (
+                            <Check className="size-3" aria-label="Sent" />
+                          ))}
+                      </div>
                     </div>
                     {isMe && (
                       <Avatar className="size-10 rounded-[10px]">

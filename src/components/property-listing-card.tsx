@@ -109,6 +109,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
       {
         participant_user_id: property.owner.id,
         subject: `Enquiry about ${property.title || property.property_type} in ${property.location.city}`,
+        property_id: property.id,
       },
       {
         onSuccess: (response) => {

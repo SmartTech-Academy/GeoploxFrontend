@@ -176,6 +176,7 @@ const ListingDetail = () => {
       {
         participant_user_id: property.owner.id,
         subject: `Enquiry about ${property.property_type} in ${property.city}, ${property.state}`,
+        property_id: property.id,
       },
       {
         onSuccess: (response) => {
