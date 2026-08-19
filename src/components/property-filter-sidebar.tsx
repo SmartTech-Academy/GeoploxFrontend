@@ -6,8 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
-import { useGetPropertyCategories, useGetPropertyTags } from "@/lib/services";
-import statesAndLocalGov from "@/data/statesAndLocalGov.json";
+import { useGetPropertyCategories, useGetPropertyTags, useGetLocations } from "@/lib/services";
 import {
   Select,
   SelectContent,
@@ -97,19 +96,18 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({
 
   const { data: categoriesResponse } = useGetPropertyCategories();
   const { data: tagsResponse } = useGetPropertyTags();
+  const { data: locationsResponse } = useGetLocations();
 
   const categories = categoriesResponse?.data.data ?? [];
   const tags = tagsResponse?.data.data ?? [];
+  const states = locationsResponse?.data.data ?? [];
 
-  const lgas = draftFilters.state
-    ? statesAndLocalGov.find((s) => s.state === draftFilters.state)?.lgas || []
-    : [];
-  const areas =
-    draftFilters.state && draftFilters.city
-      ? (statesAndLocalGov.find((s) => s.state === draftFilters.state) as any)?.[
-          draftFilters.city
-        ] || []
-      : [];
+  const selectedState = states.find((s) => s.name === draftFilters.state);
+  const cities = selectedState?.children ?? [];
+
+  const selectedCity = cities.find((c) => c.name === draftFilters.city);
+  // Areas only - neighbourhoods are a secondary filter (?n=), not part of this cascade.
+  const areas = (selectedCity?.children ?? []).filter((c) => c.type === "area");
 
   const handleApplyFilters = () => {
     const newFilters = { ...draftFilters };
@@ -202,9 +200,9 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({
                 <SelectValue placeholder="Select State" />
               </SelectTrigger>
               <SelectContent>
-                {statesAndLocalGov.map((s) => (
-                  <SelectItem key={s.state} value={s.state}>
-                    {s.state}
+                {states.map((s) => (
+                  <SelectItem key={s.slug} value={s.name}>
+                    {s.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -218,12 +216,12 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({
                 }}
               >
                 <SelectTrigger className="h-8 w-full text-sm">
-                  <SelectValue placeholder="Select LGA" />
+                  <SelectValue placeholder="Select City" />
                 </SelectTrigger>
                 <SelectContent>
-                  {lgas.map((lga: string) => (
-                    <SelectItem key={lga} value={lga}>
-                      {lga}
+                  {cities.map((city) => (
+                    <SelectItem key={city.slug} value={city.name}>
+                      {city.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -239,9 +237,9 @@ export const PropertyFilterSidebar: React.FC<PropertyFilterSidebarProps> = ({
                   <SelectValue placeholder="Select Area" />
                 </SelectTrigger>
                 <SelectContent>
-                  {areas.map((area: string) => (
-                    <SelectItem key={area} value={area}>
-                      {area}
+                  {areas.map((area) => (
+                    <SelectItem key={area.slug} value={area.name}>
+                      {area.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

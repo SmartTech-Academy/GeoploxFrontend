@@ -5,10 +5,9 @@ import { useDebounce } from "use-debounce";
 import { PropertyFilterSidebar } from "@/components/property-filter-sidebar";
 import { MobilePropertyFilters } from "@/components/mobile-property-filters";
 import { Property, PropertyListingCard } from "./property-listing-card";
-import { useGetProperties } from "@/lib/services";
+import { useGetProperties, useGetLocations } from "@/lib/services";
 import { PropertyListingCardSkeleton } from "./property-listing-card-skeleton";
 import { cn } from "@/lib/utils";
-import statesAndLocalGov from "@/data/statesAndLocalGov.json";
 import { propertyTypes, sortOptions } from "@/data/reuseable";
 import { useGetProfileData } from "@/lib/services/profile";
 
@@ -151,14 +150,22 @@ const ListingProperties = () => {
     });
   };
 
+  const { data: locationsResponse } = useGetLocations();
+  const states = locationsResponse?.data.data ?? [];
+
   let displayedLocations: string[] = [];
   if (filters.state && filters.city) {
-    displayedLocations =
-      (statesAndLocalGov.find((s) => s.state === filters.state) as any)?.[filters.city] || [];
+    const state = states.find((s) => s.name === filters.state);
+    const city = state?.children.find((c) => c.name === filters.city);
+    // Areas only here too - neighbourhoods stay a secondary ?n= filter, not part of this cascade.
+    displayedLocations = (city?.children ?? [])
+      .filter((c) => c.type === "area")
+      .map((c) => c.name);
   } else if (filters.state) {
-    displayedLocations = statesAndLocalGov.find((s) => s.state === filters.state)?.lgas || [];
+    const state = states.find((s) => s.name === filters.state);
+    displayedLocations = (state?.children ?? []).map((c) => c.name);
   } else {
-    displayedLocations = statesAndLocalGov.map((s) => s.state);
+    displayedLocations = states.map((s) => s.name);
   }
 
   const selectedTypeObject = useMemo(() => {
