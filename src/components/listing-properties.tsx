@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "@tanstack/react-router";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import { useDebounce } from "use-debounce";
 import { PropertyFilterSidebar } from "@/components/property-filter-sidebar";
 import { MobilePropertyFilters } from "@/components/mobile-property-filters";
@@ -10,28 +10,131 @@ import { PropertyListingCardSkeleton } from "./property-listing-card-skeleton";
 import { cn } from "@/lib/utils";
 import { propertyTypes, sortOptions } from "@/data/reuseable";
 import { useGetProfileData } from "@/lib/services/profile";
+import { PageMetaTags } from "@/components/page-meta-data";
+import {
+  buildListingUrl,
+  parseListingUrl,
+  CATEGORY_SLUG_MAP,
+  CATEGORY_META,
+  type ListingCategorySlug,
+} from "@/lib/url-grammar";
 
-const ListingProperties = () => {
+// Indexation policy: a page under 5 live listings can't satisfy the search that reaches it -
+// indexing it anyway reads as thin content and drags down the rest of the domain.
+const MIN_LISTINGS_TO_INDEX = 5;
+
+interface ListingPropertiesProps {
+  /** Present only on the new grammar-driven routes (/property-for-sale, etc). When absent,
+   *  this component falls back to its original pathname/query-string based behaviour, which
+   *  dashboard routes (/listing, /admin-listing) still rely on. */
+  grammarCategory?: ListingCategorySlug;
+  grammarSplat?: string;
+}
+
+const ListingProperties = ({ grammarCategory, grammarSplat }: ListingPropertiesProps = {}) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isListingPage = location.pathname.includes("/listing");
   const isAdminListingPage = location.pathname.includes("/admin-listing");
   const isProperties = location.pathname.includes("/properties");
-  const pageType = location.pathname.includes("/short-let")
-    ? `short-let`
-    : location.pathname.includes("/for-rent")
-      ? `for-rent`
-      : location.pathname.includes("/for-sale")
-        ? `for-sale`
-        : location.pathname.includes("/joint-venture")
-          ? `joint-venture`
-          : "all";
+  const pageType = grammarCategory
+    ? CATEGORY_SLUG_MAP[grammarCategory]
+    : location.pathname.includes("/short-let")
+      ? `short-let`
+      : location.pathname.includes("/for-rent")
+        ? `for-rent`
+        : location.pathname.includes("/for-sale")
+          ? `for-sale`
+          : location.pathname.includes("/joint-venture")
+            ? `joint-venture`
+            : "all";
   const { data: profileData } = useGetProfileData();
   const [filters, setFilters] = useState<Record<string, any>>({
     page: 1,
     sort: "newest",
   });
 
+  const { data: locationsResponse } = useGetLocations();
+  const states = locationsResponse?.data.data ?? [];
+
+  // URL -> filters (grammar routes). Re-runs when the splat changes (real navigation) or once
+  // the location tree finishes loading (so state/city/area resolve to their real display names
+  // instead of the title-cased-slug fallback used before locations are available).
   React.useEffect(() => {
+    if (!grammarCategory) return;
+
+    const parsed = parseListingUrl(grammarCategory, grammarSplat, {
+      resolveState: (slug) => states.find((s) => s.slug === slug)?.name,
+      resolveCity: (stateSlug, citySlug) =>
+        states
+          .find((s) => s.slug === stateSlug)
+          ?.children.find((c) => c.slug === citySlug)?.name,
+      resolveArea: (stateSlug, citySlug, areaSlug) =>
+        states
+          .find((s) => s.slug === stateSlug)
+          ?.children.find((c) => c.slug === citySlug)
+          ?.children.find((a) => a.slug === areaSlug)?.name,
+    });
+
+    const nextFilters: Record<string, any> = { page: 1, sort: "newest" };
+    if (parsed.propertyType) nextFilters.property_type = parsed.propertyType;
+    if (parsed.propertySubType) nextFilters.filter_property_sub_type = parsed.propertySubType;
+    if (parsed.state) nextFilters.state = parsed.state;
+    if (parsed.city) nextFilters.city = parsed.city;
+    if (parsed.area) nextFilters.area = parsed.area;
+    if (parsed.bedrooms) nextFilters.bedrooms = String(parsed.bedrooms);
+
+    setFilters((prev) => {
+      // Preserve sort/page (not part of the grammar) across a grammar-driven URL change.
+      const merged = { ...nextFilters, sort: prev.sort || "newest" };
+      const prevSerialized = JSON.stringify(prev);
+      const nextSerialized = JSON.stringify(merged);
+      return prevSerialized === nextSerialized ? prev : merged;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grammarCategory, grammarSplat, states.length]);
+
+  // filters -> URL (grammar routes only): keeps the address bar describing the same search the
+  // sidebar/quick-filter just applied, without making navigation the sole source of truth for
+  // the filters themselves (setFilters below still updates immediately for a responsive UI).
+  React.useEffect(() => {
+    if (!grammarCategory) return;
+
+    const bedroomValues = String(filters.bedrooms || "")
+      .split(",")
+      .filter(Boolean);
+
+    const nextUrl = buildListingUrl({
+      category: grammarCategory,
+      propertyType: filters.property_type,
+      propertySubType: filters.filter_property_sub_type,
+      state: filters.state,
+      city: filters.city,
+      area: filters.area,
+      // The grammar's bedroom segment holds a single value - a multi-select combination stays
+      // local-filter-only rather than forcing an arbitrary one into the path.
+      bedrooms: bedroomValues.length === 1 ? Number(bedroomValues[0]) : undefined,
+    });
+
+    if (nextUrl !== location.pathname) {
+      navigate({ to: nextUrl, replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    grammarCategory,
+    filters.property_type,
+    filters.filter_property_sub_type,
+    filters.state,
+    filters.city,
+    filters.area,
+    filters.bedrooms,
+  ]);
+
+  // Legacy query-string based location filters, for non-grammar usage only (dashboard
+  // /listing, /admin-listing - never had path-based location filtering to begin with).
+  React.useEffect(() => {
+    if (grammarCategory) return;
+
     const params = new URLSearchParams(location.search);
     const nextFilters: Record<string, any> = {
       page: 1,
@@ -51,7 +154,7 @@ const ListingProperties = () => {
       const nextSerialized = JSON.stringify(nextFilters);
       return prevSerialized === nextSerialized ? prev : nextFilters;
     });
-  }, [location.search]);
+  }, [location.search, grammarCategory]);
 
   const [debouncedFilters] = useDebounce(filters, 300);
   const shouldIncludeOwnerName =
@@ -89,6 +192,102 @@ const ListingProperties = () => {
 
   const totalResults = responseData?.meta?.total ?? 0;
   const lastPage = responseData?.meta?.last_page ?? 1;
+
+  // Unique title/description/H1/structured-data per the location+filters actually in the URL,
+  // and the indexation policy: noindex any page under 5 live listings (thin-content risk),
+  // self-canonical always (never canonical page 2+ back to page 1).
+  const seo = useMemo(() => {
+    if (!grammarCategory) return null;
+
+    const meta = CATEGORY_META[grammarCategory];
+    const locationParts = [filters.area, filters.city, filters.state].filter(Boolean);
+    const locationSuffix = locationParts.length ? ` in ${locationParts.join(", ")}` : "";
+    const typeSuffix = filters.filter_property_sub_type
+      ? `${filters.filter_property_sub_type} `
+      : filters.property_type
+        ? `${filters.property_type} `
+        : "";
+
+    // PageMetaTags appends " | Geoplox" itself whenever an explicit title is passed - not
+    // included here, or it would show up twice.
+    const title = locationParts.length
+      ? `${typeSuffix}Properties ${meta.noun}${locationSuffix}`
+      : undefined; // fall back to the category default title below
+    const description = locationParts.length
+      ? `Browse ${typeSuffix.toLowerCase()}properties ${meta.noun.toLowerCase()}${locationSuffix} on Geoplox - verified listings from real owners and developers.`
+      : undefined;
+
+    const isLoadedAndEmpty = !isLoadingProperties && totalResults === 0;
+    const isThin = !isLoadingProperties && totalResults > 0 && totalResults < MIN_LISTINGS_TO_INDEX;
+    const robots = isLoadedAndEmpty || isThin ? "noindex, follow" : "index, follow";
+
+    const breadcrumbItems: { name: string; item: string }[] = [{ name: "Home", item: "/" }];
+    let pathAcc = `/${grammarCategory}`;
+    breadcrumbItems.push({ name: meta.title, item: pathAcc });
+    if (filters.state) {
+      pathAcc = buildListingUrl({ category: grammarCategory, state: filters.state });
+      breadcrumbItems.push({ name: filters.state, item: pathAcc });
+    }
+    if (filters.city) {
+      pathAcc = buildListingUrl({ category: grammarCategory, state: filters.state, city: filters.city });
+      breadcrumbItems.push({ name: filters.city, item: pathAcc });
+    }
+    if (filters.area) {
+      pathAcc = buildListingUrl({
+        category: grammarCategory,
+        state: filters.state,
+        city: filters.city,
+        area: filters.area,
+      });
+      breadcrumbItems.push({ name: filters.area, item: pathAcc });
+    }
+
+    const structuredData: Record<string, unknown>[] = [
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: breadcrumbItems.map((b, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: b.name,
+          item: typeof window !== "undefined" ? `${window.location.origin}${b.item}` : b.item,
+        })),
+      },
+    ];
+
+    if (!isLoadingProperties && properties.length > 0) {
+      structuredData.push({
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        itemListElement: properties.slice(0, 20).map((p, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          url: typeof window !== "undefined" ? `${window.location.origin}${location.pathname}` : undefined,
+          name: p.title,
+        })),
+      });
+    }
+
+    return {
+      title: title ?? meta.title,
+      description: description ?? meta.description,
+      keywords: meta.keywords,
+      robots,
+      structuredData,
+      isLoadedAndEmpty,
+    };
+  }, [
+    grammarCategory,
+    filters.state,
+    filters.city,
+    filters.area,
+    filters.property_type,
+    filters.filter_property_sub_type,
+    isLoadingProperties,
+    totalResults,
+    properties,
+    location.pathname,
+  ]);
 
   const handlePageChange = (newPage: number) => {
     setFilters((prev) => ({ ...prev, page: newPage }));
@@ -150,9 +349,6 @@ const ListingProperties = () => {
     });
   };
 
-  const { data: locationsResponse } = useGetLocations();
-  const states = locationsResponse?.data.data ?? [];
-
   let displayedLocations: string[] = [];
   if (filters.state && filters.city) {
     const state = states.find((s) => s.name === filters.state);
@@ -174,6 +370,16 @@ const ListingProperties = () => {
 
   return (
     <div className="min-h-screen w-full bg-white py-(--landing-header-height)">
+      {seo && (
+        <PageMetaTags
+          title={seo.title}
+          description={seo.description}
+          keywords={seo.keywords}
+          robots={seo.robots}
+          structuredData={seo.structuredData}
+          canonicalPath={location.pathname}
+        />
+      )}
       <div className="landing-container w-full">
         <div className="hidden w-full gap-8 pt-11 lg:flex">
           {/* Left Sidebar - Filters */}
@@ -183,13 +389,22 @@ const ListingProperties = () => {
                 ? "Admin Listings"
                 : isListingPage
                   ? "My Listings"
-                  : `${
-                      location.pathname.includes("/short-let")
-                        ? "Short Let"
-                        : location.pathname.includes("/for-rent")
-                          ? "Rent"
-                          : "Sell"
-                    } Property`}
+                  : (() => {
+                      const base =
+                        pageType === "short-let"
+                          ? "Short Let Property"
+                          : pageType === "for-rent"
+                            ? "Rent Property"
+                            : pageType === "joint-venture"
+                              ? "Joint Venture Property"
+                              : "Sell Property";
+                      const locationParts = [filters.area, filters.city, filters.state].filter(
+                        Boolean,
+                      );
+                      return locationParts.length
+                        ? `${base} in ${locationParts.join(", ")}`
+                        : base;
+                    })()}
             </h2>
 
             <PropertyFilterSidebar

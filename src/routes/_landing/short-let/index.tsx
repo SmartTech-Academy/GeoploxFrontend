@@ -1,19 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { buildListingUrl } from "@/lib/url-grammar";
 
-import ListingProperties from "@/components/listing-properties";
-import { PageMetaTags } from "@/components/page-meta-data";
-
+// Old query-string-based URL, replaced by the path-based grammar at /property-for-short-let/...
 export const Route = createFileRoute("/_landing/short-let/")({
-  component: () => (
-    <>
-      <PageMetaTags
-        title="Properties for Sale"
-        listingType="buy"
-        description="Browse thousands of properties for sale. Find your dream home with transparent pricing and direct owner contact."
-        keywords="homes for sale, buy property, real estate investment, house purchase"
-      />
-
-      <ListingProperties />
-    </>
-  ),
+  beforeLoad: () => {
+    const params = new URLSearchParams(window.location.search);
+    const target = buildListingUrl({
+      category: "property-for-short-let",
+      state: params.get("state") || undefined,
+      city: params.get("city") || undefined,
+      area: params.get("area") || undefined,
+    });
+    throw redirect({ href: target, replace: true, statusCode: 301 });
+  },
 });

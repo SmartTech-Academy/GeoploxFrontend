@@ -179,6 +179,15 @@ interface PageMetaTagsProps {
   location?: string;
   propertyType?: string;
   listingType?: "buy" | "rent" | "sell" | "joint-venture";
+  /** Indexation policy override - defaults to "index, follow". Search/listing pages compute
+   *  this from listing count and query-param combination (see the indexation policy). */
+  robots?: string;
+  /** JSON-LD structured data (BreadcrumbList, ItemList, RealEstateListing, etc) - one object
+   *  or an array, each rendered as its own <script type="application/ld+json"> tag. */
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
+  /** Self-canonical by default (every page points at its own URL) - page 2+ of a list must
+   *  never canonical back to page 1, which self-canonical trivially satisfies. */
+  canonicalPath?: string;
 }
 
 export function PageMetaTags({
@@ -190,6 +199,9 @@ export function PageMetaTags({
   location,
   propertyType,
   listingType,
+  robots = "index, follow",
+  structuredData,
+  canonicalPath,
 }: PageMetaTagsProps) {
   const {
     getMetaTitle,
@@ -247,11 +259,19 @@ export function PageMetaTags({
       {getListingType() && <meta name="listing:type" content={getListingType()!} />}
 
       {/* Additional SEO Meta Tags for Real Estate */}
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content={robots} />
       <meta name="author" content="Geoplox" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      {canonicalPath && typeof window !== "undefined" && (
+        <link rel="canonical" href={`${window.location.origin}${canonicalPath}`} />
+      )}
 
-      {/* Schema.org structured data would go in a separate script tag */}
+      {structuredData &&
+        (Array.isArray(structuredData) ? structuredData : [structuredData]).map((data, i) => (
+          <script key={i} type="application/ld+json">
+            {JSON.stringify(data)}
+          </script>
+        ))}
     </>
   );
 }

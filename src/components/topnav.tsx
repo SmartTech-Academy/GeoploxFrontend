@@ -26,9 +26,9 @@ const Topnav = () => {
   const { data: user } = useGetProfileData();
 
   const navigationLinks = [
-    { to: "/for-rent", label: "For Rent" },
-    { to: "/for-sale", label: "For Sale" },
-    { to: "/short-let", label: "Short Let" },
+    { to: "/property-for-rent", label: "For Rent" },
+    { to: "/property-for-sale", label: "For Sale" },
+    { to: "/property-for-short-let", label: "Short Let" },
     { to: "/joint-venture", label: "Joint Venture" },
     { to: "/blog", label: "Blog" },
     // { to: '/pricing', label: 'Pricing' },

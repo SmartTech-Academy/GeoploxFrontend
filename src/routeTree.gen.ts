@@ -23,6 +23,9 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthAccountReadyRouteImport } from './routes/_auth/account-ready'
 import { Route as LandingShortLetIndexRouteImport } from './routes/_landing/short-let/index'
+import { Route as LandingPropertyForShortLetIndexRouteImport } from './routes/_landing/property-for-short-let/index'
+import { Route as LandingPropertyForSaleIndexRouteImport } from './routes/_landing/property-for-sale/index'
+import { Route as LandingPropertyForRentIndexRouteImport } from './routes/_landing/property-for-rent/index'
 import { Route as LandingPrivacyIndexRouteImport } from './routes/_landing/privacy/index'
 import { Route as LandingPricingIndexRouteImport } from './routes/_landing/pricing/index'
 import { Route as LandingJointVentureIndexRouteImport } from './routes/_landing/joint-venture/index'
@@ -49,7 +52,11 @@ import { Route as DashboardBlogsIndexRouteImport } from './routes/_dashboard/blo
 import { Route as DashboardAdminListingIndexRouteImport } from './routes/_dashboard/admin-listing/index'
 import { Route as DashboardAdminInsightsIndexRouteImport } from './routes/_dashboard/admin-insights/index'
 import { Route as LandingShortLetIdRouteImport } from './routes/_landing/short-let/$id'
+import { Route as LandingPropertyForShortLetSplatRouteImport } from './routes/_landing/property-for-short-let/$'
+import { Route as LandingPropertyForSaleSplatRouteImport } from './routes/_landing/property-for-sale/$'
+import { Route as LandingPropertyForRentSplatRouteImport } from './routes/_landing/property-for-rent/$'
 import { Route as LandingJointVentureIdRouteImport } from './routes/_landing/joint-venture/$id'
+import { Route as LandingJointVentureSplatRouteImport } from './routes/_landing/joint-venture/$'
 import { Route as LandingForSaleIdRouteImport } from './routes/_landing/for-sale/$id'
 import { Route as LandingForRentIdRouteImport } from './routes/_landing/for-rent/$id'
 import { Route as LandingBlogIdRouteImport } from './routes/_landing/blog/$id'
@@ -132,6 +139,24 @@ const LandingShortLetIndexRoute = LandingShortLetIndexRouteImport.update({
   path: '/short-let/',
   getParentRoute: () => LandingRoute,
 } as any)
+const LandingPropertyForShortLetIndexRoute =
+  LandingPropertyForShortLetIndexRouteImport.update({
+    id: '/property-for-short-let/',
+    path: '/property-for-short-let/',
+    getParentRoute: () => LandingRoute,
+  } as any)
+const LandingPropertyForSaleIndexRoute =
+  LandingPropertyForSaleIndexRouteImport.update({
+    id: '/property-for-sale/',
+    path: '/property-for-sale/',
+    getParentRoute: () => LandingRoute,
+  } as any)
+const LandingPropertyForRentIndexRoute =
+  LandingPropertyForRentIndexRouteImport.update({
+    id: '/property-for-rent/',
+    path: '/property-for-rent/',
+    getParentRoute: () => LandingRoute,
+  } as any)
 const LandingPrivacyIndexRoute = LandingPrivacyIndexRouteImport.update({
   id: '/privacy/',
   path: '/privacy/',
@@ -271,11 +296,35 @@ const LandingShortLetIdRoute = LandingShortLetIdRouteImport.update({
   path: '/short-let/$id',
   getParentRoute: () => LandingRoute,
 } as any)
+const LandingPropertyForShortLetSplatRoute =
+  LandingPropertyForShortLetSplatRouteImport.update({
+    id: '/property-for-short-let/$',
+    path: '/property-for-short-let/$',
+    getParentRoute: () => LandingRoute,
+  } as any)
+const LandingPropertyForSaleSplatRoute =
+  LandingPropertyForSaleSplatRouteImport.update({
+    id: '/property-for-sale/$',
+    path: '/property-for-sale/$',
+    getParentRoute: () => LandingRoute,
+  } as any)
+const LandingPropertyForRentSplatRoute =
+  LandingPropertyForRentSplatRouteImport.update({
+    id: '/property-for-rent/$',
+    path: '/property-for-rent/$',
+    getParentRoute: () => LandingRoute,
+  } as any)
 const LandingJointVentureIdRoute = LandingJointVentureIdRouteImport.update({
   id: '/joint-venture/$id',
   path: '/joint-venture/$id',
   getParentRoute: () => LandingRoute,
 } as any)
+const LandingJointVentureSplatRoute =
+  LandingJointVentureSplatRouteImport.update({
+    id: '/joint-venture/$',
+    path: '/joint-venture/$',
+    getParentRoute: () => LandingRoute,
+  } as any)
 const LandingForSaleIdRoute = LandingForSaleIdRouteImport.update({
   id: '/for-sale/$id',
   path: '/for-sale/$id',
@@ -373,7 +422,11 @@ export interface FileRoutesByFullPath {
   '/blog/$id': typeof LandingBlogIdRoute
   '/for-rent/$id': typeof LandingForRentIdRoute
   '/for-sale/$id': typeof LandingForSaleIdRoute
+  '/joint-venture/$': typeof LandingJointVentureSplatRoute
   '/joint-venture/$id': typeof LandingJointVentureIdRoute
+  '/property-for-rent/$': typeof LandingPropertyForRentSplatRoute
+  '/property-for-sale/$': typeof LandingPropertyForSaleSplatRoute
+  '/property-for-short-let/$': typeof LandingPropertyForShortLetSplatRoute
   '/short-let/$id': typeof LandingShortLetIdRoute
   '/admin-insights/': typeof DashboardAdminInsightsIndexRoute
   '/admin-listing/': typeof DashboardAdminListingIndexRoute
@@ -400,6 +453,9 @@ export interface FileRoutesByFullPath {
   '/joint-venture/': typeof LandingJointVentureIndexRoute
   '/pricing/': typeof LandingPricingIndexRoute
   '/privacy/': typeof LandingPrivacyIndexRoute
+  '/property-for-rent/': typeof LandingPropertyForRentIndexRoute
+  '/property-for-sale/': typeof LandingPropertyForSaleIndexRoute
+  '/property-for-short-let/': typeof LandingPropertyForShortLetIndexRoute
   '/short-let/': typeof LandingShortLetIndexRoute
   '/for-rent/$propertySubType/$state/$lga/$id': typeof LandingForRentPropertySubTypeStateLgaIdRoute
   '/for-sale/$propertySubType/$state/$lga/$id': typeof LandingForSalePropertySubTypeStateLgaIdRoute
@@ -427,7 +483,11 @@ export interface FileRoutesByTo {
   '/blog/$id': typeof LandingBlogIdRoute
   '/for-rent/$id': typeof LandingForRentIdRoute
   '/for-sale/$id': typeof LandingForSaleIdRoute
+  '/joint-venture/$': typeof LandingJointVentureSplatRoute
   '/joint-venture/$id': typeof LandingJointVentureIdRoute
+  '/property-for-rent/$': typeof LandingPropertyForRentSplatRoute
+  '/property-for-sale/$': typeof LandingPropertyForSaleSplatRoute
+  '/property-for-short-let/$': typeof LandingPropertyForShortLetSplatRoute
   '/short-let/$id': typeof LandingShortLetIdRoute
   '/admin-insights': typeof DashboardAdminInsightsIndexRoute
   '/admin-listing': typeof DashboardAdminListingIndexRoute
@@ -454,6 +514,9 @@ export interface FileRoutesByTo {
   '/joint-venture': typeof LandingJointVentureIndexRoute
   '/pricing': typeof LandingPricingIndexRoute
   '/privacy': typeof LandingPrivacyIndexRoute
+  '/property-for-rent': typeof LandingPropertyForRentIndexRoute
+  '/property-for-sale': typeof LandingPropertyForSaleIndexRoute
+  '/property-for-short-let': typeof LandingPropertyForShortLetIndexRoute
   '/short-let': typeof LandingShortLetIndexRoute
   '/for-rent/$propertySubType/$state/$lga/$id': typeof LandingForRentPropertySubTypeStateLgaIdRoute
   '/for-sale/$propertySubType/$state/$lga/$id': typeof LandingForSalePropertySubTypeStateLgaIdRoute
@@ -485,7 +548,11 @@ export interface FileRoutesById {
   '/_landing/blog/$id': typeof LandingBlogIdRoute
   '/_landing/for-rent/$id': typeof LandingForRentIdRoute
   '/_landing/for-sale/$id': typeof LandingForSaleIdRoute
+  '/_landing/joint-venture/$': typeof LandingJointVentureSplatRoute
   '/_landing/joint-venture/$id': typeof LandingJointVentureIdRoute
+  '/_landing/property-for-rent/$': typeof LandingPropertyForRentSplatRoute
+  '/_landing/property-for-sale/$': typeof LandingPropertyForSaleSplatRoute
+  '/_landing/property-for-short-let/$': typeof LandingPropertyForShortLetSplatRoute
   '/_landing/short-let/$id': typeof LandingShortLetIdRoute
   '/_dashboard/admin-insights/': typeof DashboardAdminInsightsIndexRoute
   '/_dashboard/admin-listing/': typeof DashboardAdminListingIndexRoute
@@ -512,6 +579,9 @@ export interface FileRoutesById {
   '/_landing/joint-venture/': typeof LandingJointVentureIndexRoute
   '/_landing/pricing/': typeof LandingPricingIndexRoute
   '/_landing/privacy/': typeof LandingPrivacyIndexRoute
+  '/_landing/property-for-rent/': typeof LandingPropertyForRentIndexRoute
+  '/_landing/property-for-sale/': typeof LandingPropertyForSaleIndexRoute
+  '/_landing/property-for-short-let/': typeof LandingPropertyForShortLetIndexRoute
   '/_landing/short-let/': typeof LandingShortLetIndexRoute
   '/_landing/for-rent/$propertySubType/$state/$lga/$id': typeof LandingForRentPropertySubTypeStateLgaIdRoute
   '/_landing/for-sale/$propertySubType/$state/$lga/$id': typeof LandingForSalePropertySubTypeStateLgaIdRoute
@@ -541,7 +611,11 @@ export interface FileRouteTypes {
     | '/blog/$id'
     | '/for-rent/$id'
     | '/for-sale/$id'
+    | '/joint-venture/$'
     | '/joint-venture/$id'
+    | '/property-for-rent/$'
+    | '/property-for-sale/$'
+    | '/property-for-short-let/$'
     | '/short-let/$id'
     | '/admin-insights/'
     | '/admin-listing/'
@@ -568,6 +642,9 @@ export interface FileRouteTypes {
     | '/joint-venture/'
     | '/pricing/'
     | '/privacy/'
+    | '/property-for-rent/'
+    | '/property-for-sale/'
+    | '/property-for-short-let/'
     | '/short-let/'
     | '/for-rent/$propertySubType/$state/$lga/$id'
     | '/for-sale/$propertySubType/$state/$lga/$id'
@@ -595,7 +672,11 @@ export interface FileRouteTypes {
     | '/blog/$id'
     | '/for-rent/$id'
     | '/for-sale/$id'
+    | '/joint-venture/$'
     | '/joint-venture/$id'
+    | '/property-for-rent/$'
+    | '/property-for-sale/$'
+    | '/property-for-short-let/$'
     | '/short-let/$id'
     | '/admin-insights'
     | '/admin-listing'
@@ -622,6 +703,9 @@ export interface FileRouteTypes {
     | '/joint-venture'
     | '/pricing'
     | '/privacy'
+    | '/property-for-rent'
+    | '/property-for-sale'
+    | '/property-for-short-let'
     | '/short-let'
     | '/for-rent/$propertySubType/$state/$lga/$id'
     | '/for-sale/$propertySubType/$state/$lga/$id'
@@ -652,7 +736,11 @@ export interface FileRouteTypes {
     | '/_landing/blog/$id'
     | '/_landing/for-rent/$id'
     | '/_landing/for-sale/$id'
+    | '/_landing/joint-venture/$'
     | '/_landing/joint-venture/$id'
+    | '/_landing/property-for-rent/$'
+    | '/_landing/property-for-sale/$'
+    | '/_landing/property-for-short-let/$'
     | '/_landing/short-let/$id'
     | '/_dashboard/admin-insights/'
     | '/_dashboard/admin-listing/'
@@ -679,6 +767,9 @@ export interface FileRouteTypes {
     | '/_landing/joint-venture/'
     | '/_landing/pricing/'
     | '/_landing/privacy/'
+    | '/_landing/property-for-rent/'
+    | '/_landing/property-for-sale/'
+    | '/_landing/property-for-short-let/'
     | '/_landing/short-let/'
     | '/_landing/for-rent/$propertySubType/$state/$lga/$id'
     | '/_landing/for-sale/$propertySubType/$state/$lga/$id'
@@ -790,6 +881,27 @@ declare module '@tanstack/react-router' {
       path: '/short-let'
       fullPath: '/short-let/'
       preLoaderRoute: typeof LandingShortLetIndexRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/property-for-short-let/': {
+      id: '/_landing/property-for-short-let/'
+      path: '/property-for-short-let'
+      fullPath: '/property-for-short-let/'
+      preLoaderRoute: typeof LandingPropertyForShortLetIndexRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/property-for-sale/': {
+      id: '/_landing/property-for-sale/'
+      path: '/property-for-sale'
+      fullPath: '/property-for-sale/'
+      preLoaderRoute: typeof LandingPropertyForSaleIndexRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/property-for-rent/': {
+      id: '/_landing/property-for-rent/'
+      path: '/property-for-rent'
+      fullPath: '/property-for-rent/'
+      preLoaderRoute: typeof LandingPropertyForRentIndexRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_landing/privacy/': {
@@ -974,11 +1086,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LandingShortLetIdRouteImport
       parentRoute: typeof LandingRoute
     }
+    '/_landing/property-for-short-let/$': {
+      id: '/_landing/property-for-short-let/$'
+      path: '/property-for-short-let/$'
+      fullPath: '/property-for-short-let/$'
+      preLoaderRoute: typeof LandingPropertyForShortLetSplatRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/property-for-sale/$': {
+      id: '/_landing/property-for-sale/$'
+      path: '/property-for-sale/$'
+      fullPath: '/property-for-sale/$'
+      preLoaderRoute: typeof LandingPropertyForSaleSplatRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/property-for-rent/$': {
+      id: '/_landing/property-for-rent/$'
+      path: '/property-for-rent/$'
+      fullPath: '/property-for-rent/$'
+      preLoaderRoute: typeof LandingPropertyForRentSplatRouteImport
+      parentRoute: typeof LandingRoute
+    }
     '/_landing/joint-venture/$id': {
       id: '/_landing/joint-venture/$id'
       path: '/joint-venture/$id'
       fullPath: '/joint-venture/$id'
       preLoaderRoute: typeof LandingJointVentureIdRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/joint-venture/$': {
+      id: '/_landing/joint-venture/$'
+      path: '/joint-venture/$'
+      fullPath: '/joint-venture/$'
+      preLoaderRoute: typeof LandingJointVentureSplatRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_landing/for-sale/$id': {
@@ -1171,7 +1311,11 @@ interface LandingRouteChildren {
   LandingBlogIdRoute: typeof LandingBlogIdRoute
   LandingForRentIdRoute: typeof LandingForRentIdRoute
   LandingForSaleIdRoute: typeof LandingForSaleIdRoute
+  LandingJointVentureSplatRoute: typeof LandingJointVentureSplatRoute
   LandingJointVentureIdRoute: typeof LandingJointVentureIdRoute
+  LandingPropertyForRentSplatRoute: typeof LandingPropertyForRentSplatRoute
+  LandingPropertyForSaleSplatRoute: typeof LandingPropertyForSaleSplatRoute
+  LandingPropertyForShortLetSplatRoute: typeof LandingPropertyForShortLetSplatRoute
   LandingShortLetIdRoute: typeof LandingShortLetIdRoute
   LandingAboutIndexRoute: typeof LandingAboutIndexRoute
   LandingBlogIndexRoute: typeof LandingBlogIndexRoute
@@ -1181,6 +1325,9 @@ interface LandingRouteChildren {
   LandingJointVentureIndexRoute: typeof LandingJointVentureIndexRoute
   LandingPricingIndexRoute: typeof LandingPricingIndexRoute
   LandingPrivacyIndexRoute: typeof LandingPrivacyIndexRoute
+  LandingPropertyForRentIndexRoute: typeof LandingPropertyForRentIndexRoute
+  LandingPropertyForSaleIndexRoute: typeof LandingPropertyForSaleIndexRoute
+  LandingPropertyForShortLetIndexRoute: typeof LandingPropertyForShortLetIndexRoute
   LandingShortLetIndexRoute: typeof LandingShortLetIndexRoute
   LandingForRentPropertySubTypeStateLgaIdRoute: typeof LandingForRentPropertySubTypeStateLgaIdRoute
   LandingForSalePropertySubTypeStateLgaIdRoute: typeof LandingForSalePropertySubTypeStateLgaIdRoute
@@ -1193,7 +1340,11 @@ const LandingRouteChildren: LandingRouteChildren = {
   LandingBlogIdRoute: LandingBlogIdRoute,
   LandingForRentIdRoute: LandingForRentIdRoute,
   LandingForSaleIdRoute: LandingForSaleIdRoute,
+  LandingJointVentureSplatRoute: LandingJointVentureSplatRoute,
   LandingJointVentureIdRoute: LandingJointVentureIdRoute,
+  LandingPropertyForRentSplatRoute: LandingPropertyForRentSplatRoute,
+  LandingPropertyForSaleSplatRoute: LandingPropertyForSaleSplatRoute,
+  LandingPropertyForShortLetSplatRoute: LandingPropertyForShortLetSplatRoute,
   LandingShortLetIdRoute: LandingShortLetIdRoute,
   LandingAboutIndexRoute: LandingAboutIndexRoute,
   LandingBlogIndexRoute: LandingBlogIndexRoute,
@@ -1203,6 +1354,9 @@ const LandingRouteChildren: LandingRouteChildren = {
   LandingJointVentureIndexRoute: LandingJointVentureIndexRoute,
   LandingPricingIndexRoute: LandingPricingIndexRoute,
   LandingPrivacyIndexRoute: LandingPrivacyIndexRoute,
+  LandingPropertyForRentIndexRoute: LandingPropertyForRentIndexRoute,
+  LandingPropertyForSaleIndexRoute: LandingPropertyForSaleIndexRoute,
+  LandingPropertyForShortLetIndexRoute: LandingPropertyForShortLetIndexRoute,
   LandingShortLetIndexRoute: LandingShortLetIndexRoute,
   LandingForRentPropertySubTypeStateLgaIdRoute:
     LandingForRentPropertySubTypeStateLgaIdRoute,

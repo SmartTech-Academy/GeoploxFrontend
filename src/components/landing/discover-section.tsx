@@ -13,6 +13,24 @@ import { excerptFromHtml } from "@/lib/utils";
 import { toAbsoluteBlogUrl } from "@/lib/wpGraphql";
 import { format } from "date-fns";
 import { FavoriteButton } from "@/components/favorite-button";
+import type { ListingCategorySlug } from "@/lib/url-grammar";
+
+// "Explore Listing" CTA below points at the search/listing page for this category, which now
+// lives at the new grammar URL - unlike getPropertyBasePath() further down, which still points
+// individual property cards at their (unchanged) detail-page URLs.
+const getListingPagePath = (category?: string): ListingCategorySlug => {
+  switch (category?.toLowerCase()) {
+    case "for rent":
+      return "property-for-rent";
+    case "short let":
+      return "property-for-short-let";
+    case "joint venture":
+      return "joint-venture";
+    case "for sale":
+    default:
+      return "property-for-sale";
+  }
+};
 
 interface Property {
   id: string;
@@ -105,9 +123,9 @@ export function DiscoverSection() {
   };
 
   const currentProperties = propertyData ? propertyData[tabKeyMap[activeTab]] : [];
-  const exploreListingPath = currentProperties?.[0]
-    ? getPropertyBasePath(currentProperties[0].category)
-    : "/for-sale";
+  const exploreListingPath = `/${
+    currentProperties?.[0] ? getListingPagePath(currentProperties[0].category) : "property-for-sale"
+  }`;
   const blogPosts = (postsQuery.data?.pages.flatMap((page) => page.nodes) ?? []).slice(0, 3);
 
   return (
