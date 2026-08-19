@@ -17,7 +17,13 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { cn, formatNumberWithCommas, parseNumber } from "@/lib/utils";
+import {
+  cn,
+  formatNumberWithCommas,
+  parseNumber,
+  getUploadErrorMessage,
+  checkFileSizeLimit,
+} from "@/lib/utils";
 import { Upload, RotateCcw, Trash, X, Slash, Loader2, ArrowLeft, ArrowRight } from "lucide-react";
 import type React from "react";
 import { useState, useRef, useEffect, useMemo } from "react";
@@ -369,12 +375,13 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
               : img,
           ),
         );
-      } catch {
-        toast.error("Failed to replace image.");
+      } catch (error) {
+        const message = getUploadErrorMessage(error, "Failed to replace image.");
+        toast.error(message);
         setPropertyImages((prev) =>
           prev.map((img, index) =>
             index === replacementIndex
-              ? { ...newImageStates[0], status: "error", error: "Upload failed" }
+              ? { ...newImageStates[0], status: "error", error: message }
               : img,
           ),
         );
@@ -414,12 +421,13 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
           }),
         );
       })
-      .catch(() => {
-        toast.error("Some images failed to upload.");
+      .catch((error) => {
+        const message = getUploadErrorMessage(error, "Some images failed to upload.");
+        toast.error(message);
         setPropertyImages((prev) =>
           prev.map((img) =>
             newImageStates.some((s) => s.preview === img.preview)
-              ? { ...img, status: "error", error: "Upload failed" }
+              ? { ...img, status: "error", error: message }
               : img,
           ),
         );
@@ -432,6 +440,13 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const handleDocumentUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      const sizeError = checkFileSizeLimit(file, 10);
+      if (sizeError) {
+        toast.error(sizeError);
+        event.target.value = "";
+        return;
+      }
+
       const docState: DocumentState = {
         file,
         preview: URL.createObjectURL(file),
@@ -448,11 +463,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
             prev ? { ...prev, status: "success", url: response.data.data.image_url } : null,
           );
         })
-        .catch(() => {
-          setPropertyDocument((prev) =>
-            prev ? { ...prev, status: "error", error: "Upload failed" } : null,
-          );
-          toast.error("Failed to upload document.");
+        .catch((error) => {
+          const message = getUploadErrorMessage(error, "Failed to upload document.");
+          setPropertyDocument((prev) => (prev ? { ...prev, status: "error", error: message } : null));
+          toast.error(message);
         });
     }
   };
@@ -460,6 +474,13 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
   const handleProofOfAddressUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      const sizeError = checkFileSizeLimit(file, 10);
+      if (sizeError) {
+        toast.error(sizeError);
+        event.target.value = "";
+        return;
+      }
+
       const docState: DocumentState = {
         file,
         preview: URL.createObjectURL(file),
@@ -476,11 +497,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
             prev ? { ...prev, status: "success", url: response.data.data.image_url } : null,
           );
         })
-        .catch(() => {
-          setProofOfAddress((prev) =>
-            prev ? { ...prev, status: "error", error: "Upload failed" } : null,
-          );
-          toast.error("Failed to upload proof of address.");
+        .catch((error) => {
+          const message = getUploadErrorMessage(error, "Failed to upload proof of address.");
+          setProofOfAddress((prev) => (prev ? { ...prev, status: "error", error: message } : null));
+          toast.error(message);
         });
     }
   };
@@ -1074,7 +1094,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                         <span className="cursor-pointer font-semibold text-[#B69118]">Click </span>{" "}
                         to upload
                       </p>
-                      <p className="text-[10px]/3 text-[#71748C]">Supports JPEG, or PNG files.</p>
+                      <p className="text-[10px]/3 text-[#71748C]">
+                        Supports JPEG or PNG files, up to 15 MB.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1180,7 +1202,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                           </span>{" "}
                           to upload
                         </p>
-                        <p className="text-[10px]/3 text-[#71748C]">Supports JPEG, or PNG files.</p>
+                        <p className="text-[10px]/3 text-[#71748C]">
+                        Supports JPEG or PNG files, up to 15 MB.
+                      </p>
                       </div>
                     </div>
                   )}
@@ -1237,7 +1261,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
 
                     <div className="flex flex-col gap-1.5">
                       <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">
-                        Supports JPEG, or PNG files.
+                        Supports JPEG, PNG, PDF or DOCX files, up to 10 MB.
                       </label>
 
                       {propertyDocument?.status === "uploading" ? (
@@ -1292,7 +1316,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                       <input
                         ref={documentInputRef}
                         type="file"
-                        accept=".pdf,.jpg,.jpeg,.png"
+                        accept=".pdf,.jpg,.jpeg,.png,.docx"
                         onChange={handleDocumentUpload}
                         className="hidden"
                       />
@@ -1311,6 +1335,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     <label className="text-[14px] leading-[17px] font-normal text-[#41415A]">
                       Upload a utility bill or other document as proof of address.
                     </label>
+                    <p className="text-[10px]/3 text-[#71748C]">
+                      Supports JPEG, PNG, PDF or DOCX files, up to 10 MB.
+                    </p>
 
                     {proofOfAddress?.status === "uploading" ? (
                       <div className="flex h-10 items-center justify-center rounded-lg border border-dashed">
@@ -1362,7 +1389,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
                     <input
                       ref={proofOfAddressInputRef}
                       type="file"
-                      accept=".pdf,.jpg,.jpeg,.png"
+                      accept=".pdf,.jpg,.jpeg,.png,.docx"
                       onChange={handleProofOfAddressUpload}
                       className="hidden"
                     />

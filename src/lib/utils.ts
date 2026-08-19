@@ -5,6 +5,26 @@ import { toast } from "@/lib/toast";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+/**
+ * Pulls the backend's actual validation/error message (e.g. "This file is 14.2 MB. The
+ * maximum is 10 MB.") out of a failed upload request instead of showing a generic
+ * "upload failed" toast that gives the user nothing to act on.
+ */
+export const getUploadErrorMessage = (error: unknown, fallback: string): string => {
+  const responseData = (error as { response?: { data?: { message?: string } } })?.response?.data;
+  return responseData?.message || fallback;
+};
+
+/** Same "this file is X MB, the maximum is Y MB" phrasing as the backend, checked client-side
+ *  before even attempting the upload so an oversized file fails instantly instead of round-tripping. */
+export const checkFileSizeLimit = (file: File, maxMB: number): string | null => {
+  const fileMB = file.size / 1048576;
+  if (fileMB > maxMB) {
+    return `This file is ${fileMB.toFixed(1)} MB. The maximum is ${maxMB} MB.`;
+  }
+  return null;
+};
 export const formatPrice = (price: number, currency: string = "NGN") => {
   // Validate currency code - if not provided or invalid, use NGN as default
   const validCurrency =
