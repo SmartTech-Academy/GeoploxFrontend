@@ -28,7 +28,7 @@ import {
   useUploadOwnerKycDocuments,
   useUploadKycDocuments,
 } from "@/lib/services/onboarding";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { useGetProfileData } from "@/lib/services/profile";
 import { queryClient } from "@/lib/queryClient";
 import { getLoginRedirectPath } from "@/lib/navigation";

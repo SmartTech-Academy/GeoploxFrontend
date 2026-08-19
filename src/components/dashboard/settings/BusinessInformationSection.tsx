@@ -33,7 +33,7 @@ import {
   ImageCropReset,
 } from "@/components/ui/kibo-ui/image-crop";
 import { useUpdateBusinessInformation } from "@/lib/services/profile";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import statesAndLgasData from "@/data/statesAndLocalGov.json";
 
 const step3BusinessSchema = z.object({

@@ -11,7 +11,7 @@ import { useGetProfileData } from "@/lib/services/profile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useMemo, useState } from "react";
 import { useGetDashboardOverview } from "@/lib/services/dashboard";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 const getGreeting = () => {
   const hour = new Date().getHours();

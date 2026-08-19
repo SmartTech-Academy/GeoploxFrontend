@@ -5,7 +5,7 @@ import assets from "@/assets";
 import { PageMetaTags } from "@/components/page-meta-data";
 import { LoginForm } from "@/components/auth/login-form";
 
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { getLoginRedirectPath } from "@/lib/navigation";
 import type { UserProfile } from "@/lib/types";
 

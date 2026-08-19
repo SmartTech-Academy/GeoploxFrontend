@@ -36,7 +36,7 @@ import DeleteProperty from "@/components/dialogs/delete-property";
 import { PageMetaTags } from "@/components/page-meta-data";
 import { useArchiveProperty, useDeleteProperty, useGetProperties } from "@/lib/services/properties";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { PropertyFilterSidebar } from "@/components/property-filter-sidebar";
 import Map from "@/components/google-map";
 import { useGetProfileData } from "@/lib/services/profile";

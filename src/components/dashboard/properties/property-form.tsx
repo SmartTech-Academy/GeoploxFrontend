@@ -42,7 +42,7 @@ import {
   useUploadProofOfAddress,
   useDeletePropertyImage,
 } from "@/lib/services/properties";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Separator } from "@/components/ui/separator";
 import statesAndLgasData from "@/data/statesAndLocalGov.json";
 import { useGetProfileData } from "@/lib/services/profile";

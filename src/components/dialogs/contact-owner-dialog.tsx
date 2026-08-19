@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useContactPropertyOwner } from "@/lib/services";
-import { toast, Toaster } from "sonner";
+import { toast } from "@/lib/toast";
 import { customResolver } from "@/lib/customZodResolver";
 
 const contactSchema = z.object({
@@ -72,7 +72,6 @@ export const ContactOwnerDialog: React.FC<ContactOwnerDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <Toaster />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Contact Property Owner</DialogTitle>

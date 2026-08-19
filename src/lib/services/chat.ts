@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import api from "../api";
 import { queryClient } from "../queryClient";
 import { LastMessage } from "@/components/dashboard/messaging/chat";

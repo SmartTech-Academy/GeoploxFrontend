@@ -23,7 +23,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Slash, Trash, RotateCcw, CircleX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod/v4";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import {
   Breadcrumb,
   BreadcrumbItem,

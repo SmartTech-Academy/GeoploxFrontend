@@ -6,7 +6,7 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { formatPrice, slugify } from "@/lib/utils";
 import { useRemoveFromFavorites, useCreateConversation } from "@/lib/services";
 import { useGetProfileData } from "@/lib/services/profile";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { FavoriteButton } from "./favorite-button";
 import { LazyImage } from "./ui/lazy-image";
 

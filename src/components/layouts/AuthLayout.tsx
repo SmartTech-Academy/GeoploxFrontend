@@ -2,7 +2,6 @@ import assets from "@/assets";
 import { cn } from "@/lib/utils";
 import { Outlet } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { Toaster } from "sonner";
 const images = [
   {
     image: assets.authside1,
@@ -58,7 +57,6 @@ const AuthLayout = () => {
     <div className="flex h-screen w-full bg-white">
       {/* Left side - content area */}
       <div className="flex flex-1 flex-col">
-        <Toaster />
         <Outlet />
       </div>
 

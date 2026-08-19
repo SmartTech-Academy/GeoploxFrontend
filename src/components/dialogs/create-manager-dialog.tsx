@@ -21,7 +21,7 @@ import { useRegisterManager } from "@/lib/services/managers";
 import z from "zod/v4";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 const createManagerSchema = z.object({
   fname: z.string().min(1, "First name is required"),

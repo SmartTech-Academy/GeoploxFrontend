@@ -21,7 +21,7 @@ import z from "zod/v4";
 import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 import { useChangePassword } from "@/lib/services/profile";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 interface PropertyProps {
   onOpenChange: Dispatch<SetStateAction<boolean>>;

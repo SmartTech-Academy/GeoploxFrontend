@@ -38,7 +38,7 @@ import {
   useRevokeUserVerification,
   useCreateConversation,
 } from "@/lib/services";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { ListingDetailSkeleton } from "./listing-detail-skeleton";
 
 import DeletePropertyModal from "./dialogs/delete-property";

@@ -4,7 +4,7 @@ import { FileText, RotateCcw, Trash } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 interface KYCDocumentsProps {
   form: UseFormReturn<any>;

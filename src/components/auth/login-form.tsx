@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { customResolver } from "@/lib/customZodResolver";
 import { useLogin } from "@/lib/services";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 export const loginSchema = z.object({
   email_or_username: z.string().min(1, "Email or Username is required"),

@@ -35,7 +35,7 @@ import {
   useGetOwnersDevelopers,
 } from "@/lib/services/managers";
 
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import React, { useId, useState, useEffect } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
 import statesAndLocalGov from "@/data/statesAndLocalGov.json";

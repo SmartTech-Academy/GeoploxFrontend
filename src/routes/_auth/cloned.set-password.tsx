@@ -17,7 +17,7 @@ import { useOverrideRegister } from "@/lib/services";
 import assets from "@/assets";
 import { customResolver } from "@/lib/customZodResolver";
 import { PageMetaTags } from "@/components/page-meta-data";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 type SetPasswordSearch = {
   firstName: string;

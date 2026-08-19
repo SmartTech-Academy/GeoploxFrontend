@@ -25,7 +25,7 @@ import { TbBrandFacebook, TbBrandInstagram, TbBrandLinkedin, TbBrandTwitter } fr
 import { PageMetaTags } from "@/components/page-meta-data";
 import { useContactUs } from "@/lib/services";
 import { customResolver } from "@/lib/customZodResolver";
-import { toast, Toaster } from "sonner";
+import { toast } from "@/lib/toast";
 
 // Zod schema for contact form
 const contactSchema = z.object({
@@ -120,7 +120,6 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen w-full bg-white pt-(--landing-header-height)">
-      <Toaster />
       <PageMetaTags
         title="Contact Us"
         description="Get in touch with our team. We're here to help with all your real estate needs across Nigeria."

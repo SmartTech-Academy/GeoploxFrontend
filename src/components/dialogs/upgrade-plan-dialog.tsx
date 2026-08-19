@@ -11,7 +11,7 @@ import {
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useGetPlans, useSubscribeToPlan } from "@/lib/services";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import LoadingFallback from "../loading-fallback";
 import { Check } from "lucide-react";
 import { customResolver } from "@/lib/customZodResolver";

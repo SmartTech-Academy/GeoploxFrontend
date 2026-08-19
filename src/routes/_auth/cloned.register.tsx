@@ -15,7 +15,7 @@ import assets from "@/assets";
 import { customResolver } from "@/lib/customZodResolver";
 import { PageMetaTags } from "@/components/page-meta-data";
 import { useVaidateRegistrationData } from "@/lib/services";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required"),

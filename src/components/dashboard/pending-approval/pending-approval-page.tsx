@@ -26,7 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import assets from "@/assets";
 import LoadingFallback from "@/components/loading-fallback";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 // --- TYPE DEFINITIONS ---
 interface KYCDetails {

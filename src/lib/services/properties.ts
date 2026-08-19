@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import api from "../api";
 import { queryClient } from "../queryClient";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 const categoryMap: Record<string, number> = {
   "for-rent": 1,

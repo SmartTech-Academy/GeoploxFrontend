@@ -52,7 +52,7 @@ import {
 import { useGetUserPerformance } from "@/lib/services/users";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 type ManagerFilterType = "all" | "active" | "suspended";
 

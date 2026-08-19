@@ -10,7 +10,7 @@ import assets from "@/assets";
 import { Link } from "@tanstack/react-router";
 import { customResolver } from "@/lib/customZodResolver";
 import { PageMetaTags } from "@/components/page-meta-data";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { useState, useEffect } from "react";
 import { setStoredToken } from "@/lib/auth-token";
 

@@ -5,7 +5,6 @@ import { AppSidebar } from "../app-sidebar";
 import { TopNav } from "../top-nav";
 import { SidebarInset, SidebarProvider } from "../ui/sidebar";
 import { cn } from "@/lib/utils";
-import { Toaster } from "../ui/sonner";
 import { useGetProfileData } from "@/lib/services/profile";
 import PermissionDenied from "../permission-denied";
 import { allDashboardPaths, getPrimaryNavigation } from "@/lib/navigation";
@@ -93,7 +92,6 @@ const DashboardLayout = () => {
         <AppSidebar />
         <SidebarInset>
           <TopNav setUseMaxWith={setUseMaxWith} />
-          <Toaster />
           <main className="min-h-dvh w-full flex-1 overflow-auto border-[#E1E1E6] bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.08)]">
             <div
               className={cn(

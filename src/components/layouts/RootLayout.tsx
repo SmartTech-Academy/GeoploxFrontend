@@ -3,6 +3,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import { useEffect } from "react";
 import NProgress from "nprogress";
+import { Toaster } from "@/lib/toast";
 
 // Configure NProgress once
 NProgress.configure({
@@ -27,6 +28,9 @@ function RouteLoader() {
 const RootLayout = () => {
   return (
     <div className="min-h-screen bg-background">
+      {/* Mounted once, globally, so every route - including public listing/details pages,
+          which previously had no Toaster at all - can reliably show notifications. */}
+      <Toaster />
       {/* Main content */}
       <div className="h-full">
         <RouteLoader />

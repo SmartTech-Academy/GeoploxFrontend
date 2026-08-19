@@ -17,7 +17,7 @@ import assets from "@/assets";
 import { customResolver } from "@/lib/customZodResolver";
 import { PageMetaTags } from "@/components/page-meta-data";
 import { useVaidateRegistrationData } from "@/lib/services";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 // Zod schema for registration form
 const registerSchema = z.object({

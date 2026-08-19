@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 import { Phone, Upload, XIcon } from "lucide-react";
 import React, { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import z from "zod";
 import statesAndLgasData from "@/data/statesAndLocalGov.json";
 
