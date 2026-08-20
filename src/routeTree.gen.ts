@@ -71,6 +71,10 @@ import { Route as LandingShortLetPropertySubTypeStateLgaIdRouteImport } from './
 import { Route as LandingJointVenturePropertySubTypeStateLgaIdRouteImport } from './routes/_landing/joint-venture/$propertySubType/$state/$lga/$id'
 import { Route as LandingForSalePropertySubTypeStateLgaIdRouteImport } from './routes/_landing/for-sale/$propertySubType/$state/$lga/$id'
 import { Route as LandingForRentPropertySubTypeStateLgaIdRouteImport } from './routes/_landing/for-rent/$propertySubType/$state/$lga/$id'
+import { Route as LandingShortLetPropertySubTypeInStateLgaIdRouteImport } from './routes/_landing/short-let/$propertySubType/in/$state/$lga/$id'
+import { Route as LandingJointVenturePropertySubTypeInStateLgaIdRouteImport } from './routes/_landing/joint-venture/$propertySubType/in/$state/$lga/$id'
+import { Route as LandingForSalePropertySubTypeInStateLgaIdRouteImport } from './routes/_landing/for-sale/$propertySubType/in/$state/$lga/$id'
+import { Route as LandingForRentPropertySubTypeInStateLgaIdRouteImport } from './routes/_landing/for-rent/$propertySubType/in/$state/$lga/$id'
 
 const LandingRoute = LandingRouteImport.update({
   id: '/_landing',
@@ -400,6 +404,30 @@ const LandingForRentPropertySubTypeStateLgaIdRoute =
     path: '/for-rent/$propertySubType/$state/$lga/$id',
     getParentRoute: () => LandingRoute,
   } as any)
+const LandingShortLetPropertySubTypeInStateLgaIdRoute =
+  LandingShortLetPropertySubTypeInStateLgaIdRouteImport.update({
+    id: '/short-let/$propertySubType/in/$state/$lga/$id',
+    path: '/short-let/$propertySubType/in/$state/$lga/$id',
+    getParentRoute: () => LandingRoute,
+  } as any)
+const LandingJointVenturePropertySubTypeInStateLgaIdRoute =
+  LandingJointVenturePropertySubTypeInStateLgaIdRouteImport.update({
+    id: '/joint-venture/$propertySubType/in/$state/$lga/$id',
+    path: '/joint-venture/$propertySubType/in/$state/$lga/$id',
+    getParentRoute: () => LandingRoute,
+  } as any)
+const LandingForSalePropertySubTypeInStateLgaIdRoute =
+  LandingForSalePropertySubTypeInStateLgaIdRouteImport.update({
+    id: '/for-sale/$propertySubType/in/$state/$lga/$id',
+    path: '/for-sale/$propertySubType/in/$state/$lga/$id',
+    getParentRoute: () => LandingRoute,
+  } as any)
+const LandingForRentPropertySubTypeInStateLgaIdRoute =
+  LandingForRentPropertySubTypeInStateLgaIdRouteImport.update({
+    id: '/for-rent/$propertySubType/in/$state/$lga/$id',
+    path: '/for-rent/$propertySubType/in/$state/$lga/$id',
+    getParentRoute: () => LandingRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LandingIndexRoute
@@ -461,6 +489,10 @@ export interface FileRoutesByFullPath {
   '/for-sale/$propertySubType/$state/$lga/$id': typeof LandingForSalePropertySubTypeStateLgaIdRoute
   '/joint-venture/$propertySubType/$state/$lga/$id': typeof LandingJointVenturePropertySubTypeStateLgaIdRoute
   '/short-let/$propertySubType/$state/$lga/$id': typeof LandingShortLetPropertySubTypeStateLgaIdRoute
+  '/for-rent/$propertySubType/in/$state/$lga/$id': typeof LandingForRentPropertySubTypeInStateLgaIdRoute
+  '/for-sale/$propertySubType/in/$state/$lga/$id': typeof LandingForSalePropertySubTypeInStateLgaIdRoute
+  '/joint-venture/$propertySubType/in/$state/$lga/$id': typeof LandingJointVenturePropertySubTypeInStateLgaIdRoute
+  '/short-let/$propertySubType/in/$state/$lga/$id': typeof LandingShortLetPropertySubTypeInStateLgaIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof LandingIndexRoute
@@ -522,6 +554,10 @@ export interface FileRoutesByTo {
   '/for-sale/$propertySubType/$state/$lga/$id': typeof LandingForSalePropertySubTypeStateLgaIdRoute
   '/joint-venture/$propertySubType/$state/$lga/$id': typeof LandingJointVenturePropertySubTypeStateLgaIdRoute
   '/short-let/$propertySubType/$state/$lga/$id': typeof LandingShortLetPropertySubTypeStateLgaIdRoute
+  '/for-rent/$propertySubType/in/$state/$lga/$id': typeof LandingForRentPropertySubTypeInStateLgaIdRoute
+  '/for-sale/$propertySubType/in/$state/$lga/$id': typeof LandingForSalePropertySubTypeInStateLgaIdRoute
+  '/joint-venture/$propertySubType/in/$state/$lga/$id': typeof LandingJointVenturePropertySubTypeInStateLgaIdRoute
+  '/short-let/$propertySubType/in/$state/$lga/$id': typeof LandingShortLetPropertySubTypeInStateLgaIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -587,6 +623,10 @@ export interface FileRoutesById {
   '/_landing/for-sale/$propertySubType/$state/$lga/$id': typeof LandingForSalePropertySubTypeStateLgaIdRoute
   '/_landing/joint-venture/$propertySubType/$state/$lga/$id': typeof LandingJointVenturePropertySubTypeStateLgaIdRoute
   '/_landing/short-let/$propertySubType/$state/$lga/$id': typeof LandingShortLetPropertySubTypeStateLgaIdRoute
+  '/_landing/for-rent/$propertySubType/in/$state/$lga/$id': typeof LandingForRentPropertySubTypeInStateLgaIdRoute
+  '/_landing/for-sale/$propertySubType/in/$state/$lga/$id': typeof LandingForSalePropertySubTypeInStateLgaIdRoute
+  '/_landing/joint-venture/$propertySubType/in/$state/$lga/$id': typeof LandingJointVenturePropertySubTypeInStateLgaIdRoute
+  '/_landing/short-let/$propertySubType/in/$state/$lga/$id': typeof LandingShortLetPropertySubTypeInStateLgaIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -650,6 +690,10 @@ export interface FileRouteTypes {
     | '/for-sale/$propertySubType/$state/$lga/$id'
     | '/joint-venture/$propertySubType/$state/$lga/$id'
     | '/short-let/$propertySubType/$state/$lga/$id'
+    | '/for-rent/$propertySubType/in/$state/$lga/$id'
+    | '/for-sale/$propertySubType/in/$state/$lga/$id'
+    | '/joint-venture/$propertySubType/in/$state/$lga/$id'
+    | '/short-let/$propertySubType/in/$state/$lga/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -711,6 +755,10 @@ export interface FileRouteTypes {
     | '/for-sale/$propertySubType/$state/$lga/$id'
     | '/joint-venture/$propertySubType/$state/$lga/$id'
     | '/short-let/$propertySubType/$state/$lga/$id'
+    | '/for-rent/$propertySubType/in/$state/$lga/$id'
+    | '/for-sale/$propertySubType/in/$state/$lga/$id'
+    | '/joint-venture/$propertySubType/in/$state/$lga/$id'
+    | '/short-let/$propertySubType/in/$state/$lga/$id'
   id:
     | '__root__'
     | '/_auth'
@@ -775,6 +823,10 @@ export interface FileRouteTypes {
     | '/_landing/for-sale/$propertySubType/$state/$lga/$id'
     | '/_landing/joint-venture/$propertySubType/$state/$lga/$id'
     | '/_landing/short-let/$propertySubType/$state/$lga/$id'
+    | '/_landing/for-rent/$propertySubType/in/$state/$lga/$id'
+    | '/_landing/for-sale/$propertySubType/in/$state/$lga/$id'
+    | '/_landing/joint-venture/$propertySubType/in/$state/$lga/$id'
+    | '/_landing/short-let/$propertySubType/in/$state/$lga/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1219,6 +1271,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LandingForRentPropertySubTypeStateLgaIdRouteImport
       parentRoute: typeof LandingRoute
     }
+    '/_landing/short-let/$propertySubType/in/$state/$lga/$id': {
+      id: '/_landing/short-let/$propertySubType/in/$state/$lga/$id'
+      path: '/short-let/$propertySubType/in/$state/$lga/$id'
+      fullPath: '/short-let/$propertySubType/in/$state/$lga/$id'
+      preLoaderRoute: typeof LandingShortLetPropertySubTypeInStateLgaIdRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/joint-venture/$propertySubType/in/$state/$lga/$id': {
+      id: '/_landing/joint-venture/$propertySubType/in/$state/$lga/$id'
+      path: '/joint-venture/$propertySubType/in/$state/$lga/$id'
+      fullPath: '/joint-venture/$propertySubType/in/$state/$lga/$id'
+      preLoaderRoute: typeof LandingJointVenturePropertySubTypeInStateLgaIdRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/for-sale/$propertySubType/in/$state/$lga/$id': {
+      id: '/_landing/for-sale/$propertySubType/in/$state/$lga/$id'
+      path: '/for-sale/$propertySubType/in/$state/$lga/$id'
+      fullPath: '/for-sale/$propertySubType/in/$state/$lga/$id'
+      preLoaderRoute: typeof LandingForSalePropertySubTypeInStateLgaIdRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/for-rent/$propertySubType/in/$state/$lga/$id': {
+      id: '/_landing/for-rent/$propertySubType/in/$state/$lga/$id'
+      path: '/for-rent/$propertySubType/in/$state/$lga/$id'
+      fullPath: '/for-rent/$propertySubType/in/$state/$lga/$id'
+      preLoaderRoute: typeof LandingForRentPropertySubTypeInStateLgaIdRouteImport
+      parentRoute: typeof LandingRoute
+    }
   }
 }
 
@@ -1333,6 +1413,10 @@ interface LandingRouteChildren {
   LandingForSalePropertySubTypeStateLgaIdRoute: typeof LandingForSalePropertySubTypeStateLgaIdRoute
   LandingJointVenturePropertySubTypeStateLgaIdRoute: typeof LandingJointVenturePropertySubTypeStateLgaIdRoute
   LandingShortLetPropertySubTypeStateLgaIdRoute: typeof LandingShortLetPropertySubTypeStateLgaIdRoute
+  LandingForRentPropertySubTypeInStateLgaIdRoute: typeof LandingForRentPropertySubTypeInStateLgaIdRoute
+  LandingForSalePropertySubTypeInStateLgaIdRoute: typeof LandingForSalePropertySubTypeInStateLgaIdRoute
+  LandingJointVenturePropertySubTypeInStateLgaIdRoute: typeof LandingJointVenturePropertySubTypeInStateLgaIdRoute
+  LandingShortLetPropertySubTypeInStateLgaIdRoute: typeof LandingShortLetPropertySubTypeInStateLgaIdRoute
 }
 
 const LandingRouteChildren: LandingRouteChildren = {
@@ -1366,6 +1450,14 @@ const LandingRouteChildren: LandingRouteChildren = {
     LandingJointVenturePropertySubTypeStateLgaIdRoute,
   LandingShortLetPropertySubTypeStateLgaIdRoute:
     LandingShortLetPropertySubTypeStateLgaIdRoute,
+  LandingForRentPropertySubTypeInStateLgaIdRoute:
+    LandingForRentPropertySubTypeInStateLgaIdRoute,
+  LandingForSalePropertySubTypeInStateLgaIdRoute:
+    LandingForSalePropertySubTypeInStateLgaIdRoute,
+  LandingJointVenturePropertySubTypeInStateLgaIdRoute:
+    LandingJointVenturePropertySubTypeInStateLgaIdRoute,
+  LandingShortLetPropertySubTypeInStateLgaIdRoute:
+    LandingShortLetPropertySubTypeInStateLgaIdRoute,
 }
 
 const LandingRouteWithChildren =

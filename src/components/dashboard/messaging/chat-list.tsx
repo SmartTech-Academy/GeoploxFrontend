@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { Search } from "lucide-react";
+import { Search, BadgeCheck } from "lucide-react";
 import { formatDistanceToNow, parseISO } from "date-fns";
 
 import { Button } from "@/components/ui/button";
@@ -144,6 +144,12 @@ export const ChatList: React.FC<ChatListProps> = ({
                         {`${otherParticipant.firstname?.[0] ?? ""}${otherParticipant.lastname?.[0] ?? ""}`}
                       </AvatarFallback>
                     </Avatar>
+                    {otherParticipant.is_verified && (
+                      <BadgeCheck
+                        className="absolute -right-1 -bottom-1 size-4 rounded-full bg-white text-[#0AA6A9]"
+                        aria-label="Verified account"
+                      />
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">

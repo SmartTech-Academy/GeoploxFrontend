@@ -159,7 +159,7 @@ export const PropertyListingCard: React.FC<PropertyListingCardProps> = ({
       }
     }
 
-    return `${basePath}/${slugifiedParams.propertyType}/${slugifiedParams.state}/${slugifiedParams.lga}/${identifier}`;
+    return `${basePath}/${slugifiedParams.propertyType}/in/${slugifiedParams.state}/${slugifiedParams.lga}/${identifier}`;
   })();
 
   const displayTitle = `${property.bedrooms ? `${property.bedrooms} Bedroom ` : ""}${property.property_type} ${

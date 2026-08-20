@@ -1,7 +1,14 @@
-import ListingDetail from "@/components/listing-detail";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { createFileRoute } from "@tanstack/react-router";
-
+// Old URL (no "in" separator between sub-type and state), replaced by the grammar-compliant
+// path at .../$propertySubType/in/$state/$lga/$id.
 export const Route = createFileRoute("/_landing/joint-venture/$propertySubType/$state/$lga/$id")({
-  component: ListingDetail,
+  beforeLoad: ({ params }) => {
+    throw redirect({
+      to: "/joint-venture/$propertySubType/in/$state/$lga/$id",
+      params,
+      replace: true,
+      statusCode: 301,
+    });
+  },
 });

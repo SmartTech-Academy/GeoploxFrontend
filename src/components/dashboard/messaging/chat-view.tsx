@@ -176,18 +176,18 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   {`${otherParticipant?.firstname?.[0] ?? ""}${otherParticipant?.lastname?.[0] ?? ""}`}
                 </AvatarFallback>
               </Avatar>
+              {otherParticipant?.is_verified && (
+                <BadgeCheck
+                  className="absolute -right-1 -bottom-1 size-4 rounded-full bg-white text-[#0AA6A9]"
+                  aria-label="Verified account"
+                />
+              )}
             </div>
             <div>
               <h2 className="flex items-center gap-1.5 font-semibold text-gray-900">
                 {otherParticipant
                   ? `${otherParticipant.firstname} ${otherParticipant.lastname}`
                   : "Unknown User"}
-                {otherParticipant?.is_verified && (
-                  <BadgeCheck
-                    className="size-4 shrink-0 text-[#0AA6A9]"
-                    aria-label="Verified account"
-                  />
-                )}
               </h2>
               <p className="text-sm text-gray-500">
                 {otherParticipant?.role
@@ -271,12 +271,20 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 <div className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                   <div className={`flex max-w-xs space-x-2 lg:max-w-md`}>
                     {!isMe && (
-                      <Avatar className="size-10 rounded-[10px]">
-                        <AvatarImage src={msg.sender.display_picture_url} />
-                        <AvatarFallback className="bg-gray-200">
-                          {`${msg.sender.firstname?.[0] ?? ""}${msg.sender.lastname?.[0] ?? ""}`}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="relative shrink-0">
+                        <Avatar className="size-10 rounded-[10px]">
+                          <AvatarImage src={msg.sender.display_picture_url} />
+                          <AvatarFallback className="bg-gray-200">
+                            {`${msg.sender.firstname?.[0] ?? ""}${msg.sender.lastname?.[0] ?? ""}`}
+                          </AvatarFallback>
+                        </Avatar>
+                        {msg.sender.is_verified && (
+                          <BadgeCheck
+                            className="absolute -right-1 -bottom-1 size-3.5 rounded-full bg-white text-[#0AA6A9]"
+                            aria-label="Verified account"
+                          />
+                        )}
+                      </div>
                     )}
                     <div
                       className={cn(
@@ -303,10 +311,18 @@ export const ChatView: React.FC<ChatViewProps> = ({
                       </div>
                     </div>
                     {isMe && (
-                      <Avatar className="size-10 rounded-[10px]">
-                        <AvatarImage src={profileData?.display_picture_url} />
-                        <AvatarFallback className="bg-gray-200">Me</AvatarFallback>
-                      </Avatar>
+                      <div className="relative shrink-0">
+                        <Avatar className="size-10 rounded-[10px]">
+                          <AvatarImage src={profileData?.display_picture_url} />
+                          <AvatarFallback className="bg-gray-200">Me</AvatarFallback>
+                        </Avatar>
+                        {profileData?.onboarding_status === "active" && (
+                          <BadgeCheck
+                            className="absolute -right-1 -bottom-1 size-3.5 rounded-full bg-white text-[#0AA6A9]"
+                            aria-label="Verified account"
+                          />
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

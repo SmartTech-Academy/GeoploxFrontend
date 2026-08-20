@@ -65,6 +65,23 @@ const getPublicPropertyBasePath = (category?: string) => {
   }
 };
 
+// The search/listing page CTA below points at the new grammar URL directly (avoiding an
+// unnecessary redirect hop) - unlike getPublicPropertyBasePath above, which still builds
+// individual property detail links on their existing (unchanged) URL scheme.
+const getListingPagePath = (category?: string) => {
+  switch (category?.toLowerCase()) {
+    case "for rent":
+      return "/property-for-rent";
+    case "short let":
+      return "/property-for-short-let";
+    case "joint venture":
+      return "/joint-venture";
+    case "for sale":
+    default:
+      return "/property-for-sale";
+  }
+};
+
 const ListingDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -198,7 +215,7 @@ const ListingDetail = () => {
 
   const relatedProperties = relatedPropertiesResponse?.data.data ?? [];
   const images = property?.images.map((img: { url: string }) => img.url) ?? [];
-  const exploreListingPath = getPublicPropertyBasePath(property?.category);
+  const exploreListingPath = getListingPagePath(property?.category);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
