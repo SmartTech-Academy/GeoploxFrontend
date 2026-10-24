@@ -1,15 +1,9 @@
 import assets from "@/assets";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  ImageCrop,
-  ImageCropApply,
-  ImageCropContent,
-  ImageCropReset,
-} from "@/components/ui/kibo-ui/image-crop";
+import { ImageCropDialog } from "@/components/ui/image-crop-dialog";
 import {
   Select,
   SelectContent,
@@ -22,7 +16,7 @@ import { customResolver } from "@/lib/customZodResolver";
 import { useUpdatePersonalInformation } from "@/lib/services/profile";
 import { UserProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Phone, Upload, XIcon } from "lucide-react";
+import { Phone, Upload } from "lucide-react";
 import React, { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "@/lib/toast";
@@ -170,37 +164,16 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
                 </div>
               </div>
             </div>
-            {selectedFile && (
-              <Dialog open={isCropDialogOpen} onOpenChange={handleDialogClose}>
-                <DialogContent className="max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Crop Your Profile Picture</DialogTitle>
-                  </DialogHeader>
-                  <div className="flex w-full flex-col items-center justify-center space-y-4">
-                    <ImageCrop
-                      aspect={1}
-                      file={selectedFile}
-                      maxImageSize={1024 * 1024} // 1MB
-                      onCrop={handleCrop}
-                    >
-                      <ImageCropContent className="max-w-md" />
-                      <div className="flex items-center justify-center gap-2 pt-4">
-                        <ImageCropApply />
-                        <ImageCropReset />
-                        <Button
-                          onClick={handleDialogClose}
-                          size="icon"
-                          type="button"
-                          variant="ghost"
-                        >
-                          <XIcon className="size-4" />
-                        </Button>
-                      </div>
-                    </ImageCrop>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            )}
+            <ImageCropDialog
+              open={isCropDialogOpen}
+              file={selectedFile}
+              aspect={1}
+              cropShape="round"
+              title="Crop Your Profile Picture"
+              maxOutputBytes={1024 * 1024}
+              onCropComplete={handleCrop}
+              onClose={handleDialogClose}
+            />
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <FormField

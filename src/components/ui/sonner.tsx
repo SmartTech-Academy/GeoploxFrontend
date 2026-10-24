@@ -1,14 +1,17 @@
-import { useTheme } from "next-themes";
 import { Toaster as Sonner, ToasterProps } from "sonner";
 
+// Bootstrap 5 alert palette (light bg / dark text / matching border) per toast type, so
+// success/info/warning/danger read instantly by colour, the way Bootstrap alerts do. This is
+// intentionally always "light" regardless of the app's own dark/light mode -- Bootstrap alerts
+// are a light-surface design by definition, and sonner's dark theme forces a light gray text
+// color on the description slot that `unstyled` doesn't fully strip, so pinning "light" here
+// keeps text legible against our colored backgrounds without fighting sonner's internals.
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "dark" } = useTheme();
-
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme="light"
       className="toaster group"
-      position="top-center"
+      position="top-right"
       duration={5000} // fallback for any raw sonner `toast()` call bypassing src/lib/toast.ts
       closeButton
       gap={10}
@@ -19,35 +22,42 @@ const Toaster = ({ ...props }: ToasterProps) => {
         unstyled: true,
         classNames: {
           toast:
-            "group toast relative flex items-start gap-3 w-full rounded-2xl border backdrop-blur-xl px-4 py-3.5 shadow-[0_8px_30px_rgba(0,0,0,0.25)] " +
-            "bg-neutral-900/85 border-white/10 text-white " +
-            "data-[type=success]:border-emerald-400/25 data-[type=success]:shadow-[0_8px_30px_rgba(16,185,129,0.18)] " +
-            "data-[type=error]:border-rose-400/25 data-[type=error]:shadow-[0_8px_30px_rgba(244,63,94,0.18)] " +
-            "data-[type=warning]:border-amber-400/25 data-[type=warning]:shadow-[0_8px_30px_rgba(245,158,11,0.18)] " +
-            "data-[type=info]:border-sky-400/25 data-[type=info]:shadow-[0_8px_30px_rgba(56,189,248,0.18)]",
+            "group toast relative flex items-start gap-3 w-full rounded-2xl border px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] " +
+            // default / plain toast() calls -- Bootstrap "secondary" style
+            "bg-[#e2e3e5] border-[#d3d6d8] text-[#41464b] " +
+            // success -- Bootstrap alert-success
+            "data-[type=success]:bg-[#d1e7dd] data-[type=success]:border-[#a3cfbb] data-[type=success]:text-[#0f5132] " +
+            // error -> Bootstrap alert-danger
+            "data-[type=error]:bg-[#f8d7da] data-[type=error]:border-[#f1aeb5] data-[type=error]:text-[#842029] " +
+            // warning -- Bootstrap alert-warning
+            "data-[type=warning]:bg-[#fff3cd] data-[type=warning]:border-[#ffe69c] data-[type=warning]:text-[#664d03] " +
+            // info -- Bootstrap alert-info
+            "data-[type=info]:bg-[#cff4fc] data-[type=info]:border-[#b6effb] data-[type=info]:text-[#055160] " +
+            // loading -- Bootstrap "light"
+            "data-[type=loading]:bg-[#fefefe] data-[type=loading]:border-[#e9ecef] data-[type=loading]:text-[#495057]",
           icon:
-            "!m-0 flex h-8 w-8 shrink-0 items-center justify-center rounded-full " +
-            "group-data-[type=success]:bg-emerald-400/15 group-data-[type=success]:text-emerald-400 " +
-            "group-data-[type=error]:bg-rose-400/15 group-data-[type=error]:text-rose-400 " +
-            "group-data-[type=warning]:bg-amber-400/15 group-data-[type=warning]:text-amber-400 " +
-            "group-data-[type=info]:bg-sky-400/15 group-data-[type=info]:text-sky-400 " +
-            "group-data-[type=default]:bg-white/10 group-data-[type=default]:text-white/80 " +
-            "group-data-[type=loading]:bg-white/10 group-data-[type=loading]:text-white/80 " +
+            "!m-0 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black/5 " +
+            "group-data-[type=success]:text-[#0f5132] " +
+            "group-data-[type=error]:text-[#842029] " +
+            "group-data-[type=warning]:text-[#664d03] " +
+            "group-data-[type=info]:text-[#055160] " +
+            "group-data-[type=loading]:text-[#495057] " +
             "[&_svg]:h-4.5 [&_svg]:w-4.5",
           content: "flex-1 min-w-0 pt-0.5",
-          title: "text-[14px] font-medium leading-snug text-white",
-          description: "text-[13px] leading-snug text-white/60 mt-0.5",
+          title: "text-[14px] font-semibold leading-snug",
+          description: "text-[13px] leading-snug opacity-80 mt-0.5",
           closeButton:
-            "!absolute !left-auto !right-1.5 !top-1.5 !translate-x-0 !translate-y-0 !bg-white/10 !border-white/10 !text-white/70 hover:!bg-white/20 hover:!text-white !rounded-full !h-5 !w-5 !flex !items-center !justify-center",
+            "!absolute !left-auto !right-1.5 !top-1.5 !translate-x-0 !translate-y-0 !bg-black/5 !border-0 !text-current !opacity-60 hover:!opacity-100 hover:!bg-black/10 !rounded-full !h-5 !w-5 !flex !items-center !justify-center",
           actionButton:
-            "!py-[11px] !px-3 !h-[32px] !bg-white !text-neutral-900 !border-0 shadow-[0px_1px_1px_rgba(31,33,48,0.25)] !rounded-full",
-          cancelButton: "!bg-white/10 !text-white/70 !rounded-full",
+            "!py-[11px] !px-3 !h-[32px] !bg-black/80 !text-white !border-0 !rounded-full",
+          cancelButton: "!bg-black/5 !text-current !rounded-full",
         },
       }}
       style={
         {
           position: "fixed",
           top: "16px",
+          right: "16px",
           zIndex: 9999,
           "--width": "380px",
         } as React.CSSProperties

@@ -9,20 +9,13 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { Phone, Upload, XIcon } from "lucide-react";
+import { Phone, Upload } from "lucide-react";
 import type React from "react";
 import { useState, useRef, useMemo, useEffect } from "react";
 
 import type { UseFormReturn } from "react-hook-form";
 import assets from "@/assets";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import {
-  ImageCrop,
-  ImageCropApply,
-  ImageCropContent,
-  ImageCropReset,
-} from "@/components/ui/kibo-ui/image-crop";
-import { Button } from "@/components/ui/button";
+import { ImageCropDialog } from "@/components/ui/image-crop-dialog";
 import statesAndLgasData from "@/data/statesAndLocalGov.json";
 import { UserProfile } from "@/lib/types";
 
@@ -148,32 +141,16 @@ const BusinessInfo: React.FC<AccountTypeProps> = ({ form, profileData }) => {
         </div>
       </div>
 
-      {selectedFile && (
-        <Dialog open={isCropDialogOpen} onOpenChange={handleDialogClose}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Crop Your Business Logo</DialogTitle>
-            </DialogHeader>
-            <div className="flex w-full flex-col items-center justify-center space-y-4">
-              <ImageCrop
-                aspect={1}
-                file={selectedFile}
-                maxImageSize={1024 * 1024} // 1MB
-                onCrop={handleCrop}
-              >
-                <ImageCropContent className="max-w-md" />
-                <div className="flex items-center justify-center gap-2 pt-4">
-                  <ImageCropApply />
-                  <ImageCropReset />
-                  <Button onClick={handleDialogClose} size="icon" type="button" variant="ghost">
-                    <XIcon className="size-4" />
-                  </Button>
-                </div>
-              </ImageCrop>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+      <ImageCropDialog
+        open={isCropDialogOpen}
+        file={selectedFile}
+        aspect={1}
+        cropShape="round"
+        title="Crop Your Business Logo"
+        maxOutputBytes={1024 * 1024}
+        onCropComplete={handleCrop}
+        onClose={handleDialogClose}
+      />
 
       <div className="flex w-full flex-col gap-5">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
