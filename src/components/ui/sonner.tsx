@@ -22,7 +22,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         unstyled: true,
         classNames: {
           toast:
-            "group toast relative flex items-start gap-3 w-full rounded-2xl border px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] " +
+            "group toast relative flex items-start gap-3 w-full overflow-hidden rounded-2xl border px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] " +
             // default / plain toast() calls -- Bootstrap "secondary" style
             "bg-[#e2e3e5] border-[#d3d6d8] text-[#41464b] " +
             // success -- Bootstrap alert-success
