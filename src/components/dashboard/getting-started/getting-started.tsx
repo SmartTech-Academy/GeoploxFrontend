@@ -413,12 +413,8 @@ const GettingStarted = () => {
       setIsSubmitting(true);
       await completeOnboardingMutate();
 
-      const toastId = toast.success("Onboarding complete! Welcome to your dashboard.", {
+      toast.success("Onboarding complete! Welcome to your dashboard.", {
         description: "We’re reviewing your information and will notify you once it's approved.",
-        action: {
-          label: "Dismiss",
-          onClick: () => toast.dismiss(toastId), // dismisses the toast
-        },
       });
 
       // Navigate immediately after success
@@ -427,12 +423,8 @@ const GettingStarted = () => {
       await queryClient.invalidateQueries({ queryKey: ["profile"] });
     } catch (error: any) {
       const message = error.response?.data?.message || "Failed to complete onboarding.";
-      const toastId = toast.error("Failed to complete onboarding.", {
+      toast.error("Failed to complete onboarding.", {
         description: message,
-        action: {
-          label: "Dismiss",
-          onClick: () => toast.dismiss(toastId), // dismisses the toast
-        },
       });
     } finally {
       setIsSubmitting(false);

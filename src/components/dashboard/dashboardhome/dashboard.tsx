@@ -81,11 +81,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (dashboardData?.data?.data?.Dashboard_Warning_Message) {
-      const toastId = toast.info(dashboardData?.data?.data?.Dashboard_Warning_Message, {
-        action: {
-          label: "Dismiss",
-          onClick: () => toast.dismiss(toastId), // dismisses the toast
-        },
+      // Persistent until manually closed (via the Toaster's close button) -- this is a
+      // standing warning, not a transient alert, so it shouldn't auto-dismiss.
+      toast.info(dashboardData?.data?.data?.Dashboard_Warning_Message, {
         duration: Infinity,
       });
     }

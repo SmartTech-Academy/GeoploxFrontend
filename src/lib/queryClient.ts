@@ -65,12 +65,8 @@ export const queryClient = new QueryClient({
             .join("; ");
         }
         console.log("description", description);
-        const toastId = toast.error(title, {
+        toast.error(title, {
           description: description,
-          action: {
-            label: "Dismiss",
-            onClick: () => toast.dismiss(toastId), // dismisses the toast
-          },
         });
       },
     },
