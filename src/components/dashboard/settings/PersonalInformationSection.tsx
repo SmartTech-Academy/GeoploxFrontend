@@ -20,6 +20,7 @@ import { Phone, Upload } from "lucide-react";
 import React, { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "@/lib/toast";
+import { getErrorMessage } from "@/lib/errors";
 import z from "zod";
 import statesAndLgasData from "@/data/statesAndLocalGov.json";
 
@@ -114,8 +115,7 @@ const PersonalInformationSection: React.FC<PersonalInformationSectionProps> = ({
       });
       toast.success("Personal information updated successfully!");
     } catch (error: any) {
-      const message = error.response?.data?.message || "An error occurred.";
-      toast.error(message);
+      toast.error(getErrorMessage(error, "Unable to update personal information. Please try again."));
     }
   };
 

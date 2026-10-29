@@ -49,6 +49,7 @@ import {
   useDeletePropertyImage,
 } from "@/lib/services/properties";
 import { toast } from "@/lib/toast";
+import { getErrorMessage } from "@/lib/errors";
 import { Separator } from "@/components/ui/separator";
 import statesAndLgasData from "@/data/statesAndLocalGov.json";
 import { useGetProfileData } from "@/lib/services/profile";
@@ -620,7 +621,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ isEdit = false, initialData
       }
       router.navigate({ to: "/properties" });
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "An error occurred.");
+      toast.error(getErrorMessage(error, "Unable to save this property. Please try again."));
     }
   };
 

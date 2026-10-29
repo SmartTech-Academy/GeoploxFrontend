@@ -28,6 +28,7 @@ import { UserProfile } from "@/lib/types";
 import { ImageCropDialog } from "@/components/ui/image-crop-dialog";
 import { useUpdateBusinessInformation } from "@/lib/services/profile";
 import { toast } from "@/lib/toast";
+import { getErrorMessage } from "@/lib/errors";
 import statesAndLgasData from "@/data/statesAndLocalGov.json";
 
 const step3BusinessSchema = z.object({
@@ -96,9 +97,7 @@ const BusinessInformationSection: React.FC<BusinessInformationSectionProps> = ({
       });
       toast.success("Business information updated successfully!");
     } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || "An error occurred while updating business information.",
-      );
+      toast.error(getErrorMessage(error, "Unable to update business information. Please try again."));
     }
   }
 

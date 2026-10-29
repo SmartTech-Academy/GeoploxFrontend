@@ -50,7 +50,12 @@ export const queryClient = new QueryClient({
       // Global mutation error handling
       onError: (error: any) => {
         console.log("mutation error", error);
-        const title = error.response?.data?.message || error.message || "An error occurred";
+        const title =
+          error.response?.data?.message ||
+          (error.message === "Network Error"
+            ? "Unable to reach the server. Please check your internet connection and try again."
+            : error.message) ||
+          "An error occurred";
         let description = "";
 
         const errorData = error.response?.data?.errors || error.response?.data?.data;

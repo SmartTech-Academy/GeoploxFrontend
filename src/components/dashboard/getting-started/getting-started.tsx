@@ -15,6 +15,7 @@ import Subscription from "./subscription";
 import CompleteOnboarding from "./complete-onboarding";
 import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getErrorMessage } from "@/lib/errors";
 // import { useUserOnboardingStatus } from '@/hooks/use-user-onboarding-status';
 import { useNavigate } from "@tanstack/react-router";
 import { customResolver } from "@/lib/customZodResolver";
@@ -272,7 +273,7 @@ const GettingStarted = () => {
 
       return true;
     } catch (error: any) {
-      const message = error.response?.data?.message || "Unable to save this step.";
+      const message = getErrorMessage(error, "Unable to save this step. Please try again.");
       await refetchProfile();
       toast.error(message);
       return false;
@@ -422,7 +423,7 @@ const GettingStarted = () => {
       // Invalidate profile data after navigation to refresh it in the background for the dashboard
       await queryClient.invalidateQueries({ queryKey: ["profile"] });
     } catch (error: any) {
-      const message = error.response?.data?.message || "Failed to complete onboarding.";
+      const message = getErrorMessage(error, "Failed to complete onboarding. Please try again.");
       toast.error("Failed to complete onboarding.", {
         description: message,
       });

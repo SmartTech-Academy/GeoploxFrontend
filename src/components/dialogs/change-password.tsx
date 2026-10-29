@@ -22,6 +22,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 import { useChangePassword } from "@/lib/services/profile";
 import { toast } from "@/lib/toast";
+import { getErrorMessage } from "@/lib/errors";
 
 interface PropertyProps {
   onOpenChange: Dispatch<SetStateAction<boolean>>;
@@ -57,9 +58,7 @@ const ChangePassword: React.FC<PropertyProps> = ({ open, onOpenChange }) => {
       onOpenChange(false);
       form.reset();
     } catch (error: any) {
-      const message =
-        error.response?.data?.message || "An error occurred while changing your password.";
-      toast.error(message);
+      toast.error(getErrorMessage(error, "Unable to change your password. Please try again."));
     }
   }
 
