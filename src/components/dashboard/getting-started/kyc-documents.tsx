@@ -11,7 +11,7 @@ interface KYCDocumentsProps {
   isOwner?: boolean;
 }
 
-const MAX_FILE_SIZE = 1024 * 1024; // 1MB
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB -- matches the backend's doc_file/cac_doc/gov_id_doc limit
 const ACCEPTED_TYPES = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
 
 const validateFile = (file: File): string | null => {
@@ -19,7 +19,7 @@ const validateFile = (file: File): string | null => {
     return "Unsupported file type. Please upload a PDF, JPEG, or PNG file.";
   }
   if (file.size > MAX_FILE_SIZE) {
-    return "File is too large. Please upload a file smaller than 1 MB.";
+    return "File is too large. Please upload a file smaller than 15 MB.";
   }
   return null;
 };
