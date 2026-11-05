@@ -23,6 +23,16 @@ const Subscription: React.FC<SubscriptionProps> = ({ form }) => {
     form.setValue("duration_months", 1);
   }, [form]);
 
+  // Default to the free/basic plan once it loads, using its real plan id
+  // (not a placeholder string) so the backend's "plan id must be an integer"
+  // validation never fires just because the user didn't touch this step.
+  useEffect(() => {
+    const basicPlanId = plansData?.basic?.id;
+    if (basicPlanId && !form.getValues("plan")) {
+      form.setValue("plan", String(basicPlanId), { shouldValidate: true });
+    }
+  }, [plansData, form]);
+
   if (isLoadingPlans) {
     return <LoadingFallback />;
   }

@@ -82,9 +82,11 @@ const step4KYCSchema = z.object({
 });
 
 const step3SubscriptionSchema = z.object({
-  plan: z.string({
-    error: "Please select a subscription plan",
-  }),
+  plan: z
+    .string({
+      error: "Please select a subscription plan before continuing.",
+    })
+    .min(1, "Please select a subscription plan before continuing."),
   duration_months: z.number().min(1),
 });
 
@@ -167,7 +169,7 @@ const GettingStarted = () => {
     resolver: customResolver(combinedSchema),
     defaultValues: {
       accountType: "developer",
-      plan: "basic",
+      plan: "",
     },
     mode: "onChange",
     reValidateMode: "onChange",
@@ -206,6 +208,9 @@ const GettingStarted = () => {
 
   const stepFlow = getStepFlow();
   const currentStepKey = stepFlow[currentStep];
+  const selectedPlan = form.watch("plan");
+  const isContinueDisabled =
+    isSubmitting || (currentStepKey === "subscription" && !selectedPlan);
 
   const handleApiSubmission = async (stepKey: string, data: any) => {
     try {
@@ -519,8 +524,8 @@ const GettingStarted = () => {
                           "0px 4px 3px rgba(31, 33, 48, 0.1), inset 0px 2px 1px rgba(255, 255, 255, 0.25)",
                       }}
                       type="submit"
-                      className="h-12 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] font-semibold text-white"
-                      disabled={isSubmitting}
+                      className="h-12 flex-1 rounded-[40px] border border-[oklch(0.7665_0.1393_91.15/50%)] font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled={isContinueDisabled}
                     >
                       {isSubmitting ? "Saving..." : "Continue"}
                     </Button>
