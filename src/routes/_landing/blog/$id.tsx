@@ -17,6 +17,7 @@ import {
 import { excerptFromHtml } from "@/lib/utils";
 import {
   // BLOG_BASE_URL,
+  proxyBlogMediaInHtml,
   toAbsoluteBlogUrl,
 } from "@/lib/wpGraphql";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -154,7 +155,7 @@ function RouteComponent() {
                   <div className="flex flex-col items-start gap-6 px-5 lg:px-6">
                     <div
                       className="wp-content w-full"
-                      dangerouslySetInnerHTML={{ __html: post.content ?? "" }}
+                      dangerouslySetInnerHTML={{ __html: proxyBlogMediaInHtml(post.content ?? "") }}
                     />
                     <div className="flex w-full flex-col items-start gap-[25px]">
                       <div className="flex items-center gap-[25px]">

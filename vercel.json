@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/blog-graphql", "destination": "https://blog.geoplox.com/graphql" },
+    { "source": "/blog-media/:path*", "destination": "https://blog.geoplox.com/wp-content/:path*" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }

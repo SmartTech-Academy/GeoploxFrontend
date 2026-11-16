@@ -1,9 +1,27 @@
 export const BLOG_BASE_URL =
   (import.meta.env.VITE_BLOG_BASE_URL as string | undefined) ?? "https://blog.geoplox.com";
 
-// Prefer same-origin proxy to avoid CORS in browsers. Configure via Vite/Netlify/Vercel rewrites.
+// Always go through the same-origin proxy (Vercel/Netlify rewrites + Vite dev proxy), never
+// blog.geoplox.com directly from the browser. Besides avoiding CORS, the WordPress host
+// (SiteGround) drops connections from some networks, including Nigerian ISPs (confirmed
+// 2026-11-16: timeouts from Nigeria, 200 from Germany and from Vercel). When the browser
+// called it directly, the blog sections loaded nothing for those visitors.
 export const BLOG_GRAPHQL_URL =
-  import.meta.env.VITE_BLOG_GRAPHQL_URL ?? "https://blog.geoplox.com/graphql";
+  (import.meta.env.VITE_BLOG_GRAPHQL_URL as string | undefined) ?? "/blog-graphql";
+
+// Same-origin proxy for WordPress media (featured images, images inside post content), for
+// the same reason: /blog-media/* is rewritten to blog.geoplox.com/wp-content/*.
+const BLOG_MEDIA_PROXY = "/blog-media/";
+const BLOG_MEDIA_PATTERN = /https?:\/\/blog\.geoplox\.com\/wp-content\//gi;
+
+export function proxyBlogMedia(url: string): string {
+  return url.replace(BLOG_MEDIA_PATTERN, BLOG_MEDIA_PROXY);
+}
+
+/** Rewrites every blog.geoplox.com/wp-content URL in WordPress post HTML (src, srcset, href). */
+export function proxyBlogMediaInHtml(html: string): string {
+  return html.replace(BLOG_MEDIA_PATTERN, BLOG_MEDIA_PROXY);
+}
 
 type GraphqlError = {
   message: string;
@@ -43,6 +61,6 @@ export async function wpGraphqlRequest<
 
 export function toAbsoluteBlogUrl(pathOrUrl: string | null | undefined): string | undefined {
   if (!pathOrUrl) return undefined;
-  if (/^https?:\/\//i.test(pathOrUrl)) return pathOrUrl;
-  return `${BLOG_BASE_URL}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
+  if (/^https?:\/\//i.test(pathOrUrl)) return proxyBlogMedia(pathOrUrl);
+  return proxyBlogMedia(`${BLOG_BASE_URL}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`);
 }
